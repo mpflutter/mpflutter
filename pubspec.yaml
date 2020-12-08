@@ -1,0 +1,9 @@
+name: mpflutter
+version: 0.0.1
+
+executables:
+  mpflutter:
+
+dependencies:
+  args: ^1.6.0
+  path: ^1.7.0
