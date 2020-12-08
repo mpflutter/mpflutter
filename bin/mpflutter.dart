@@ -1,8 +1,12 @@
-import 'package:args/args.dart';
+library mpflutter;
 
-import 'build.dart';
-import 'create.dart';
-import 'upgrade.dart';
+import 'dart:io';
+
+import 'package:path/path.dart' as path;
+
+part 'build.dart';
+part 'create.dart';
+part 'upgrade.dart';
 
 main(List<String> args) {
   if (args.length >= 2 && args[0] == 'create') {

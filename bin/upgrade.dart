@@ -1,5 +1,4 @@
-import 'dart:io';
-import 'package:path/path.dart' as path;
+part of 'mpflutter.dart';
 
 void upgrade(List<String> args) {
   Process.run('flutter', ['packages', 'upgrade']);
