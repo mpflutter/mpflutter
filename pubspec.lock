@@ -8,6 +8,34 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.6.0"
+  charcode:
+    dependency: transitive
+    description:
+      name: charcode
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.3"
+  collection:
+    dependency: transitive
+    description:
+      name: collection
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.14.13"
+  io:
+    dependency: "direct main"
+    description:
+      name: io
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "0.3.4"
+  meta:
+    dependency: transitive
+    description:
+      name: meta
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.2.4"
   path:
     dependency: "direct main"
     description:
@@ -15,5 +43,26 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.7.0"
+  source_span:
+    dependency: transitive
+    description:
+      name: source_span
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.7.0"
+  string_scanner:
+    dependency: transitive
+    description:
+      name: string_scanner
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.5"
+  term_glyph:
+    dependency: transitive
+    description:
+      name: term_glyph
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.1.0"
 sdks:
   dart: ">=2.7.0 <3.0.0"

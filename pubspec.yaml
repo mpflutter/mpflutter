@@ -10,3 +10,4 @@ executables:
 dependencies:
   args: ^1.6.0
   path: ^1.7.0
+  io: ^0.3.4

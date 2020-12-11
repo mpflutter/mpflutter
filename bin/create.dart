@@ -30,22 +30,19 @@ void _createFlutter(String projectName) {
 
 void _createWeb(String projectName) {
   try {
-    Directory(path.join('/', 'tmp', '.mp_client_web'))
+    Directory(path.join('/', 'tmp', '.mp_web_runtime'))
         .deleteSync(recursive: true);
   } catch (e) {}
   Process.runSync('git', [
     'clone',
-    'https://github.com/mpflutter/mp_client_web.git',
-    '/tmp/.mp_client_web'
+    'https://github.com/mpflutter/mp_web_runtime.git',
+    '/tmp/.mp_web_runtime'
   ]);
   Directory(path.join(projectName, 'web')).createSync();
-  Directory(path.join('/', 'tmp', '.mp_client_web', 'dist'))
-      .listSync()
-      .forEach((element) {
-    (element as File).copySync(
-      path.join(projectName, 'web', path.basename(element.path)),
-    );
-  });
+  copyPathSync(
+    path.join('/', 'tmp', '.mp_web_runtime', 'dist'),
+    path.join(projectName, 'web'),
+  );
 }
 
 void _replacePubspec(String projectName) {

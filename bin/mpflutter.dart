@@ -2,6 +2,7 @@ library mpflutter;
 
 import 'dart:io';
 
+import 'package:io/io.dart';
 import 'package:path/path.dart' as path;
 
 part 'build.dart';
