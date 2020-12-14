@@ -13,7 +13,8 @@ void _upgradeWeb() {
   Process.runSync('git', [
     'clone',
     'https://github.com/mpflutter/mp_web_runtime.git',
-    '/tmp/.mp_web_runtime'
+    '/tmp/.mp_web_runtime',
+    '--depth=1'
   ]);
   Directory(path.join('web')).deleteSync(recursive: true);
   copyPathSync(
