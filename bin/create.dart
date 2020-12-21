@@ -64,6 +64,8 @@ dependencies:
 dependency_overrides:
   flutter: 
     git: https://github.com/mpflutter/flutter
+  flutter_web_plugins:
+    git: https://github.com/mpflutter/flutter_web_plugins
 ''');
   Process.runSync(
     'flutter',

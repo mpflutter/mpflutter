@@ -13,6 +13,12 @@ void _buildWeb() {
   } catch (e) {}
   Directory(path.join('build')).createSync();
   copyPathSync(path.join('web'), path.join('build', 'web'));
+  if (File('lib/generated_plugin_registrant.dart').existsSync()) {
+    final code = File('lib/generated_plugin_registrant.dart')
+        .readAsStringSync()
+        .replaceFirst("import 'dart:ui';", '');
+    File('lib/generated_plugin_registrant.dart').writeAsStringSync(code);
+  }
   Process.runSync('dart2js', [
     'lib/main.dart',
     '-O4',
