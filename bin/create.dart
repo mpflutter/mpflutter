@@ -59,8 +59,6 @@ dependencies:
     git: https://github.com/mpflutter/flutter
   mpcore: 
     git: https://github.com/mpflutter/mpcore
-  mpkit: 
-    git: https://github.com/mpflutter/mpkit
 dependency_overrides:
   flutter: 
     git: https://github.com/mpflutter/flutter
@@ -77,7 +75,6 @@ dependency_overrides:
 void _replaceExample(String projectName) {
   File(path.join(projectName, 'lib', 'main.dart')).writeAsStringSync('''
 import 'package:flutter/material.dart';
-import 'package:mpkit/mpkit.dart';
 import 'package:mpcore/mpcore.dart';
 
 void main() {
