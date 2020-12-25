@@ -30,9 +30,10 @@ void _buildWeb() {
     'bundle',
   ]);
   if (Directory(path.join('build', 'flutter_assets', 'assets')).existsSync()) {
+    Directory(path.join('build', 'web', 'assets')).createSync();
     copyPathSync(
       path.join('build', 'flutter_assets', 'assets'),
-      path.join('build', 'web', 'assets'),
+      path.join('build', 'web', 'assets', 'assets'),
     );
   } else {
     Directory(path.join('build', 'web', 'assets')).createSync();
