@@ -22,6 +22,7 @@ void _buildWeb() {
   Process.runSync('dart2js', [
     'lib/main.dart',
     '-O4',
+    '-Ddart.vm.product=true',
     '-o',
     'build/web/main.dart.js',
   ]);
