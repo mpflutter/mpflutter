@@ -22,6 +22,20 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.14.13"
+  convert:
+    dependency: transitive
+    description:
+      name: convert
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.1.1"
+  crypto:
+    dependency: "direct main"
+    description:
+      name: crypto
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.1.5"
   io:
     dependency: "direct main"
     description:
@@ -64,5 +78,12 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.1.0"
+  typed_data:
+    dependency: transitive
+    description:
+      name: typed_data
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.2.0"
 sdks:
   dart: ">=2.7.0 <3.0.0"

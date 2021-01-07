@@ -26,6 +26,19 @@ void _buildWeb() {
     '-o',
     'build/web/main.dart.js',
   ]);
+  // Add hash to main.dart.js {
+  final mainDartJSHash = md5
+      .convert(File('./build/web/main.dart.js').readAsBytesSync())
+      .toString()
+      .substring(0, 6)
+      .toLowerCase();
+  File('./build/web/main.dart.js')
+      .renameSync('./build/web/main.dart.${mainDartJSHash}.js');
+  File('./build/web/index.html').writeAsStringSync(
+      File('./build/web/index.html')
+          .readAsStringSync()
+          .replaceFirst('main.dart.js', 'main.dart.${mainDartJSHash}.js'));
+  // } Add hash to main.dart.js
   Process.runSync('flutter', [
     'build',
     'bundle',
