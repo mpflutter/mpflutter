@@ -8,6 +8,7 @@ void create(List<String> args) {
   }
   _createFlutter(projectName);
   _createWeb(projectName);
+  _createTaro(projectName);
   _replacePubspec(projectName);
   _replaceExample(projectName);
 }
@@ -26,6 +27,20 @@ void _createFlutter(String projectName) {
   try {
     Directory(path.join(projectName, 'web')).deleteSync(recursive: true);
   } catch (e) {}
+  Directory(path.join(projectName, '.vscode')).createSync();
+  File(path.join(projectName, '.vscode', 'launch.json')).writeAsStringSync('''
+{
+  "version": "0.2.0",
+  "configurations": [
+      {
+          "name": "MPFlutter",
+          "request": "launch",
+          "type": "dart",
+          "program": "lib/main.dart"
+      }
+  ]
+}
+''');
 }
 
 void _createWeb(String projectName) {
@@ -44,6 +59,42 @@ void _createWeb(String projectName) {
     path.join('/', 'tmp', '.mp_web_runtime', 'dist'),
     path.join(projectName, 'web'),
   );
+}
+
+void _createTaro(String projectName) {
+  Directory(path.join(projectName, 'taro')).createSync();
+  File(path.join(projectName, 'taro', 'app.config.ts')).writeAsStringSync('''
+export default {
+  pages: ["pages/index/index"],
+  window: {
+    backgroundTextStyle: "light",
+    navigationBarBackgroundColor: "#fff",
+    navigationBarTitleText: "${projectName}",
+    navigationBarTextStyle: "black",
+  },
+  mp: {
+    isDebug: true,
+    debugServer: "127.0.0.1",
+    assetsServer: null,
+  },
+};
+''');
+  File(path.join(projectName, 'taro', 'project.config.json'))
+      .writeAsStringSync('''
+{
+  "miniprogramRoot": "./dist",
+  "projectname": "${projectName}",
+  "description": "",
+  "appid": "",
+  "setting": {
+    "urlCheck": false,
+    "es6": false,
+    "postcss": true,
+    "minified": true
+  },
+  "compileType": "miniprogram"
+}
+''');
 }
 
 void _replacePubspec(String projectName) {

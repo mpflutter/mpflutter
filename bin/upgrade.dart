@@ -3,6 +3,7 @@ part of 'mpflutter.dart';
 void upgrade(List<String> args) {
   Process.run('flutter', ['packages', 'upgrade']);
   _upgradeWeb();
+  _upgradeTaro();
 }
 
 void _upgradeWeb() {
@@ -21,4 +22,11 @@ void _upgradeWeb() {
     path.join('/', 'tmp', '.mp_web_runtime', 'dist'),
     path.join('web'),
   );
+}
+
+void _upgradeTaro() {
+  if (!Directory(path.join('/', 'tmp', '.mp_taro_runtime')).existsSync()) {
+    Directory(path.join('/', 'tmp', '.mp_taro_runtime'))
+        .deleteSync(recursive: true);
+  }
 }
