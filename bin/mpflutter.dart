@@ -7,6 +7,8 @@ import 'package:path/path.dart' as path;
 import 'package:crypto/crypto.dart';
 
 part 'build.dart';
+part 'build_web.dart';
+part 'build_taro.dart';
 part 'create.dart';
 part 'upgrade.dart';
 

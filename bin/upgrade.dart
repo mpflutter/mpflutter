@@ -25,7 +25,7 @@ void _upgradeWeb() {
 }
 
 void _upgradeTaro() {
-  if (!Directory(path.join('/', 'tmp', '.mp_taro_runtime')).existsSync()) {
+  if (Directory(path.join('/', 'tmp', '.mp_taro_runtime')).existsSync()) {
     Directory(path.join('/', 'tmp', '.mp_taro_runtime'))
         .deleteSync(recursive: true);
   }

@@ -105,6 +105,8 @@ publish_to: 'none'
 version: 1.0.0+1
 environment:
   sdk: ">=2.7.0 <3.0.0"
+sub_packages:
+  - main
 dependencies:
   flutter:
     git: https://github.com/mpflutter/flutter
