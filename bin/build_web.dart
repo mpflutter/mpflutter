@@ -5,35 +5,53 @@ void _buildWeb() {
   copyPathSync(path.join('web'), path.join('build', 'web'));
   Directory(path.join('build', 'web', 'assets')).createSync();
   _buildPlugin();
-  Process.runSync('dart2js', [
-    'lib/main.dart',
-    '-O4',
-    '-Ddart.vm.product=true',
-    '-o',
-    'build/web/main.dart.js',
-  ]);
-  // Add hash to main.dart.js {
-  final mainDartJSHash = md5
-      .convert(File('./build/web/main.dart.js').readAsBytesSync())
-      .toString()
-      .substring(0, 6)
-      .toLowerCase();
-  File('./build/web/main.dart.js')
-      .renameSync('./build/web/main.dart.${mainDartJSHash}.js');
-  File('./build/web/index.html').writeAsStringSync(
-      File('./build/web/index.html')
-          .readAsStringSync()
-          .replaceFirst('main.dart.js', 'main.dart.${mainDartJSHash}.js'));
-  // } Add hash to main.dart.js
+  subPackages().forEach((pkg) {
+    if (pkg is String) {
+      _buildWebPackage(pkg);
+    } else if (pkg is YamlMap) {
+      _buildWebPackage(pkg.keys.first);
+    }
+  });
   _buildWebAssets();
   _buildWebPlugins();
 }
 
+void _buildWebPackage(String pkgName) {
+  final dart2JSResult = Process.runSync('dart2js', [
+    'lib/${pkgName}.dart',
+    '-O4',
+    '-Ddart.vm.product=true',
+    '-o',
+    'build/web/${pkgName}.dart.js',
+  ]);
+  print(dart2JSResult.stdout);
+  print(dart2JSResult.stderr);
+  final fileHash = md5
+      .convert(File('./build/web/${pkgName}.dart.js').readAsBytesSync())
+      .toString()
+      .substring(0, 6)
+      .toLowerCase();
+  File('./build/web/${pkgName}.dart.js')
+      .renameSync('./build/web/${pkgName}.dart.${fileHash}.js');
+  if (pkgName == 'main') {
+    File('./build/web/index.html').writeAsStringSync(File('./web/index.html')
+        .readAsStringSync()
+        .replaceFirst('main.dart.js', '${pkgName}.dart.${fileHash}.js'));
+  } else {
+    File('./build/web/${pkgName}.html').writeAsStringSync(
+        File('./web/index.html')
+            .readAsStringSync()
+            .replaceFirst('main.dart.js', '${pkgName}.dart.${fileHash}.js'));
+  }
+}
+
 void _buildWebAssets() {
-  Process.runSync('flutter', [
+  final result = Process.runSync('flutter', [
     'build',
     'bundle',
   ]);
+  print(result.stdout);
+  print(result.stderr);
   if (Directory(path.join('build', 'flutter_assets', 'assets')).existsSync()) {
     copyPathSync(
       path.join('build', 'flutter_assets', 'assets'),

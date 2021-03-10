@@ -1,7 +1,9 @@
 part of 'mpflutter.dart';
 
 void upgrade(List<String> args) {
-  Process.run('flutter', ['packages', 'upgrade']);
+  final upgradeResult = Process.runSync('flutter', ['packages', 'upgrade']);
+  print(upgradeResult.stdout);
+  print(upgradeResult.stderr);
   _upgradeWeb();
   _upgradeTaro();
 }
@@ -11,12 +13,14 @@ void _upgradeWeb() {
     Directory(path.join('/', 'tmp', '.mp_web_runtime'))
         .deleteSync(recursive: true);
   } catch (e) {}
-  Process.runSync('git', [
+  final gitCloneResult = Process.runSync('git', [
     'clone',
     'https://github.com/mpflutter/mp_web_runtime.git',
     '/tmp/.mp_web_runtime',
     '--depth=1'
   ]);
+  print(gitCloneResult.stdout);
+  print(gitCloneResult.stderr);
   Directory(path.join('web')).deleteSync(recursive: true);
   copyPathSync(
     path.join('/', 'tmp', '.mp_web_runtime', 'dist'),

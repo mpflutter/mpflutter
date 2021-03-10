@@ -12,3 +12,4 @@ dependencies:
   path: ^1.7.0
   io: ^0.3.4
   crypto: ^2.1.5
+  yaml: ^2.2.1

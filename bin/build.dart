@@ -2,16 +2,23 @@ part of 'mpflutter.dart';
 
 void build(List<String> args) {
   final target = args.length <= 1 || args[1] == 'web' ? 'web' : args[1];
-  final isDebug = args.length > 2 && args[2] == '--debug';
+  // final isDebug = args.length > 2 && args[2] == '--debug';
   if (target == 'web') {
     _buildWeb();
   } else if (target == 'weapp') {
-    if (isDebug) {
-      _buildTaroDebug("weapp");
-    } else {
-      _buildTaro("weapp");
-    }
+    _buildTaro("weapp");
   }
+}
+
+List<dynamic> subPackages() {
+  if (!processArgs.contains('--subPackages')) {
+    return ['main'];
+  }
+  final yamlConfig = loadYaml(File('pubspec.yaml').readAsStringSync());
+  if (yamlConfig is Map && yamlConfig['sub_packages'] is List) {
+    return yamlConfig['sub_packages'];
+  }
+  return ['main'];
 }
 
 void _clearWorkspace() {

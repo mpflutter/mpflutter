@@ -85,5 +85,12 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.2.0"
+  yaml:
+    dependency: "direct main"
+    description:
+      name: yaml
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.2.1"
 sdks:
   dart: ">=2.7.0 <3.0.0"
