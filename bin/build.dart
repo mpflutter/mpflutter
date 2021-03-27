@@ -2,7 +2,6 @@ part of 'mpflutter.dart';
 
 void build(List<String> args) {
   final target = args.length <= 1 || args[1] == 'web' ? 'web' : args[1];
-  // final isDebug = args.length > 2 && args[2] == '--debug';
   if (target == 'web') {
     _buildWeb();
   } else if (target == 'weapp') {

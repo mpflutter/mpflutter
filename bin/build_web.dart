@@ -19,7 +19,22 @@ void _buildWeb() {
 void _buildWebPackage(String pkgName) {
   final dart2JSResult = Process.runSync('dart2js', [
     'lib/${pkgName}.dart',
-    '-O4',
+    (() {
+      if (processArgs.contains('-O0')) {
+        return '-O0';
+      }
+      if (processArgs.contains('-O1')) {
+        return '-O1';
+      }
+      if (processArgs.contains('-O2')) {
+        return '-O2';
+      }
+      if (processArgs.contains('-O3')) {
+        return '-O3';
+      } else {
+        return '-O4';
+      }
+    })(),
     '-Ddart.vm.product=true',
     '-o',
     'build/web/${pkgName}.dart.js',

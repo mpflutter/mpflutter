@@ -27,6 +27,12 @@ void _createFlutter(String projectName) {
   try {
     Directory(path.join(projectName, 'web')).deleteSync(recursive: true);
   } catch (e) {}
+  try {
+    Directory(path.join(projectName, 'macos')).deleteSync(recursive: true);
+  } catch (e) {}
+  try {
+    Directory(path.join(projectName, 'linux')).deleteSync(recursive: true);
+  } catch (e) {}
   Directory(path.join(projectName, '.vscode')).createSync();
   File(path.join(projectName, '.vscode', 'launch.json')).writeAsStringSync('''
 {

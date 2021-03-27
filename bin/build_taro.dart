@@ -43,7 +43,22 @@ void _buildTaro(String appType) {
       'dart2js',
       [
         'lib/${pkgName}.dart',
-        '-O4',
+        (() {
+          if (processArgs.contains('-O0')) {
+            return '-O0';
+          }
+          if (processArgs.contains('-O1')) {
+            return '-O1';
+          }
+          if (processArgs.contains('-O2')) {
+            return '-O2';
+          }
+          if (processArgs.contains('-O3')) {
+            return '-O3';
+          } else {
+            return '-O4';
+          }
+        })(),
         '--csp',
         '-Ddart.vm.product=true',
         '-Dmpcore.env.taro=true',

@@ -11,19 +11,16 @@ MPFlutter makes it easy to build web and mini-program base on Flutter.
 
 在开始使用 `MPFlutter` 前，你需要先安装好 `Flutter` 环境。
 
-请参阅[官网](https://flutter.dev)或[中国非官方镜像](https://flutter-io.cn)网站相关教程安装 `Flutter` 环境，版本要求 1.22.0+ 。
+请参阅[官网](https://flutter.dev)或[中国非官方镜像](https://flutter-io.cn)网站相关教程安装 `Flutter` 环境，版本要求 2.0.0+ 。
 
 安装完成后，请在命令行执行以下命令，观察输出是否正常。
 
 ```bash
 > flutter --version
-Flutter 1.22.1 • channel unknown • unknown source
-Framework • revision f30b7f4db9 (9 weeks ago) • 2020-10-08 10:06:30 -0700
-Engine • revision 75bef9f6c8
-Tools • Dart 2.10.1
-
-> dart --version
-Dart SDK version: 2.10.1 (stable) (Tue Oct 6 10:54:20 2020 +0200) on "macos_x64"
+Flutter 2.0.2 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision 8962f6dc68 (2 weeks ago) • 2021-03-11 13:22:20 -0800
+Engine • revision 5d8bf811b3
+Tools • Dart 2.12.1
 ```
 
 ## 配置 pub-cache bin 到 PATH 环境变量
@@ -61,11 +58,3 @@ mpflutter build
 ```
 
 构建完成后，产物位于 `./build/web` 目录下。
-
-## 升级 MPFlutter 环境
-
-使用命令行进入需要升级环境的工程目录，执行以下命令。
-
-```bash
-mpflutter upgrade
-```
