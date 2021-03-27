@@ -4,6 +4,8 @@ void _cloneTaro() {
   if (!Directory(path.join('/', 'tmp', '.mp_taro_runtime')).existsSync()) {
     final gitCloneResult = Process.runSync('git', [
       'clone',
+      '-b',
+      'stable',
       'https://github.com/mpflutter/mp_taro_runtime.git',
       '/tmp/.mp_taro_runtime',
       '--depth=1'

@@ -56,6 +56,8 @@ void _createWeb(String projectName) {
   } catch (e) {}
   Process.runSync('git', [
     'clone',
+    '-b',
+    'stable',
     'https://github.com/mpflutter/mp_web_runtime.git',
     '/tmp/.mp_web_runtime',
     '--depth=1'
