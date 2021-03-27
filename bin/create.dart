@@ -105,7 +105,7 @@ export default {
 
 void _replacePubspec(String projectName) {
   File(path.join(projectName, 'pubspec.yaml')).writeAsStringSync('''
-name: xxx
+name: $projectName
 description: A new Flutter project.
 publish_to: 'none'
 version: 1.0.0+1
@@ -116,13 +116,17 @@ sub_packages:
 dependencies:
   flutter:
     git: https://github.com/mpflutter/flutter
+    ref: stable
   mpcore: 
     git: https://github.com/mpflutter/mpcore
+    ref: stable
 dependency_overrides:
   flutter: 
     git: https://github.com/mpflutter/flutter
+    ref: stable
   flutter_web_plugins:
     git: https://github.com/mpflutter/flutter_web_plugins
+    ref: stable
 ''');
   Process.runSync(
     'flutter',
