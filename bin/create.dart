@@ -117,18 +117,22 @@ sub_packages:
   - main
 dependencies:
   flutter:
-    git: https://github.com/mpflutter/flutter
-    ref: stable
+    git: 
+      url: https://github.com/mpflutter/flutter
+      ref: stable
   mpcore: 
-    git: https://github.com/mpflutter/mpcore
-    ref: stable
+    git: 
+      url: https://github.com/mpflutter/mpcore
+      ref: stable
 dependency_overrides:
   flutter: 
-    git: https://github.com/mpflutter/flutter
-    ref: stable
+    git: 
+      url: https://github.com/mpflutter/flutter
+      ref: stable
   flutter_web_plugins:
-    git: https://github.com/mpflutter/flutter_web_plugins
-    ref: stable
+    git: 
+      url: https://github.com/mpflutter/flutter_web_plugins
+      ref: stable
 ''');
   Process.runSync(
     'flutter',
