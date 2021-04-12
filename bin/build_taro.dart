@@ -1,7 +1,13 @@
 part of 'mpflutter.dart';
 
 void _cloneTaro() {
-  if (!Directory(path.join('/', 'tmp', '.mp_taro_runtime')).existsSync()) {
+  if (!Directory(path.join('/', 'tmp', '.mp_taro_runtime')).existsSync() ||
+      !Directory(path.join('/', 'tmp', '.mp_taro_runtime', 'package.json'))
+          .existsSync()) {
+    try {
+      Directory(path.join('/', 'tmp', '.mp_taro_runtime'))
+          .deleteSync(recursive: true);
+    } catch (e) {}
     final gitCloneResult = Process.runSync('git', [
       'clone',
       '-b',
@@ -33,6 +39,7 @@ void _cloneTaro() {
 void _buildTaro(String appType) {
   _cloneTaro();
   _clearWorkspace();
+  _copyPages();
 
   subPackages().forEach((pkg) {
     String pkgName;
@@ -112,4 +119,16 @@ void _buildTaro(String appType) {
   print(npmRunBuildResult.stderr);
 
   copyPathSync('/tmp/.mp_taro_runtime/dist', path.join('build', appType));
+}
+
+void _copyPages() {
+  if (Directory('./taro/pages').existsSync()) {
+    final dirs = Directory('./taro/pages').listSync();
+    dirs.forEach((element) {
+      if (element.statSync().type == FileSystemEntityType.directory) {
+        copyPathSync(element.path,
+            '/tmp/.mp_taro_runtime/src/pages/${element.path.split('/').last}');
+      }
+    });
+  }
 }
