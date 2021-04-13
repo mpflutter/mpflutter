@@ -2,7 +2,7 @@ part of 'mpflutter.dart';
 
 void _cloneTaro() {
   if (!Directory(path.join('/', 'tmp', '.mp_taro_runtime')).existsSync() ||
-      !Directory(path.join('/', 'tmp', '.mp_taro_runtime', 'package.json'))
+      !File(path.join('/', 'tmp', '.mp_taro_runtime', 'package.json'))
           .existsSync()) {
     try {
       Directory(path.join('/', 'tmp', '.mp_taro_runtime'))
