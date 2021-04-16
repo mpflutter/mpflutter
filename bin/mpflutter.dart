@@ -16,9 +16,11 @@ part 'upgrade.dart';
 part 'server_ip.dart';
 
 List<String> processArgs;
+String codeSource;
 
 main(List<String> args) {
   processArgs = args;
+  codeSource = chooseCodeSource();
   if (args.length >= 2 && args[0] == 'create') {
     create(args);
   }
@@ -27,5 +29,18 @@ main(List<String> args) {
   }
   if (args.length >= 1 && args[0] == 'build') {
     build(args);
+  }
+}
+
+String chooseCodeSource() {
+  final file = File('/tmp/.mpflutter.code.source');
+  if (file.existsSync()) {
+    return file.readAsStringSync().trim();
+  } else {
+    print('Pick the code source:');
+    final menu = Menu(['https://github.com', 'https://gitee.com']);
+    final result = menu.choose();
+    file.writeAsStringSync(result.value);
+    return result.value;
   }
 }

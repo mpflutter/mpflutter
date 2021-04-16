@@ -12,7 +12,7 @@ void _cloneTaro() {
       'clone',
       '-b',
       'stable',
-      'https://github.com/mpflutter/mp_taro_runtime.git',
+      '${codeSource}/mpflutter/mp_taro_runtime.git',
       '/tmp/.mp_taro_runtime',
       '--depth=1'
     ]);

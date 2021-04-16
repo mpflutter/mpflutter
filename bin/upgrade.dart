@@ -18,7 +18,7 @@ void _upgradeWeb() {
     'git',
     [
       'clone',
-      'https://github.com/mpflutter/mp_web_runtime.git',
+      '${codeSource}/mpflutter/mp_web_runtime.git',
       '/tmp/.mp_web_runtime',
       '--depth=1'
     ],

@@ -1,6 +1,7 @@
 part of 'mpflutter.dart';
 
 void create(List<String> args) {
+  print('Please wait a minute...');
   final projectName = args[1];
   final dir = Directory(projectName);
   if (dir.existsSync()) {
@@ -65,7 +66,7 @@ void _createWeb(String projectName) {
     'clone',
     '-b',
     'stable',
-    'https://github.com/mpflutter/mp_web_runtime.git',
+    '${codeSource}/mpflutter/mp_web_runtime.git',
     '/tmp/.mp_web_runtime',
     '--depth=1'
   ]);
@@ -125,21 +126,26 @@ sub_packages:
 dependencies:
   flutter:
     git: 
-      url: https://github.com/mpflutter/flutter
+      url: ${codeSource}/mpflutter/flutter
       ref: stable
   mpcore: 
     git: 
-      url: https://github.com/mpflutter/mpcore
+      url: ${codeSource}/mpflutter/mpcore
       ref: stable
 dependency_overrides:
   flutter: 
     git: 
-      url: https://github.com/mpflutter/flutter
+      url: ${codeSource}/mpflutter/flutter
+      ref: stable
+  mpcore:
+    git:
+      url: https://gitee.com/mpflutter/mpcore
       ref: stable
   flutter_web_plugins:
     git: 
-      url: https://github.com/mpflutter/flutter_web_plugins
+      url: ${codeSource}/mpflutter/flutter_web_plugins
       ref: stable
+      
 ''');
   Process.runSync(
     'flutter',
