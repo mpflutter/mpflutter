@@ -43,6 +43,13 @@ void _createFlutter(String projectName) {
           "request": "launch",
           "type": "dart",
           "program": "lib/main.dart"
+      },
+      {
+          "name": "MPFlutter Taro",
+          "request": "launch",
+          "type": "dart",
+          "program": "lib/main.dart",
+          "vmAdditionalArgs": ["-Dmpcore.env.taro=true"]
       }
   ]
 }

@@ -2,6 +2,7 @@ library mpflutter;
 
 import 'dart:io';
 
+import 'package:cli_menu/cli_menu.dart';
 import 'package:io/io.dart';
 import 'package:path/path.dart' as path;
 import 'package:crypto/crypto.dart';
@@ -12,6 +13,7 @@ part 'build_web.dart';
 part 'build_taro.dart';
 part 'create.dart';
 part 'upgrade.dart';
+part 'server_ip.dart';
 
 List<String> processArgs;
 

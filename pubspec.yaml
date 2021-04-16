@@ -13,3 +13,4 @@ dependencies:
   io: ^0.3.4
   crypto: ^2.1.5
   yaml: ^2.2.1
+  cli_menu: ^0.2.3

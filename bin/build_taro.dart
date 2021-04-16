@@ -22,7 +22,7 @@ void _cloneTaro() {
         workingDirectory: '/tmp/.mp_taro_runtime');
     print(npmIResult.stdout);
     print(npmIResult.stderr);
-  } else {
+  } else if (!processArgs.contains('--mpDev')) {
     Process.runSync(
       'git',
       ['reset', '--hard'],
@@ -36,7 +36,7 @@ void _cloneTaro() {
   }
 }
 
-void _buildTaro(String appType) {
+void _buildTaro(String appType) async {
   _cloneTaro();
   _clearWorkspace();
   _copyPages();
@@ -101,7 +101,16 @@ void _buildTaro(String appType) {
   });
 
   var appConfig = File(path.join('taro', 'app.config.ts')).readAsStringSync();
-  appConfig = appConfig.replaceAll('isDebug: true', 'isDebug: false');
+  if (processArgs.contains('--debug')) {
+    appConfig = appConfig.replaceAll('isDebug: false', 'isDebug: true');
+    final debugIP = await selectDebugIP();
+    if (debugIP != null) {
+      appConfig = appConfig.replaceAll(
+          'debugServer: "127.0.0.1"', 'debugServer: "${debugIP}"');
+    }
+  } else {
+    appConfig = appConfig.replaceAll('isDebug: true', 'isDebug: false');
+  }
   File('/tmp/.mp_taro_runtime/src/app.config.ts').writeAsStringSync(appConfig);
 
   var projectConfig =
