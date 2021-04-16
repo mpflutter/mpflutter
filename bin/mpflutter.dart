@@ -15,8 +15,8 @@ part 'create.dart';
 part 'upgrade.dart';
 part 'server_ip.dart';
 
-List<String> processArgs;
-String codeSource;
+late List<String> processArgs;
+late String codeSource;
 
 main(List<String> args) {
   processArgs = args;

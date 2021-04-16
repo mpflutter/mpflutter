@@ -42,12 +42,13 @@ void _buildTaro(String appType) async {
   _copyPages();
 
   subPackages().forEach((pkg) {
-    String pkgName;
+    String? pkgName;
     if (pkg is String) {
       pkgName = pkg;
     } else if (pkg is YamlMap) {
       pkgName = pkg.keys.first;
     }
+    if (pkgName == null) throw "pkgName must not null.";
     final dart2jsResult = Process.runSync(
       'dart2js',
       [

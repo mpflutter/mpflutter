@@ -1,16 +1,16 @@
 name: mpflutter
-version: 0.0.1
+version: 0.1.0
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 
 executables:
   mpflutter:
 
 dependencies:
-  args: ^1.6.0
-  path: ^1.7.0
-  io: ^0.3.4
-  crypto: ^2.1.5
-  yaml: ^2.2.1
-  cli_menu: ^0.2.3
+  args: ^2.0.0
+  path: ^1.8.0
+  io: ^1.0.0
+  crypto: ^3.0.1
+  yaml: ^3.1.0
+  cli_menu: ^0.3.0-nullsafety.0
