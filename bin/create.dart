@@ -156,7 +156,7 @@ dependency_overrides:
 
 void _replaceExample(String projectName) {
   File(path.join(projectName, 'lib', 'main.dart')).writeAsStringSync('''
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
 
 void main() {
