@@ -36,6 +36,8 @@ String chooseCodeSource() {
   final file = File('/tmp/.mpflutter.code.source');
   if (processArgs.contains('--useGitee')) {
     return "https://gitee.com";
+  } else if (processArgs.contains('--useGitHub')) {
+    return "https://github.com";
   } else if (file.existsSync()) {
     return file.readAsStringSync().trim();
   } else {
