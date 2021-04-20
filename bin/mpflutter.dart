@@ -38,9 +38,13 @@ String chooseCodeSource() {
     return file.readAsStringSync().trim();
   } else {
     print('Pick the code source:');
-    final menu = Menu(['https://github.com', 'https://gitee.com']);
-    final result = menu.choose();
-    file.writeAsStringSync(result.value);
-    return result.value;
+    try {
+      final menu = Menu(['https://github.com', 'https://gitee.com']);
+      final result = menu.choose();
+      file.writeAsStringSync(result.value);
+      return result.value;
+    } catch (e) {
+      return "https://gitee.com";
+    }
   }
 }
