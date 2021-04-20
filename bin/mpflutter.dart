@@ -34,7 +34,9 @@ main(List<String> args) {
 
 String chooseCodeSource() {
   final file = File('/tmp/.mpflutter.code.source');
-  if (file.existsSync()) {
+  if (processArgs.contains('--useGitee')) {
+    return "https://gitee.com";
+  } else if (file.existsSync()) {
     return file.readAsStringSync().trim();
   } else {
     print('Pick the code source:');
