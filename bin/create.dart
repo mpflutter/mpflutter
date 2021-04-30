@@ -92,6 +92,7 @@ export default {
     isDebug: true,
     debugServer: "127.0.0.1",
     assetsServer: null,
+    navigationStyle: "default",
   },
 };
 ''');

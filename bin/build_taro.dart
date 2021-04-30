@@ -41,6 +41,10 @@ void _buildTaro(String appType) async {
   _clearWorkspace();
   _copyPages();
 
+  var appConfig = File(path.join('taro', 'app.config.ts')).readAsStringSync();
+  var projectConfig =
+      File(path.join('taro', 'project.config.json')).readAsStringSync();
+
   subPackages().forEach((pkg) {
     String? pkgName;
     if (pkg is String) {
@@ -92,16 +96,24 @@ void _buildTaro(String appType) async {
           '"../../components/app"', '"../../components/app_${pkgName}"');
       File('/tmp/.mp_taro_runtime/src/pages/${pkgName}/index.tsx')
           .writeAsStringSync(indexCode);
+      if (appConfig.contains('navigationStyle: "custom"')) {
+        File('/tmp/.mp_taro_runtime/src/pages/${pkgName}/index.config.js')
+            .writeAsStringSync('export default { navigationStyle: "custom" };');
+      }
       var appCode = File('/tmp/.mp_taro_runtime/src/components/app.tsx')
           .readAsStringSync();
       appCode = appCode.replaceAll('require("../dart/main.dart");',
           'require("../dart/${pkgName}.dart");');
       File('/tmp/.mp_taro_runtime/src/components/app_${pkgName}.tsx')
           .writeAsStringSync(appCode);
+    } else {
+      if (appConfig.contains('navigationStyle: "custom"')) {
+        File('/tmp/.mp_taro_runtime/src/pages/index/index.config.js')
+            .writeAsStringSync('export default { navigationStyle: "custom" };');
+      }
     }
   });
 
-  var appConfig = File(path.join('taro', 'app.config.ts')).readAsStringSync();
   if (processArgs.contains('--debug')) {
     appConfig = appConfig.replaceAll('isDebug: false', 'isDebug: true');
     final debugIP = await selectDebugIP();
@@ -114,8 +126,6 @@ void _buildTaro(String appType) async {
   }
   File('/tmp/.mp_taro_runtime/src/app.config.ts').writeAsStringSync(appConfig);
 
-  var projectConfig =
-      File(path.join('taro', 'project.config.json')).readAsStringSync();
   File('/tmp/.mp_taro_runtime/project.config.json')
       .writeAsStringSync(projectConfig);
 
