@@ -39,7 +39,8 @@ void _cloneTaro() {
 void _buildTaro(String appType) async {
   _cloneTaro();
   _clearWorkspace();
-  _copyPages();
+  _copyTaroPages();
+  _copyTaroScripts();
 
   var appConfig = File(path.join('taro', 'app.config.ts')).readAsStringSync();
   var projectConfig =
@@ -141,7 +142,7 @@ void _buildTaro(String appType) async {
   copyPathSync('/tmp/.mp_taro_runtime/dist', path.join('build', appType));
 }
 
-void _copyPages() {
+void _copyTaroPages() {
   if (Directory('./taro/pages').existsSync()) {
     final dirs = Directory('./taro/pages').listSync();
     dirs.forEach((element) {
@@ -151,4 +152,13 @@ void _copyPages() {
       }
     });
   }
+}
+
+void _copyTaroScripts() {
+  File('/tmp/.mp_taro_runtime/src/dart/hook.js').writeAsStringSync('');
+  var files = Directory(path.join('taro')).listSync();
+  files.where((element) => element.path.endsWith('.js')).forEach((element) {
+    File(element.path).copySync(
+        '/tmp/.mp_taro_runtime/src/dart/${element.path.split('/').last}');
+  });
 }
