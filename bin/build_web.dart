@@ -17,28 +17,32 @@ void _buildWeb() {
 }
 
 void _buildWebPackage(String pkgName) {
-  final dart2JSResult = Process.runSync('dart2js', [
-    'lib/${pkgName}.dart',
-    (() {
-      if (processArgs.contains('-O0')) {
-        return '-O0';
-      }
-      if (processArgs.contains('-O1')) {
-        return '-O1';
-      }
-      if (processArgs.contains('-O2')) {
-        return '-O2';
-      }
-      if (processArgs.contains('-O3')) {
-        return '-O3';
-      } else {
-        return '-O4';
-      }
-    })(),
-    '-Ddart.vm.product=true',
-    '-o',
-    'build/web/${pkgName}.dart.js',
-  ]);
+  final dart2JSResult = Process.runSync(
+    'dart2js',
+    [
+      'lib/${pkgName}.dart',
+      (() {
+        if (processArgs.contains('-O0')) {
+          return '-O0';
+        }
+        if (processArgs.contains('-O1')) {
+          return '-O1';
+        }
+        if (processArgs.contains('-O2')) {
+          return '-O2';
+        }
+        if (processArgs.contains('-O3')) {
+          return '-O3';
+        } else {
+          return '-O4';
+        }
+      })(),
+      '-Ddart.vm.product=true',
+      '-o',
+      'build/web/${pkgName}.dart.js',
+    ],
+    runInShell: Platform.isWindows ? true : false,
+  );
   print(dart2JSResult.stdout);
   print(dart2JSResult.stderr);
   final fileHash = md5
@@ -61,10 +65,14 @@ void _buildWebPackage(String pkgName) {
 }
 
 void _buildWebAssets() {
-  final result = Process.runSync('flutter', [
-    'build',
-    'bundle',
-  ]);
+  final result = Process.runSync(
+    'flutter',
+    [
+      'build',
+      'bundle',
+    ],
+    runInShell: Platform.isWindows ? true : false,
+  );
   print(result.stdout);
   print(result.stderr);
   if (Directory(path.join('build', 'flutter_assets', 'assets')).existsSync()) {

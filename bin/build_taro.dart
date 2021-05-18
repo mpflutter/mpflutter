@@ -8,18 +8,26 @@ void _cloneTaro() {
       Directory(path.join('/', 'tmp', '.mp_taro_runtime'))
           .deleteSync(recursive: true);
     } catch (e) {}
-    final gitCloneResult = Process.runSync('git', [
-      'clone',
-      '-b',
-      'stable',
-      '${codeSource}/mpflutter/mp_taro_runtime.git',
-      '/tmp/.mp_taro_runtime',
-      '--depth=1'
-    ]);
+    final gitCloneResult = Process.runSync(
+      'git',
+      [
+        'clone',
+        '-b',
+        'stable',
+        '${codeSource}/mpflutter/mp_taro_runtime.git',
+        '/tmp/.mp_taro_runtime',
+        '--depth=1'
+      ],
+      runInShell: Platform.isWindows ? true : false,
+    );
     print(gitCloneResult.stdout);
     print(gitCloneResult.stderr);
-    final npmIResult = Process.runSync('npm', ['i'],
-        workingDirectory: '/tmp/.mp_taro_runtime');
+    final npmIResult = Process.runSync(
+      'npm',
+      ['i'],
+      workingDirectory: '/tmp/.mp_taro_runtime',
+      runInShell: Platform.isWindows ? true : false,
+    );
     print(npmIResult.stdout);
     print(npmIResult.stderr);
   } else if (!processArgs.contains('--mpDev')) {
@@ -27,11 +35,13 @@ void _cloneTaro() {
       'git',
       ['reset', '--hard'],
       workingDirectory: '/tmp/.mp_taro_runtime',
+      runInShell: Platform.isWindows ? true : false,
     );
     Process.runSync(
       'git',
       ['clean', '-fd'],
       workingDirectory: '/tmp/.mp_taro_runtime',
+      runInShell: Platform.isWindows ? true : false,
     );
   }
 }
@@ -80,6 +90,7 @@ void _buildTaro(String appType) async {
         '-o',
         '/tmp/weapp.dart.js',
       ],
+      runInShell: Platform.isWindows ? true : false,
     );
     print(dart2jsResult.stdout);
     print(dart2jsResult.stderr);
@@ -134,6 +145,7 @@ void _buildTaro(String appType) async {
     'npm',
     ['run', 'build:${appType}'],
     workingDirectory: '/tmp/.mp_taro_runtime',
+    runInShell: Platform.isWindows ? true : false,
   );
 
   print(npmRunBuildResult.stdout);

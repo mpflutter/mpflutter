@@ -21,7 +21,11 @@ void create(List<String> args) {
 }
 
 void _createFlutter(String projectName) {
-  Process.runSync('flutter', ['create', projectName]);
+  Process.runSync(
+    'flutter',
+    ['create', projectName],
+    runInShell: Platform.isWindows ? true : false,
+  );
   try {
     Directory(path.join(projectName, 'test')).deleteSync(recursive: true);
   } catch (e) {}
@@ -73,18 +77,22 @@ void _createWeb(String projectName) {
       recursive: true,
     );
   } catch (e) {}
-  Process.runSync('git', [
-    'clone',
-    '-b',
-    'stable',
-    '${codeSource}/mpflutter/mp_web_runtime.git',
-    path.join(
-      Platform.isWindows ? 'C:' : '/',
-      'tmp',
-      '.mp_web_runtime',
-    ),
-    '--depth=1'
-  ]);
+  Process.runSync(
+    'git',
+    [
+      'clone',
+      '-b',
+      'stable',
+      '${codeSource}/mpflutter/mp_web_runtime.git',
+      path.join(
+        Platform.isWindows ? 'C:' : '/',
+        'tmp',
+        '.mp_web_runtime',
+      ),
+      '--depth=1'
+    ],
+    runInShell: Platform.isWindows ? true : false,
+  );
   Directory(path.join(projectName, 'web')).createSync();
   copyPathSync(
     path.join(
@@ -173,6 +181,7 @@ dependency_overrides:
     'flutter',
     ['packages', 'get'],
     workingDirectory: projectName,
+    runInShell: Platform.isWindows ? true : false,
   );
 }
 
