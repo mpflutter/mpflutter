@@ -112,6 +112,7 @@ export default {
   "compileType": "miniprogram"
 }
 ''');
+  File(path.join(projectName, 'taro', 'hook.js')).writeAsStringSync('');
 }
 
 void _replacePubspec(String projectName) {
@@ -121,7 +122,7 @@ description: A new Flutter project.
 publish_to: 'none'
 version: 1.0.0+1
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
 sub_packages:
   - main
 dependencies:
