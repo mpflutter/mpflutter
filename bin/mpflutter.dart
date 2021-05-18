@@ -33,7 +33,11 @@ main(List<String> args) {
 }
 
 String chooseCodeSource() {
-  final file = File('/tmp/.mpflutter.code.source');
+  final file = File(path.join(
+    Platform.isWindows ? 'C:' : '/',
+    'tmp',
+    '.mpflutter.code.source',
+  ));
   if (processArgs.contains('--useGitee')) {
     return "https://gitee.com";
   } else if (processArgs.contains('--useGitHub')) {
