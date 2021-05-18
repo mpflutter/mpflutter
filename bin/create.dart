@@ -7,6 +7,12 @@ void create(List<String> args) {
   if (dir.existsSync()) {
     throw 'The project directory is not empty.';
   }
+  try {
+    final tmpDir = Directory(path.join(Platform.isWindows ? 'C:' : '/', 'tmp'));
+    if (!tmpDir.existsSync()) {
+      tmpDir.createSync();
+    }
+  } catch (e) {}
   _createFlutter(projectName);
   _createWeb(projectName);
   _createTaro(projectName);
@@ -59,20 +65,34 @@ void _createFlutter(String projectName) {
 
 void _createWeb(String projectName) {
   try {
-    Directory(path.join('/', 'tmp', '.mp_web_runtime'))
-        .deleteSync(recursive: true);
+    Directory(path.join(
+      Platform.isWindows ? 'C:' : '/',
+      'tmp',
+      '.mp_web_runtime',
+    )).deleteSync(
+      recursive: true,
+    );
   } catch (e) {}
   Process.runSync('git', [
     'clone',
     '-b',
     'stable',
     '${codeSource}/mpflutter/mp_web_runtime.git',
-    '/tmp/.mp_web_runtime',
+    path.join(
+      Platform.isWindows ? 'C:' : '/',
+      'tmp',
+      '.mp_web_runtime',
+    ),
     '--depth=1'
   ]);
   Directory(path.join(projectName, 'web')).createSync();
   copyPathSync(
-    path.join('/', 'tmp', '.mp_web_runtime', 'dist'),
+    path.join(
+      Platform.isWindows ? 'C:' : '/',
+      'tmp',
+      '.mp_web_runtime',
+      'dist',
+    ),
     path.join(projectName, 'web'),
   );
 }
