@@ -1,6 +1,14 @@
 part of 'mpflutter.dart';
 
 void upgrade(List<String> args) {
+  Process.runSync('pub', ['global', 'deactivate', 'mpflutter']);
+  Process.runSync('pub', [
+    'global',
+    'activate',
+    '--source',
+    'git',
+    '${codeSource}/mpflutter/mpflutter.git'
+  ]);
   final upgradeResult =
       Process.runSync('flutter', ['packages', 'upgrade', '--offline']);
   print(upgradeResult.stdout);
@@ -21,6 +29,8 @@ void _upgradeWeb() {
     'git',
     [
       'clone',
+      '-b',
+      'stable',
       '${codeSource}/mpflutter/mp_web_runtime.git',
       path.join(
         Platform.isWindows ? 'C:' : '/',
