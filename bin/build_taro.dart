@@ -152,6 +152,11 @@ void _buildTaro(String appType) async {
   print(npmRunBuildResult.stderr);
 
   copyPathSync('/tmp/.mp_taro_runtime/dist', path.join('build', appType));
+
+  if (appConfig.contains('assetsServer: null') ||
+      appConfig.contains('assetsServer: undefined')) {
+    _copyTaroAssets();
+  }
 }
 
 void _copyTaroPages() {
@@ -163,6 +168,25 @@ void _copyTaroPages() {
             '/tmp/.mp_taro_runtime/src/pages/${element.path.split('/').last}');
       }
     });
+  }
+}
+
+void _copyTaroAssets() {
+  final result = Process.runSync(
+    'flutter',
+    [
+      'build',
+      'bundle',
+    ],
+    runInShell: Platform.isWindows ? true : false,
+  );
+  print(result.stdout);
+  print(result.stderr);
+  if (Directory(path.join('build', 'flutter_assets', 'assets')).existsSync()) {
+    copyPathSync(
+      path.join('build', 'flutter_assets', 'assets'),
+      path.join('/', 'tmp', '.mp_taro_runtime', 'dist', 'assets'),
+    );
   }
 }
 
