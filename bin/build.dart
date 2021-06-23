@@ -6,6 +6,8 @@ void build(List<String> args) {
     _buildWeb();
   } else if (target == 'weapp') {
     _buildTaro("weapp");
+  } else if (target == 'mpk') {
+    _buildMpk();
   }
 }
 

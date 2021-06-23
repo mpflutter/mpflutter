@@ -1,6 +1,8 @@
 library mpflutter;
 
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cli_menu/cli_menu.dart';
 import 'package:io/io.dart';
@@ -11,6 +13,7 @@ import 'package:yaml/yaml.dart';
 part 'build.dart';
 part 'build_web.dart';
 part 'build_taro.dart';
+part 'build_mpk.dart';
 part 'create.dart';
 part 'upgrade.dart';
 part 'server_ip.dart';
