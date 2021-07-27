@@ -1,0 +1,18 @@
+import 'package:flutter/widgets.dart';
+
+class MPIcon extends StatelessWidget {
+  final String iconUrl;
+  final double size;
+  final Color color;
+
+  MPIcon(this.iconUrl, {this.size = 24, this.color = Colors.black});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      color: Colors.transparent,
+    );
+  }
+}

@@ -1,0 +1,25 @@
+name: mpcore
+description: The MPFlutter core libs.
+publish_to: none
+version: 0.0.1
+author: /
+homepage: /
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  flutter: 
+    git: 
+      url: https://github.com/mpflutter/mpflutter
+      path: packages/flutter
+  json_patch: ^2.1.0
+  vm_service: ^6.2.0
+  watcher: ^1.0.0
+  glob: ^2.0.1
+  mime_type: ^1.0.0
+  path: ^1.8.0
+
+dependency_overrides:
+  flutter: 
+    path: ../flutter
