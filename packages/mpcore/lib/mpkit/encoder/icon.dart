@@ -6,8 +6,6 @@ MPElement _encodeMPIcon(Element element) {
     hashCode: element.hashCode,
     flutterElement: element,
     name: 'mp_icon',
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     children: MPElement.childrenFromFlutterElement(element),
     attributes: {
       'iconUrl': widget.iconUrl,

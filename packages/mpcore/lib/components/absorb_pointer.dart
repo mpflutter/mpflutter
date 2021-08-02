@@ -7,8 +7,6 @@ MPElement _encodeAbsorbPointer(Element element) {
     flutterElement: element,
     name: 'absorb_pointer',
     children: MPElement.childrenFromFlutterElement(element),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {'absorbing': widget.absorbing},
   );
 }

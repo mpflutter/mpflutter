@@ -39,8 +39,8 @@ packages:
   flutter:
     dependency: "direct main"
     description:
-      path: "/Users/saiakirahui/Documents/mpflutter/flutter"
-      relative: false
+      path: "../flutter"
+      relative: true
     source: path
     version: "0.0.0"
   glob:

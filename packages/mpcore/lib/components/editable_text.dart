@@ -7,8 +7,6 @@ MPElement _encodeEditableText(Element element) {
     flutterElement: element,
     name: 'editable_text',
     children: [],
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {
       'style': _encodeTextStyle(widget.style),
       'value':

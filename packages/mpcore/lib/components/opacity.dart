@@ -7,8 +7,6 @@ MPElement _encodeOpacity(Element element) {
     flutterElement: element,
     name: 'opacity',
     children: MPElement.childrenFromFlutterElement(element),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {
       'opacity': widget.opacity,
     },
@@ -22,8 +20,6 @@ MPElement _encodeSliverOpacity(Element element) {
     flutterElement: element,
     name: 'opacity',
     children: MPElement.childrenFromFlutterElement(element),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {
       'opacity': widget.opacity,
     },

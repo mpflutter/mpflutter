@@ -47,7 +47,6 @@ class MPElement {
   final Element? flutterElement;
   final String name;
   final List<MPElement>? children;
-  final Constraints? constraints;
   final Map<String, dynamic>? attributes;
 
   MPElement({
@@ -55,7 +54,6 @@ class MPElement {
     this.flutterElement,
     required this.name,
     this.children,
-    this.constraints,
     this.attributes,
   }) {
     if (name.endsWith('_span')) {
@@ -81,7 +79,6 @@ class MPElement {
     if (_isEqual != null) return;
     final result = hashCode == other.hashCode &&
         name == other.name &&
-        constraints == other.constraints &&
         isChildrenEqual(other) &&
         isAttributesEqual(other);
     _isEqual = result;
@@ -149,6 +146,7 @@ class MPElement {
   Map? _encodeConstraints() {
     double? x, y, w, h;
     final renderBox = flutterElement?.renderObject;
+    var hasConstraints = false;
     if (renderBox != null && renderBox is RenderBox) {
       if (!renderBox.hasSize) {
         renderBox.layout(renderBox.constraints);
@@ -157,6 +155,9 @@ class MPElement {
         if (renderBox.parentData is BoxParentData) {
           x = (renderBox.parentData as BoxParentData).offset.dx;
           y = (renderBox.parentData as BoxParentData).offset.dy;
+        } else if (renderBox.parentData is SliverPhysicalParentData) {
+          x = (renderBox.parentData as SliverPhysicalParentData).paintOffset.dx;
+          y = (renderBox.parentData as SliverPhysicalParentData).paintOffset.dy;
         } else {
           x = 0.0;
           y = 0.0;
@@ -164,20 +165,29 @@ class MPElement {
         w = renderBox.size.width;
         h = renderBox.size.height;
       }
+      hasConstraints = true;
     }
-    if (constraints != null && constraints is BoxConstraints) {
+    if (renderBox != null && renderBox is RenderSliver) {
+      if (renderBox.parentData is BoxParentData) {
+        x = (renderBox.parentData as BoxParentData).offset.dx;
+        y = (renderBox.parentData as BoxParentData).offset.dy;
+      } else if (renderBox.parentData is SliverPhysicalParentData) {
+        x = (renderBox.parentData as SliverPhysicalParentData).paintOffset.dx;
+        y = (renderBox.parentData as SliverPhysicalParentData).paintOffset.dy;
+      } else {
+        x = 0.0;
+        y = 0.0;
+      }
+      w = renderBox.paintBounds.width;
+      h = renderBox.paintBounds.height;
+      hasConstraints = true;
+    }
+    if (hasConstraints) {
       return {
         'x': x,
         'y': y,
         'w': w,
         'h': h,
-        'minWidth': (constraints as BoxConstraints).minWidth.toString(),
-        'minHeight': (constraints as BoxConstraints).minHeight.toString(),
-        'maxWidth': (constraints as BoxConstraints).maxWidth.toString(),
-        'maxHeight': (constraints as BoxConstraints).maxHeight.toString(),
-        'hasTightWidth': (constraints as BoxConstraints).hasTightWidth,
-        'hasTightHeight': (constraints as BoxConstraints).hasTightHeight,
-        'isTight': (constraints as BoxConstraints).isTight,
       }..removeWhere((key, value) => value == null);
     } else {
       return null;

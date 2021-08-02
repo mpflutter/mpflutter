@@ -6,8 +6,6 @@ MPElement _encodeIcon(Element element) {
     hashCode: element.hashCode,
     flutterElement: element,
     name: 'icon',
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {
       'icon': {
         'fontFamily': widget.icon?.fontFamily,

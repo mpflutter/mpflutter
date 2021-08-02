@@ -27,8 +27,6 @@ MPElement _encodePositioned(Element element) {
     flutterElement: element,
     name: 'positioned',
     children: children,
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: attributes,
   );
 }

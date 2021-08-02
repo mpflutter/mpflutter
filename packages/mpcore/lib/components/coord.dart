@@ -6,8 +6,6 @@ MPElement _encodeCoord(Element element) {
     flutterElement: element,
     name: 'coord',
     children: MPElement.childrenFromFlutterElement(element),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {},
   );
 }

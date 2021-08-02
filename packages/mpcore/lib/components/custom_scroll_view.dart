@@ -11,8 +11,6 @@ MPElement _encodeCustomScrollView(Element element) {
       flutterElement: element,
       name: 'custom_scroll_view',
       children: [],
-      // ignore: invalid_use_of_protected_member
-      constraints: element.findRenderObject()?.constraints,
       attributes: {},
     );
   }
@@ -21,8 +19,6 @@ MPElement _encodeCustomScrollView(Element element) {
     flutterElement: element,
     name: 'custom_scroll_view',
     children: MPElement.childrenFromFlutterElement(viewportElement),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {
       'isRoot': (() {
         if ((element.widget as CustomScrollView).primary == false) {

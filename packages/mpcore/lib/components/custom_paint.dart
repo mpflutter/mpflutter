@@ -369,8 +369,6 @@ MPElement _encodeCustomPaint(Element element) {
     flutterElement: element,
     name: 'custom_paint',
     children: MPElement.childrenFromFlutterElement(element),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {
       'width': widget.size.width,
       'height': widget.size.height,

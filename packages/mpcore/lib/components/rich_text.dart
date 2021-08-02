@@ -69,7 +69,6 @@ MPElement _encodeRichText(Element element) {
     flutterElement: element,
     name: 'rich_text',
     children: [_encodeSpan(widget.text, element)],
-    constraints: constraints,
     attributes: {
       'measureId':
           renderObject is RenderParagraph && renderObject.measuredSize == null

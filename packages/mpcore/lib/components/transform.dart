@@ -13,8 +13,6 @@ MPElement _encodeTransform(Element element) {
     flutterElement: element,
     name: 'transform',
     children: MPElement.childrenFromFlutterElement(element),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {
       'transform':
           'matrix(${a.toStringAsFixed(6)},${b.toStringAsFixed(6)},${c.toStringAsFixed(6)},${d.toStringAsFixed(6)},${tx.toStringAsFixed(6)},${ty.toStringAsFixed(6)})',

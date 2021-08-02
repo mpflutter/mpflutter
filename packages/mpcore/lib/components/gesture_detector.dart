@@ -8,8 +8,6 @@ MPElement _encodeGestureDetector(Element element) {
     flutterElement: element,
     name: 'gesture_detector',
     children: MPElement.childrenFromFlutterElement(element),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {
       'onTap': widget.onTap != null ? element.hashCode : null,
     },

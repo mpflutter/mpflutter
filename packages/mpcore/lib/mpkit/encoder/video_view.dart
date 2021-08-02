@@ -6,8 +6,6 @@ MPElement _encodeMPVideoView(Element element) {
     hashCode: element.hashCode,
     flutterElement: element,
     name: 'mp_video_view',
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     children: MPElement.childrenFromFlutterElement(element),
     attributes: {
       'url': widget.url,

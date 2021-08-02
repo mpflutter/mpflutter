@@ -7,8 +7,6 @@ MPElement _encodeColoredBox(Element element) {
     flutterElement: element,
     name: 'colored_box',
     children: MPElement.childrenFromFlutterElement(element),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {'color': widget.color.value.toString()},
   );
 }

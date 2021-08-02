@@ -24,8 +24,6 @@ MPElement _encodeGridView(Element element) {
     children: MPElement.childrenFromFlutterElement(
       indexedSemanticeParentElement,
     ),
-    // ignore: invalid_use_of_protected_member
-    constraints: element.findRenderObject()?.constraints,
     attributes: {
       'scrollDirection': widget.scrollDirection.toString(),
       'isRoot': (() {
