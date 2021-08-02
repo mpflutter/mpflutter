@@ -74,6 +74,8 @@ MPElement _encodeRichText(Element element) {
           renderObject is RenderParagraph && renderObject.measuredSize == null
               ? element.hashCode
               : null,
+      'maxWidth': constraints.maxWidth.toString(),
+      'maxHeight': constraints.maxHeight.toString(),
       'maxLines': widget.maxLines,
       'textAlign': widget.textAlign.toString(),
     },
