@@ -5465,14 +5465,11 @@ class NavigatorState extends State<Navigator>
           child: FocusScope(
             node: focusScopeNode,
             autofocus: true,
-            child: UnmanagedRestorationScope(
-              bucket: bucket,
-              child: Overlay(
-                key: _overlayKey,
-                initialEntries: overlay == null
-                    ? _allRouteOverlayEntries.toList(growable: false)
-                    : const <OverlayEntry>[],
-              ),
+            child: Overlay(
+              key: _overlayKey,
+              initialEntries: overlay == null
+                  ? _allRouteOverlayEntries.toList(growable: false)
+                  : const <OverlayEntry>[],
             ),
           ),
         ),

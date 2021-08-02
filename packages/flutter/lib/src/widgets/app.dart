@@ -1500,13 +1500,10 @@ class _WidgetsAppState extends State<WidgetsApp> with WidgetsBindingObserver {
       );
     }
 
-    return RootRestorationScope(
-      restorationId: widget.restorationScopeId,
-      child: Directionality(
-        textDirection: TextDirection.ltr,
-        child: _MediaQueryFromWindow(
-          child: title,
-        ),
+    return Directionality(
+      textDirection: TextDirection.ltr,
+      child: _MediaQueryFromWindow(
+        child: title,
       ),
     );
   }

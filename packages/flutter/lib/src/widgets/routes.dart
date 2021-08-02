@@ -674,7 +674,7 @@ class _ModalScopeStatus extends InheritedWidget {
     required this.canPop,
     required this.route,
     required Widget child,
-  })  : assert(isCurrent != null),
+  })   : assert(isCurrent != null),
         assert(canPop != null),
         assert(route != null),
         assert(child != null),
@@ -788,10 +788,7 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
       animation: widget.route.restorationScopeId,
       builder: (BuildContext context, Widget? child) {
         assert(child != null);
-        return RestorationScope(
-          restorationId: widget.route.restorationScopeId.value,
-          child: child!,
-        );
+        return child!;
       },
       child: _ModalScopeStatus(
         route: widget.route,
@@ -801,60 +798,17 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
         child: Offstage(
           offstage:
               widget.route.offstage, // _routeSetState is called if this updates
-          child: PageStorage(
-            bucket: widget.route._storageBucket, // immutable
-            child: Builder(
-              builder: (BuildContext context) {
-                return PrimaryScrollController(
-                  controller: primaryScrollController,
-                  child: FocusScope(
-                    node: focusScopeNode, // immutable
-                    child: RepaintBoundary(
-                      child: AnimatedBuilder(
-                        animation: _listenable, // immutable
-                        builder: (BuildContext context, Widget? child) {
-                          return widget.route.buildTransitions(
-                            context,
-                            widget.route.animation!,
-                            widget.route.secondaryAnimation!,
-                            // This additional AnimatedBuilder is include because if the
-                            // value of the userGestureInProgressNotifier changes, it's
-                            // only necessary to rebuild the IgnorePointer widget and set
-                            // the focus node's ability to focus.
-                            AnimatedBuilder(
-                              animation: widget.route.navigator
-                                      ?.userGestureInProgressNotifier ??
-                                  ValueNotifier<bool>(false),
-                              builder: (BuildContext context, Widget? child) {
-                                final bool ignoreEvents =
-                                    _shouldIgnoreFocusRequest;
-                                focusScopeNode.canRequestFocus = !ignoreEvents;
-                                return IgnorePointer(
-                                  ignoring: ignoreEvents,
-                                  child: child,
-                                );
-                              },
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: _page ??= RepaintBoundary(
-                          key: widget.route._subtreeKey, // immutable
-                          child: Builder(
-                            builder: (BuildContext context) {
-                              return widget.route.buildPage(
-                                context,
-                                widget.route.animation!,
-                                widget.route.secondaryAnimation!,
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
+          child: PrimaryScrollController(
+            controller: primaryScrollController,
+            child: FocusScope(
+              node: focusScopeNode, // immutable
+              child: RepaintBoundary(
+                child: widget.route.buildPage(
+                  context,
+                  widget.route.animation!,
+                  widget.route.secondaryAnimation!,
+                ),
+              ),
             ),
           ),
         ),

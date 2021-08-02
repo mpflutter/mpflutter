@@ -5170,13 +5170,13 @@ class InheritedElement extends ProxyElement {
   void notifyClients(InheritedWidget oldWidget) {
     assert(_debugCheckOwnerBuildTargetExists('notifyClients'));
     for (final Element dependent in _dependents.keys) {
-      assert(() {
-        // check that it really is our descendant
-        Element? ancestor = dependent._parent;
-        while (ancestor != this && ancestor != null)
-          ancestor = ancestor._parent;
-        return ancestor == this;
-      }());
+      // assert(() {
+      //   // check that it really is our descendant
+      //   Element? ancestor = dependent._parent;
+      //   while (ancestor != this && ancestor != null)
+      //     ancestor = ancestor._parent;
+      //   return ancestor == this;
+      // }());
       // check that it really depends on us
       assert(dependent._dependencies!.contains(this));
       notifyDependent(oldWidget, dependent);
