@@ -248,18 +248,10 @@ class MPElement {
       fromFlutterElementMethodCache[element.widget.runtimeType] =
           _encodeSliverOpacity;
       return _encodeSliverOpacity(element);
-    } else if (element.widget is Flexible) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeFlexible;
-      return _encodeFlexible(element);
     } else if (element.widget is GestureDetector) {
       fromFlutterElementMethodCache[element.widget.runtimeType] =
           _encodeGestureDetector;
       return _encodeGestureDetector(element);
-    } else if (element.widget is Positioned) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodePositioned;
-      return _encodePositioned(element);
     } else if (element.widget is Visibility) {
       fromFlutterElementMethodCache[element.widget.runtimeType] =
           _encodeVisibility;
@@ -315,14 +307,7 @@ class MPElement {
       fromFlutterElementMethodCache[element.widget.runtimeType] =
           _encodeCustomPaint;
       return _encodeCustomPaint(element);
-    } else if (element.widget is Stack ||
-        element.widget is SizedBox ||
-        element.widget is Padding ||
-        element.widget is SliverPadding ||
-        element.widget is ConstrainedBox ||
-        element.widget is Flex ||
-        element.widget is Align ||
-        element.widget is Wrap) {
+    } else if (_isCoordElement(element)) {
       fromFlutterElementMethodCache[element.widget.runtimeType] = _encodeCoord;
       return _encodeCoord(element);
     } else {
