@@ -24,9 +24,7 @@ MPElement _encodeCustomScrollView(Element element) {
         if ((element.widget as CustomScrollView).primary == false) {
           return false;
         } else if (element.findAncestorWidgetOfExactType<Scrollable>() ==
-                null &&
-            element.findAncestorWidgetOfExactType<Align>() == null &&
-            element.findAncestorWidgetOfExactType<Center>() == null) {
+            null) {
           return true;
         } else {
           return false;

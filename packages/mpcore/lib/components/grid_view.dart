@@ -30,9 +30,7 @@ MPElement _encodeGridView(Element element) {
         if (widget.primary == false) {
           return false;
         } else if (widget.scrollDirection == Axis.vertical &&
-            element.findAncestorWidgetOfExactType<Scrollable>() == null &&
-            element.findAncestorWidgetOfExactType<Align>() == null &&
-            element.findAncestorWidgetOfExactType<Center>() == null) {
+            element.findAncestorWidgetOfExactType<Scrollable>() == null) {
           return true;
         } else {
           return false;
