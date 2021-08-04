@@ -45,6 +45,7 @@ class MPElement {
   final int hashCode;
 
   final Element? flutterElement;
+  final Rect? constraints;
   final String name;
   final List<MPElement>? children;
   final Map<String, dynamic>? attributes;
@@ -55,7 +56,7 @@ class MPElement {
     required this.name,
     this.children,
     this.attributes,
-  }) {
+  }) : constraints = _getConstraints(flutterElement) {
     if (name.endsWith('_span')) {
       return;
     }
@@ -80,7 +81,8 @@ class MPElement {
     final result = hashCode == other.hashCode &&
         name == other.name &&
         isChildrenEqual(other) &&
-        isAttributesEqual(other);
+        isAttributesEqual(other) &&
+        isConstraintsEuqal(other);
     _isEqual = result;
     other._isEqual = result;
   }
@@ -127,6 +129,10 @@ class MPElement {
     return true;
   }
 
+  bool isConstraintsEuqal(MPElement other) {
+    return constraints == other.constraints;
+  }
+
   Map toJson() {
     if (_isEqual == true) {
       return {
@@ -138,12 +144,19 @@ class MPElement {
       'hashCode': hashCode,
       'name': name,
       'children': children,
-      'constraints': _encodeConstraints(),
+      'constraints': constraints != null
+          ? {
+              'x': constraints!.left,
+              'y': constraints!.top,
+              'w': constraints!.width,
+              'h': constraints!.height
+            }
+          : null,
       'attributes': attributes,
     };
   }
 
-  Map? _encodeConstraints() {
+  static Rect? _getConstraints(Element? flutterElement) {
     double? x, y, w, h;
     final renderBox = flutterElement?.renderObject;
     var hasConstraints = false;
@@ -199,12 +212,7 @@ class MPElement {
       hasConstraints = true;
     }
     if (hasConstraints) {
-      return {
-        'x': x,
-        'y': y,
-        'w': w,
-        'h': h,
-      }..removeWhere((key, value) => value == null);
+      return Rect.fromLTWH(x ?? 0.0, y ?? 0.0, w ?? 0.0, h ?? 0.0);
     } else {
       return null;
     }
