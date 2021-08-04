@@ -171,15 +171,31 @@ class MPElement {
       if (renderBox.parentData is BoxParentData) {
         x = (renderBox.parentData as BoxParentData).offset.dx;
         y = (renderBox.parentData as BoxParentData).offset.dy;
-      } else if (renderBox.parentData is SliverPhysicalParentData) {
-        x = (renderBox.parentData as SliverPhysicalParentData).paintOffset.dx;
-        y = (renderBox.parentData as SliverPhysicalParentData).paintOffset.dy;
+      } else if (renderBox.parent is RenderSliver) {
+        if (renderBox.constraints.axis == Axis.horizontal) {
+          x = renderBox.constraints.precedingScrollExtent -
+              (renderBox.parent as RenderSliver)
+                  .constraints
+                  .precedingScrollExtent;
+          y = (renderBox.parentData as SliverPhysicalParentData).paintOffset.dy;
+        } else {
+          x = (renderBox.parentData as SliverPhysicalParentData).paintOffset.dx;
+          y = renderBox.constraints.precedingScrollExtent -
+              (renderBox.parent as RenderSliver)
+                  .constraints
+                  .precedingScrollExtent;
+        }
       } else {
         x = 0.0;
         y = 0.0;
       }
-      w = renderBox.paintBounds.width;
-      h = renderBox.paintBounds.height;
+      if (renderBox.constraints.axis == Axis.horizontal) {
+        w = renderBox.geometry?.maxPaintExtent ?? 0.0;
+        h = renderBox.paintBounds.height;
+      } else {
+        w = renderBox.paintBounds.width;
+        h = renderBox.geometry?.maxPaintExtent ?? 0.0;
+      }
       hasConstraints = true;
     }
     if (hasConstraints) {

@@ -14,6 +14,8 @@ MPElement _encodeSliverList(Element element) {
       attributes: {},
     );
   }
+  final padding =
+      element.findAncestorWidgetOfExactType<SliverPadding>()?.padding;
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
@@ -21,6 +23,8 @@ MPElement _encodeSliverList(Element element) {
     children: MPElement.childrenFromFlutterElement(
       indexedSemanticeParentElement,
     ),
-    attributes: {},
+    attributes: {
+      'padding': padding?.toString(),
+    },
   );
 }
