@@ -85,7 +85,7 @@ MPElement _encodeRichText(Element element) {
 MPElement _encodeSpan(InlineSpan span, Element richTextElement) {
   if (span is TextSpan) {
     return MPElement(
-      hashCode: span.hashCode,
+      hashCode: ui.hashValues(span.hashCode, richTextElement.hashCode),
       name: 'text_span',
       children: span.children != null
           ? span.children!.map((e) => _encodeSpan(e, richTextElement)).toList()
@@ -110,7 +110,7 @@ MPElement _encodeSpan(InlineSpan span, Element richTextElement) {
         element: richTextElement);
     if (targetElement == null) {
       return MPElement(
-        hashCode: span.hashCode,
+        hashCode: ui.hashValues(span.hashCode, richTextElement.hashCode),
         name: 'inline_span',
         attributes: {},
       );
@@ -123,7 +123,7 @@ MPElement _encodeSpan(InlineSpan span, Element richTextElement) {
     );
   } else {
     return MPElement(
-      hashCode: span.hashCode,
+      hashCode: ui.hashValues(span.hashCode, richTextElement.hashCode),
       name: 'inline_span',
       attributes: {},
     );
