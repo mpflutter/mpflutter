@@ -68,7 +68,7 @@ MPElement _encodeRichText(Element element) {
     hashCode: element.hashCode,
     flutterElement: element,
     name: 'rich_text',
-    children: [_encodeSpan(widget.text, element)],
+    children: [_encodeSpan(widget.text, element, 0, 0)],
     attributes: {
       'measureId':
           renderObject is RenderParagraph && renderObject.measuredSize == null
@@ -82,13 +82,20 @@ MPElement _encodeRichText(Element element) {
   );
 }
 
-MPElement _encodeSpan(InlineSpan span, Element richTextElement) {
+MPElement _encodeSpan(
+    InlineSpan span, Element richTextElement, int level, int index) {
   if (span is TextSpan) {
     return MPElement(
-      hashCode: ui.hashValues(span.hashCode, richTextElement.hashCode),
+      hashCode:
+          ui.hashValues(span.hashCode, richTextElement.hashCode, level, index),
       name: 'text_span',
       children: span.children != null
-          ? span.children!.map((e) => _encodeSpan(e, richTextElement)).toList()
+          ? span.children!
+              .asMap()
+              .map(((key, value) => MapEntry(
+                  key, _encodeSpan(value, richTextElement, level + 1, key))))
+              .values
+              .toList()
           : null,
       attributes: {
         'text': span.text,
@@ -110,20 +117,23 @@ MPElement _encodeSpan(InlineSpan span, Element richTextElement) {
         element: richTextElement);
     if (targetElement == null) {
       return MPElement(
-        hashCode: ui.hashValues(span.hashCode, richTextElement.hashCode),
+        hashCode: ui.hashValues(
+            span.hashCode, richTextElement.hashCode, level, index),
         name: 'inline_span',
         attributes: {},
       );
     }
     return MPElement(
-      hashCode: span.hashCode,
+      hashCode:
+          ui.hashValues(span.hashCode, richTextElement.hashCode, level, index),
       name: 'widget_span',
       children: [MPElement.fromFlutterElement(targetElement)],
       attributes: {},
     );
   } else {
     return MPElement(
-      hashCode: ui.hashValues(span.hashCode, richTextElement.hashCode),
+      hashCode:
+          ui.hashValues(span.hashCode, richTextElement.hashCode, level, index),
       name: 'inline_span',
       attributes: {},
     );

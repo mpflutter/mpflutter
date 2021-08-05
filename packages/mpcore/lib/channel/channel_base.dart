@@ -271,7 +271,8 @@ class MPChannelBase {
         requestingRoute = true;
         final name = message['name'] as String;
         routeRequestId = message['requestId'] as String;
-        final params = (message['params'] as Map?) ?? {};
+        final oriParams = ((message['params'] as Map?) ?? {});
+        final params = {}..addAll(oriParams);
         if (message['viewport'] is Map) {
           params['\$viewportWidth'] = message['viewport']['width'];
           params['\$viewportHeight'] = message['viewport']['height'];
@@ -280,10 +281,37 @@ class MPChannelBase {
         final navigator = MPNavigatorObserver.instance.navigator;
         if (navigator == null) return;
         if (root) {
-          navigator.popUntil((route) {
-            return false;
-          });
-          navigator.pushNamed(name, arguments: params);
+          if (MPNavigatorObserver.instance.routeCache.length == 1 &&
+              MPNavigatorObserver.instance.routeCache.values.first.isFirst &&
+              isEqualRoute(
+                name,
+                oriParams,
+                MPNavigatorObserver.instance.routeCache.values.first,
+              )) {
+            final target = MPNavigatorObserver.instance.routeCache.values.first;
+            MPNavigatorObserver.instance.routeViewport[target.hashCode] = Size(
+              (message['viewport']['width'] as num).toDouble(),
+              (message['viewport']['height'] as num).toDouble(),
+            );
+            routeScaffoldStateMap[target.hashCode]?.refreshState();
+            final routeData = json.encode({
+              'type': 'route',
+              'message': {
+                'event': 'responseRoute',
+                'requestId': routeRequestId,
+                'routeId': target.hashCode,
+              },
+            });
+            MPChannel.postMesssage(routeData);
+            requestingRoute = false;
+          } else {
+            MPNavigatorObserver.doBacking = true;
+            navigator.popUntil((route) {
+              return false;
+            });
+            MPNavigatorObserver.doBacking = false;
+            navigator.pushNamed(name, arguments: params);
+          }
         } else {
           navigator.pushNamed(name, arguments: params);
         }
@@ -317,6 +345,20 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+    }
+  }
+
+  static bool isEqualRoute(String name, Map params, Route route) {
+    try {
+      var equal = true;
+      if (name != route.settings.name) {
+        equal = false;
+      } else if (json.encode(params) != json.encode(route.settings.arguments)) {
+        equal = false;
+      }
+      return equal;
+    } catch (e) {
+      return false;
     }
   }
 

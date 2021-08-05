@@ -47,17 +47,21 @@ class MPApp extends StatelessWidget {
       onGenerateInitialRoutes: (_) {
         final routeName = MPNavigatorObserver.instance.initialRoute;
         final routeParams = MPNavigatorObserver.instance.initialParams;
+        final routeSetting =
+            RouteSettings(name: routeName, arguments: routeParams);
         return [
-          onGenerateRoute?.call(
-                  RouteSettings(name: routeName, arguments: routeParams)) ??
-              MPPageRoute(builder: (context) {
-                final routeBuilder = routes[routeName];
-                if (routeBuilder != null) {
-                  return routeBuilder(context);
-                } else {
-                  return Container();
-                }
-              })
+          onGenerateRoute?.call(routeSetting) ??
+              MPPageRoute(
+                builder: (context) {
+                  final routeBuilder = routes[routeName];
+                  if (routeBuilder != null) {
+                    return routeBuilder(context);
+                  } else {
+                    return Container();
+                  }
+                },
+                settings: routeSetting,
+              )
         ];
       },
     );
