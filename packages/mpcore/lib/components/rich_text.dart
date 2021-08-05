@@ -85,20 +85,27 @@ MPElement _encodeRichText(Element element) {
 MPElement _encodeSpan(
     InlineSpan span, Element richTextElement, int level, int index) {
   if (span is TextSpan) {
+    final children = span.children != null
+        ? span.children!
+            .asMap()
+            .map(((key, value) => MapEntry(
+                key, _encodeSpan(value, richTextElement, level + 1, key))))
+            .values
+            .toList()
+        : null;
+    if (children != null && span.text != null) {
+      children.insert(
+          0,
+          _encodeSpan(
+              TextSpan(text: span.text), richTextElement, level + 1, -1));
+    }
     return MPElement(
       hashCode:
           ui.hashValues(span.hashCode, richTextElement.hashCode, level, index),
       name: 'text_span',
-      children: span.children != null
-          ? span.children!
-              .asMap()
-              .map(((key, value) => MapEntry(
-                  key, _encodeSpan(value, richTextElement, level + 1, key))))
-              .values
-              .toList()
-          : null,
+      children: children,
       attributes: {
-        'text': span.text,
+        'text': children == null ? span.text : null,
         'style': span.style != null ? _encodeTextStyle(span.style!) : null,
         'onTap_el': (() {
           if (span.recognizer is TapGestureRecognizer) {
