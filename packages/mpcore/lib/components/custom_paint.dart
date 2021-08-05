@@ -352,7 +352,7 @@ class _RecordingCanvas implements Canvas {
       'color': paint.color.value.toString(),
       'strokeMiterLimit': paint.strokeMiterLimit,
     };
-    if (encodeAlpha) {
+    if (encodeAlpha && paint.color.value > 0) {
       result['alpha'] = paint.color.opacity;
     }
     return result;
