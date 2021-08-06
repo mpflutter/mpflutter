@@ -283,9 +283,12 @@ class MPChannelBase {
     }
   }
 
-  static void onRouterTrigger(Map message) {
+  static void onRouterTrigger(Map message) async {
     try {
       if (message['event'] == 'requestRoute') {
+        while (!MPNavigatorObserver.initialPushed) {
+          await Future.delayed(Duration(milliseconds: 10));
+        }
         requestingRoute = true;
         final name = message['name'] as String;
         routeRequestId = message['requestId'] as String;
@@ -328,10 +331,10 @@ class MPChannelBase {
               return false;
             });
             MPNavigatorObserver.doBacking = false;
-            navigator.pushNamed(name, arguments: params);
+            await navigator.pushNamed(name, arguments: params);
           }
         } else {
-          navigator.pushNamed(name, arguments: params);
+          await navigator.pushNamed(name, arguments: params);
         }
       } else if (message['event'] == 'updateRoute') {
         final routeId = message['routeId'];
