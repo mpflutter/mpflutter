@@ -41,6 +41,15 @@ class MPNavigatorObserver extends NavigatorObserver {
           'event': 'didPush',
           'routeId': route.hashCode,
           'name': route.settings.name ?? '/',
+          'params': (() {
+            try {
+              if (!(route.settings.arguments is Map)) return null;
+              json.encode(route.settings.arguments);
+              return route.settings.arguments;
+            } catch (e) {
+              return {};
+            }
+          })()
         },
       });
       MPChannel.postMesssage(routeData);
@@ -93,6 +102,15 @@ class MPNavigatorObserver extends NavigatorObserver {
             'event': 'didReplace',
             'routeId': newRoute.hashCode,
             'name': newRoute.settings.name ?? '/',
+            'params': (() {
+              try {
+                if (!(newRoute.settings.arguments is Map)) return null;
+                json.encode(newRoute.settings.arguments);
+                return newRoute.settings.arguments;
+              } catch (e) {
+                return {};
+              }
+            })()
           },
         });
         MPChannel.postMesssage(routeData);
