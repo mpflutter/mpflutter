@@ -21,17 +21,9 @@ void _onMeasuredText(List values) {
       }
       renderObject.measuredSize = size;
       renderObject.reassemble();
+      renderObject.layout(renderObject.constraints);
     }
   });
-  _measuringText.forEach((key, fltElement) {
-    final renderObject = fltElement.findRenderObject();
-    if (!(renderObject is RenderParagraph)) {
-      return;
-    }
-    renderObject.measuredSize = Size(0, 0);
-    renderObject.reassemble();
-  });
-  _measuringText.clear();
   WidgetsBinding.instance?.scheduleFrame();
 }
 

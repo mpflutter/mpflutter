@@ -29,16 +29,17 @@ class _Document {
 }
 
 class MPElement {
-  static Map<int, MPElement> elementCache = {};
-  static List<int> invalidElements = [];
+  static final Map<int, MPElement> _elementCache = {};
+  static final Map<int, MPElement> _elementCacheNext = {};
+  static final List<int> _invalidElements = [];
 
   static void runElementCacheGC() {
-    final theInvalidElements = elementCache.values
+    final theInvalidElements = _elementCache.values
         .where((element) => element.flutterElement?.isInactive() == true)
         .toList();
-    elementCache.removeWhere(
+    _elementCache.removeWhere(
         (key, value) => value.flutterElement?.isInactive() == true);
-    invalidElements.addAll(theInvalidElements.map((e) => e.hashCode));
+    _invalidElements.addAll(theInvalidElements.map((e) => e.hashCode));
   }
 
   @override
@@ -60,11 +61,11 @@ class MPElement {
     if (name.endsWith('_span')) {
       return;
     }
-    final cachedElement = elementCache[hashCode];
+    final cachedElement = _elementCache[hashCode];
     if (cachedElement != null) {
       euqalCheck(cachedElement);
     }
-    elementCache[hashCode] = this;
+    _elementCacheNext[hashCode] = this;
   }
 
   bool? _isEqual;

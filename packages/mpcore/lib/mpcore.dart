@@ -61,14 +61,9 @@ class MPCore {
     _plugins.add(plugin);
   }
 
-  static bool? sendingSSRFrame = false;
-
-  static void scheduleSSRFrame() async {
-    sendingSSRFrame = true;
-    WidgetsBinding.instance?.scheduleFrame();
-  }
-
   Element get renderView => WidgetsBinding.instance!.renderViewElement!;
+
+  final Set<int> _diffableElements = {};
 
   void connectToHostChannel() async {
     if (kReleaseMode) {
@@ -199,45 +194,34 @@ class MPCore {
     }
   }
 
-  static String? lastFrameData;
-
   static void clearOldFrameObject() {
-    lastFrameData = null;
-    MPElement.elementCache.clear();
+    MPElement._elementCache.clear();
   }
 
   Future sendFrame() async {
     await nextFrame();
-    var textMeasuringRetryMax = 20;
-    while (_measuringText.isNotEmpty && textMeasuringRetryMax > 0) {
-      await Future.delayed(Duration(milliseconds: 100));
-      textMeasuringRetryMax--;
-    }
-    if (textMeasuringRetryMax <= 0) {
-      _measuringText.clear();
-    }
-    final recentDirtyElements = BuildOwner.recentDirtyElements.where((element) {
-      return element.isInactive() != true &&
-          ModalRoute.of(element)?.isCurrent == true;
-    }).toList();
-    _Document? diffDoc;
-    if (recentDirtyElements.isNotEmpty && lastFrameData != null) {
-      if (recentDirtyElements.every((element) {
-        final found = lastFrameData!.contains('"hashCode":${element.hashCode}');
-        if (!found && element is StatefulElement) {
-          final firstChildElement = findFirstChild(element);
-          if (firstChildElement != null &&
-              lastFrameData!
-                  .contains('"hashCode":${firstChildElement.hashCode}')) {
-            return true;
+    final recentDirtyElements = BuildOwner.recentDirtyElements
+        .where((element) {
+          return element.isInactive() != true &&
+              ModalRoute.of(element)?.isCurrent == true;
+        })
+        .map((e) {
+          Element? currentE = e;
+          while (currentE != null &&
+              (currentE is StatefulElement || currentE is StatelessElement)) {
+            currentE = findFirstChild(currentE);
           }
-        }
-        return found;
-      })) {
-        diffDoc = toDiffDocument(recentDirtyElements);
-      }
+          return currentE;
+        })
+        .whereType<Element>()
+        .toList();
+    _Document? diffDoc;
+    if (recentDirtyElements.isNotEmpty &&
+        recentDirtyElements
+            .every((element) => _diffableElements.contains(element.hashCode))) {
+      diffDoc = toDiffDocument(recentDirtyElements);
     }
-    if (diffDoc != null && sendingSSRFrame != true) {
+    if (diffDoc != null) {
       final diffFrameData = json.encode({
         'type': 'diff_data',
         'message': diffDoc,
@@ -246,25 +230,28 @@ class MPCore {
       MPChannel.postMesssage(frameData);
     } else {
       final doc = toDocument();
+      _diffableElements.clear();
+      if (doc != null) {
+        _updateDiffableDocument(doc);
+      }
       final newFrameData = json.encode({
-        'type': sendingSSRFrame == true ? 'ssr_frame_data' : 'frame_data',
+        'type': 'frame_data',
         'message': doc,
       });
       final frameData = newFrameData;
-      lastFrameData = frameData;
       MPChannel.postMesssage(frameData);
     }
-    if (_measuringText.isEmpty) {
-      BuildOwner.recentDirtyElements.clear();
-    }
+    BuildOwner.recentDirtyElements.clear();
+    MPElement._elementCache.addAll(MPElement._elementCacheNext);
+    MPElement._elementCacheNext.clear();
     MPElement.runElementCacheGC();
-    if (MPElement.invalidElements.isNotEmpty) {
+    if (MPElement._invalidElements.isNotEmpty) {
       final gcData = json.encode({
         'type': 'element_gc',
-        'message': MPElement.invalidElements,
+        'message': MPElement._invalidElements,
       });
       MPChannel.postMesssage(gcData);
-      MPElement.invalidElements.clear();
+      MPElement._invalidElements.clear();
     }
   }
 
@@ -331,6 +318,24 @@ class MPCore {
     } else {
       return null;
     }
+  }
+
+  void _updateDiffableDocument(_Document document) {
+    final scaffold = document.scaffold;
+    if (scaffold != null) {
+      scaffold.attributes?.forEach((key, value) {
+        if (value is MPElement) {
+          _updateDiffableElement(value);
+        }
+      });
+    }
+  }
+
+  void _updateDiffableElement(MPElement element) {
+    _diffableElements.add(element.hashCode);
+    element.children?.forEach((element) {
+      _updateDiffableElement(element);
+    });
   }
 
   static Element? findTarget<T>(
