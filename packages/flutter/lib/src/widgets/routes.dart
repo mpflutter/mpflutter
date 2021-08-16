@@ -784,32 +784,20 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.route.restorationScopeId,
-      builder: (BuildContext context, Widget? child) {
-        assert(child != null);
-        return child!;
-      },
-      child: _ModalScopeStatus(
-        route: widget.route,
-        isCurrent:
-            widget.route.isCurrent, // _routeSetState is called if this updates
-        canPop: widget.route.canPop, // _routeSetState is called if this updates
-        child: Offstage(
-          offstage:
-              widget.route.offstage, // _routeSetState is called if this updates
-          child: PrimaryScrollController(
-            controller: primaryScrollController,
-            child: FocusScope(
-              node: focusScopeNode, // immutable
-              child: RepaintBoundary(
-                child: widget.route.buildPage(
-                  context,
-                  widget.route.animation!,
-                  widget.route.secondaryAnimation!,
-                ),
-              ),
-            ),
+    return _ModalScopeStatus(
+      route: widget.route,
+      isCurrent:
+          widget.route.isCurrent, // _routeSetState is called if this updates
+      canPop: widget.route.canPop, // _routeSetState is called if this updates
+      child: Offstage(
+        offstage:
+            widget.route.offstage, // _routeSetState is called if this updates
+        child: PrimaryScrollController(
+          controller: primaryScrollController,
+          child: widget.route.buildPage(
+            context,
+            widget.route.animation!,
+            widget.route.secondaryAnimation!,
           ),
         ),
       ),

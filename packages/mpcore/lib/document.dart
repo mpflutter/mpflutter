@@ -49,6 +49,7 @@ class MPElement {
   final Rect? constraints;
   final String name;
   final List<MPElement>? children;
+  final List<MPElement> ancestors = [];
   final Map<String, dynamic>? attributes;
 
   MPElement({
@@ -57,6 +58,7 @@ class MPElement {
     required this.name,
     this.children,
     this.attributes,
+    bool mergable = false,
   }) : constraints = _getConstraints(flutterElement) {
     if (name.endsWith('_span')) {
       return;
@@ -72,6 +74,7 @@ class MPElement {
 
   @override
   bool operator ==(Object other) {
+    if (_elementCache[hashCode] == null) return false;
     if (!(other is MPElement)) return false;
     euqalCheck(other);
     return _isEqual!;
@@ -82,6 +85,7 @@ class MPElement {
     final result = hashCode == other.hashCode &&
         name == other.name &&
         isChildrenEqual(other) &&
+        isAncestorsEqual(other) &&
         isAttributesEqual(other) &&
         isConstraintsEuqal(other);
     _isEqual = result;
@@ -118,6 +122,7 @@ class MPElement {
     if (children == null && other.children != null) return false;
     if (children != null && other.children == null) return false;
     if (children == null && other.children == null) return true;
+    if (children!.length != other.children!.length) return false;
     for (var i = 0; i < children!.length; i++) {
       if (i >= other.children!.length) {
         return false;
@@ -126,7 +131,19 @@ class MPElement {
         return false;
       }
     }
-    if (children!.length != other.children!.length) return false;
+    return true;
+  }
+
+  bool isAncestorsEqual(MPElement other) {
+    if (ancestors.length != other.ancestors.length) return false;
+    for (var i = 0; i < ancestors.length; i++) {
+      if (i >= other.ancestors.length) {
+        return false;
+      }
+      if (ancestors[i] != other.ancestors[i]) {
+        return false;
+      }
+    }
     return true;
   }
 
@@ -144,6 +161,7 @@ class MPElement {
     return {
       'hashCode': hashCode,
       'name': name,
+      'widget': flutterElement?.widget.runtimeType.toString(),
       'children': children,
       'constraints': constraints != null
           ? {
@@ -153,6 +171,7 @@ class MPElement {
               'h': constraints!.height
             }
           : null,
+      'ancestors': ancestors,
       'attributes': attributes,
     };
   }
@@ -355,8 +374,44 @@ class MPElement {
     final els = <MPElement>[];
     element.visitChildElements((element) {
       final it = fromFlutterElement(element);
+      if (it.constraints != null &&
+          it.constraints!.size.isEmpty &&
+          it.children?.isEmpty == true) {
+        return;
+      }
+      if (it.name == 'coord' && (it.children == null || it.children!.isEmpty)) {
+        return;
+      }
       els.add(it);
     });
     return els;
+  }
+
+  static const mergableSingleChildElements = {
+    'opacity': true,
+  };
+
+  static MPElement mergeSingleChildElements(MPElement element) {
+    var finalTarget = element;
+    var stackElements = <MPElement>[];
+    while (mergableSingleChildElements[finalTarget.name] == true) {
+      if (finalTarget.children == null ||
+          finalTarget.children!.isEmpty == true) {
+        break;
+      }
+      if (finalTarget.constraints != null &&
+          (finalTarget.constraints!.left != 0.0 ||
+              finalTarget.constraints!.top != 0.0)) {
+        break;
+      }
+      final child = finalTarget.children!.first;
+      finalTarget.children!.clear();
+      stackElements.add(finalTarget);
+      finalTarget = child;
+    }
+    if (finalTarget != element) {
+      finalTarget.ancestors.addAll(stackElements);
+    }
+    return finalTarget;
   }
 }
