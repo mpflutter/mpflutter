@@ -59,7 +59,8 @@ class MPElement {
     this.children,
     this.attributes,
     bool mergable = false,
-  }) : constraints = _getConstraints(flutterElement) {
+    Rect? additionalConstraints,
+  }) : constraints = additionalConstraints ?? _getConstraints(flutterElement) {
     if (name.endsWith('_span')) {
       return;
     }
@@ -389,19 +390,22 @@ class MPElement {
 
   static const mergableSingleChildElements = {
     'opacity': true,
+    'clip_r_rect': true,
   };
 
   static MPElement mergeSingleChildElements(MPElement element) {
+    if (element.flutterElement?.findRenderObject()?.parent
+        is RenderRepaintBoundary) {
+      return element;
+    } else if (element.flutterElement?.findRenderObject()?.parent
+        is RenderSliver) {
+      return element;
+    }
     var finalTarget = element;
     var stackElements = <MPElement>[];
     while (mergableSingleChildElements[finalTarget.name] == true) {
       if (finalTarget.children == null ||
           finalTarget.children!.isEmpty == true) {
-        break;
-      }
-      if (finalTarget.constraints != null &&
-          (finalTarget.constraints!.left != 0.0 ||
-              finalTarget.constraints!.top != 0.0)) {
         break;
       }
       final child = finalTarget.children!.first;

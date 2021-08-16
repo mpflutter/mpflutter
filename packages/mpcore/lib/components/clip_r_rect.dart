@@ -2,7 +2,7 @@ part of '../mpcore.dart';
 
 MPElement _encodeClipRRect(Element element) {
   final widget = element.widget as ClipRRect;
-  return MPElement(
+  return MPElement.mergeSingleChildElements(MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
     name: 'clip_r_rect',
@@ -10,11 +10,11 @@ MPElement _encodeClipRRect(Element element) {
     attributes: {
       'borderRadius': widget.borderRadius.toString(),
     },
-  );
+  ));
 }
 
 MPElement _encodeClipRect(Element element) {
-  return MPElement(
+  return MPElement.mergeSingleChildElements(MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
     name: 'clip_r_rect',
@@ -22,5 +22,5 @@ MPElement _encodeClipRect(Element element) {
     attributes: {
       'borderRadius': '',
     },
-  );
+  ));
 }
