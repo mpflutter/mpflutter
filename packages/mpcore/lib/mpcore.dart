@@ -188,7 +188,6 @@ class MPCore {
     try {
       markNeedsBuild(renderView);
       clearOldFrameObject();
-      await sendFrame();
     } catch (e) {
       print(e);
     }
@@ -196,6 +195,7 @@ class MPCore {
 
   static void clearOldFrameObject() {
     MPElement._elementCache.clear();
+    MPElement._elementCacheNext.clear();
   }
 
   static void cancelTextMeasureTask(String reason) {
@@ -215,9 +215,8 @@ class MPCore {
         await sendTextMeasureFrame();
         WidgetsBinding.instance!.scheduleFrame();
         await nextFrame();
-      } catch (e) {
-        print(e);
-      }
+        // ignore: empty_catches
+      } catch (e) {}
     }
     final recentDirtyElements = BuildOwner.recentDirtyElements
         .where((element) {

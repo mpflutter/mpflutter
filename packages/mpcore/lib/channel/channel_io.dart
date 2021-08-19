@@ -32,6 +32,7 @@ class MPChannel {
       reloader.addPath('./src');
       reloader.onReload.listen((event) async {
         await minip.handleHotReload();
+        MPCore.cancelTextMeasureTask('Hot reload');
         print('Reloaded');
       });
       await reloader.go();
