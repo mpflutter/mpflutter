@@ -2477,6 +2477,7 @@ abstract class BuildContext {
 /// widget tree.
 class BuildOwner {
   static final List<Element> recentDirtyElements = <Element>[];
+  static final List<Element> beingMeasureElements = <Element>[];
 
   /// Creates an object that manages widgets.
   BuildOwner({this.onBuildScheduled, FocusManager? focusManager})

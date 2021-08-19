@@ -1570,39 +1570,7 @@ class FocusManager with DiagnosticableTreeMixin, ChangeNotifier {
 
   // Update function to be called whenever the state relating to highlightMode
   // changes.
-  void _updateHighlightMode() {
-    final FocusHighlightMode newMode;
-    switch (highlightStrategy) {
-      case FocusHighlightStrategy.automatic:
-        if (_lastInteractionWasTouch == null) {
-          // If we don't have any information about the last interaction yet,
-          // then just rely on the default value for the platform, which will be
-          // determined based on the target platform if _highlightMode is not
-          // set.
-          return;
-        }
-        if (_lastInteractionWasTouch!) {
-          newMode = FocusHighlightMode.touch;
-        } else {
-          newMode = FocusHighlightMode.traditional;
-        }
-        break;
-      case FocusHighlightStrategy.alwaysTouch:
-        newMode = FocusHighlightMode.touch;
-        break;
-      case FocusHighlightStrategy.alwaysTraditional:
-        newMode = FocusHighlightMode.traditional;
-        break;
-    }
-    // We can't just compare newMode with _highlightMode here, since
-    // _highlightMode could be null, so we want to compare with the return value
-    // for the getter, since that's what clients will be looking at.
-    final FocusHighlightMode oldMode = highlightMode;
-    _highlightMode = newMode;
-    if (highlightMode != oldMode) {
-      _notifyHighlightModeListeners();
-    }
-  }
+  void _updateHighlightMode() {}
 
   // The list of listeners for [highlightMode] state changes.
   final HashedObserverList<ValueChanged<FocusHighlightMode>> _listeners =
@@ -1618,40 +1586,7 @@ class FocusManager with DiagnosticableTreeMixin, ChangeNotifier {
   void removeHighlightModeListener(ValueChanged<FocusHighlightMode> listener) =>
       _listeners.remove(listener);
 
-  void _notifyHighlightModeListeners() {
-    if (_listeners.isEmpty) {
-      return;
-    }
-    final List<ValueChanged<FocusHighlightMode>> localListeners =
-        List<ValueChanged<FocusHighlightMode>>.from(_listeners);
-    for (final ValueChanged<FocusHighlightMode> listener in localListeners) {
-      try {
-        if (_listeners.contains(listener)) {
-          listener(highlightMode);
-        }
-      } catch (exception, stack) {
-        InformationCollector? collector;
-        assert(() {
-          collector = () sync* {
-            yield DiagnosticsProperty<FocusManager>(
-              'The $runtimeType sending notification was',
-              this,
-              style: DiagnosticsTreeStyle.errorProperty,
-            );
-          };
-          return true;
-        }());
-        FlutterError.reportError(FlutterErrorDetails(
-          exception: exception,
-          stack: stack,
-          library: 'widgets library',
-          context: ErrorDescription(
-              'while dispatching notifications for $runtimeType'),
-          informationCollector: collector,
-        ));
-      }
-    }
-  }
+  void _notifyHighlightModeListeners() {}
 
   /// The root [FocusScopeNode] in the focus tree.
   ///
@@ -1660,81 +1595,10 @@ class FocusManager with DiagnosticableTreeMixin, ChangeNotifier {
   final FocusScopeNode rootScope =
       FocusScopeNode(debugLabel: 'Root Focus Scope');
 
-  void _handlePointerEvent(PointerEvent event) {
-    final FocusHighlightMode expectedMode;
-    switch (event.kind) {
-      case PointerDeviceKind.touch:
-      case PointerDeviceKind.stylus:
-      case PointerDeviceKind.invertedStylus:
-        _lastInteractionWasTouch = true;
-        expectedMode = FocusHighlightMode.touch;
-        break;
-      case PointerDeviceKind.mouse:
-      case PointerDeviceKind.unknown:
-        _lastInteractionWasTouch = false;
-        expectedMode = FocusHighlightMode.traditional;
-        break;
-    }
-    if (expectedMode != highlightMode) {
-      _updateHighlightMode();
-    }
-  }
+  void _handlePointerEvent(PointerEvent event) {}
 
   bool _handleRawKeyEvent(RawKeyEvent event) {
-    // Update highlightMode first, since things responding to the keys might
-    // look at the highlight mode, and it should be accurate.
-    _lastInteractionWasTouch = false;
-    _updateHighlightMode();
-
-    assert(_focusDebug('Received key event ${event.logicalKey}'));
-    if (_primaryFocus == null) {
-      assert(_focusDebug('No primary focus for key event, ignored: $event'));
-      return false;
-    }
-
-    // Walk the current focus from the leaf to the root, calling each one's
-    // onKey on the way up, and if one responds that they handled it or want to
-    // stop propagation, stop.
-    bool handled = false;
-    for (final FocusNode node in <FocusNode>[
-      _primaryFocus!,
-      ..._primaryFocus!.ancestors
-    ]) {
-      if (node.onKey != null) {
-        // TODO(gspencergoog): Convert this from dynamic to KeyEventResult once migration is complete.
-        final dynamic result = node.onKey!(node, event);
-        assert(result is bool || result is KeyEventResult,
-            'Value returned from onKey handler must be a non-null bool or KeyEventResult, not ${result.runtimeType}');
-        if (result is KeyEventResult) {
-          switch (result) {
-            case KeyEventResult.handled:
-              assert(_focusDebug('Node $node handled key event $event.'));
-              handled = true;
-              break;
-            case KeyEventResult.skipRemainingHandlers:
-              assert(_focusDebug(
-                  'Node $node stopped key event propagation: $event.'));
-              handled = false;
-              break;
-            case KeyEventResult.ignored:
-              continue;
-          }
-        } else if (result is bool) {
-          if (result) {
-            assert(_focusDebug('Node $node handled key event $event.'));
-            handled = true;
-            break;
-          } else {
-            continue;
-          }
-        }
-        break;
-      }
-    }
-    if (!handled) {
-      assert(_focusDebug('Key event not handled by anyone: $event.'));
-    }
-    return handled;
+    return true;
   }
 
   /// The node that currently has the primary focus.
@@ -1749,98 +1613,14 @@ class FocusManager with DiagnosticableTreeMixin, ChangeNotifier {
   // given it yet.
   FocusNode? _markedForFocus;
 
-  void _markDetached(FocusNode node) {
-    // The node has been removed from the tree, so it no longer needs to be
-    // notified of changes.
-    assert(_focusDebug('Node was detached: $node'));
-    if (_primaryFocus == node) {
-      _primaryFocus = null;
-    }
-    _dirtyNodes.remove(node);
-  }
+  void _markDetached(FocusNode node) {}
 
-  void _markPropertiesChanged(FocusNode node) {
-    _markNeedsUpdate();
-    assert(_focusDebug('Properties changed for node $node.'));
-    _dirtyNodes.add(node);
-  }
+  void _markPropertiesChanged(FocusNode node) {}
 
-  void _markNextFocus(FocusNode node) {
-    if (_primaryFocus == node) {
-      // The caller asked for the current focus to be the next focus, so just
-      // pretend that didn't happen.
-      _markedForFocus = null;
-    } else {
-      _markedForFocus = node;
-      _markNeedsUpdate();
-    }
-  }
+  void _markNextFocus(FocusNode node) {}
 
   // True indicates that there is an update pending.
   bool _haveScheduledUpdate = false;
-
-  // Request that an update be scheduled, optionally requesting focus for the
-  // given newFocus node.
-  void _markNeedsUpdate() {
-    assert(_focusDebug(
-        'Scheduling update, current focus is $_primaryFocus, next focus will be $_markedForFocus'));
-    if (_haveScheduledUpdate) {
-      return;
-    }
-    _haveScheduledUpdate = true;
-    scheduleMicrotask(_applyFocusChange);
-  }
-
-  void _applyFocusChange() {
-    _haveScheduledUpdate = false;
-    final FocusNode? previousFocus = _primaryFocus;
-    if (_primaryFocus == null && _markedForFocus == null) {
-      // If we don't have any current focus, and nobody has asked to focus yet,
-      // then revert to the root scope.
-      _markedForFocus = rootScope;
-    }
-    assert(_focusDebug(
-        'Refreshing focus state. Next focus will be $_markedForFocus'));
-    // A node has requested to be the next focus, and isn't already the primary
-    // focus.
-    if (_markedForFocus != null && _markedForFocus != _primaryFocus) {
-      final Set<FocusNode> previousPath =
-          previousFocus?.ancestors.toSet() ?? <FocusNode>{};
-      final Set<FocusNode> nextPath = _markedForFocus!.ancestors.toSet();
-      // Notify nodes that are newly focused.
-      _dirtyNodes.addAll(nextPath.difference(previousPath));
-      // Notify nodes that are no longer focused
-      _dirtyNodes.addAll(previousPath.difference(nextPath));
-
-      _primaryFocus = _markedForFocus;
-      _markedForFocus = null;
-    }
-    if (previousFocus != _primaryFocus) {
-      assert(
-          _focusDebug('Updating focus from $previousFocus to $_primaryFocus'));
-      if (previousFocus != null) {
-        _dirtyNodes.add(previousFocus);
-      }
-      if (_primaryFocus != null) {
-        _dirtyNodes.add(_primaryFocus!);
-      }
-    }
-    assert(_focusDebug('Notifying ${_dirtyNodes.length} dirty nodes:',
-        _dirtyNodes.toList().map<String>((FocusNode node) => node.toString())));
-    for (final FocusNode node in _dirtyNodes) {
-      node._notify();
-    }
-    _dirtyNodes.clear();
-    if (previousFocus != _primaryFocus) {
-      notifyListeners();
-    }
-    assert(() {
-      if (_kDebugFocus) {
-        debugDumpFocusTree();
-      }
-      return true;
-    }());
-  }
 
   @override
   List<DiagnosticsNode> debugDescribeChildren() {

@@ -29,6 +29,7 @@ class _Document {
 }
 
 class MPElement {
+  static bool disableElementCache = false;
   static final Map<int, MPElement> _elementCache = {};
   static final Map<int, MPElement> _elementCacheNext = {};
   static final List<int> _invalidElements = [];
@@ -68,7 +69,9 @@ class MPElement {
     if (cachedElement != null) {
       euqalCheck(cachedElement);
     }
-    _elementCacheNext[hashCode] = this;
+    if (disableElementCache) {
+      _elementCacheNext[hashCode] = this;
+    }
   }
 
   bool? _isEqual;
@@ -83,6 +86,11 @@ class MPElement {
 
   void euqalCheck(MPElement other) {
     if (_isEqual != null) return;
+    if (disableElementCache) {
+      _isEqual = false;
+      other._isEqual = false;
+      return;
+    }
     final result = hashCode == other.hashCode &&
         name == other.name &&
         isChildrenEqual(other) &&

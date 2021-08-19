@@ -1,5 +1,6 @@
 part of '../mpcore.dart';
 
+Completer? _onMeasureCompleter;
 Map<int, Element> _measuringText = {};
 
 void _onMeasuredText(List values) {
@@ -15,6 +16,7 @@ void _onMeasuredText(List values) {
         return;
       }
       _measuringText.remove(measureId);
+      BuildOwner.beingMeasureElements.remove(fltElement);
       final renderObject = fltElement.findRenderObject();
       if (!(renderObject is RenderParagraph)) {
         return;
@@ -22,8 +24,11 @@ void _onMeasuredText(List values) {
       renderObject.measuredSize = size;
       renderObject.reassemble();
       renderObject.layout(renderObject.constraints);
+      BuildOwner.beingMeasureElements.remove(fltElement);
     }
   });
+  _onMeasureCompleter?.complete();
+  _onMeasureCompleter = null;
   WidgetsBinding.instance?.scheduleFrame();
 }
 

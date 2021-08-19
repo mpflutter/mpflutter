@@ -5610,6 +5610,7 @@ class RichText extends MultiChildRenderObjectWidget {
   @override
   RenderParagraph createRenderObject(BuildContext context) {
     assert(textDirection != null || debugCheckHasDirectionality(context));
+    BuildOwner.beingMeasureElements.add(context as Element);
     return RenderParagraph(
       data: text,
       textAlign: textAlign,
@@ -5626,11 +5627,13 @@ class RichText extends MultiChildRenderObjectWidget {
         renderObject.softWrap != softWrap ||
         renderObject.overflow != overflow ||
         renderObject.maxLines != maxLines) {
+      BuildOwner.beingMeasureElements.add(context as Element);
       renderObject.measuredSize = null;
     }
     if (renderObject.data != null &&
         text != null &&
         renderObject.data?.compareTo(text) == RenderComparison.layout) {
+      BuildOwner.beingMeasureElements.add(context as Element);
       renderObject.measuredSize = null;
     }
     renderObject.data = text;

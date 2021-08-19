@@ -198,8 +198,27 @@ class MPCore {
     MPElement._elementCache.clear();
   }
 
+  static void cancelTextMeasureTask(String reason) {
+    if (_onMeasureCompleter != null) {
+      _onMeasureCompleter!.completeError(reason);
+      _onMeasureCompleter = null;
+    }
+  }
+
   Future sendFrame() async {
     await nextFrame();
+    while (BuildOwner.beingMeasureElements.isNotEmpty) {
+      try {
+        BuildOwner.beingMeasureElements
+            .removeWhere((element) => element.isInactive());
+        if (BuildOwner.beingMeasureElements.isEmpty) break;
+        await sendTextMeasureFrame();
+        WidgetsBinding.instance!.scheduleFrame();
+        await nextFrame();
+      } catch (e) {
+        print(e);
+      }
+    }
     final recentDirtyElements = BuildOwner.recentDirtyElements
         .where((element) {
           return element.isInactive() != true &&
@@ -252,6 +271,38 @@ class MPCore {
       });
       MPChannel.postMesssage(gcData);
       MPElement._invalidElements.clear();
+    }
+  }
+
+  Future sendTextMeasureFrame() async {
+    MPElement.disableElementCache = true;
+    final measureFrameData = json.encode({
+      'type': 'rich_text',
+      'message': {
+        'event': 'doMeasure',
+        'items': BuildOwner.beingMeasureElements
+            .map((e) => MPElement.fromFlutterElement(e))
+            .toList(),
+      }
+    });
+    MPElement.disableElementCache = false;
+    MPChannel.postMesssage(measureFrameData);
+    final completer = Completer();
+    _loopCheckMeasureCompleter();
+    _onMeasureCompleter = completer;
+    return completer.future;
+  }
+
+  void _loopCheckMeasureCompleter() async {
+    await Future.delayed(Duration(seconds: 2));
+    BuildOwner.beingMeasureElements
+        .removeWhere((element) => element.isInactive());
+    if (_onMeasureCompleter != null &&
+        BuildOwner.beingMeasureElements.isEmpty) {
+      _onMeasureCompleter!.completeError('No element for text measure.');
+    } else if (_onMeasureCompleter != null &&
+        BuildOwner.beingMeasureElements.isNotEmpty) {
+      _loopCheckMeasureCompleter();
     }
   }
 

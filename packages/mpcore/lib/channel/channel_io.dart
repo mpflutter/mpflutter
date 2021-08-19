@@ -57,6 +57,7 @@ class MPChannel {
             ..onDone(
               () {
                 sockets.remove(socket);
+                MPCore.cancelTextMeasureTask('Disconnected');
               },
             );
           MPCore.clearOldFrameObject();
