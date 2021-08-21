@@ -168,6 +168,7 @@ class TextEditingController extends ValueNotifier<TextEditingValue> {
         ),
         super(value ?? TextEditingValue.empty);
 
+  bool changeCauseByEvent = false;
   bool textDirty = true;
 
   /// The current string the user is editing.
@@ -448,8 +449,8 @@ class EditableText extends StatefulWidget {
     this.enableSuggestions = true,
     required this.style,
     StrutStyle? strutStyle,
-    required this.cursorColor,
-    required this.backgroundCursorColor,
+    this.cursorColor = const Color.fromARGB(0, 0, 0, 0),
+    this.backgroundCursorColor = const Color.fromARGB(0, 0, 0, 0),
     this.textAlign = TextAlign.start,
     this.textDirection,
     this.placeholder,
@@ -2478,6 +2479,7 @@ class EditableTextState extends State<EditableText>
   }
 
   void _didChangeTextEditingValue() {
+    if (widget.controller.changeCauseByEvent) return;
     _updateRemoteEditingValueIfNeeded();
     _startOrStopCursorTimerIfNeeded();
     _updateOrDisposeSelectionOverlayIfNeeded();
@@ -2831,7 +2833,7 @@ class _Editable extends LeafRenderObjectWidget {
     this.promptRectRange,
     this.promptRectColor,
     required this.clipBehavior,
-  })  : assert(textDirection != null),
+  })   : assert(textDirection != null),
         assert(rendererIgnoresPointer != null),
         super(key: key);
 

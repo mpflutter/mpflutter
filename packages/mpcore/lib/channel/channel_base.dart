@@ -227,8 +227,10 @@ class MPChannelBase {
       if (message['event'] == 'onSubmitted') {
         widget.onSubmitted?.call(message['data']);
       } else if (message['event'] == 'onChanged' && message['data'] is String) {
+        widget.controller.changeCauseByEvent = true;
         widget.controller.text = message['data'];
         widget.controller.textDirty = false;
+        widget.controller.changeCauseByEvent = false;
         widget.onChanged?.call(message['data']);
       }
     } catch (e) {
