@@ -43,7 +43,7 @@ Dart 端分别有两个子工程，在 [mpflutter/mpflutter](https://github.com/
 
 ### 克隆核心仓库
 
-创建一个文无任何顾问，一般是 `~/Document/mpflutter` ，然后在该文件夹下克隆以下仓库。
+创建一个文件夹，一般是 `~/Document/mpflutter` ，然后在该文件夹下克隆以下仓库。
 
 * https://github.com/mpflutter/mpflutter
 * https://github.com/mpflutter/mp_dom_runtime
