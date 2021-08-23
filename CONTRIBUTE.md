@@ -52,7 +52,9 @@ Dart 端分别有两个子工程，在 [mpflutter/mpflutter](https://github.com/
 ### 安装依赖
 
 打开 `mpflutter` 工程，使用命令行执行 `dart pub get` 安装依赖。
+
 打开 `mpflutter_sample` 工程，使用命令行执行 `dart pub get` 安装依赖。
+
 打开 `mp_dom_runtime` 工程，使用命令行执行 `npm i -g typescript uglify-js browserify http-server` 全局安装依赖。
 
 ### 尝试运行 sample 工程
