@@ -10,6 +10,7 @@ MPElement _encodeGestureDetector(Element element) {
     children: MPElement.childrenFromFlutterElement(element),
     attributes: {
       'onTap': widget.onTap != null ? element.hashCode : null,
+      'hoverOpacity': widget.hoverOpacity,
     },
   );
 }

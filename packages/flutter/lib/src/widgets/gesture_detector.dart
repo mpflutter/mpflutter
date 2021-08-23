@@ -223,6 +223,7 @@ class GestureDetector extends StatelessWidget {
   GestureDetector({
     Key? key,
     this.child,
+    this.hoverOpacity = true,
     this.onTapDown,
     this.onTapUp,
     this.onTap,
@@ -310,6 +311,8 @@ class GestureDetector extends StatelessWidget {
   ///
   /// {@macro flutter.widgets.ProxyWidget.child}
   final Widget? child;
+
+  final bool hoverOpacity;
 
   /// A pointer that might cause a tap with a primary button has contacted the
   /// screen at a particular location.
