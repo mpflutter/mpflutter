@@ -346,6 +346,12 @@ class MPChannelBase {
             (message['viewport']['width'] as num).toDouble(),
             (message['viewport']['height'] as num).toDouble(),
           );
+          if (target.settings.arguments is Map) {
+            (target.settings.arguments as Map)['\$viewportWidth'] =
+                message['viewport']['width'];
+            (target.settings.arguments as Map)['\$viewportHeight'] =
+                message['viewport']['height'];
+          }
           routeScaffoldStateMap[routeId]?.refreshState();
         }
       } else if (message['event'] == 'disposeRoute') {

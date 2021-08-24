@@ -209,8 +209,17 @@ class MPCore {
     await nextFrame();
     while (BuildOwner.beingMeasureElements.isNotEmpty) {
       try {
-        BuildOwner.beingMeasureElements
-            .removeWhere((element) => element.isInactive());
+        BuildOwner.beingMeasureElements.removeWhere((element) {
+          if (element.isInactive()) {
+            return true;
+          }
+          final renderObject = element.findRenderObject();
+          if (renderObject is RenderParagraph &&
+              renderObject.measuredSize != null) {
+            return true;
+          }
+          return false;
+        });
         if (BuildOwner.beingMeasureElements.isEmpty) break;
         await sendTextMeasureFrame();
         WidgetsBinding.instance!.scheduleFrame();

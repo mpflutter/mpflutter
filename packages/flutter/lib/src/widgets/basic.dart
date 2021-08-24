@@ -92,7 +92,7 @@ class Directionality extends InheritedWidget {
     Key? key,
     required this.textDirection,
     required Widget child,
-  })   : assert(textDirection != null),
+  })  : assert(textDirection != null),
         assert(child != null),
         super(key: key, child: child);
 
@@ -2054,7 +2054,7 @@ class LayoutId extends ParentDataWidget<MultiChildLayoutParentData> {
     Key? key,
     required this.id,
     required Widget child,
-  })   : assert(child != null),
+  })  : assert(child != null),
         assert(id != null),
         super(key: key ?? ValueKey<Object>(id), child: child);
 
@@ -3765,7 +3765,7 @@ class Positioned extends ParentDataWidget<StackParentData> {
     this.width,
     this.height,
     required Widget child,
-  })   : assert(left == null || right == null || width == null),
+  })  : assert(left == null || right == null || width == null),
         assert(top == null || bottom == null || height == null),
         super(key: key, child: child);
 
@@ -3778,7 +3778,7 @@ class Positioned extends ParentDataWidget<StackParentData> {
     Key? key,
     required Rect rect,
     required Widget child,
-  })   : left = rect.left,
+  })  : left = rect.left,
         top = rect.top,
         width = rect.width,
         height = rect.height,
@@ -3794,7 +3794,7 @@ class Positioned extends ParentDataWidget<StackParentData> {
     Key? key,
     required RelativeRect rect,
     required Widget child,
-  })   : left = rect.left,
+  })  : left = rect.left,
         top = rect.top,
         right = rect.right,
         bottom = rect.bottom,
@@ -3811,7 +3811,7 @@ class Positioned extends ParentDataWidget<StackParentData> {
     this.right = 0.0,
     this.bottom = 0.0,
     required Widget child,
-  })   : width = null,
+  })  : width = null,
         height = null,
         super(key: key, child: child);
 
@@ -5612,6 +5612,7 @@ class RichText extends MultiChildRenderObjectWidget {
     assert(textDirection != null || debugCheckHasDirectionality(context));
     BuildOwner.beingMeasureElements.add(context as Element);
     return RenderParagraph(
+      element: context,
       data: text,
       textAlign: textAlign,
       softWrap: softWrap,
@@ -5913,7 +5914,7 @@ class DefaultAssetBundle extends InheritedWidget {
     Key? key,
     required this.bundle,
     required Widget child,
-  })   : assert(bundle != null),
+  })  : assert(bundle != null),
         assert(child != null),
         super(key: key, child: child);
 
@@ -7283,7 +7284,7 @@ class KeyedSubtree extends StatelessWidget {
   const KeyedSubtree({
     Key? key,
     required this.child,
-  })   : assert(child != null),
+  })  : assert(child != null),
         super(key: key);
 
   /// Creates a KeyedSubtree for child with a key that's based on the child's existing key or childIndex.
@@ -7408,7 +7409,7 @@ class Builder extends StatelessWidget {
   const Builder({
     Key? key,
     required this.builder,
-  })   : assert(builder != null),
+  })  : assert(builder != null),
         super(key: key);
 
   /// Called to obtain the child widget.
@@ -7481,7 +7482,7 @@ class StatefulBuilder extends StatefulWidget {
   const StatefulBuilder({
     Key? key,
     required this.builder,
-  })   : assert(builder != null),
+  })  : assert(builder != null),
         super(key: key);
 
   /// Called to obtain the child widget.

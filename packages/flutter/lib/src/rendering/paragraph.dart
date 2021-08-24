@@ -6,6 +6,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/painting.dart';
 
+import '../../widgets.dart';
 import 'box.dart';
 import 'object.dart';
 
@@ -47,15 +48,23 @@ class TextParentData extends ContainerBoxParentData<RenderBox> {
 
 class RenderParagraph extends RenderBox
     with ContainerRenderObjectMixin<RenderBox, TextParentData> {
+  Element? element;
   Size? measuredSize;
   InlineSpan? data;
   TextAlign? textAlign;
   bool? softWrap;
   TextOverflow? overflow;
   int? maxLines;
+  BoxConstraints? lastConstraints;
 
-  RenderParagraph(
-      {this.data, this.textAlign, this.softWrap, this.overflow, this.maxLines});
+  RenderParagraph({
+    this.element,
+    this.data,
+    this.textAlign,
+    this.softWrap,
+    this.overflow,
+    this.maxLines,
+  });
 
   @override
   void setupParentData(covariant RenderObject child) {
@@ -66,6 +75,15 @@ class RenderParagraph extends RenderBox
   @override
   void performLayout() {
     size = _sizeForConstraints(constraints);
+    if (lastConstraints != null &&
+        lastConstraints != constraints &&
+        lastConstraints!.maxWidth < constraints.maxWidth) {
+      if (this.element != null) {
+        this.measuredSize = null;
+        BuildOwner.beingMeasureElements.add(this.element!);
+      }
+    }
+    lastConstraints = constraints;
   }
 
   Size _sizeForConstraints(BoxConstraints constraints) {
