@@ -70,6 +70,7 @@ class MPChannel {
           handleAssetsRequest(req);
         } else if (req.uri.path.startsWith('/bundle.') ||
             req.uri.path.startsWith('/index.html') ||
+            req.uri.path.startsWith('/index.css') ||
             req.uri.path.startsWith('/main.dart.js') ||
             req.uri.path.startsWith('/static/')) {
           handleScaffoldRequest(req);
