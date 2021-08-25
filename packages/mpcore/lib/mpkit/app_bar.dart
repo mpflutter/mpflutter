@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+part of 'mpkit.dart';
 
 class MPAppBar extends StatelessWidget implements PreferredSizeWidget {
   final BuildContext context;

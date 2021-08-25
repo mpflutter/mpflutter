@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+part of 'mpkit.dart';
 
 class MPPageView extends StatelessWidget {
   final List<Widget> children;

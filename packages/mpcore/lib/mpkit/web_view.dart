@@ -1,5 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:mpcore/mpkit/platform_view.dart';
+part of 'mpkit.dart';
 
 class MPWebView extends MPPlatformView {
   final String url;

@@ -1,9 +1,4 @@
-import 'package:flutter/widgets.dart';
-
-import 'dart:math' as math;
-
-import 'package:flutter/rendering.dart';
-import 'package:flutter/src/rendering/sliver_grid.dart';
+part of 'mpkit.dart';
 
 class SliverWaterfallDelegate
     extends SliverGridDelegateWithFixedCrossAxisCount {

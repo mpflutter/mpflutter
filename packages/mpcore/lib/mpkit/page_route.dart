@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+part of 'mpkit.dart';
 
 class MPPageRoute<T> extends PageRoute<T> {
   final WidgetBuilder builder;

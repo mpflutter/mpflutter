@@ -1,6 +1,4 @@
-import 'package:flutter/widgets.dart';
-
-import '../mpcore.dart';
+part of 'mpkit.dart';
 
 final List<MPScaffoldState> scaffoldStates = [];
 final Map<int, MPScaffoldState> routeScaffoldStateMap = {};

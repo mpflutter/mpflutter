@@ -2,8 +2,7 @@ library mpkit_encoder;
 
 import 'package:mpcore/mpcore.dart';
 import 'package:flutter/widgets.dart';
-import 'package:mpcore/mpkit/icon.dart';
-import 'package:mpcore/mpkit/platform_view.dart';
+import '../mpkit.dart';
 
 part './scaffold.dart';
 part './page_view.dart';

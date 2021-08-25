@@ -1,3 +1,5 @@
+part of 'mpkit.dart';
+
 const iconBasePath =
     'https://cdn.jsdelivr.net/gh/google/material-design-icons@master/src';
 

@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+part of 'mpkit.dart';
 
 class MPPlatformView extends StatelessWidget {
   final String viewType;

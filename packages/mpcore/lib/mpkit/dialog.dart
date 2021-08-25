@@ -1,8 +1,4 @@
-import 'dart:math';
-
-import 'package:flutter/widgets.dart';
-
-import 'mpkit.dart';
+part of 'mpkit.dart';
 
 Future<T> showMPDialog<T>({
   required BuildContext context,
@@ -24,7 +20,7 @@ Future<T> showMPDialog<T>({
         parentRoute: parentRoute,
       );
     },
-    settings: RouteSettings(name: '/mp_dialog/${Random().nextDouble()}'),
+    settings: RouteSettings(name: '/mp_dialog/${math.Random().nextDouble()}'),
   ));
   return result;
 }

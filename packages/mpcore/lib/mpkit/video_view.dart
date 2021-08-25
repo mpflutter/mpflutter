@@ -1,4 +1,4 @@
-import 'package:mpcore/mpkit/platform_view.dart';
+part of 'mpkit.dart';
 
 class MPVideoView extends MPPlatformView {
   final String url;

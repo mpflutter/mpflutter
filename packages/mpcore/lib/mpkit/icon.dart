@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+part of 'mpkit.dart';
 
 class MPIcon extends StatelessWidget {
   final String iconUrl;

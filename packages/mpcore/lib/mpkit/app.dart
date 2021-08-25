@@ -1,7 +1,4 @@
-import 'package:flutter/widgets.dart';
-import 'package:mpcore/mpcore.dart';
-
-import 'page_route.dart';
+part of 'mpkit.dart';
 
 class MPApp extends StatelessWidget {
   final String? title;
