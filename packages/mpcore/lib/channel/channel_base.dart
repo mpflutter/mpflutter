@@ -144,6 +144,8 @@ class MPChannelBase {
         MPChannelBase.onActionTrigger(obj['message']);
       } else if (obj['type'] == 'mpjs') {
         mpjs.JsBridgeInvoker.instance.makeResponse(obj['message']);
+      } else if (obj['type'] == 'platform_view') {
+        MPChannelBase.onPlatformViewTrigger(obj['message']);
       } else {
         MPChannelBase.onPluginMessage(obj);
       }
@@ -280,6 +282,18 @@ class MPChannelBase {
   static void onActionTrigger(Map message) {
     try {
       MPAction.onActionTrigger(message);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static void onPlatformViewTrigger(Map message) {
+    try {
+      final widget = MPCore.findTargetHashCode(message['hashCode'])?.widget;
+      if (!(widget is MPPlatformView)) return;
+      if (message['event'] == 'methodCall') {
+        widget.controller?.onMethodCall(message['method'], message['params']);
+      }
     } catch (e) {
       print(e);
     }

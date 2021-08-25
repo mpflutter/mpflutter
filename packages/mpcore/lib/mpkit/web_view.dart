@@ -1,10 +1,25 @@
 part of 'mpkit.dart';
 
+class MPWebViewController extends MPPlatformViewController {
+  void reload() {
+    invokeMethod('reload');
+  }
+
+  void loadUrl(String url) {
+    invokeMethod('loadUrl', params: {'url': url});
+  }
+}
+
 class MPWebView extends MPPlatformView {
   final String url;
-  MPWebView({required this.url})
+
+  @override
+  final MPWebViewController? controller;
+
+  MPWebView({required this.url, this.controller})
       : super(
           viewType: 'mp_web_view',
           viewAttributes: {'url': url},
+          controller: controller,
         );
 }
