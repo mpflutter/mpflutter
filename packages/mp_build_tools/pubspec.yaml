@@ -1,0 +1,8 @@
+name: mp_build_tools
+description: The MPFlutter build tools.
+publish_to: "none"
+version: 1.0.0+1
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+dependencies:
+  path: any
