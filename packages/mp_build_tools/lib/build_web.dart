@@ -61,12 +61,12 @@ String _buildDartJS() {
 
 _fixDefererLoader() {
   var code = File('build/main.dart.js').readAsStringSync();
-  code = code
-      .replaceFirst("m=\$.O1()", "m=\$.O1() || ''")
-      .replaceFirst("m=\$.O2()", "m=\$.O2() || ''")
-      .replaceFirst("m=\$.O3()", "m=\$.O3() || ''")
-      .replaceFirst("m=\$.O4()", "m=\$.O4() || ''")
-      .replaceFirst("\$.\$get\$thisScript();", "\$.\$get\$thisScript() || '';");
+  code = code.replaceFirstMapped(
+      RegExp(r"m=\$\.([a-z0-9A-Z].?)\(\)\nm.toString"), (match) {
+    return "m=\$.${match.group(1)}() || ''\nm.toString";
+  });
+  code = code.replaceFirst(
+      "\$.\$get\$thisScript();", "\$.\$get\$thisScript() || '';");
   File('build/main.dart.js').writeAsStringSync(code);
 }
 
