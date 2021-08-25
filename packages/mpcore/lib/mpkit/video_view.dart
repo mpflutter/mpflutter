@@ -1,6 +1,6 @@
-import 'package:flutter/widgets.dart';
+import 'package:mpcore/mpkit/platform_view.dart';
 
-class MPVideoView extends StatelessWidget {
+class MPVideoView extends MPPlatformView {
   final String url;
   final bool controls;
   final bool autoplay;
@@ -15,10 +15,15 @@ class MPVideoView extends StatelessWidget {
     this.loop = false,
     this.muted = false,
     this.poster,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
+  }) : super(
+          viewType: 'mp_video_view',
+          viewAttributes: {
+            'url': url,
+            'controls': controls,
+            'autoplay': autoplay,
+            'loop': loop,
+            'muted': muted,
+            'poster': poster,
+          },
+        );
 }
