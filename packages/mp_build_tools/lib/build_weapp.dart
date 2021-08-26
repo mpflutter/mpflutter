@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as p;
+import 'build_plugins.dart' as plugin_builder;
 
 final Map<int, List<String>> subpackages = {};
 final subpackageSizeLimited = 1024 * 1024 * 1.9;
@@ -8,6 +9,7 @@ final subpackageSizeLimited = 1024 * 1024 * 1.9;
 main(List<String> args) {
   _checkPubspec();
   _createBuildDir();
+  plugin_builder.main(args);
   _copyWeappSource();
   _buildDartJS();
 }

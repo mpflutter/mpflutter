@@ -72,6 +72,7 @@ class MPChannel {
             req.uri.path.startsWith('/index.html') ||
             req.uri.path.startsWith('/index.css') ||
             req.uri.path.startsWith('/main.dart.js') ||
+            req.uri.path.startsWith('/plugins.min.js') ||
             req.uri.path.startsWith('/static/')) {
           handleScaffoldRequest(req);
         } else if (req.uri.path == '/') {
@@ -151,11 +152,7 @@ class MPChannel {
         'Content-Type',
         mimeType,
       );
-    if (fileName == 'mp_plugins.js') {
-      handlePluginJSRequest(request);
-    } else if (fileName == 'mp_plugins.css') {
-      handlePluginCSSRequest(request);
-    } else if (File(fileName).existsSync()) {
+    if (File(fileName).existsSync()) {
       request.response
         ..statusCode = 200
         ..add(File(fileName).readAsBytesSync())
@@ -170,44 +167,6 @@ class MPChannel {
         ..statusCode = 404
         ..close();
     }
-  }
-
-  static void handlePluginJSRequest(HttpRequest request) {
-    final stringBuffer = StringBuffer();
-    final lines = File('./.packages').readAsLinesSync();
-    for (final line in lines) {
-      final pkgPath = line
-          .replaceFirst(RegExp('.*?:'), '')
-          .replaceFirst('file://', '')
-          .replaceFirst('/lib/', '');
-      if (File('$pkgPath/web/dist/index.min.js').existsSync()) {
-        stringBuffer
-            .writeln(File('$pkgPath/web/dist/index.min.js').readAsStringSync());
-      }
-    }
-    request.response
-      ..statusCode = 200
-      ..add(utf8.encode(stringBuffer.toString()))
-      ..close();
-  }
-
-  static void handlePluginCSSRequest(HttpRequest request) {
-    final stringBuffer = StringBuffer();
-    final lines = File('./.packages').readAsLinesSync();
-    for (final line in lines) {
-      final pkgPath = line
-          .replaceFirst(RegExp('.*?:'), '')
-          .replaceFirst('file://', '')
-          .replaceFirst('/lib/', '');
-      if (File('$pkgPath/web/dist/index.css').existsSync()) {
-        stringBuffer
-            .writeln(File('$pkgPath/web/dist/index.css').readAsStringSync());
-      }
-    }
-    request.response
-      ..statusCode = 200
-      ..add(utf8.encode(stringBuffer.toString()))
-      ..close();
   }
 
   static void handleScaffoldRequest(HttpRequest request) {

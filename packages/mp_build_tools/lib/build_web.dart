@@ -1,9 +1,12 @@
 import 'dart:io';
 
+import 'build_plugins.dart' as plugin_builder;
+
 main(List<String> args) {
   _checkPubspec();
   _createBuildDir();
   final hashCode = _buildDartJS();
+  plugin_builder.main(args);
   _copyWebSource(hashCode);
 }
 
@@ -74,10 +77,16 @@ _copyWebSource(String hashCode) {
   var indexFileContent = File('./web/index.html').readAsStringSync();
   indexFileContent =
       indexFileContent.replaceAll("var dev = true;", "var dev = false;");
-  indexFileContent =
-      indexFileContent.replaceAll("'main.dart.js'", "'main.dart.js?$hashCode'");
+  indexFileContent = indexFileContent
+      .replaceAll("'main.dart.js'", "'main.dart.js?$hashCode'")
+      .replaceAll("'plugins.min.js'", "'plugins.min.js?$hashCode'");
   File("./build/index.html").writeAsStringSync(indexFileContent);
-  File("./web/index.css").copySync("./build/index.css");
+  if (File("./web/index.css").existsSync()) {
+    File("./web/index.css").copySync("./build/index.css");
+  }
+  if (File("./web/plugins.min.js").existsSync()) {
+    File("./web/plugins.min.js").copySync("./build/plugins.min.js");
+  }
 }
 
 _removeFiles(List<String> files) {
