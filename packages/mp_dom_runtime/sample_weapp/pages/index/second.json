@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "mpdom": "miniprogram_dom/index"
+  },
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

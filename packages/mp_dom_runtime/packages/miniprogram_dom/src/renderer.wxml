@@ -1,0 +1,95 @@
+<wxs module="tools">
+var dictCSSKeys = ["_","position","top","left","width","height","z-index","border-radius","overflow","background-color","display", "user-select", "-webkit-user-select", "text-align", "-webkit-line-clamp", "opacity", "max-width", "max-height"];
+var dictCSSValues = {"_1":"absolute","_2":"unset","_3":"start"};
+var style = function(params) {
+    var output = "";
+    if (!params) return output;
+    for (var i = 0; i < dictCSSKeys.length; i++) {
+        if (params[i.toString()]) {
+            if (dictCSSValues[params[i.toString()]]) {
+                output += dictCSSKeys[i] + ":" + dictCSSValues[params[i.toString()]] + ';';
+            }
+            else {
+                output += dictCSSKeys[i] + ":" + params[i.toString()] + ';';
+            }
+        }
+        else if (params[dictCSSKeys[i]]) {
+            output += dictCSSKeys[i] + ":" + params[dictCSSKeys[i]] + ';';
+        }
+    }
+    if (params.other) {
+        output += params.other;
+    }
+    return output;
+}
+var tag = function(value, n) {
+    if (!value || value === 'div') {
+        if (n !== undefined) {
+            return 'f' + n;
+        }
+        return 'fdiv';
+    }
+    else {
+        return 'f' + value;
+    }
+}
+module.exports = {
+    style: style,
+    tag: tag,
+};
+</wxs>
+
+<block wx:if="{{dom[root]}}">
+    <template is="f{{dom[root].tag}}" data="{{dom,style,rt:dom[root],n:1}}" />
+</block>
+<template name="fdiv">
+    <view id="d_{{rt.id}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" bindtap="{{rt.onclick ? 'ontap' : ''}}" class="{{rt.class}}" style="{{tools.style(rt.s)}};{{style}}">
+        <block wx:key="*this" wx:for="{{rt.n}}">
+            <template is="{{tools.tag(dom[item].tag, n)}}" data="{{dom,rt:dom[item],n:n+1}}" />
+        </block>
+        <block wx:if="{{rt.innerText}}">{{rt.innerText}}</block>
+    </view>
+</template>
+<!-- floop -->
+
+<template name="fcatchclick">
+    <view id="d_{{rt.id}}" class="{{rt.class}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" style="{{tools.style(rt.s)}}">
+        <block wx:key="*this" wx:for="{{rt.n}}">
+            <template is="{{tools.tag(dom[item].tag, n)}}" data="{{dom,rt:dom[item],n:n+1}}" />
+        </block>
+    </view>
+</template>
+<template name="fcatchmove">
+    <view id="d_{{rt.id}}" class="{{rt.class}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" catchtouchmove="catchmove" style="{{tools.style(rt.s)}}">
+        <block wx:key="*this" wx:for="{{rt.n}}">
+            <template is="{{tools.tag(dom[item].tag, n)}}" data="{{dom,rt:dom[item],n:n+1}}" />
+        </block>
+    </view>
+</template>
+<template name="fimg">
+    <image id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" mode="{{rt.mode}}" src="{{rt.src}}"></image>
+</template>
+<template name="fiframe">
+    <web-view id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" src="{{rt.src}}"></web-view>
+</template>
+<template name="fvideo">
+    <video id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" src="{{rt.src}}" controls="{{rt.controls}}" autoplay="{{rt.autoplay}}" loop="{{rt.loop}}" muted="{{rt.muted}}" poster="{{rt.poster}}"></video>
+</template>
+<template name="fcanvas">
+    <canvas id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" type="2d"></canvas>
+</template>
+<template name="ftextarea">
+    <textarea id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{rt.type}}" password="{{rt.type === 'password'}}" disabled="{{rt.readOnly}}" focus="{{rt.autoFocus}}"></textarea>
+</template>
+<template name="finput">
+    <input id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{rt.type}}" password="{{rt.type === 'password'}}" always-embed="true" disabled="{{rt.readOnly}}" focus="{{rt.autoFocus}}"></input>
+</template>
+<template name="fswiper">
+    <swiper id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" vertical="{{rt.vertical}}" circular="{{rt.circular}}">
+        <block wx:key="*this" wx:for="{{rt.n}}">
+            <swiper-item>
+                <template is="{{tools.tag(dom[item].tag, n)}}" data="{{dom,rt:dom[item],n:n+1}}" />
+            </swiper-item>
+        </block>
+    </swiper>
+</template>

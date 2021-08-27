@@ -1,0 +1,13 @@
+{
+  "name": "@mpflutter/mp_dom_runtime",
+  "version": "1.0.0",
+  "description": "",
+  "main": "mpdom.min.js",
+  "types": "mpdom.d.ts",
+  "scripts": {
+    "build": "sh scripts/build.sh",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

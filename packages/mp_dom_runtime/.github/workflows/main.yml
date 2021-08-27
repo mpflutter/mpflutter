@@ -1,0 +1,19 @@
+name: GiteeSync
+
+on: 
+  - push
+  - delete
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    name: Git Repo Sync
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: wangchucheng/git-repo-sync@v0.1.0
+      with:
+        target-url: https://gitee.com/mpflutter/mp_dom_runtime.git
+        target-username: ponycui
+        target-token: ${{ secrets.GITEE_TOKEN }}

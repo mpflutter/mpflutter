@@ -1,0 +1,12 @@
+{
+    "name": "@mpflutter/mp_web_features",
+    "version": "1.0.0",
+    "description": "",
+    "scripts": {
+      "build": "sh scripts/build.sh",
+      "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "",
+    "license": "ISC"
+  }
+  

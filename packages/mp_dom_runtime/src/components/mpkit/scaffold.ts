@@ -1,0 +1,165 @@
+import { ComponentView } from "../component_view";
+import { setDOMStyle } from "../dom_utils";
+import { cssColor, cssColorHex } from "../utils";
+
+export interface MPScaffoldDelegate {
+  document: Document;
+  setPageTitle(title: string): void;
+  setPageBackgroundColor(color: string): void;
+  setAppBarColor(color: string, tintColor?: string): void;
+}
+
+export class MPScaffold extends ComponentView {
+  attached = false;
+  appBar?: ComponentView;
+  body?: ComponentView;
+  bottomBar?: ComponentView;
+  floatingBody?: ComponentView;
+  delegate?: MPScaffoldDelegate;
+  refreshEndResolver?: (_: any) => void;
+
+  setAppBar(appBar?: ComponentView) {
+    if (this.appBar === appBar) return;
+    this.removeAllSubviews();
+    this.appBar = appBar;
+    if (appBar && this.engine.pageMode) {
+      appBar.additionalConstraints = { position: "fixed" };
+      setDOMStyle(appBar.htmlElement, { position: "fixed", zIndex: "9999" });
+    }
+    this.readdSubviews();
+  }
+
+  setBody(body?: ComponentView) {
+    if (this.body === body) return;
+    this.removeAllSubviews();
+    this.body = body;
+    this.readdSubviews();
+  }
+
+  setBottomBar(bottomBar?: ComponentView) {
+    if (this.bottomBar === bottomBar) return;
+    this.removeAllSubviews();
+    this.bottomBar = bottomBar;
+    if (bottomBar && this.engine.pageMode) {
+      bottomBar.additionalConstraints = {
+        position: "fixed",
+        top: "unset",
+        zIndex: "9999",
+      };
+      setDOMStyle(bottomBar.htmlElement, {
+        position: "fixed",
+        top: "unset",
+        bottom: "0px",
+      });
+    }
+    this.readdSubviews();
+  }
+
+  setFloatingBody(floatingBody?: ComponentView) {
+    if (this.floatingBody === floatingBody) return;
+    this.removeAllSubviews();
+    this.floatingBody = floatingBody;
+    if (floatingBody && this.engine.pageMode) {
+      floatingBody.additionalConstraints = {
+        position: "fixed",
+        zIndex: "9999",
+      };
+      setDOMStyle(floatingBody.htmlElement, {
+        position: "fixed",
+      });
+    }
+    this.readdSubviews();
+  }
+
+  readdSubviews() {
+    if (this.body) {
+      this.addSubview(this.body);
+    }
+    if (this.appBar) {
+      this.addSubview(this.appBar);
+    }
+    if (this.bottomBar) {
+      this.addSubview(this.bottomBar);
+    }
+    if (this.floatingBody) {
+      this.addSubview(this.floatingBody);
+    }
+  }
+
+  setAttributes(attributes: any) {
+    super.setAttributes(attributes);
+    this.setAppBar(
+      attributes.appBar
+        ? this.factory.create(attributes.appBar, this.document)
+        : undefined
+    );
+    this.setBody(
+      attributes.body
+        ? this.factory.create(attributes.body, this.document)
+        : undefined
+    );
+    this.setBottomBar(
+      attributes.bottomBar
+        ? this.factory.create(attributes.bottomBar, this.document)
+        : undefined
+    );
+    this.setFloatingBody(
+      attributes.floatingBody
+        ? this.factory.create(attributes.floatingBody, this.document)
+        : undefined
+    );
+    if (attributes.name) {
+      this.delegate?.setPageTitle(attributes.name);
+    } else {
+      this.delegate?.setPageTitle("");
+    }
+    if (attributes.backgroundColor) {
+      this.delegate?.setPageBackgroundColor(
+        cssColorHex(attributes.backgroundColor)
+      );
+    } else {
+      this.delegate?.setPageBackgroundColor("transparent");
+    }
+    if (attributes.appBarColor) {
+      this.delegate?.setAppBarColor(
+        cssColorHex(attributes.appBarColor),
+        attributes.appBarTintColor
+          ? cssColorHex(attributes.appBarTintColor)
+          : "#000000"
+      );
+    }
+  }
+
+  setDelegate(delegate?: MPScaffoldDelegate) {
+    this.delegate = delegate;
+  }
+
+  onRefresh(): Promise<any> {
+    return new Promise((res) => {
+      this.refreshEndResolver = res;
+      this.engine.sendMessage(
+        JSON.stringify({
+          type: "scaffold",
+          message: {
+            event: "onRefresh",
+            target: this.hashCode,
+          },
+        })
+      );
+    });
+  }
+
+  onReachBottom() {
+    this.engine.sendMessage(
+      JSON.stringify({
+        type: "scaffold",
+        message: {
+          event: "onReachBottom",
+          target: this.hashCode,
+        },
+      })
+    );
+  }
+
+  setChildren() {}
+}
