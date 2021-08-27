@@ -37,7 +37,7 @@ Dart 端分别有两个子工程，在 [mpflutter/mpflutter](https://github.com/
 
 ### Native 端
 
-小程序 / Web 端由 [mpflutter/mp_dom_runtime](https://github.com/mpflutter/mp_dom_runtime) 负责渲染，具体架构请参见该仓库。
+小程序 / Web 端由 [mpflutter/mp_dom_runtime](https://github.com/mpflutter/mpflutter/packages/mp_dom_runtime) 负责渲染，具体架构请参见该仓库。
 
 ## 开发环境配置说明
 
@@ -61,13 +61,13 @@ Dart 端分别有两个子工程，在 [mpflutter/mpflutter](https://github.com/
 
 使用 VSCode 打开 `mpflutter_sample` 工程，按下键盘 『F5』 键，开始 Debug。
 
-使用 VSCode 打开 `mp_dom_runtime`，执行 `npm run build`，然后执行 `http-server -c-1`，使用浏览器打开 `sample` 目录。
+使用 VSCode 打开 `mp_dom_runtime`，执行 `npm run build`，然后执行 `http-server -c-1`，使用浏览器打开 `sample_web` 目录。
 
 看看 sample 工程是否正常在浏览器上运行。
 
 ### 修改 mp_dom_runtime 工程
 
-修改代码后，重新执行 `npm run build`，在浏览器中刷新 `sample` 目录，查看新修改是否有效。
+修改代码后，重新执行 `npm run build`，在浏览器中刷新 `sample_web` 目录，查看新修改是否有效。
 
 ### 修改 mpflutter 工程
 
