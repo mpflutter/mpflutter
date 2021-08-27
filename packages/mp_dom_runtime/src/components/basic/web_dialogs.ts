@@ -65,6 +65,51 @@ export class WebDialogs {
           );
         },
       });
+    } else if (message["params"]["dialogType"] === "actionSheet") {
+      wx.showActionSheet({
+        itemList: message["params"]["items"],
+        success: (res: any) => {
+          engine.sendMessage(
+            JSON.stringify({
+              type: "action",
+              message: {
+                event: "callback",
+                id: message["id"],
+                data: res.tapIndex,
+              },
+            })
+          );
+        },
+        fail: () => {
+          engine.sendMessage(
+            JSON.stringify({
+              type: "action",
+              message: {
+                event: "callback",
+                id: message["id"],
+                data: null,
+              },
+            })
+          );
+        },
+      });
+    } else if (message["params"]["dialogType"] === "showToast") {
+      let params: any = {};
+      if (message["params"]["title"]) {
+        params.title = message["params"]["title"];
+      }
+      if (message["params"]["icon"]) {
+        params.icon = message["params"]["icon"]?.replace("ToastIcon.", "");
+      }
+      if (message["params"]["duration"]) {
+        params.duration = message["params"]["duration"];
+      }
+      if (message["params"]["mask"]) {
+        params.mask = message["params"]["mask"];
+      }
+      wx.showToast(params);
+    } else if (message["params"]["dialogType"] === "hideToast") {
+      wx.hideToast();
     }
   }
 
@@ -99,6 +144,51 @@ export class WebDialogs {
           message: { event: "callback", id: message["id"], data: result },
         })
       );
+    } else if (message["params"]["dialogType"] === "actionSheet") {
+      (window as any).MPWebDialog.showActionSheet({
+        itemList: message["params"]["items"],
+        success: (res: any) => {
+          engine.sendMessage(
+            JSON.stringify({
+              type: "action",
+              message: {
+                event: "callback",
+                id: message["id"],
+                data: res.tapIndex,
+              },
+            })
+          );
+        },
+        fail: () => {
+          engine.sendMessage(
+            JSON.stringify({
+              type: "action",
+              message: {
+                event: "callback",
+                id: message["id"],
+                data: null,
+              },
+            })
+          );
+        },
+      });
+    } else if (message["params"]["dialogType"] === "showToast") {
+      let params: any = {};
+      if (message["params"]["title"]) {
+        params.title = message["params"]["title"];
+      }
+      if (message["params"]["icon"]) {
+        params.icon = message["params"]["icon"]?.replace("ToastIcon.", "");
+      }
+      if (message["params"]["duration"]) {
+        params.duration = message["params"]["duration"];
+      }
+      if (message["params"]["mask"]) {
+        params.mask = message["params"]["mask"];
+      }
+      (window as any).MPWebDialog.showToast(params);
+    } else if (message["params"]["dialogType"] === "hideToast") {
+      (window as any).MPWebDialog.hideToast();
     }
   }
 }
