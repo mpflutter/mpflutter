@@ -6,3 +6,5 @@ environment:
   sdk: ">=2.12.0 <3.0.0"
 dependencies:
   path: any
+  http: 
+    git: https://github.com/mpflutter-plugins/http
