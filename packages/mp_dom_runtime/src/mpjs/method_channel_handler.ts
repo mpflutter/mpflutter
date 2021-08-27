@@ -11,7 +11,8 @@ export class MethodChannelHandler {
     method: string,
     beInvokeMethod: string,
     beInvokeParams: any,
-    resultCallback: (jsonEncodedResult: string) => void
+    resultCallback: (jsonEncodedResult: string) => void,
+    eventSink?: (data: string) => void
   ) {
     if (!Object.prototype.hasOwnProperty.call(self, method)) {
       resultCallback("NOTIMPLEMENTED");
@@ -22,7 +23,7 @@ export class MethodChannelHandler {
       return;
     }
     try {
-      let result = await (self as any)[method][beInvokeMethod](beInvokeParams);
+      let result = await (self as any)[method][beInvokeMethod](beInvokeParams, eventSink);
       resultCallback(JSON.stringify(result));
     } catch (error) {
       resultCallback("ERROR:" + error);

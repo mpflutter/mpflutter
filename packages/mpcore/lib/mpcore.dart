@@ -144,6 +144,17 @@ class MPCore {
           .hasProperty('mp_core_methodChannelHandlerWebOnly')) {
         if (data != null) {
           final methodMessage = StandardMethodCodec().decodeMethodCall(data);
+          void Function(dynamic data)? eventSink;
+          if (methodMessage.method == 'listen') {
+            eventSink = (data) {
+              ServicesBinding.instance?.defaultBinaryMessenger
+                  .handlePlatformMessage(
+                      method,
+                      StandardMethodCodec()
+                          .encodeSuccessEnvelope(json.decode(data)),
+                      null);
+            };
+          }
           await mpjs.context.callMethod('mp_core_methodChannelHandlerWebOnly', [
             method,
             methodMessage.method,
@@ -165,7 +176,8 @@ class MPCore {
                   );
                 }
               }
-            }
+            },
+            eventSink,
           ]);
         } else {
           callback?.call(null);
