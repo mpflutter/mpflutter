@@ -48,7 +48,7 @@ export class MPDrawable {
       } else {
         throw new Error("Unknown drawable type.");
       }
-    } catch (error) {
+    } catch (error: any) {
       this.engine.sendMessage(
         JSON.stringify({
           type: "decode_drawable",
