@@ -1,13 +1,16 @@
 import 'dart:io';
 
+import 'package:path/path.dart' as p;
+import 'package:crypto/crypto.dart';
+
 import 'build_plugins.dart' as plugin_builder;
 
 main(List<String> args) {
   _checkPubspec();
   _createBuildDir();
-  final hashCode = _buildDartJS();
+  _buildDartJS();
   plugin_builder.main(args);
-  _copyWebSource(hashCode);
+  _copyWebSource();
 }
 
 _checkPubspec() {
@@ -28,7 +31,7 @@ _createBuildDir() {
   }
 }
 
-String _buildDartJS() {
+void _buildDartJS() {
   Process.runSync(
       'dart2js',
       [
@@ -57,9 +60,6 @@ String _buildDartJS() {
     './build/assets/vm_snapshot_data',
     './build/snapshot_blob.bin.d'
   ]);
-  return File('./build/assets/.last_build_id')
-      .readAsStringSync()
-      .substring(0, 6);
 }
 
 _fixDefererLoader() {
@@ -73,20 +73,25 @@ _fixDefererLoader() {
   File('build/main.dart.js').writeAsStringSync(code);
 }
 
-_copyWebSource(String hashCode) {
+_copyWebSource() async {
+  _copyPathSync('./web', './build');
+  final mainDartJSHashCode = File('./build/main.dart.js').existsSync()
+      ? (await md5.bind(File('./build/main.dart.js').openRead()).first)
+          .toString()
+          .substring(0, 8)
+      : "";
+  final pluginMinJSHashCode = File('./build/plugins.min.js').existsSync()
+      ? (await md5.bind(File('./build/plugins.min.js').openRead()).first)
+          .toString()
+          .substring(0, 8)
+      : "";
   var indexFileContent = File('./web/index.html').readAsStringSync();
   indexFileContent =
       indexFileContent.replaceAll("var dev = true;", "var dev = false;");
   indexFileContent = indexFileContent
-      .replaceAll("'main.dart.js'", "'main.dart.js?$hashCode'")
-      .replaceAll("'plugins.min.js'", "'plugins.min.js?$hashCode'");
+      .replaceAll("main.dart.js", "main.dart.js?$mainDartJSHashCode")
+      .replaceAll("plugins.min.js", "plugins.min.js?$pluginMinJSHashCode");
   File("./build/index.html").writeAsStringSync(indexFileContent);
-  if (File("./web/index.css").existsSync()) {
-    File("./web/index.css").copySync("./build/index.css");
-  }
-  if (File("./web/plugins.min.js").existsSync()) {
-    File("./web/plugins.min.js").copySync("./build/plugins.min.js");
-  }
 }
 
 _removeFiles(List<String> files) {
@@ -95,4 +100,18 @@ _removeFiles(List<String> files) {
       File(element).deleteSync();
     } catch (e) {}
   });
+}
+
+void _copyPathSync(String from, String to) {
+  Directory(to).createSync(recursive: true);
+  for (final file in Directory(from).listSync(recursive: true)) {
+    final copyTo = p.join(to, p.relative(file.path, from: from));
+    if (file is Directory) {
+      Directory(copyTo).createSync(recursive: true);
+    } else if (file is File) {
+      File(file.path).copySync(copyTo);
+    } else if (file is Link) {
+      Link(copyTo).createSync(file.targetSync(), recursive: true);
+    }
+  }
 }
