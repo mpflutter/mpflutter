@@ -135,6 +135,7 @@ export class Page {
 
   setOverlays(overlays: any[]) {
     this.overlaysView.forEach((it) => {
+      it.htmlElement.remove();
       it.removeFromSuperview();
     });
     let overlaysView = overlays
