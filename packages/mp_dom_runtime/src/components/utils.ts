@@ -20,7 +20,7 @@ export const cssColor = (value: string) => {
   if (a.length < 2) {
     a = "0" + a;
   }
-  return `#${r}${g}${b}${a}`;
+  return `rgba(${((intValue >> 16) & 0xff)},${((intValue >> 8) & 0xff)},${((intValue >> 0) & 0xff)},${(((intValue >> 24) & 0xff) / 255.0)})`;
 };
 
 export const cssColorHex = (value: string) => {

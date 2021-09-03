@@ -124,12 +124,20 @@ export class MPScaffold extends ComponentView {
     } else {
       this.delegate?.setPageTitle("");
     }
-    if (attributes.backgroundColor) {
-      this.delegate?.setPageBackgroundColor(
-        cssColorHex(attributes.backgroundColor)
-      );
+    if (this.delegate) {
+      if (attributes.backgroundColor) {
+        this.delegate?.setPageBackgroundColor(
+          cssColorHex(attributes.backgroundColor)
+        );
+      } else {
+        this.delegate?.setPageBackgroundColor("transparent");
+      }
     } else {
-      this.delegate?.setPageBackgroundColor("transparent");
+      setDOMStyle(this.htmlElement, {
+        backgroundColor: attributes.backgroundColor
+          ? cssColor(attributes.backgroundColor)
+          : "unset",
+      });
     }
     if (attributes.appBarColor) {
       this.delegate?.setAppBarColor(
