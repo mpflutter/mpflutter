@@ -270,10 +270,6 @@ class MPElement {
       fromFlutterElementMethodCache[element.widget.runtimeType] =
           _encodeGridView;
       return _encodeGridView(element);
-    } else if (element.widget is SliverWaterfallItem) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeSliverWaterfallItem;
-      return _encodeSliverWaterfallItem(element);
     } else if (element.widget is DecoratedBox) {
       fromFlutterElementMethodCache[element.widget.runtimeType] =
           _encodeDecoratedBox;

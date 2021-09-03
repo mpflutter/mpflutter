@@ -45,21 +45,6 @@ MPElement _encodeGridView(Element element) {
   );
 }
 
-MPElement _encodeSliverWaterfallItem(Element element) {
-  final widget = element.widget as SliverWaterfallItem;
-  var height = widget.size?.height;
-  if (height == null && element.findRenderObject() is RenderBox) {
-    height = (element.findRenderObject() as RenderBox).size.height;
-  }
-  return MPElement(
-    hashCode: element.hashCode,
-    flutterElement: element,
-    name: 'sliver_waterfall_item',
-    children: MPElement.childrenFromFlutterElement(element),
-    attributes: {'height': height},
-  );
-}
-
 Map? _encodeGridDelegate(dynamic delegate) {
   if (delegate == null) return null;
   if (delegate is SliverWaterfallDelegate) {

@@ -62,20 +62,7 @@ class _SliverWaterfallGridGeometry extends SliverGridGeometry {
   BoxConstraints getBoxConstraints(SliverConstraints constraints) {
     return constraints.asBoxConstraints(
       minExtent: mainAxisExtent,
-      maxExtent: 2000,
       crossAxisExtent: crossAxisExtent,
     );
-  }
-}
-
-class SliverWaterfallItem extends StatelessWidget {
-  final Widget child;
-  final Size? size;
-
-  SliverWaterfallItem({required this.child, this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return child;
   }
 }
