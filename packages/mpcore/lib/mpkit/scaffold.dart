@@ -12,6 +12,8 @@ class MPScaffold extends StatefulWidget {
   final Function? onReachBottom;
   final PreferredSizeWidget? appBar;
   final Widget? bottomBar;
+  final bool? bottomBarWithSafeArea;
+  final Color? bottomBarSafeAreaColor;
   final Widget? floatingBody;
   final Color? backgroundColor;
 
@@ -24,6 +26,8 @@ class MPScaffold extends StatefulWidget {
     this.onReachBottom,
     this.appBar,
     this.bottomBar,
+    this.bottomBarWithSafeArea,
+    this.bottomBarSafeAreaColor,
     this.floatingBody,
     this.backgroundColor,
   });

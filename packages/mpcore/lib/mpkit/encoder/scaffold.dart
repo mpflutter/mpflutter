@@ -50,6 +50,8 @@ MPElement _encodeMPScaffold(Element element) {
       'bottomBar': bottomBarElement != null
           ? MPElement.fromFlutterElement(bottomBarElement)
           : null,
+      'bottomBarWithSafeArea': widget.bottomBarWithSafeArea,
+      'bottomBarSafeAreaColor': widget.bottomBarSafeAreaColor?.value.toString(),
       'backgroundColor': bodyBackgroundColor != null
           ? bodyBackgroundColor.value.toString()
           : null,

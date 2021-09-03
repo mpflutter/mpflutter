@@ -36,7 +36,11 @@ export class MPScaffold extends ComponentView {
     this.readdSubviews();
   }
 
-  setBottomBar(bottomBar?: ComponentView) {
+  setBottomBar(
+    bottomBar?: ComponentView,
+    bottomBarWithSafeArea?: boolean,
+    bottomBarSafeAreaColor?: string
+  ) {
     if (this.bottomBar === bottomBar) return;
     this.removeAllSubviews();
     this.bottomBar = bottomBar;
@@ -50,6 +54,11 @@ export class MPScaffold extends ComponentView {
         position: "fixed",
         top: "unset",
         bottom: "0px",
+        paddingBottom:
+          bottomBarWithSafeArea === true ? "env(safe-area-inset-bottom)" : "",
+        backgroundColor: bottomBarSafeAreaColor
+          ? cssColor(bottomBarSafeAreaColor)
+          : undefined,
       });
     }
     this.readdSubviews();
@@ -101,7 +110,9 @@ export class MPScaffold extends ComponentView {
     this.setBottomBar(
       attributes.bottomBar
         ? this.factory.create(attributes.bottomBar, this.document)
-        : undefined
+        : undefined,
+      attributes.bottomBarWithSafeArea,
+      attributes.bottomBarSafeAreaColor
     );
     this.setFloatingBody(
       attributes.floatingBody

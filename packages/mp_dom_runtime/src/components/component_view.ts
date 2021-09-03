@@ -70,8 +70,14 @@ export class ComponentView {
       .map((it) => this.factory.create(it, this.document))
       .filter((it) => it);
     let changed = false;
+    let changedOnlyAppend = false;
     if (makeSubviews.length !== this.subviews.length) {
       changed = true;
+      if (makeSubviews.length > this.subviews.length) {
+        changedOnlyAppend = this.subviews.every((it, idx) => {
+          return it === makeSubviews[idx] && it.superview === this;
+        });
+      }
     } else {
       let allSame = makeSubviews.every((it, idx) => {
         return it === this.subviews[idx] && it.superview === this;
@@ -81,8 +87,18 @@ export class ComponentView {
       }
     }
     if (changed) {
-      this.removeAllSubviews();
-      makeSubviews.forEach((it) => this.addSubview(it!));
+      if (changedOnlyAppend) {
+        for (
+          let index = this.subviews.length;
+          index < makeSubviews.length;
+          index++
+        ) {
+          this.addSubview(makeSubviews[index]!);
+        }
+      } else {
+        this.removeAllSubviews();
+        makeSubviews.forEach((it) => this.addSubview(it!));
+      }
     }
   }
 
