@@ -86,7 +86,12 @@ class MPWebDialogs {
     required String title,
     bool mask = false,
   }) {
-    showToast(title: title, duration: Duration(seconds: 3600), mask: mask);
+    showToast(
+      title: title,
+      icon: ToastIcon.loading,
+      duration: Duration(seconds: 3600),
+      mask: mask,
+    );
   }
 
   static void hideLoading() {
