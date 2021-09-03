@@ -170,7 +170,13 @@ class MethodChannel {
       if (missingOk) {
         return null;
       } else {
-        rethrow;
+        if (e
+            .toString()
+            .startsWith('PlatformException(NOTIMPLEMENTED, NOTIMPLEMENTED')) {
+          print('No implementation found for method $method on channel $name');
+        } else {
+          print(e);
+        }
       }
     }
   }
