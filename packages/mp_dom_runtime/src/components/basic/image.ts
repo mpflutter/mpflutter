@@ -3,8 +3,24 @@ import { ComponentView } from "../component_view";
 import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 
 export class Image extends ComponentView {
+  
   elementType() {
     return "img";
+  }
+
+  updateLayout() {
+    if (!this.attributes?.width || !this.attributes?.height) {
+      setDOMStyle(this.htmlElement, {
+        position: this.additionalConstraints?.position ?? "absolute",
+        left: "0px",
+        top: "0px",
+        width: "100%",
+        height: "100%",
+      });
+    }
+    else {
+      super.updateLayout();
+    }
   }
 
   setAttributes(attributes: any) {
@@ -79,5 +95,6 @@ export class Image extends ComponentView {
         setDOMAttribute(this.htmlElement, "src", assetUrl);
       }
     }
+    this.updateLayout();
   }
 }
