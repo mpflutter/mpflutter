@@ -20,7 +20,7 @@ export class Overlay extends ComponentView {
       });
     }
     this.additionalConstraints = { position: "fixed" };
-    setDOMStyle(this.htmlElement, { position: "fixed" });
+    setDOMStyle(this.htmlElement, { position: "fixed", zIndex: "10000" });
     if (attributes.onBackgroundTap) {
       this.htmlElement.onclick = () => {
         this.engine.sendMessage(

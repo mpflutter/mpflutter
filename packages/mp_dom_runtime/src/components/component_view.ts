@@ -10,6 +10,7 @@ interface Constraints {
 }
 
 export class ComponentView {
+  classname = "";
   htmlElement: HTMLElement;
   superview?: ComponentView;
   subviews: ComponentView[] = [];
@@ -19,6 +20,7 @@ export class ComponentView {
   attributes: any;
   constraints?: Constraints;
   additionalConstraints: any;
+  collectionViewConstraints: any;
 
   ancestors: AncestorView[] = [];
   ancestorStyle: any = {};
@@ -49,12 +51,20 @@ export class ComponentView {
         y += it.constraints.y;
       }
     });
+    let additionalConstraints = this.additionalConstraints;
+    if (
+      this.collectionViewConstraints &&
+      this.superview &&
+      this.superview.classname === "CollectionView"
+    ) {
+      additionalConstraints = this.collectionViewConstraints;
+    }
     setDOMStyle(this.htmlElement, {
-      position: this.additionalConstraints?.position ?? "absolute",
-      left: this.additionalConstraints?.left ?? x + "px",
-      top: this.additionalConstraints?.top ?? y + "px",
-      width: this.additionalConstraints?.width ?? w + "px",
-      height: this.additionalConstraints?.height ?? h + "px",
+      position: additionalConstraints?.position ?? "absolute",
+      left: additionalConstraints?.left ?? x + "px",
+      top: additionalConstraints?.top ?? y + "px",
+      width: additionalConstraints?.width ?? w + "px",
+      height: additionalConstraints?.height ?? h + "px",
     });
   }
 

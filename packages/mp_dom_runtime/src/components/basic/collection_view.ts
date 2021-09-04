@@ -3,6 +3,7 @@ import { setDOMStyle } from "../dom_utils";
 import { SliverPersistentHeader } from "./sliver_persistent_header";
 
 export class CollectionView extends ComponentView {
+  classname = "CollectionView";
   wrapperHtmlElement = this.document.createElement("div");
   viewWidth: number = 0;
   viewHeight: number = 0;
@@ -29,6 +30,10 @@ export class CollectionView extends ComponentView {
     for (let index = 0; index < this.subviews.length; index++) {
       let subview = this.subviews[index];
       let subviewLayout = this.layout.layoutAttributesForItemAtIndex(index);
+      subview.collectionViewConstraints = {
+        top: subviewLayout.y.toFixed(1) + "px",
+        left: subviewLayout.x.toFixed(1) + "px",
+      };
       setDOMStyle(subview.htmlElement, {
         position: "absolute",
         top: subviewLayout.y.toFixed(1) + "px",
