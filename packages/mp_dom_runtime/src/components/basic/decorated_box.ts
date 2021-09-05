@@ -24,13 +24,22 @@ export class DecoratedBox extends ComponentView {
         } else if (attributes.image.assetName) {
           if (this.engine.debugger) {
             const assetUrl = (() => {
-              if (attributes.assetPkg) {
-                return `http://${this.engine.debugger.serverAddr}/assets/packages/${attributes.assetPkg}/${attributes.assetName}`;
+              if (attributes.image.assetPkg) {
+                return `http://${this.engine.debugger.serverAddr}/assets/packages/${attributes.image.assetPkg}/${attributes.image.assetName}`;
               } else {
-                return `http://${this.engine.debugger.serverAddr}/assets/${attributes.assetName}`;
+                return `http://${this.engine.debugger.serverAddr}/assets/${attributes.image.assetName}`;
               }
             })();
-            (this.htmlElement as HTMLImageElement).src = assetUrl;
+            return assetUrl;
+          } else {
+            let assetUrl = (() => {
+              if (attributes.image.assetPkg) {
+                return `assets/packages/${attributes.image.assetPkg}/${attributes.assetName}`;
+              } else {
+                return `assets/${attributes.image.assetName}`;
+              }
+            })();
+            return assetUrl;
           }
         }
       })()}")`;
@@ -39,6 +48,7 @@ export class DecoratedBox extends ComponentView {
       } else {
         style.backgroundSize = "contain";
       }
+      style.backgroundRepeat = "no-repeat";
     }
     if (attributes.decoration?.gradient) {
       if (style.backgroundImage) {
