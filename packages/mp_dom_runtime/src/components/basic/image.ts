@@ -3,13 +3,15 @@ import { ComponentView } from "../component_view";
 import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 
 export class Image extends ComponentView {
-  
   elementType() {
     return "img";
   }
 
   updateLayout() {
-    if (!this.attributes?.width || !this.attributes?.height) {
+    if (
+      (!this.attributes?.width || !this.attributes?.height) &&
+      (!this.constraints?.w || !this.constraints?.h)
+    ) {
       setDOMStyle(this.htmlElement, {
         position: this.additionalConstraints?.position ?? "absolute",
         left: "0px",
@@ -17,8 +19,7 @@ export class Image extends ComponentView {
         width: "100%",
         height: "100%",
       });
-    }
-    else {
+    } else {
       super.updateLayout();
     }
   }
