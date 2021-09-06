@@ -28,6 +28,8 @@ MPElement _encodeGridView(Element element) {
     }
   })();
   Element? appBarPinnedElement;
+  var bottomBarHeight = 0.0;
+  var bottomBarWithSafeArea = false;
   if (isRoot && widget.scrollDirection == Axis.vertical) {
     final scaffoldState = element.findAncestorStateOfType<MPScaffoldState>();
     if (scaffoldState?.appBarKey.currentWidget != null) {
@@ -38,6 +40,10 @@ MPElement _encodeGridView(Element element) {
         singleChildOnly: true,
       );
     }
+    bottomBarHeight =
+        scaffoldState?.bottomBarKey.currentContext?.size?.height ?? 0.0;
+    bottomBarWithSafeArea =
+        scaffoldState?.widget.bottomBarWithSafeArea ?? false;
   }
   return MPElement(
     hashCode: element.hashCode,
@@ -52,6 +58,8 @@ MPElement _encodeGridView(Element element) {
       'appBarPinned': appBarPinnedElement != null
           ? MPElement.fromFlutterElement(appBarPinnedElement)
           : null,
+      'bottomBarHeight': bottomBarHeight,
+      'bottomBarWithSafeArea': bottomBarWithSafeArea,
       'padding': widget.padding?.toString(),
       'width':
           // ignore: invalid_use_of_protected_member

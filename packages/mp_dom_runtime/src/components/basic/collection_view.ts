@@ -8,6 +8,8 @@ export class CollectionView extends ComponentView {
   appBarPinnedViews: ComponentView[] = [];
   viewWidth: number = 0;
   viewHeight: number = 0;
+  bottomBarHeight: number = 0;
+  bottomBarWithSafeArea = false;
   layout!: CollectionViewLayout;
 
   constructor(document: Document) {
@@ -56,7 +58,7 @@ export class CollectionView extends ComponentView {
       top: "0px",
       left: "0px",
       width: contentSize.width + "px",
-      height: contentSize.height + "px",
+      height: this.bottomBarWithSafeArea ? `calc(${contentSize.height + this.bottomBarHeight}px + env(safe-area-inset-bottom))` : contentSize.height + this.bottomBarHeight + "px",
     });
   }
 
@@ -65,6 +67,8 @@ export class CollectionView extends ComponentView {
     setDOMStyle(this.htmlElement, {
       overflow: attributes.isRoot ? "unset" : "scroll",
     });
+    this.bottomBarHeight = attributes.bottomBarHeight ?? 0.0;
+    this.bottomBarWithSafeArea = attributes.bottomBarWithSafeArea ?? false;
   }
 
   addSubview(view: ComponentView) {
