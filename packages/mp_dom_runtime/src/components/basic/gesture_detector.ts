@@ -11,7 +11,11 @@ export class GestureDetector extends ComponentView {
   }
 
   elementType() {
-    return "div";
+    if (MPEnv.platformType == PlatformType.wxMiniProgram) {
+      return "catchclick";
+    } else {
+      return "div";
+    }
   }
 
   setConstraints(constraints: any) {
@@ -38,7 +42,7 @@ export class GestureDetector extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    this.htmlElement.onclick = () => {
+    this.htmlElement.onclick = (e) => {
       this.engine.sendMessage(
         JSON.stringify({
           type: "gesture_detector",
@@ -48,6 +52,7 @@ export class GestureDetector extends ComponentView {
           },
         })
       );
+      if (e) e.stopPropagation();
     };
     this.hoverOpacity = attributes.hoverOpacity;
     setDOMAttribute(this.htmlElement, "hoverOpacity", attributes.hoverOpacity);
