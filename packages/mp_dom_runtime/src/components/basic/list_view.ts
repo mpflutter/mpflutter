@@ -1,4 +1,5 @@
-import { cssPadding } from "../utils";
+import { setDOMStyle } from "../dom_utils";
+import { cssPadding, cssSizeFromMPElement } from "../utils";
 import { CollectionView } from "./collection_view";
 import { GridListLayout } from "./grid_list_layout";
 
@@ -42,6 +43,12 @@ export class ListView extends CollectionView {
       (this.layout as GridListLayout).padding.right = parseFloat(
         padding.paddingRight ?? "0.0"
       );
+    }
+    if (attributes.appBarPinned) {
+      this.setPinnedAppBar(attributes);
+    } else if (this.appBarPinnedViews.length) {
+      this.appBarPinnedViews.forEach((it) => it.removeFromSuperview());
+      this.appBarPinnedViews = [];
     }
     this.reloadLayouts();
   }

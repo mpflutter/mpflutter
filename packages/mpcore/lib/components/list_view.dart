@@ -16,6 +16,25 @@ MPElement _encodeListView(Element element) {
     );
   }
   final widget = element.widget as ListView;
+  final isRoot = (() {
+    if (widget.primary == false) {
+      return false;
+    } else if (widget.scrollDirection == Axis.vertical &&
+        element.findAncestorWidgetOfExactType<Scrollable>() == null) {
+      return true;
+    } else {
+      return false;
+    }
+  })();
+  Element? appBarPinnedElement;
+  if (isRoot && widget.scrollDirection == Axis.vertical) {
+    final scaffoldState = element.findAncestorStateOfType<MPScaffoldState>();
+    if (scaffoldState?.appBarKey.currentWidget is MPScaffoldAppBar &&
+        (scaffoldState?.appBarKey.currentWidget as MPScaffoldAppBar).child
+            is MPAppBarPinned) {
+      appBarPinnedElement = scaffoldState!.appBarKey.currentContext as Element?;
+    }
+  }
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
@@ -24,16 +43,10 @@ MPElement _encodeListView(Element element) {
       indexedSemanticeParentElement,
     ),
     attributes: {
-      'isRoot': (() {
-        if (widget.primary == false) {
-          return false;
-        } else if (widget.scrollDirection == Axis.vertical &&
-            element.findAncestorWidgetOfExactType<Scrollable>() == null) {
-          return true;
-        } else {
-          return false;
-        }
-      })(),
+      'isRoot': isRoot,
+      'appBarPinned': appBarPinnedElement != null
+          ? MPElement.fromFlutterElement(appBarPinnedElement)
+          : null,
       'padding': widget.padding?.toString(),
       'scrollDirection': widget.scrollDirection.toString(),
     },

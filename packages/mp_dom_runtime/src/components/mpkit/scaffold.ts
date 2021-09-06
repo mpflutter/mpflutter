@@ -19,12 +19,25 @@ export class MPScaffold extends ComponentView {
   refreshEndResolver?: (_: any) => void;
 
   setAppBar(appBar?: ComponentView) {
-    if (this.appBar === appBar) return;
+    if (this.appBar === appBar && (appBar as any)?.collectionViewFixed !== true)
+      return;
     this.removeAllSubviews();
     this.appBar = appBar;
+    if (appBar) {
+      (appBar as any).collectionViewFixed = false;
+      setDOMStyle(appBar.htmlElement, {
+        pointerEvents: "unset",
+      });
+      appBar.subviews.forEach((it) => {
+        setDOMStyle(it.htmlElement, { position: "absolute", marginTop: "0px" });
+      });
+    }
     if (appBar && this.engine.pageMode) {
       appBar.additionalConstraints = { position: "fixed" };
-      setDOMStyle(appBar.htmlElement, { position: "fixed", zIndex: "9999" });
+      setDOMStyle(appBar.htmlElement, {
+        position: "fixed",
+        zIndex: "9999",
+      });
     }
     this.readdSubviews();
   }

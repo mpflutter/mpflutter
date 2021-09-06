@@ -5,6 +5,7 @@ import { SliverPersistentHeader } from "./sliver_persistent_header";
 export class CollectionView extends ComponentView {
   classname = "CollectionView";
   wrapperHtmlElement = this.document.createElement("div");
+  appBarPinnedViews: ComponentView[] = [];
   viewWidth: number = 0;
   viewHeight: number = 0;
   layout!: CollectionViewLayout;
@@ -71,6 +72,44 @@ export class CollectionView extends ComponentView {
       view.removeFromSuperview();
     }
     this.subviews.push(view);
+    view.superview = this;
+    this.wrapperHtmlElement.appendChild(view.htmlElement);
+  }
+
+  setPinnedAppBar(attributes: any) {
+    const appBarPinnedView = this.factory.create(
+      attributes.appBarPinned,
+      this.document
+    );
+    if (appBarPinnedView) {
+      (appBarPinnedView as any).collectionViewFixed = true;
+      let appBarH = appBarPinnedView.constraints?.h ?? 0;
+      let appBarY = 0.0;
+      appBarPinnedView?.subviews.slice().forEach((it, idx) => {
+        if (idx === 0) {
+          appBarY += it.constraints?.h ?? 0;
+        }
+        if (idx === 1) {
+          setDOMStyle(it.htmlElement, {
+            marginTop: -(appBarH - appBarY) + "px",
+            top: "0px",
+            position: "sticky",
+            zIndex: "9999",
+          });
+        } else {
+          setDOMStyle(it.htmlElement, { marginTop: -appBarH + "px" });
+        }
+        this.appBarPinnedViews.push(it);
+        this.addSubviewForPinnedAppBar(it);
+      });
+      setDOMStyle(appBarPinnedView.htmlElement, { pointerEvents: "none" });
+    }
+  }
+
+  addSubviewForPinnedAppBar(view: ComponentView) {
+    if (view.superview) {
+      view.removeFromSuperview();
+    }
     view.superview = this;
     this.wrapperHtmlElement.appendChild(view.htmlElement);
   }

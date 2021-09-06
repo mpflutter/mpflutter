@@ -69,6 +69,13 @@ export class CustomScrollView extends CollectionView {
     super.setAttributes(attributes);
     (this.layout as GridListLayout).isHorizontalScroll =
       attributes.scrollDirection === "Axis.horizontal";
+
+    if (attributes.appBarPinned) {
+      this.setPinnedAppBar(attributes);
+    } else if (this.appBarPinnedViews.length) {
+      this.appBarPinnedViews.forEach((it) => it.removeFromSuperview());
+      this.appBarPinnedViews = [];
+    }
   }
 }
 

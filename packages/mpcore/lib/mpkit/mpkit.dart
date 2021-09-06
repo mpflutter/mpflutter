@@ -9,6 +9,7 @@ import '../mpcore.dart';
 
 part 'app.dart';
 part 'app_bar.dart';
+part 'app_bar_pinned.dart';
 part 'page_route.dart';
 part 'scaffold.dart';
 part 'sliver_waterfall_delegate.dart';

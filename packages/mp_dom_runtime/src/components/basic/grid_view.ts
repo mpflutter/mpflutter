@@ -56,6 +56,12 @@ export class GridView extends CollectionView {
         padding.paddingRight ?? "0.0"
       );
     }
+    if (attributes.appBarPinned) {
+      this.setPinnedAppBar(attributes);
+    } else if (this.appBarPinnedViews.length) {
+      this.appBarPinnedViews.forEach((it) => it.removeFromSuperview());
+      this.appBarPinnedViews = [];
+    }
     this.reloadLayouts();
   }
 }

@@ -207,6 +207,10 @@ class MPElement {
         w = renderBox.size.width;
         h = renderBox.size.height;
       }
+      if (renderBox.parent?.parent is RenderDecoratedBox) {
+        x = 0.0;
+        y = 0.0;
+      }
       hasConstraints = true;
     }
     if (renderBox != null && renderBox is RenderSliver) {
