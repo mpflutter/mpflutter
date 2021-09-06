@@ -5,6 +5,7 @@ MPElement _encodeListView(Element element) {
     element,
     findParent: true,
     maxDepth: 20,
+    singleChildOnly: true,
   );
   if (indexedSemanticeParentElement == null) {
     return MPElement(
@@ -29,10 +30,13 @@ MPElement _encodeListView(Element element) {
   Element? appBarPinnedElement;
   if (isRoot && widget.scrollDirection == Axis.vertical) {
     final scaffoldState = element.findAncestorStateOfType<MPScaffoldState>();
-    if (scaffoldState?.appBarKey.currentWidget is MPScaffoldAppBar &&
-        (scaffoldState?.appBarKey.currentWidget as MPScaffoldAppBar).child
-            is MPAppBarPinned) {
-      appBarPinnedElement = scaffoldState!.appBarKey.currentContext as Element?;
+    if (scaffoldState?.appBarKey.currentWidget != null) {
+      appBarPinnedElement = MPCore.findTarget<MPAppBarPinned>(
+        scaffoldState!.appBarKey.currentContext as Element?,
+        findParent: true,
+        maxDepth: 20,
+        singleChildOnly: true,
+      );
     }
   }
   return MPElement(

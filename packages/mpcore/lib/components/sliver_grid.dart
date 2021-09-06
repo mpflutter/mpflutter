@@ -5,6 +5,7 @@ MPElement _encodeSliverGrid(Element element) {
     element,
     findParent: true,
     maxDepth: 20,
+    singleChildOnly: true,
   );
   if (indexedSemanticeParentElement == null) {
     return MPElement(

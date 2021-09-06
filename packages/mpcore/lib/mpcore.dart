@@ -413,6 +413,7 @@ class MPCore {
     Element? element, {
     bool findParent = false,
     int? maxDepth,
+    bool singleChildOnly = false,
   }) {
     if (maxDepth != null && maxDepth < 0) {
       return null;
@@ -421,6 +422,9 @@ class MPCore {
       return null;
     }
     Element? targetElement;
+    if (singleChildOnly && element is MultiChildRenderObjectElement) {
+      return null;
+    }
     element.visitChildElements((el) {
       if (targetElement != null) return;
       if (el.widget is T) {
