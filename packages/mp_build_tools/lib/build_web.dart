@@ -8,7 +8,7 @@ import 'build_plugins.dart' as plugin_builder;
 main(List<String> args) {
   _checkPubspec();
   _createBuildDir();
-  _buildDartJS();
+  _buildDartJS(dumpInfo: args.contains('--dump-info'));
   plugin_builder.main(args);
   _copyWebSource();
 }
@@ -31,19 +31,25 @@ _createBuildDir() {
   }
 }
 
-void _buildDartJS() {
-  Process.runSync(
+void _buildDartJS({bool dumpInfo = false}) {
+  final dart2JsResult = Process.runSync(
       'dart2js',
       [
         'lib/main.dart',
         '-O4',
         '-Ddart.vm.product=true',
+        dumpInfo ? '--dump-info' : '',
         '-o',
         'build/main.dart.js'
       ],
       runInShell: true);
+  if (dart2JsResult.exitCode != 0) {
+    print(dart2JsResult.stdout);
+    print(dart2JsResult.stderr);
+    throw 'dart2js execute failed.';
+  }
   _fixDefererLoader();
-  Process.runSync(
+  final buildBundleResult = Process.runSync(
     'flutter',
     [
       'build',
@@ -51,6 +57,11 @@ void _buildDartJS() {
     ],
     runInShell: true,
   );
+  if (buildBundleResult.exitCode != 0) {
+    print(buildBundleResult.stdout);
+    print(buildBundleResult.stderr);
+    throw 'flutter build bundle execute failed.';
+  }
   if (Directory('./build/flutter_assets').existsSync()) {
     Directory('./build/flutter_assets').renameSync('./build/assets');
   }
@@ -64,8 +75,8 @@ void _buildDartJS() {
 
 _fixDefererLoader() {
   var code = File('build/main.dart.js').readAsStringSync();
-  code = code.replaceFirstMapped(
-      RegExp(r"m=\$\.([a-z0-9A-Z].?)\(\)\nm.toString"), (match) {
+  code = code.replaceAllMapped(RegExp(r"m=\$\.([a-z0-9A-Z]+)\(\)\nm.toString"),
+      (match) {
     return "m=\$.${match.group(1)}() || ''\nm.toString";
   });
   code = code.replaceFirst(

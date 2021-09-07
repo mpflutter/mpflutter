@@ -11,7 +11,7 @@ main(List<String> args) {
   _createBuildDir();
   plugin_builder.main(args);
   _copyWeappSource();
-  _buildDartJS();
+  _buildDartJS(dumpInfo: args.contains('--dump-info'));
 }
 
 _checkPubspec() {
@@ -32,18 +32,24 @@ _createBuildDir() {
   }
 }
 
-String _buildDartJS() {
-  Process.runSync(
+String _buildDartJS({bool dumpInfo = false}) {
+  final dart2JsResult = Process.runSync(
       'dart2js',
       [
         'lib/main.dart',
         '-O4',
         '-Ddart.vm.product=true',
+        dumpInfo ? '--dump-info' : '',
         '--csp',
         '-o',
         'build/main.dart.js'
       ],
       runInShell: true);
+  if (dart2JsResult.exitCode != 0) {
+    print(dart2JsResult.stdout);
+    print(dart2JsResult.stderr);
+    throw 'dart2js execute failed.';
+  }
   _fixDefererLoader();
   _moveDeferedScriptToSubpackages();
   _writeSubpackagesToAppJson();
@@ -59,7 +65,7 @@ String _buildDartJS() {
   var appSource = File('./build/app.js').readAsStringSync();
   appSource = appSource.replaceAll("var dev = true;", "var dev = false;");
   File('./build/app.js').writeAsStringSync(appSource);
-  Process.runSync(
+  final buildBundleResult = Process.runSync(
     'flutter',
     [
       'build',
@@ -67,6 +73,11 @@ String _buildDartJS() {
     ],
     runInShell: true,
   );
+  if (buildBundleResult.exitCode != 0) {
+    print(buildBundleResult.stdout);
+    print(buildBundleResult.stderr);
+    throw 'flutter build bundle execute failed.';
+  }
   if (Directory('./build/flutter_assets').existsSync()) {
     Directory('./build/flutter_assets').renameSync('./build/assets');
   }
@@ -178,8 +189,8 @@ self.dartDeferredLibraryLoader = function(uri, res, rej) {
 
 _fixDefererLoader() {
   var code = File('build/main.dart.js').readAsStringSync();
-  code = code.replaceFirstMapped(
-      RegExp(r"m=\$\.([a-z0-9A-Z].?)\(\)\nm.toString"), (match) {
+  code = code.replaceAllMapped(RegExp(r"m=\$\.([a-z0-9A-Z]+)\(\)\nm.toString"),
+      (match) {
     return "m=\$.${match.group(1)}() || ''\nm.toString";
   });
   code = code.replaceFirst(
