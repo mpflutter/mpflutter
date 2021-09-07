@@ -136,7 +136,28 @@ export class TextSpan extends ComponentView {
         setDOMAttribute(this.htmlElement, "innerText", attributes.text);
       }
     }
+    if (attributes.onTap_el && attributes.onTap_span) {
+      this.htmlElement.onclick = (e) => {
+        this.onClick();
+        if (e) e.stopPropagation();
+      };
+    }
     setDOMStyle(this.htmlElement, style);
+  }
+
+  onClick() {
+    if (this.attributes.onTap_el && this.attributes.onTap_span) {
+      this.engine.sendMessage(
+        JSON.stringify({
+          type: "rich_text",
+          message: {
+            event: "onTap",
+            target: this.attributes.onTap_el,
+            subTarget: this.attributes.onTap_span,
+          },
+        })
+      );
+    }
   }
 }
 
