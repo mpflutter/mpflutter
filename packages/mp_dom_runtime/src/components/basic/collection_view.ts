@@ -1,5 +1,6 @@
 import { ComponentView } from "../component_view";
 import { setDOMStyle } from "../dom_utils";
+import { cssColor } from "../utils";
 import { SliverPersistentHeader } from "./sliver_persistent_header";
 
 export class CollectionView extends ComponentView {
@@ -33,6 +34,7 @@ export class CollectionView extends ComponentView {
     for (let index = 0; index < this.subviews.length; index++) {
       let subview = this.subviews[index];
       let subviewLayout = this.layout.layoutAttributesForItemAtIndex(index);
+      if (!subviewLayout) continue;
       subview.collectionViewConstraints = {
         top: subviewLayout.y.toFixed(1) + "px",
         left: subviewLayout.x.toFixed(1) + "px",
@@ -58,7 +60,11 @@ export class CollectionView extends ComponentView {
       top: "0px",
       left: "0px",
       width: contentSize.width + "px",
-      height: this.bottomBarWithSafeArea ? `calc(${contentSize.height + this.bottomBarHeight}px + env(safe-area-inset-bottom))` : contentSize.height + this.bottomBarHeight + "px",
+      height: this.bottomBarWithSafeArea
+        ? `calc(${
+            contentSize.height + this.bottomBarHeight
+          }px + env(safe-area-inset-bottom))`
+        : contentSize.height + this.bottomBarHeight + "px",
     });
   }
 
@@ -89,16 +95,25 @@ export class CollectionView extends ComponentView {
       (appBarPinnedView as any).collectionViewFixed = true;
       let appBarH = appBarPinnedView.constraints?.h ?? 0;
       let appBarY = 0.0;
+      let stickyIndex = appBarPinnedView?.subviews.length === 1 ? 0 : 1;
       appBarPinnedView?.subviews.slice().forEach((it, idx) => {
-        if (idx === 0) {
+        if (idx === stickyIndex - 1) {
           appBarY += it.constraints?.h ?? 0;
         }
-        if (idx === 1) {
+        if (idx === stickyIndex) {
           setDOMStyle(it.htmlElement, {
             marginTop: -(appBarH - appBarY) + "px",
             top: "0px",
             position: "sticky",
             zIndex: "9999",
+            backgroundColor:
+              appBarPinnedView.attributes?.color ??
+              appBarPinnedView.attributes?.backgroundColor
+                ? cssColor(
+                    appBarPinnedView.attributes?.color ??
+                      appBarPinnedView.attributes?.backgroundColor
+                  )
+                : "unset",
           });
         } else {
           setDOMStyle(it.htmlElement, { marginTop: -appBarH + "px" });
@@ -106,7 +121,10 @@ export class CollectionView extends ComponentView {
         this.appBarPinnedViews.push(it);
         this.addSubviewForPinnedAppBar(it);
       });
-      setDOMStyle(appBarPinnedView.htmlElement, { pointerEvents: "none" });
+      setDOMStyle(appBarPinnedView.htmlElement, {
+        pointerEvents: "none",
+        display: "none",
+      });
     }
   }
 

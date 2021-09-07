@@ -7,6 +7,7 @@ export class GestureDetector extends ComponentView {
 
   constructor(readonly document: Document) {
     super(document);
+    (this.htmlElement as any).isGestureDetector = true;
     this.setupGestureCatcher();
   }
 
@@ -55,16 +56,34 @@ export class GestureDetector extends ComponentView {
       if (e) e.stopPropagation();
     };
     this.hoverOpacity = attributes.hoverOpacity;
+    (this.htmlElement as any).hoverOpacity = this.hoverOpacity;
     setDOMAttribute(this.htmlElement, "hoverOpacity", attributes.hoverOpacity);
+  }
+
+  static activeTouchElement?: HTMLElement;
+
+  findGestureDetectorElement(elementList: HTMLElement[]) {
+    for (let index = 0; index < elementList.length; index++) {
+      const element = elementList[index] as any;
+      if (element.isGestureDetector) {
+        return element;
+      }
+    }
+    return undefined;
   }
 
   setupGestureCatcher() {
     if (MPEnv.platformType === PlatformType.browser) {
       this.htmlElement.addEventListener(
         "touchstart",
-        () => {
-          if (this.hoverOpacity) {
-            this.htmlElement.className = "hoverOpacity";
+        (e: TouchEvent) => {
+          if (GestureDetector.activeTouchElement) return;
+          const targetElement = this.findGestureDetectorElement(
+            e.composedPath() as any
+          );
+          if (targetElement.hoverOpacity) {
+            GestureDetector.activeTouchElement = targetElement;
+            targetElement.classList.add("hoverOpacity");
           }
         },
         true
@@ -72,27 +91,24 @@ export class GestureDetector extends ComponentView {
       this.htmlElement.addEventListener(
         "touchmove",
         () => {
-          if (this.hoverOpacity) {
-            this.htmlElement.className = "";
-          }
+          GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
+          GestureDetector.activeTouchElement = undefined;
         },
         true
       );
       this.htmlElement.addEventListener(
         "touchend",
         () => {
-          if (this.hoverOpacity) {
-            this.htmlElement.className = "";
-          }
+          GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
+          GestureDetector.activeTouchElement = undefined;
         },
         true
       );
       this.htmlElement.addEventListener(
         "touchcancel",
         () => {
-          if (this.hoverOpacity) {
-            this.htmlElement.className = "";
-          }
+          GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
+          GestureDetector.activeTouchElement = undefined;
         },
         true
       );

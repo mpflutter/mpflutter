@@ -27,6 +27,7 @@ export class MPScaffold extends ComponentView {
       (appBar as any).collectionViewFixed = false;
       setDOMStyle(appBar.htmlElement, {
         pointerEvents: "unset",
+        display: "unset",
       });
       appBar.subviews.forEach((it) => {
         setDOMStyle(it.htmlElement, { position: "absolute", marginTop: "0px" });

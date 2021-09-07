@@ -207,9 +207,19 @@ class MPElement {
         w = renderBox.size.width;
         h = renderBox.size.height;
       }
-      if (renderBox.parent?.parent is RenderDecoratedBox) {
-        x = 0.0;
-        y = 0.0;
+      if (x != null &&
+          y != null &&
+          renderBox.parent?.parent is RenderDecoratedBox) {
+        final renderDecorateBox =
+            renderBox.parent?.parent as RenderDecoratedBox;
+        if (renderDecorateBox.decoration is BoxDecoration) {
+          final boxDecoration = renderDecorateBox.decoration as BoxDecoration;
+          if (boxDecoration.border is Border) {
+            final boxBorder = boxDecoration.border as Border;
+            x -= boxBorder.left.width;
+            y -= boxBorder.top.width;
+          }
+        }
       }
       hasConstraints = true;
     }
