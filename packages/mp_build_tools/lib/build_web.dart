@@ -41,7 +41,7 @@ void _buildDartJS({bool dumpInfo = false}) {
         dumpInfo ? '--dump-info' : '',
         '-o',
         'build/main.dart.js'
-      ],
+      ]..removeWhere((element) => element.isEmpty),
       runInShell: true);
   if (dart2JsResult.exitCode != 0) {
     print(dart2JsResult.stdout);
