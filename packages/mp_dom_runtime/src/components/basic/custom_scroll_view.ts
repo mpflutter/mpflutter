@@ -90,7 +90,10 @@ class CustomScrollViewLayout extends CollectionViewLayout {
   prepareLayout() {
     let viewWidth = this.collectionView.viewWidth;
     let viewHeight = this.collectionView.viewHeight;
-    if (viewWidth <= 0.01 || viewHeight <= 0.01) {
+    if (this.isHorizontalScroll && viewHeight <= 0.01) {
+      return;
+    }
+    if (!this.isHorizontalScroll && viewWidth <= 0.01) {
       return;
     }
     let layouts: any[] = [];
