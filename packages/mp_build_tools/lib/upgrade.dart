@@ -60,7 +60,7 @@ main(List<String> args) async {
       for (var item in fileList) {
         final response = await get(
           Uri.parse(
-              'https://cdn.jsdelivr.net/gh/mpflutter/mpflutter@0.3.0/packages/mp_dom_runtime/dist_weapp/' +
+              'https://cdn.jsdelivr.net/gh/mpflutter/mpflutter@$versionCode/packages/mp_dom_runtime/dist_weapp/' +
                   item),
         );
         File(p.join('weapp', item)).writeAsStringSync(response.body);
