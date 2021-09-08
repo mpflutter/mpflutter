@@ -263,7 +263,7 @@ class MPCore {
     if (diffDoc != null) {
       MPChannel.postMapMessage({
         'type': 'diff_data',
-        'message': diffDoc,
+        'message': diffDoc.toJson(),
       });
     } else {
       final doc = toDocument();

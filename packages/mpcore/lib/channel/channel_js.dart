@@ -6,6 +6,7 @@ import 'dart:js' as js;
 import '../mpcore.dart';
 
 js.JsObject engineScope = js.context['engineScope'];
+bool envSupportProxyObject = js.context['Proxy'] is js.JsFunction;
 
 class MPChannel {
   static bool _isClientAttached = false;
@@ -31,6 +32,10 @@ class MPChannel {
   }
 
   static void postMapMessage(Map message, {bool? forLastConnection}) {
+    if (!envSupportProxyObject) {
+      return postMessage(json.encode(message),
+          forLastConnection: forLastConnection);
+    }
     if (!_isClientAttached) {
       postMessage(json.encode(message), forLastConnection: forLastConnection);
       return;
