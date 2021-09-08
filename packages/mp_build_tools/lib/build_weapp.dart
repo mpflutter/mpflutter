@@ -39,6 +39,7 @@ String _buildDartJS({bool dumpInfo = false}) {
         'lib/main.dart',
         '-O4',
         '-Ddart.vm.product=true',
+        '-Dmpflutter.hostType=wechatMiniProgram',
         dumpInfo ? '--dump-info' : '',
         '--csp',
         '-o',

@@ -38,6 +38,7 @@ void _buildDartJS({bool dumpInfo = false}) {
         'lib/main.dart',
         '-O4',
         '-Ddart.vm.product=true',
+        '-Dmpflutter.hostType=browser',
         dumpInfo ? '--dump-info' : '',
         '-o',
         'build/main.dart.js'

@@ -215,7 +215,9 @@ export const WXPage = (
   return {
     onLoad(pageOptions: any) {
       const document = (this as any).selectComponent(selector).miniDom.document;
-      TextMeasurer.activeTextMeasureDocument = document;
+      const documentTm = (this as any).selectComponent(selector + "_tm").miniDom
+        .document;
+      TextMeasurer.activeTextMeasureDocument = documentTm;
       const basePath = (() => {
         let c = app.indexPage.split("/");
         c.pop();
@@ -256,7 +258,7 @@ export const WXPage = (
     },
     onShow() {
       TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(
-        selector
+        selector + "_tm"
       ).miniDom.document;
     },
     onPullDownRefresh() {

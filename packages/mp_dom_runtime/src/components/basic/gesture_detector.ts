@@ -4,6 +4,7 @@ import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 
 export class GestureDetector extends ComponentView {
   hoverOpacity = false;
+  didSetOnclicked = false;
 
   constructor(readonly document: Document) {
     super(document);
@@ -12,11 +13,7 @@ export class GestureDetector extends ComponentView {
   }
 
   elementType() {
-    if (MPEnv.platformType == PlatformType.wxMiniProgram) {
-      return "catchclick";
-    } else {
-      return "div";
-    }
+    return "div";
   }
 
   setConstraints(constraints: any) {
@@ -43,18 +40,21 @@ export class GestureDetector extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    this.htmlElement.onclick = (e) => {
-      this.engine.sendMessage(
-        JSON.stringify({
-          type: "gesture_detector",
-          message: {
-            event: "onTap",
-            target: attributes.onTap,
-          },
-        })
-      );
-      if (e) e.stopPropagation();
-    };
+    if (!this.didSetOnclicked) {
+      this.didSetOnclicked = true;
+      this.htmlElement.onclick = (e) => {
+        this.engine.sendMessage(
+          JSON.stringify({
+            type: "gesture_detector",
+            message: {
+              event: "onTap",
+              target: attributes.onTap,
+            },
+          })
+        );
+        if (e) e.stopPropagation();
+      };
+    }
     this.hoverOpacity = attributes.hoverOpacity;
     (this.htmlElement as any).hoverOpacity = this.hoverOpacity;
     setDOMAttribute(this.htmlElement, "hoverOpacity", attributes.hoverOpacity);

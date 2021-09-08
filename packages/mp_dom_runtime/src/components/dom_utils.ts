@@ -462,6 +462,12 @@ export const setDOMStyle = (
   style: CSSStyleDeclaration
 ) => {
   if (Object.keys(style).length === 0) return;
+  for (const key in style) {
+    const value = (style as any)[key];
+    if (typeof value === "string" && value.indexOf(".0px") > 0) {
+      (style as any)[key] = value.replace(".0px", "px");
+    }
+  }
   if (typeof HTMLElement === "function" && element instanceof HTMLElement) {
     for (const key in style) {
       (element.style as any)[key] = (style as any)[key];
