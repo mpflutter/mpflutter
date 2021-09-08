@@ -1,5 +1,6 @@
 // ignore: avoid_web_libraries_in_flutter
 
+import 'dart:convert';
 import 'dart:js' as js;
 
 import '../mpcore.dart';
@@ -27,6 +28,14 @@ class MPChannel {
       return;
     }
     engineScope.callMethod('onMessage', [message]);
+  }
+
+  static void postMapMessage(Map message, {bool? forLastConnection}) {
+    if (!_isClientAttached) {
+      postMesssage(json.encode(message), forLastConnection: forLastConnection);
+      return;
+    }
+    engineScope.callMethod('onMapMessage', [message]);
   }
 
   static final List<String> _messageQueue = [];

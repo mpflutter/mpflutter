@@ -16,6 +16,7 @@ import { Page } from "./page";
 import { BrowserRouter, Router } from "./router";
 import { TextMeasurer } from "./text_measurer";
 import { WindowInfo } from "./window_info";
+import { wrapDartObject } from "./components/dart_object";
 
 try {
   let self = window ?? global;
@@ -113,6 +114,9 @@ export class Engine {
       this.mpJS.engineScope.onMessage = (message: string) => {
         this.didReceivedMessage(message);
       };
+      this.mpJS.engineScope.onMapMessage = (message: any) => {
+        this.didReceivedMessage(message, true);
+      };
       (() => {
         this.codeBlock();
       })();
@@ -148,8 +152,10 @@ export class Engine {
     }
   }
 
-  didReceivedMessage(message: string) {
-    let decodedMessage = JSON.parse(message);
+  didReceivedMessage(message: string, isDartObject: boolean = false) {
+    let decodedMessage = isDartObject
+      ? wrapDartObject(message)
+      : JSON.parse(message);
     if (!decodedMessage) return;
     if (((window ?? global) as any)?.mpDEBUG) {
       console.log(new Date().getTime(), "in", decodedMessage);

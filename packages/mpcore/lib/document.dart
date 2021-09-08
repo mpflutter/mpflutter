@@ -17,13 +17,13 @@ class _Document {
     if (diffs != null) {
       return {
         'routeId': routeId,
-        'diffs': diffs,
+        'diffs': diffs?.map((e) => e.toJson()).toList(),
       };
     }
     return {
       'routeId': routeId,
-      'scaffold': scaffold,
-      'overlays': overlays,
+      'scaffold': scaffold?.toJson(),
+      'overlays': overlays?.map((e) => e.toJson()).toList(),
     };
   }
 }
@@ -171,7 +171,7 @@ class MPElement {
       'hashCode': hashCode,
       'name': name,
       'widget': flutterElement?.widget.runtimeType.toString(),
-      'children': children,
+      'children': children?.map((e) => e.toJson()).toList(),
       'constraints': constraints != null
           ? {
               'x': constraints!.left,
@@ -180,7 +180,7 @@ class MPElement {
               'h': constraints!.height
             }
           : null,
-      'ancestors': ancestors,
+      'ancestors': ancestors.map((e) => e.toJson()).toList(),
       'attributes': attributes,
     };
   }

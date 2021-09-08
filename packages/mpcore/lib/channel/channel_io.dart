@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:developer' as dev;
 
@@ -211,6 +212,10 @@ class MPChannel {
         print(e);
       }
     }
+  }
+
+  static void postMapMessage(Map message, {bool? forLastConnection}) {
+    postMesssage(json.encode(message), forLastConnection: forLastConnection);
   }
 
   static final List<String> _messageQueue = [];

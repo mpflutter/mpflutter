@@ -273,12 +273,16 @@ class MPCore {
       if (doc != null) {
         _updateDiffableDocument(doc);
       }
-      final newFrameData = json.encode({
+      MPChannel.postMapMessage({
         'type': 'frame_data',
-        'message': doc,
+        'message': doc?.toJson(),
       });
-      final frameData = newFrameData;
-      MPChannel.postMesssage(frameData);
+      // final newFrameData = json.encode({
+      //   'type': 'frame_data',
+      //   'message': doc,
+      // });
+      // final frameData = newFrameData;
+      // MPChannel.postMesssage(frameData);
     }
     BuildOwner.recentDirtyElements.clear();
     MPElement._elementCache.addAll(MPElement._elementCacheNext);

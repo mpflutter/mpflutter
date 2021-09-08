@@ -88,6 +88,8 @@ export class Page {
   }
 
   didReceivedFrameData(message: { [key: string]: any }) {
+    console.log(message.scaffold.name);
+    
     const scaffoldView = this.engine.componentFactory.create(
       message.scaffold,
       this.document
