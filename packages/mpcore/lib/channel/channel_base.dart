@@ -28,7 +28,7 @@ class MPNavigatorObserver extends NavigatorObserver {
           'routeId': route.hashCode,
         },
       });
-      MPChannel.postMesssage(routeData);
+      MPChannel.postMessage(routeData);
       requestingRoute = false;
     } else {
       if (!initialPushed && previousRoute == null) {
@@ -52,7 +52,7 @@ class MPNavigatorObserver extends NavigatorObserver {
           })()
         },
       });
-      MPChannel.postMesssage(routeData);
+      MPChannel.postMessage(routeData);
     }
     super.didPush(route, previousRoute);
   }
@@ -70,7 +70,7 @@ class MPNavigatorObserver extends NavigatorObserver {
         'routeId': route.hashCode,
       },
     });
-    MPChannel.postMesssage(routeData);
+    MPChannel.postMessage(routeData);
     super.didPop(route, previousRoute);
   }
 
@@ -93,7 +93,7 @@ class MPNavigatorObserver extends NavigatorObserver {
             'routeId': newRoute.hashCode,
           },
         });
-        MPChannel.postMesssage(routeData);
+        MPChannel.postMessage(routeData);
         requestingRoute = false;
       } else {
         final routeData = json.encode({
@@ -113,7 +113,7 @@ class MPNavigatorObserver extends NavigatorObserver {
             })()
           },
         });
-        MPChannel.postMesssage(routeData);
+        MPChannel.postMessage(routeData);
       }
     }
     super.didReplace(newRoute: newRoute, oldRoute: oldRoute);
@@ -248,7 +248,7 @@ class MPChannelBase {
               scaffoldState.context.hashCode == message['target'],
         );
         await target.widget.onRefresh?.call();
-        MPChannel.postMesssage(json.encode({
+        MPChannel.postMessage(json.encode({
           'type': 'scaffold',
           'message': {
             'event': 'onRefreshEnd',
@@ -339,7 +339,7 @@ class MPChannelBase {
                 'routeId': target.hashCode,
               },
             });
-            MPChannel.postMesssage(routeData);
+            MPChannel.postMessage(routeData);
             requestingRoute = false;
           } else {
             MPNavigatorObserver.doBacking = true;

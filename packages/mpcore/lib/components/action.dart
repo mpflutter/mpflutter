@@ -19,7 +19,7 @@ class MPAction {
   Future<dynamic> send() {
     final completer = Completer();
     peddingActions[id] = completer;
-    MPChannel.postMesssage(
+    MPChannel.postMessage(
       json.encode({
         'type': 'action:$type',
         'message': {

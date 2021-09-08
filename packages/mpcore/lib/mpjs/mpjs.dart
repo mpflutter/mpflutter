@@ -18,7 +18,7 @@ class JsBridgeInvoker {
     final completer = Completer();
     final requestId = Random().nextDouble().toString();
     handlers[requestId] = completer;
-    MPChannel.postMesssage(
+    MPChannel.postMessage(
       json.encode({
         'type': 'mpjs',
         'flow': 'request',

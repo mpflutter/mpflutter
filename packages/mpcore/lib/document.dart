@@ -181,7 +181,12 @@ class MPElement {
             }
           : null,
       'ancestors': ancestors.map((e) => e.toJson()).toList(),
-      'attributes': attributes,
+      'attributes': attributes?.map((key, value) {
+        if (value is MPElement) {
+          return MapEntry(key, value.toJson());
+        }
+        return MapEntry(key, value);
+      }),
     };
   }
 

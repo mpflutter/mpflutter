@@ -9,7 +9,7 @@ class MPDrawable implements ui.Image {
     final drawable = MPDrawable();
     _decodeHandlers[drawable.hashCode] = completer;
     _decodeDrawables[drawable.hashCode] = drawable;
-    MPChannel.postMesssage(
+    MPChannel.postMessage(
       json.encode({
         'type': 'decode_drawable',
         'flow': 'request',
@@ -29,7 +29,7 @@ class MPDrawable implements ui.Image {
     final drawable = MPDrawable();
     _decodeHandlers[drawable.hashCode] = completer;
     _decodeDrawables[drawable.hashCode] = drawable;
-    MPChannel.postMesssage(
+    MPChannel.postMessage(
       json.encode({
         'type': 'decode_drawable',
         'flow': 'request',

@@ -196,7 +196,7 @@ class MPChannel {
     }
   }
 
-  static void postMesssage(String message, {bool? forLastConnection}) {
+  static void postMessage(String message, {bool? forLastConnection}) {
     if (sockets.isEmpty) {
       _addMessageToQueue(message);
       return;
@@ -215,7 +215,7 @@ class MPChannel {
   }
 
   static void postMapMessage(Map message, {bool? forLastConnection}) {
-    postMesssage(json.encode(message), forLastConnection: forLastConnection);
+    postMessage(json.encode(message), forLastConnection: forLastConnection);
   }
 
   static final List<String> _messageQueue = [];

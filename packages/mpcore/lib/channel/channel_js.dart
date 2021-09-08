@@ -22,7 +22,7 @@ class MPChannel {
     _flushMessageQueue();
   }
 
-  static void postMesssage(String message, {bool? forLastConnection}) {
+  static void postMessage(String message, {bool? forLastConnection}) {
     if (!_isClientAttached) {
       _addMessageToQueue(message);
       return;
@@ -32,7 +32,7 @@ class MPChannel {
 
   static void postMapMessage(Map message, {bool? forLastConnection}) {
     if (!_isClientAttached) {
-      postMesssage(json.encode(message), forLastConnection: forLastConnection);
+      postMessage(json.encode(message), forLastConnection: forLastConnection);
       return;
     }
     engineScope.callMethod('onMapMessage', [message]);

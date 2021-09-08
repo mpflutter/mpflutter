@@ -261,12 +261,10 @@ class MPCore {
       diffDoc = toDiffDocument(recentDirtyElements);
     }
     if (diffDoc != null) {
-      final diffFrameData = json.encode({
+      MPChannel.postMapMessage({
         'type': 'diff_data',
         'message': diffDoc,
       });
-      final frameData = diffFrameData;
-      MPChannel.postMesssage(frameData);
     } else {
       final doc = toDocument();
       _diffableElements.clear();
@@ -277,12 +275,6 @@ class MPCore {
         'type': 'frame_data',
         'message': doc?.toJson(),
       });
-      // final newFrameData = json.encode({
-      //   'type': 'frame_data',
-      //   'message': doc,
-      // });
-      // final frameData = newFrameData;
-      // MPChannel.postMesssage(frameData);
     }
     BuildOwner.recentDirtyElements.clear();
     MPElement._elementCache.addAll(MPElement._elementCacheNext);
@@ -293,24 +285,24 @@ class MPCore {
         'type': 'element_gc',
         'message': MPElement._invalidElements,
       });
-      MPChannel.postMesssage(gcData);
+      MPChannel.postMessage(gcData);
       MPElement._invalidElements.clear();
     }
   }
 
   Future sendTextMeasureFrame() async {
     MPElement.disableElementCache = true;
-    final measureFrameData = json.encode({
+    final measureFrameData = {
       'type': 'rich_text',
       'message': {
         'event': 'doMeasure',
         'items': BuildOwner.beingMeasureElements
-            .map((e) => MPElement.fromFlutterElement(e))
+            .map((e) => MPElement.fromFlutterElement(e).toJson())
             .toList(),
       }
-    });
+    };
     MPElement.disableElementCache = false;
-    MPChannel.postMesssage(measureFrameData);
+    MPChannel.postMapMessage(measureFrameData);
     final completer = Completer();
     _loopCheckMeasureCompleter();
     _onMeasureCompleter = completer;

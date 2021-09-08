@@ -7,7 +7,7 @@ class MPPlatformViewController {
 
   void invokeMethod(String method, {Map? params}) {
     if (targetHashCode != null) {
-      MPChannel.postMesssage(json.encode({
+      MPChannel.postMessage(json.encode({
         'type': 'platform_view',
         'message': {
           'event': 'methodCall',
