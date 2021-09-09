@@ -88,33 +88,35 @@ export class Page {
   }
 
   didReceivedFrameData(message: { [key: string]: any }) {
-    const scaffoldView = this.engine.componentFactory.create(
-      message.scaffold,
-      this.document
-    );
-    if (!(scaffoldView instanceof MPScaffold)) return;
-    if (this.scaffoldView !== scaffoldView) {
-      if (this.scaffoldView) {
-        this.scaffoldView.htmlElement.remove();
-        this.scaffoldView.removeFromSuperview();
-      }
-      this.scaffoldView = scaffoldView;
-      if (scaffoldView instanceof MPScaffold && !scaffoldView.delegate) {
-        if (MPEnv.platformType === PlatformType.wxMiniProgram) {
-          scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document));
-          scaffoldView.setAttributes(message.scaffold.attributes);
-        } else {
-          scaffoldView.setDelegate(
-            new BrowserPageScaffoldDelegate(this.document)
-          );
-          scaffoldView.setAttributes(message.scaffold.attributes);
+    if (message.ignoreScaffold !== true) {
+      const scaffoldView = this.engine.componentFactory.create(
+        message.scaffold,
+        this.document
+      );
+      if (!(scaffoldView instanceof MPScaffold)) return;
+      if (this.scaffoldView !== scaffoldView) {
+        if (this.scaffoldView) {
+          this.scaffoldView.htmlElement.remove();
+          this.scaffoldView.removeFromSuperview();
+        }
+        this.scaffoldView = scaffoldView;
+        if (scaffoldView instanceof MPScaffold && !scaffoldView.delegate) {
+          if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+            scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document));
+            scaffoldView.setAttributes(message.scaffold.attributes);
+          } else {
+            scaffoldView.setDelegate(
+              new BrowserPageScaffoldDelegate(this.document)
+            );
+            scaffoldView.setAttributes(message.scaffold.attributes);
+          }
         }
       }
-    }
-    if (this.scaffoldView && this.active && !this.scaffoldView.attached) {
-      this.scaffoldView.attached = true;
-      this.element.appendChild(this.scaffoldView.htmlElement);
-      setDOMStyle(this.scaffoldView.htmlElement, { display: "contents" });
+      if (this.scaffoldView && this.active && !this.scaffoldView.attached) {
+        this.scaffoldView.attached = true;
+        this.element.appendChild(this.scaffoldView.htmlElement);
+        setDOMStyle(this.scaffoldView.htmlElement, { display: "contents" });
+      }
     }
     if (message.overlays && message.overlays instanceof Array) {
       this.setOverlays(message.overlays);

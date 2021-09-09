@@ -3,12 +3,14 @@ part of './mpcore.dart';
 class _Document {
   final int? routeId;
   final MPElement? scaffold;
+  final bool ignoreScaffold;
   final List<MPElement>? overlays;
   final List<MPElement>? diffs;
 
   _Document({
     this.routeId,
     this.scaffold,
+    this.ignoreScaffold = false,
     this.overlays,
     this.diffs,
   });
@@ -23,6 +25,7 @@ class _Document {
     return {
       'routeId': routeId,
       'scaffold': scaffold?.toJson(),
+      'ignoreScaffold': ignoreScaffold,
       'overlays': overlays?.map((e) => e.toJson()).toList(),
     };
   }

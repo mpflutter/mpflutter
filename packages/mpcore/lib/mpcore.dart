@@ -375,10 +375,13 @@ class MPCore {
     if (activeScaffoldElement != null) {
       final vDocument = _Document(
         routeId: ModalRoute.of(activeScaffoldElement)?.hashCode ?? 0,
-        scaffold: (() {
-          if (activeScaffoldElement == null) return null;
-          return MPElement.fromFlutterElement(activeScaffoldElement);
-        })(),
+        scaffold: activeOverlayParentRoute != null
+            ? null
+            : (() {
+                if (activeScaffoldElement == null) return null;
+                return MPElement.fromFlutterElement(activeScaffoldElement);
+              })(),
+        ignoreScaffold: activeOverlayParentRoute != null,
         overlays: overlays,
       );
       return vDocument;
