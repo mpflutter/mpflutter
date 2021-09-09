@@ -28,6 +28,7 @@ import { Visibility } from "./basic/visibility";
 import { SliverPersistentHeader } from "./basic/sliver_persistent_header";
 import { EditableText } from "./basic/editable_text";
 import { MPPlatformView } from "./mpkit/platform_view";
+import { ForegroundDecoratedBox } from "./basic/foreground_decorated_box";
 
 export class ComponentFactory {
   static components: { [key: string]: typeof ComponentView } = {
@@ -38,6 +39,7 @@ export class ComponentFactory {
     custom_paint: CustomPaint,
     custom_scroll_view: CustomScrollView,
     decorated_box: DecoratedBox,
+    foreground_decorated_box: ForegroundDecoratedBox,
     editable_text: EditableText,
     gesture_detector: GestureDetector,
     grid_view: GridView,

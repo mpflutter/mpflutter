@@ -91,7 +91,9 @@ MPElement _encodeDecoratedBox(Element element) {
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
-    name: 'decorated_box',
+    name: widget.position == DecorationPosition.foreground
+        ? 'foreground_decorated_box'
+        : 'decorated_box',
     children: MPElement.childrenFromFlutterElement(element),
     attributes: attributes,
   );

@@ -8,11 +8,24 @@ import {
   cssOffset,
 } from "../utils";
 
-export class DecoratedBox extends ComponentView {
+export class ForegroundDecoratedBox extends ComponentView {
+  decorateElement = this.document.createElement("div");
+
+  setChildren(children: any) {
+    super.setChildren(children);
+    this.decorateElement.remove();
+    this.htmlElement.appendChild(this.decorateElement);
+  }
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    let style: any = {};
+    let style: any = {
+      position: "absolute",
+      top: "0px",
+      left: "0px",
+      width: "100%",
+      height: "100%",
+    };
     if (attributes.color) {
       style.backgroundColor = cssColor(attributes.color);
     } else {
@@ -82,6 +95,6 @@ export class DecoratedBox extends ComponentView {
         (style as any)[key] = s[key];
       }
     }
-    setDOMStyle(this.htmlElement, style);
+    setDOMStyle(this.decorateElement, style);
   }
 }
