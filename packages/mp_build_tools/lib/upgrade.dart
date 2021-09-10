@@ -11,12 +11,17 @@ main(List<String> args) async {
     final tags = json.decode((await get(
             Uri.parse('https://api.github.com/repos/mpflutter/mpflutter/tags')))
         .body) as List;
-    print('Current available versions:');
+    final masterBranch = json.decode((await get(Uri.parse(
+            'https://api.github.com/repos/mpflutter/mpflutter/branches/master')))
+        .body) as Map;
+    print('Current master version >>> ' +
+        (masterBranch['commit']['sha'] as String).substring(0, 8));
+    print('Current release versions >>>');
     print(
       tags.sublist(0, min(10, tags.length)).map((e) => e['name']).join('\n'),
     );
     print(
-      'Please retry with version code to upgrade like \n> dart scripts/upgrade.dart ' +
+      'Retry with version code to upgrade for example \n> dart scripts/upgrade.dart ' +
           tags.first['name'],
     );
   } else {
