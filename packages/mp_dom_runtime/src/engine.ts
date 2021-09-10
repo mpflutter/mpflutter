@@ -229,6 +229,14 @@ export class Engine {
         target.refreshEndResolver?.(undefined);
         target.refreshEndResolver = undefined;
       }
+    } else if (message.event === "onWechatMiniProgramShareAppMessageResolve") {
+      let target = this.componentFactory.cachedView[
+        message.target
+      ] as MPScaffold;
+      if (target) {
+        target.onWechatMiniProgramShareAppMessageResolver?.(message.params);
+        target.onWechatMiniProgramShareAppMessageResolver = undefined;
+      }
     }
   }
 

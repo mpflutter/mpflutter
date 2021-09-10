@@ -129,6 +129,12 @@ export class Page {
     }
   }
 
+  async onWechatMiniProgramShareAppMessage() {
+    if (this.scaffoldView instanceof MPScaffold) {
+      return await this.scaffoldView.onWechatMiniProgramShareAppMessage();
+    }
+  }
+
   onReachBottom() {
     if (this.scaffoldView instanceof MPScaffold) {
       this.scaffoldView.onReachBottom();
@@ -267,6 +273,11 @@ export const WXPage = (
       (this as any).mpPage.onRefresh().then((it: any) => {
         wx.stopPullDownRefresh();
       });
+    },
+    onShareAppMessage() {
+      return {
+        promise: (this as any).mpPage.onWechatMiniProgramShareAppMessage(),
+      };
     },
     onReachBottom() {
       (this as any).mpPage.onReachBottom();

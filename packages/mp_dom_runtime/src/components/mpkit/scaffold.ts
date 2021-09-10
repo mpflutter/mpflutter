@@ -17,6 +17,7 @@ export class MPScaffold extends ComponentView {
   floatingBody?: ComponentView;
   delegate?: MPScaffoldDelegate;
   refreshEndResolver?: (_: any) => void;
+  onWechatMiniProgramShareAppMessageResolver?: (_: any) => void;
 
   setAppBar(appBar?: ComponentView) {
     if (this.appBar === appBar && (appBar as any)?.collectionViewFixed !== true)
@@ -175,6 +176,21 @@ export class MPScaffold extends ComponentView {
           type: "scaffold",
           message: {
             event: "onRefresh",
+            target: this.hashCode,
+          },
+        })
+      );
+    });
+  }
+
+  onWechatMiniProgramShareAppMessage(): Promise<any> {
+    return new Promise((res) => {
+      this.onWechatMiniProgramShareAppMessageResolver = res;
+      this.engine.sendMessage(
+        JSON.stringify({
+          type: "scaffold",
+          message: {
+            event: "onWechatMiniProgramShareAppMessage",
             target: this.hashCode,
           },
         })

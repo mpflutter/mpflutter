@@ -261,6 +261,21 @@ class MPChannelBase {
               scaffoldState.context.hashCode == message['target'],
         );
         target.widget.onReachBottom?.call();
+      } else if (message['event'] == 'onWechatMiniProgramShareAppMessage') {
+        final target = scaffoldStates.firstWhere(
+          (scaffoldState) =>
+              scaffoldState.context.hashCode == message['target'],
+        );
+        final result =
+            await target.widget.onWechatMiniProgramShareAppMessage?.call();
+        MPChannel.postMessage(json.encode({
+          'type': 'scaffold',
+          'message': {
+            'event': 'onWechatMiniProgramShareAppMessageResolve',
+            'target': message['target'],
+            'params': result,
+          },
+        }));
       }
     } catch (e) {
       print(e);
