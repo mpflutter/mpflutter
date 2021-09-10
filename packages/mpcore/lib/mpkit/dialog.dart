@@ -8,16 +8,21 @@ Future<T> showMPDialog<T>({
 }) async {
   final parentRoute = ModalRoute.of(context);
   final result = await Navigator.of(context).push(MPPageRoute(
-    builder: (context) {
-      return MPOverlayScaffold(
-        backgroundColor: barrierColor,
-        onBackgroundTap: () {
-          if (barrierDismissible) {
-            Navigator.of(context).pop();
-          }
-        },
-        body: builder(context),
-        parentRoute: parentRoute,
+    builder: (childContext) {
+      return MediaQuery(
+        data: MediaQuery.of(context),
+        child: Builder(builder: (context) {
+          return MPOverlayScaffold(
+            backgroundColor: barrierColor,
+            onBackgroundTap: () {
+              if (barrierDismissible) {
+                Navigator.of(context).pop();
+              }
+            },
+            body: builder(childContext),
+            parentRoute: parentRoute,
+          );
+        }),
       );
     },
     settings: RouteSettings(name: '/mp_dialog/${math.Random().nextDouble()}'),

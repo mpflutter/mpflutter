@@ -7,6 +7,7 @@ class MPAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget? trailing;
   final Color backgroundColor;
   final double appBarHeight;
+  final bool primary;
 
   MPAppBar({
     required this.context,
@@ -15,20 +16,21 @@ class MPAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.trailing,
     this.backgroundColor = Colors.white,
     this.appBarHeight = 44,
+    this.primary = true,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: appBarHeight + MediaQuery.of(context).padding.top,
+      height: appBarHeight + (primary ? MediaQuery.of(context).padding.top : 0),
       color: backgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            height: MediaQuery.of(context).padding.top,
+            height: primary ? MediaQuery.of(context).padding.top : 0.0,
             width: MediaQuery.of(context).size.width,
           ),
           Container(
