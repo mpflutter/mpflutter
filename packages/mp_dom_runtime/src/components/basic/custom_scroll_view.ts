@@ -53,7 +53,6 @@ export class CustomScrollView extends CollectionView {
       } else {
         listChildren.push(obj);
       }
-      this.factory.create(obj, this.document);
     });
     this.listChildren = listChildren;
     (this.layout as CustomScrollViewLayout).items = listChildren;
