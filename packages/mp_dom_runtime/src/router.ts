@@ -262,7 +262,7 @@ export class WXRouter extends Router {
     } else {
       return `/${
         (this.engine.app as WXApp).indexPage
-      }?route=${encodeURIComponent(name)}}`;
+      }?route=${encodeURIComponent(name)}`;
     }
   }
 
