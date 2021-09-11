@@ -80,13 +80,14 @@ export class ComponentView {
       .map((it) => this.factory.create(it, this.document))
       .filter((it) => it);
     let changed = false;
-    let changedOnlyAppend = false;
+    let changedStartIndex = -1;
     if (makeSubviews.length !== this.subviews.length) {
       changed = true;
-      if (makeSubviews.length > this.subviews.length) {
-        changedOnlyAppend = this.subviews.every((it, idx) => {
-          return it === makeSubviews[idx] && it.superview === this;
-        });
+      for (let index = 0; index < makeSubviews.length; index++) {
+        if (makeSubviews[index] !== this.subviews[index]) {
+          changedStartIndex = index;
+          break;
+        }
       }
     } else {
       let allSame = makeSubviews.every((it, idx) => {
@@ -97,9 +98,18 @@ export class ComponentView {
       }
     }
     if (changed) {
-      if (changedOnlyAppend) {
+      if (changedStartIndex > 0) {
+        let removingSubviews = [];
         for (
-          let index = this.subviews.length;
+          let index = changedStartIndex;
+          index < this.subviews.length;
+          index++
+        ) {
+          removingSubviews.push(this.subviews[index]);
+        }
+        removingSubviews.forEach((it) => it.removeFromSuperview());
+        for (
+          let index = changedStartIndex;
           index < makeSubviews.length;
           index++
         ) {
@@ -162,7 +172,7 @@ export class ComponentView {
     if (!this.superview) return;
     const index = this.superview.subviews.indexOf(this);
     if (index >= 0) {
-      this.superview.subviews = this.superview?.subviews.splice(index, 1);
+      this.superview?.subviews.splice(index, 1);
     }
     this.htmlElement.remove();
   }
