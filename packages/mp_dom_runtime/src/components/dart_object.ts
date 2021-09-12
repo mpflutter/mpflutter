@@ -17,7 +17,12 @@ export const wrapDartObject = (dartObject: any): any => {
   }
   return new Proxy(dartObject, {
     get: function (obj: any, prop: any) {
-      let finalValue = obj?.b?.[prop]?.b ?? obj?.c?.[prop]?.b ?? obj[prop];
+      let finalValue =
+        obj?.b?.[prop]?.b ??
+        obj?.c?.[prop]?.b ??
+        obj?._nums?.[prop]?.hashMapCellValue ??
+        obj?._strings?.[prop]?.hashMapCellValue ??
+        obj[prop];
       return wrapDartObject(finalValue);
     },
   });

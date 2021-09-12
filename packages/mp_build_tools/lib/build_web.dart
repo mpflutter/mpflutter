@@ -8,7 +8,7 @@ import 'build_plugins.dart' as plugin_builder;
 main(List<String> args) {
   _checkPubspec();
   _createBuildDir();
-  _buildDartJS(dumpInfo: args.contains('--dump-info'));
+  _buildDartJS(args);
   plugin_builder.main(args);
   _copyWebSource();
 }
@@ -31,15 +31,18 @@ _createBuildDir() {
   }
 }
 
-void _buildDartJS({bool dumpInfo = false}) {
+void _buildDartJS(List<String> args) {
+  final dart2JSParams = args.toList();
+  if (!dart2JSParams.any((element) => element.startsWith('-O'))) {
+    dart2JSParams.add('-O4');
+  }
   final dart2JsResult = Process.runSync(
       'dart2js',
       [
         'lib/main.dart',
-        '-O4',
+        ...dart2JSParams,
         '-Ddart.vm.product=true',
         '-Dmpflutter.hostType=browser',
-        dumpInfo ? '--dump-info' : '',
         '-o',
         'build/main.dart.js'
       ]..removeWhere((element) => element.isEmpty),

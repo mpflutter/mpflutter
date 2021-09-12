@@ -11,7 +11,7 @@ main(List<String> args) {
   _createBuildDir();
   plugin_builder.main(args);
   _copyWeappSource();
-  _buildDartJS(dumpInfo: args.contains('--dump-info'));
+  _buildDartJS(args);
 }
 
 _checkPubspec() {
@@ -32,15 +32,18 @@ _createBuildDir() {
   }
 }
 
-String _buildDartJS({bool dumpInfo = false}) {
+String _buildDartJS(List<String> args) {
+  final dart2JSParams = args.toList();
+  if (!dart2JSParams.any((element) => element.startsWith('-O'))) {
+    dart2JSParams.add('-O4');
+  }
   final dart2JsResult = Process.runSync(
       'dart2js',
       [
         'lib/main.dart',
-        '-O4',
+        ...dart2JSParams,
         '-Ddart.vm.product=true',
         '-Dmpflutter.hostType=wechatMiniProgram',
-        dumpInfo ? '--dump-info' : '',
         '--csp',
         '-o',
         'build/main.dart.js'
