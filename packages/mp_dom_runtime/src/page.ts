@@ -89,10 +89,7 @@ export class Page {
 
   didReceivedFrameData(message: { [key: string]: any }) {
     if (message.ignoreScaffold !== true) {
-      const scaffoldView = this.engine.componentFactory.create(
-        message.scaffold,
-        this.document
-      );
+      const scaffoldView = this.engine.componentFactory.create(message.scaffold, this.document);
       if (!(scaffoldView instanceof MPScaffold)) return;
       if (this.scaffoldView !== scaffoldView) {
         if (this.scaffoldView) {
@@ -105,9 +102,7 @@ export class Page {
             scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document));
             scaffoldView.setAttributes(message.scaffold.attributes);
           } else {
-            scaffoldView.setDelegate(
-              new BrowserPageScaffoldDelegate(this.document)
-            );
+            scaffoldView.setDelegate(new BrowserPageScaffoldDelegate(this.document));
             scaffoldView.setAttributes(message.scaffold.attributes);
           }
         }
@@ -193,12 +188,18 @@ export class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   constructor(readonly document: Document) {}
 
   backgroundElement = this.document.createElement("div");
+  backgroundElementAttached = false;
 
   setPageTitle(title: string): void {
     wx.setNavigationBarTitle({ title });
   }
 
   setPageBackgroundColor(color: string): void {
+    if (color === "transparent") {
+      this.backgroundElement.remove();
+      this.backgroundElementAttached = false;
+      return;
+    }
     setDOMStyle(this.backgroundElement, {
       position: "fixed",
       width: "100vw",
@@ -206,7 +207,9 @@ export class WXPageScaffoldDelegate implements MPScaffoldDelegate {
       zIndex: "-1",
       backgroundColor: color,
     });
+    if (this.backgroundElementAttached) return;
     this.document.body.appendChild(this.backgroundElement);
+    this.backgroundElementAttached = true;
     wx.setBackgroundColor({ backgroundColor: color });
   }
 
@@ -223,8 +226,7 @@ export const WXPage = (
   return {
     onLoad(pageOptions: any) {
       const document = (this as any).selectComponent(selector).miniDom.document;
-      const documentTm = (this as any).selectComponent(selector + "_tm").miniDom
-        .document;
+      const documentTm = (this as any).selectComponent(selector + "_tm").miniDom.document;
       TextMeasurer.activeTextMeasureDocument = documentTm;
       const basePath = (() => {
         let c = app.indexPage.split("/");
@@ -251,12 +253,7 @@ export const WXPage = (
         finalOptions.route = decodeURIComponent(finalOptions.route);
       }
 
-      (this as any).mpPage = new Page(
-        document.body,
-        app.engine,
-        finalOptions,
-        document
-      );
+      (this as any).mpPage = new Page(document.body, app.engine, finalOptions, document);
       (this as any).mpPage.isFirst = getCurrentPages().length === 1;
     },
     onUnload() {
@@ -265,9 +262,7 @@ export const WXPage = (
       }
     },
     onShow() {
-      TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(
-        selector + "_tm"
-      ).miniDom.document;
+      TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(selector + "_tm").miniDom.document;
     },
     onPullDownRefresh() {
       (this as any).mpPage.onRefresh().then((it: any) => {
