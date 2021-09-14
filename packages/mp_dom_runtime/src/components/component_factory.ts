@@ -98,6 +98,9 @@ export class ComponentFactory {
       !ComponentFactory.disableCache && this.cachedView[hashCode];
     if (cachedView) {
       document = cachedView.document;
+      if (data.ancestors) {
+        cachedView.setAncestors(data.ancestors);
+      }
       if (data.constraints) {
         cachedView.setConstraints(data.constraints);
       }
@@ -106,9 +109,6 @@ export class ComponentFactory {
       }
       if (data.children) {
         cachedView.setChildren(this.fetchCachedChildren(data.children));
-      }
-      if (data.ancestors) {
-        cachedView.setAncestors(data.ancestors);
       }
       return cachedView;
     }
@@ -124,6 +124,9 @@ export class ComponentFactory {
     view.factory = this;
     view.engine = this.engine;
     view.hashCode = hashCode;
+    if (data.ancestors) {
+      view.setAncestors(data.ancestors);
+    }
     if (data.constraints) {
       view.setConstraints(data.constraints);
     }
@@ -136,9 +139,6 @@ export class ComponentFactory {
       } else {
         view.setChildren(this.fetchCachedChildren(data.children));
       }
-    }
-    if (data.ancestors) {
-      view.setAncestors(data.ancestors);
     }
     if (!ComponentFactory.disableCache) {
       this.cachedView[hashCode] = view;
