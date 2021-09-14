@@ -18,24 +18,8 @@ export class GestureDetector extends ComponentView {
 
   setConstraints(constraints: any) {
     if (!constraints) return;
-    this.constraints = constraints;
-    let x: number = constraints.x;
-    let y: number = constraints.y;
-    let w: number = constraints.w;
-    let h: number = constraints.h;
-    if (
-      typeof x === "number" &&
-      typeof y === "number" &&
-      typeof w === "number" &&
-      typeof h === "number"
-    ) {
-      setDOMStyle(this.htmlElement, {
-        left: "0px",
-        top: "0px",
-        width: "0.1px",
-        height: "0.1px",
-      });
-    }
+    this.constraints = { x: 0, y: 0, w: constraints.w, h: constraints.h };
+    this.updateLayout();
   }
 
   setAttributes(attributes: any) {
