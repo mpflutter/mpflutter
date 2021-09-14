@@ -90,6 +90,15 @@ export class RichText extends ComponentView {
         );
       }
     }
+    if (children[0].attributes.onTap_el && children[0].attributes.onTap_span) {
+      this.htmlElement.onclick = (e) => {
+        this.onClick(
+          children[0].attributes.onTap_el,
+          children[0].attributes.onTap_span
+        );
+        if (e) e.stopPropagation();
+      };
+    }
     setDOMStyle(this.htmlElement, style);
   }
 
@@ -104,6 +113,19 @@ export class RichText extends ComponentView {
     } else {
       super.setChildren(children);
     }
+  }
+
+  onClick(el: string, onTap_span: string) {
+    this.engine.sendMessage(
+      JSON.stringify({
+        type: "rich_text",
+        message: {
+          event: "onTap",
+          target: el,
+          subTarget: onTap_span,
+        },
+      })
+    );
   }
 }
 
