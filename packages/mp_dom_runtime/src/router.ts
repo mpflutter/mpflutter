@@ -154,10 +154,15 @@ export class BrowserRouter extends Router {
         return `${name}`;
       }
     } else {
+      const namePath = name.indexOf("?") >= 0 ? name.split("?")[0] : name;
+      const paramPath =
+        name.indexOf("?") >= 0 ? name.substr(name.indexOf("?")) : '';
       if (searchParams.length > 0) {
-        return `?route=${encodeURIComponent(name)}&${searchParams.join("&")}`;
+        return `?route=${encodeURI(namePath)}${encodeURIComponent(
+          paramPath
+        )}&${searchParams.join("&")}`;
       } else {
-        return `?route=${encodeURIComponent(name)}`;
+        return `?route=${encodeURI(namePath)}${encodeURIComponent(paramPath)}`;
       }
     }
   }
@@ -255,14 +260,17 @@ export class WXRouter extends Router {
         searchParams.push(`${key}=${encodeURIComponent(params[key])}`);
       }
     }
+    const namePath = name.indexOf("?") >= 0 ? name.split("?")[0] : name;
+    const paramPath =
+      name.indexOf("?") >= 0 ? name.substr(name.indexOf("?")) : '';
     if (searchParams.length > 0) {
-      return `/${
-        (this.engine.app as WXApp).indexPage
-      }?route=${encodeURIComponent(name)}&${searchParams.join("&")}`;
+      return `/${(this.engine.app as WXApp).indexPage}?route=${encodeURI(
+        namePath
+      )}${encodeURIComponent(paramPath)}&${searchParams.join("&")}`;
     } else {
-      return `/${
-        (this.engine.app as WXApp).indexPage
-      }?route=${encodeURIComponent(name)}`;
+      return `/${(this.engine.app as WXApp).indexPage}?route=${encodeURI(
+        namePath
+      )}${encodeURIComponent(paramPath)}`;
     }
   }
 
