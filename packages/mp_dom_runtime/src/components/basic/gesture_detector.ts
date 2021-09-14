@@ -3,6 +3,7 @@ import { ComponentView } from "../component_view";
 import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 
 export class GestureDetector extends ComponentView {
+  classname = "GestureDetector";
   hoverOpacity = false;
   didSetOnclicked = false;
 
@@ -16,10 +17,15 @@ export class GestureDetector extends ComponentView {
     return "div";
   }
 
-  setConstraints(constraints: any) {
-    if (!constraints) return;
-    this.constraints = { x: 0, y: 0, w: constraints.w, h: constraints.h };
-    this.updateLayout();
+  setChildren(children: any) {
+    super.setChildren(children);
+    this.subviews.forEach((it) => {
+      it.gestureViewConstraints = {
+        x: this.constraints?.x ?? 0.0,
+        y: this.constraints?.y ?? 0.0,
+      };
+      it.updateLayout();
+    });
   }
 
   setAttributes(attributes: any) {

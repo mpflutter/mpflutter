@@ -21,6 +21,7 @@ export class ComponentView {
   constraints?: Constraints;
   additionalConstraints: any;
   collectionViewConstraints: any;
+  gestureViewConstraints: any;
 
   ancestors: AncestorView[] = [];
   ancestorStyle: any = {};
@@ -59,6 +60,15 @@ export class ComponentView {
     ) {
       additionalConstraints = this.collectionViewConstraints;
     }
+    if (
+      this.gestureViewConstraints &&
+      this.superview &&
+      this.superview.classname === "GestureDetector"
+    ) {
+      x -= this.gestureViewConstraints.x;
+      y -= this.gestureViewConstraints.y;
+    }
+
     setDOMStyle(this.htmlElement, {
       position: additionalConstraints?.position ?? "absolute",
       left: additionalConstraints?.left ?? x + "px",
