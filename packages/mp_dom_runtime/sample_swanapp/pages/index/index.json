@@ -1,6 +1,6 @@
 {
-    "navigationBarTitleText": "智能小程序示例",
+    "navigationBarTitleText": "",
     "usingComponents": {
-        "mpdom": "/miniprogram_dom/index"
+        "mpdom": "/swan_dom/index"
     }
 }

@@ -1,0 +1,1 @@
+<renderer id="renderer" dom="{{dom}}" style="{{style}}" root="body" />
