@@ -1,0 +1,42 @@
+/**
+ * @file index.css
+ * @author swan
+ */
+.logo {
+    width: 375rpx;
+    height: 60rpx;
+    background-image: url("../../images/smartapp.png");
+    background-size: 375rpx;
+}
+
+.userinfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 380rpx;
+    width: 100%;
+}
+
+.userinfo-login-btn {
+    font-size: 11px;
+}
+
+.userinfo-message {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 40%;
+}
+
+.userinfo-avatar {
+    margin: 20rpx;
+    border-radius: 50%;
+    width: 88rpx;
+    height: 88rpx;
+}
+
+.userinfo-nickname {
+    display: block;
+    color: #aaa;
+    width: 150rpx;
+}
