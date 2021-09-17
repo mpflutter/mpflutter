@@ -1,5 +1,4 @@
 declare var global: any;
-declare var wx: any;
 declare var getCurrentPages: any;
 
 import { WXApp } from "./app";
@@ -63,8 +62,11 @@ export class Page {
   async fetchViewport() {
     let viewport = await this.element.getBoundingClientRect();
     if (viewport.height <= 0.1) {
-      if (MPEnv.platformType === PlatformType.wxMiniProgram) {
-        viewport.height = wx.getSystemInfoSync().windowHeight;
+      if (
+        MPEnv.platformType === PlatformType.wxMiniProgram ||
+        MPEnv.platformType === PlatformType.swanMiniProgram
+      ) {
+        viewport.height = MPEnv.platformScope.getSystemInfoSync().windowHeight;
       } else {
         viewport.height = window.innerHeight;
       }
@@ -89,7 +91,10 @@ export class Page {
 
   didReceivedFrameData(message: { [key: string]: any }) {
     if (message.ignoreScaffold !== true) {
-      const scaffoldView = this.engine.componentFactory.create(message.scaffold, this.document);
+      const scaffoldView = this.engine.componentFactory.create(
+        message.scaffold,
+        this.document
+      );
       if (!(scaffoldView instanceof MPScaffold)) return;
       if (this.scaffoldView !== scaffoldView) {
         if (this.scaffoldView) {
@@ -98,11 +103,16 @@ export class Page {
         }
         this.scaffoldView = scaffoldView;
         if (scaffoldView instanceof MPScaffold && !scaffoldView.delegate) {
-          if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+          if (
+            MPEnv.platformType === PlatformType.wxMiniProgram ||
+            MPEnv.platformType === PlatformType.swanMiniProgram
+          ) {
             scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document));
             scaffoldView.setAttributes(message.scaffold.attributes);
           } else {
-            scaffoldView.setDelegate(new BrowserPageScaffoldDelegate(this.document));
+            scaffoldView.setDelegate(
+              new BrowserPageScaffoldDelegate(this.document)
+            );
             scaffoldView.setAttributes(message.scaffold.attributes);
           }
         }
@@ -191,7 +201,7 @@ export class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   backgroundElementAttached = false;
 
   setPageTitle(title: string): void {
-    wx.setNavigationBarTitle({ title });
+    MPEnv.platformScope.setNavigationBarTitle({ title });
   }
 
   setPageBackgroundColor(color: string): void {
@@ -210,11 +220,14 @@ export class WXPageScaffoldDelegate implements MPScaffoldDelegate {
     if (this.backgroundElementAttached) return;
     this.document.body.appendChild(this.backgroundElement);
     this.backgroundElementAttached = true;
-    wx.setBackgroundColor({ backgroundColor: color });
+    MPEnv.platformScope.setBackgroundColor({ backgroundColor: color });
   }
 
   setAppBarColor(color: string, tintColor?: string): void {
-    wx.setNavigationBarColor({ backgroundColor: color, frontColor: tintColor });
+    MPEnv.platformScope.setNavigationBarColor({
+      backgroundColor: color,
+      frontColor: tintColor,
+    });
   }
 }
 
@@ -225,9 +238,12 @@ export const WXPage = (
 ) => {
   return {
     onLoad(pageOptions: any) {
+      console.log("fjkdhsakjlfdhsal");
       const document = (this as any).selectComponent(selector).miniDom.document;
-      const documentTm = (this as any).selectComponent(selector + "_tm").miniDom.document;
+      const documentTm = (this as any).selectComponent(selector + "_tm").miniDom
+        .document;
       TextMeasurer.activeTextMeasureDocument = documentTm;
+      Router.beingPush = false;
       const basePath = (() => {
         let c = app.indexPage.split("/");
         c.pop();
@@ -253,7 +269,12 @@ export const WXPage = (
         finalOptions.route = decodeURIComponent(finalOptions.route);
       }
 
-      (this as any).mpPage = new Page(document.body, app.engine, finalOptions, document);
+      (this as any).mpPage = new Page(
+        document.body,
+        app.engine,
+        finalOptions,
+        document
+      );
       (this as any).mpPage.isFirst = getCurrentPages().length === 1;
     },
     onUnload() {
@@ -262,11 +283,13 @@ export const WXPage = (
       }
     },
     onShow() {
-      TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(selector + "_tm").miniDom.document;
+      TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(
+        selector + "_tm"
+      ).miniDom.document;
     },
     onPullDownRefresh() {
       (this as any).mpPage.onRefresh().then((it: any) => {
-        wx.stopPullDownRefresh();
+        MPEnv.platformScope.stopPullDownRefresh();
       });
     },
     onShareAppMessage() {

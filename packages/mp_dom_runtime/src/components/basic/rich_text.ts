@@ -25,7 +25,10 @@ export class RichText extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (
+      MPEnv.platformType === PlatformType.wxMiniProgram ||
+      MPEnv.platformType === PlatformType.swanMiniProgram
+    ) {
       (this.htmlElement as any).setClass("mp_text");
     }
     const maxWidth = attributes.maxWidth;
@@ -40,7 +43,10 @@ export class RichText extends ComponentView {
     } else {
       this.maxHeight = undefined;
     }
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (
+      MPEnv.platformType === PlatformType.wxMiniProgram ||
+      MPEnv.platformType === PlatformType.swanMiniProgram
+    ) {
       setDOMStyle(this.htmlElement, {
         textAlign: cssTextAlign(attributes.textAlign),
         lineHeight: attributes.height?.toString(),
@@ -82,7 +88,10 @@ export class RichText extends ComponentView {
     if (children[0].attributes.text) {
       (this.htmlElement as HTMLDivElement).innerText =
         children[0].attributes.text;
-      if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      if (
+        MPEnv.platformType === PlatformType.wxMiniProgram ||
+        MPEnv.platformType === PlatformType.swanMiniProgram
+      ) {
         setDOMAttribute(
           this.htmlElement,
           "innerText",
@@ -154,7 +163,10 @@ export class TextSpan extends ComponentView {
     }
     if (attributes.text) {
       (this.htmlElement as HTMLSpanElement).innerText = attributes.text;
-      if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      if (
+        MPEnv.platformType === PlatformType.wxMiniProgram ||
+        MPEnv.platformType === PlatformType.swanMiniProgram
+      ) {
         setDOMAttribute(this.htmlElement, "innerText", attributes.text);
       }
     }

@@ -161,24 +161,32 @@ class _Element {
         }
     }
     getBoundingClientRect() {
-        if (this.class) {
-            return this.getBoundingClientRectWithClass();
-        }
+        // if (this.class) {
+        //   return this.getBoundingClientRectWithClass();
+        // }
         return new Promise((res) => {
-            wx.createSelectorQuery()
-                .in(this.controller.componentInstance.selectComponent("#renderer"))
+            swan
+                .createSelectorQuery()
+                .in(this.controller.componentInstance)
                 .select("#d_" + this.hashCode)
                 .boundingClientRect((result) => {
-                res(result);
+                if (!result) {
+                    res({ width: 0.0, height: 0.0 });
+                    return;
+                }
+                res({
+                    width: result.width > 1 ? Math.ceil(result.width + 1) : 0.0,
+                    height: result.height > 1 ? Math.ceil(result.height + 1) : 0.0,
+                });
             })
                 .exec();
         });
     }
     getBoundingClientRectWithClass() {
         if (!_Element.classBoundingClientRectQuery[this.class]) {
-            _Element.classBoundingClientRectQuery[this.class] = wx
+            _Element.classBoundingClientRectQuery[this.class] = swan
                 .createSelectorQuery()
-                .in(this.controller.componentInstance.selectComponent("#renderer"))
+                .in(this.controller.componentInstance)
                 .selectAll("." + this.class)
                 .boundingClientRect((result) => {
                 if (result instanceof Array) {
@@ -203,8 +211,9 @@ class _Element {
     }
     getFields(fields) {
         return new Promise((res) => {
-            wx.createSelectorQuery()
-                .in(this.controller.componentInstance.selectComponent("#renderer"))
+            swan
+                .createSelectorQuery()
+                .in(this.controller.componentInstance)
                 .select("#d_" + this.hashCode)
                 .fields(fields)
                 .exec((result) => {
@@ -213,20 +222,20 @@ class _Element {
         });
     }
     get clientWidth() {
-        return wx.getSystemInfoSync().windowWidth;
+        return swan.getSystemInfoSync().windowWidth;
     }
     get clientHeight() {
-        return wx.getSystemInfoSync().windowHeight;
+        return swan.getSystemInfoSync().windowHeight;
     }
     get windowPaddingTop() {
-        return wx.getSystemInfoSync().statusBarHeight;
+        return swan.getSystemInfoSync().statusBarHeight;
     }
     get windowPaddingBottom() {
         var _a, _b;
-        return (_b = (_a = wx.getSystemInfoSync().safeArea) === null || _a === void 0 ? void 0 : _a.bottom) !== null && _b !== void 0 ? _b : 0;
+        return (_b = (_a = swan.getSystemInfoSync().safeArea) === null || _a === void 0 ? void 0 : _a.bottom) !== null && _b !== void 0 ? _b : 0;
     }
     get devicePixelRatio() {
-        return wx.getSystemInfoSync().pixelRatio;
+        return swan.getSystemInfoSync().pixelRatio;
     }
     set onclick(value) {
         _Element.eventHandlers[`${this.hashCode}.onclick`] = value;
@@ -262,10 +271,19 @@ class _Document {
         const hashCode = _Document.nextElementHashCode.toString();
         _Document.nextElementHashCode++;
         if (tag !== "div") {
-            this.controller.pushCommand(hashCode, { id: hashCode, tag, s: {}, n: [] });
+            this.controller.pushCommand(hashCode, {
+                id: hashCode,
+                tag,
+                s: {},
+                n: [],
+            });
         }
         else {
-            this.controller.pushCommand(hashCode, { id: hashCode, tag: 'div', s: {}, n: [] });
+            this.controller.pushCommand(hashCode, {
+                id: hashCode,
+                s: {},
+                n: [],
+            });
         }
         return new _Element(hashCode, this.controller, tag);
     }
@@ -302,7 +320,8 @@ class MiniDom {
                 else if (parentKey.endsWith(".s") &&
                     data[`dom.${parentKey.replace(".s", "")}`] &&
                     data[`dom.${parentKey.replace(".s", "")}`]["s"]) {
-                    data[`dom.${parentKey.replace(".s", "")}`]["s"][myKey] = command.value;
+                    data[`dom.${parentKey.replace(".s", "")}`]["s"][myKey] =
+                        command.value;
                 }
                 else {
                     data[`dom.${command.key}`] = command.value;
@@ -342,9 +361,7 @@ Component({
         attached() {
             this.miniDom = new MiniDom();
             this.miniDom.componentInstance = this;
-            this.miniDom.setData = (data) => {
-                this.setData(data);
-            };
+            this.miniDom.setData = this.setData.bind(this);
         },
     },
 });

@@ -1,4 +1,4 @@
-declare var global, Component, wx: any;
+declare var global, Component, swan: any;
 
 const dictCSSKeys = {
   position: 1,
@@ -44,7 +44,11 @@ class _Element {
     return this.nodes[0];
   }
 
-  constructor(readonly hashCode: string, readonly controller: MiniDom, readonly tag: string) {
+  constructor(
+    readonly hashCode: string,
+    readonly controller: MiniDom,
+    readonly tag: string
+  ) {
     global.miniDomEventHandlers = _Element.eventHandlers;
   }
 
@@ -91,7 +95,10 @@ class _Element {
       }
     }
     if (changed && changeCount > 1) {
-      this.controller.pushCommand(`${this.hashCode}.s`, this.transformStyle(this.currentStyle));
+      this.controller.pushCommand(
+        `${this.hashCode}.s`,
+        this.transformStyle(this.currentStyle)
+      );
     } else if (changed && changeCount === 1) {
       const cssKey = this.toCSSKey(changeKey);
       if (dictCSSKeys[cssKey]) {
@@ -101,7 +108,10 @@ class _Element {
         );
       } else {
         let transformedStyle = this.transformStyle(this.currentStyle);
-        this.controller.pushCommand(`${this.hashCode}.s.other`, transformedStyle["other"]);
+        this.controller.pushCommand(
+          `${this.hashCode}.s.other`,
+          transformedStyle["other"]
+        );
       }
     }
   }
@@ -182,15 +192,24 @@ class _Element {
   }
 
   getBoundingClientRect() {
-    if (this.class) {
-      return this.getBoundingClientRectWithClass();
-    }
+    // if (this.class) {
+    //   return this.getBoundingClientRectWithClass();
+    // }
+
     return new Promise((res) => {
-      wx.createSelectorQuery()
-        .in(this.controller.componentInstance.selectComponent("#renderer"))
+      swan
+        .createSelectorQuery()
+        .in(this.controller.componentInstance)
         .select("#d_" + this.hashCode)
         .boundingClientRect((result) => {
-          res(result);
+          if (!result) {
+            res({ width: 0.0, height: 0.0 });
+            return;
+          }
+          res({
+            width: result.width > 1 ? Math.ceil(result.width + 1) : 0.0,
+            height: result.height > 1 ? Math.ceil(result.height + 1) : 0.0,
+          });
         })
         .exec();
     });
@@ -198,9 +217,9 @@ class _Element {
 
   getBoundingClientRectWithClass() {
     if (!_Element.classBoundingClientRectQuery[this.class]) {
-      _Element.classBoundingClientRectQuery[this.class] = wx
+      _Element.classBoundingClientRectQuery[this.class] = swan
         .createSelectorQuery()
-        .in(this.controller.componentInstance.selectComponent("#renderer"))
+        .in(this.controller.componentInstance)
         .selectAll("." + this.class)
         .boundingClientRect((result) => {
           if (result instanceof Array) {
@@ -225,8 +244,9 @@ class _Element {
 
   getFields(fields: any) {
     return new Promise((res) => {
-      wx.createSelectorQuery()
-        .in(this.controller.componentInstance.selectComponent("#renderer"))
+      swan
+        .createSelectorQuery()
+        .in(this.controller.componentInstance)
         .select("#d_" + this.hashCode)
         .fields(fields)
         .exec((result: any) => {
@@ -236,28 +256,31 @@ class _Element {
   }
 
   get clientWidth(): number {
-    return wx.getSystemInfoSync().windowWidth;
+    return swan.getSystemInfoSync().windowWidth;
   }
 
   get clientHeight(): number {
-    return wx.getSystemInfoSync().windowHeight;
+    return swan.getSystemInfoSync().windowHeight;
   }
 
   get windowPaddingTop(): number {
-    return wx.getSystemInfoSync().statusBarHeight;
+    return swan.getSystemInfoSync().statusBarHeight;
   }
 
   get windowPaddingBottom(): number {
-    return wx.getSystemInfoSync().safeArea?.bottom ?? 0;
+    return swan.getSystemInfoSync().safeArea?.bottom ?? 0;
   }
 
   get devicePixelRatio(): number {
-    return wx.getSystemInfoSync().pixelRatio;
+    return swan.getSystemInfoSync().pixelRatio;
   }
 
   set onclick(value: () => void) {
     _Element.eventHandlers[`${this.hashCode}.onclick`] = value;
-    this.controller.pushCommand(`${this.hashCode}.onclick`, value ? this.hashCode : undefined);
+    this.controller.pushCommand(
+      `${this.hashCode}.onclick`,
+      value ? this.hashCode : undefined
+    );
   }
 
   set oninput(value: () => void) {
@@ -272,7 +295,10 @@ class _Element {
 
   private toCSSKey(str: string) {
     if (_Element.toCSSKeyCache[str]) return _Element.toCSSKeyCache[str];
-    let snakeCase = str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
+    let snakeCase = str.replace(
+      /[A-Z]/g,
+      (letter) => `-${letter.toLowerCase()}`
+    );
     if (snakeCase.startsWith("webkit")) {
       snakeCase = `-${snakeCase}`;
     }
@@ -292,9 +318,18 @@ class _Document {
     const hashCode = _Document.nextElementHashCode.toString();
     _Document.nextElementHashCode++;
     if (tag !== "div") {
-      this.controller.pushCommand(hashCode, { id: hashCode, tag, s: {}, n: [] });
+      this.controller.pushCommand(hashCode, {
+        id: hashCode,
+        tag,
+        s: {},
+        n: [],
+      });
     } else {
-      this.controller.pushCommand(hashCode, { id: hashCode, tag: 'div', s: {}, n: [] });
+      this.controller.pushCommand(hashCode, {
+        id: hashCode,
+        s: {},
+        n: [],
+      });
     }
     return new _Element(hashCode, this.controller, tag);
   }
@@ -336,7 +371,8 @@ class MiniDom {
           data[`dom.${parentKey.replace(".s", "")}`] &&
           data[`dom.${parentKey.replace(".s", "")}`]["s"]
         ) {
-          data[`dom.${parentKey.replace(".s", "")}`]["s"][myKey] = command.value;
+          data[`dom.${parentKey.replace(".s", "")}`]["s"][myKey] =
+            command.value;
         } else {
           data[`dom.${command.key}`] = command.value;
         }
@@ -378,9 +414,7 @@ Component({
     attached() {
       this.miniDom = new MiniDom();
       this.miniDom.componentInstance = this;
-      this.miniDom.setData = (data) => {
-        this.setData(data);
-      };
+      this.miniDom.setData = this.setData.bind(this);
     },
   },
 });

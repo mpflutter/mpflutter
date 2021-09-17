@@ -1,11 +1,15 @@
 declare var wx: any;
+declare var swan: any;
 
 import { Engine } from "../../engine";
 import { MPEnv, PlatformType } from "../../env";
 
 export class WebDialogs {
   static receivedWebDialogsMessage(engine: Engine, message: any) {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (
+      MPEnv.platformType === PlatformType.wxMiniProgram ||
+      MPEnv.platformType === PlatformType.swanMiniProgram
+    ) {
       this.wxMiniProgramReceivedWebDialogsMessage(engine, message);
     } else {
       this.browserMiniProgramReceivedWebDialogsMessage(engine, message);
@@ -14,7 +18,7 @@ export class WebDialogs {
 
   static wxMiniProgramReceivedWebDialogsMessage(engine: Engine, message: any) {
     if (message["params"]["dialogType"] === "alert") {
-      wx.showModal({
+      MPEnv.platformScope.showModal({
         content: message["params"]["message"],
         showCancel: false,
         confirmText: "确定",
@@ -28,7 +32,7 @@ export class WebDialogs {
         },
       });
     } else if (message["params"]["dialogType"] === "confirm") {
-      wx.showModal({
+      MPEnv.platformScope.showModal({
         content: message["params"]["message"],
         cancelText: "取消",
         confirmText: "确认",
@@ -46,7 +50,7 @@ export class WebDialogs {
         },
       });
     } else if (message["params"]["dialogType"] === "prompt") {
-      wx.showModal({
+      MPEnv.platformScope.showModal({
         title: message["params"]["message"],
         content: message["params"]["defaultValue"] ?? "",
         editable: true,
@@ -66,7 +70,7 @@ export class WebDialogs {
         },
       });
     } else if (message["params"]["dialogType"] === "actionSheet") {
-      wx.showActionSheet({
+      MPEnv.platformScope.showActionSheet({
         itemList: message["params"]["items"],
         success: (res: any) => {
           engine.sendMessage(
@@ -107,9 +111,9 @@ export class WebDialogs {
       if (message["params"]["mask"]) {
         params.mask = message["params"]["mask"];
       }
-      wx.showToast(params);
+      MPEnv.platformScope.showToast(params);
     } else if (message["params"]["dialogType"] === "hideToast") {
-      wx.hideToast();
+      MPEnv.platformScope.hideToast();
     }
   }
 

@@ -61,7 +61,7 @@ export class EditableText extends ComponentView {
       );
     };
     if (attributes.style) {
-      let textStyle: any = cssTextStyle(attributes.style);  
+      let textStyle: any = cssTextStyle(attributes.style);
       delete textStyle["userSelect"];
       delete textStyle["WebkitUserSelect"];
       setDOMStyle(this.contentElement, {
@@ -83,7 +83,10 @@ export class EditableText extends ComponentView {
       this._keyboardPattern(attributes.keyboardType)
     );
     if (attributes.value) {
-      if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      if (
+        MPEnv.platformType === PlatformType.wxMiniProgram ||
+        MPEnv.platformType === PlatformType.swanMiniProgram
+      ) {
         setDOMAttribute(this.contentElement, "value", attributes.value);
       } else {
         this.contentElement.value = attributes.value;

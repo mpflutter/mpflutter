@@ -3,9 +3,18 @@ import { ComponentView } from "./components/component_view";
 import { setDOMStyle } from "./components/dom_utils";
 import { Engine } from "./engine";
 import { MPEnv, PlatformType } from "./env";
+import { Router } from "./router";
 
 export class TextMeasurer {
   static activeTextMeasureDocument: Document;
+
+  static async delay() {
+    return new Promise((res) => {
+      setTimeout(() => {
+        res(null);
+      }, 32);
+    });
+  }
 
   static async didReceivedDoMeasureData(
     engine: Engine,
@@ -13,6 +22,9 @@ export class TextMeasurer {
   ) {
     if (!this.activeTextMeasureDocument) {
       this.activeTextMeasureDocument = document;
+    }
+    while (Router.beingPush) {
+      await this.delay();
     }
     if (data.items) {
       ComponentFactory.disableCache = true;
@@ -28,8 +40,11 @@ export class TextMeasurer {
       ComponentFactory.disableCache = false;
       const rects = await Promise.all(
         views.map(async (it) => {
-          if (MPEnv.platformType === PlatformType.wxMiniProgram) {
-            (it.htmlElement as any).setClass = "tm";
+          if (
+            MPEnv.platformType === PlatformType.wxMiniProgram ||
+            MPEnv.platformType === PlatformType.swanMiniProgram
+          ) {
+            (it.htmlElement as any).setClass("tm");
           }
           setDOMStyle(it.htmlElement, {
             position: "fixed",
@@ -49,8 +64,12 @@ export class TextMeasurer {
                 : "999999px",
           });
           this.activeTextMeasureDocument.body.appendChild(it.htmlElement);
-          if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+          if (
+            MPEnv.platformType === PlatformType.wxMiniProgram ||
+            MPEnv.platformType === PlatformType.swanMiniProgram
+          ) {
             await (this.activeTextMeasureDocument as any).awaitSetState();
+            await this.delay();
           }
           const rect = await it.htmlElement.getBoundingClientRect();
           it.htmlElement.remove();

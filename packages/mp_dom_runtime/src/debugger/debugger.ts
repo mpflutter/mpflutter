@@ -5,7 +5,10 @@ import { BrowserDebugger } from "./browser_debugger";
 import { WXDebugger } from "./wx_debugger";
 
 export function createDebugger(serverAddr: string, engine: Engine): Debugger {
-  if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+  if (
+    MPEnv.platformType === PlatformType.wxMiniProgram ||
+    MPEnv.platformType === PlatformType.swanMiniProgram
+  ) {
     return new WXDebugger(serverAddr, engine);
   } else {
     return new BrowserDebugger(serverAddr, engine);

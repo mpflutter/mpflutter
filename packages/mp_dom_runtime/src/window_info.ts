@@ -1,5 +1,3 @@
-declare var wx: any;
-
 import { Engine } from "./engine";
 import { MPEnv, PlatformType } from "./env";
 
@@ -7,22 +5,26 @@ export class WindowInfo {
   constructor(readonly engine: Engine) {}
 
   updateWindowInfo() {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (
+      MPEnv.platformType === PlatformType.wxMiniProgram ||
+      MPEnv.platformType === PlatformType.swanMiniProgram
+    ) {
       this.engine.sendMessage(
         JSON.stringify({
           type: "window_info",
           message: {
             window: {
-              width: wx.getSystemInfoSync().screenWidth,
-              height: wx.getSystemInfoSync().screenHeight,
+              width: MPEnv.platformScope.getSystemInfoSync().screenWidth,
+              height: MPEnv.platformScope.getSystemInfoSync().screenHeight,
               padding: {
-                top: wx.getSystemInfoSync().statusBarHeight,
+                top: MPEnv.platformScope.getSystemInfoSync().statusBarHeight,
                 bottom:
-                  wx.getSystemInfoSync().screenHeight -
-                  wx.getSystemInfoSync().safeArea.bottom,
+                  MPEnv.platformScope.getSystemInfoSync().screenHeight -
+                  MPEnv.platformScope.getSystemInfoSync().safeArea?.bottom,
               },
             },
-            devicePixelRatio: wx.getSystemInfoSync().pixelRatio,
+            devicePixelRatio:
+              MPEnv.platformScope.getSystemInfoSync().pixelRatio,
           },
         })
       );

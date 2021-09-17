@@ -1,6 +1,5 @@
-declare var wx: any;
-
 import { Engine } from "../engine";
+import { MPEnv } from "../env";
 import { Debugger } from "./debugger";
 
 export class WXDebugger implements Debugger {
@@ -11,7 +10,9 @@ export class WXDebugger implements Debugger {
   constructor(readonly serverAddr: string, readonly engine: Engine) {}
 
   start() {
-    this.socket = wx.connectSocket({ url: `ws://${this.serverAddr}/ws` });
+    this.socket = MPEnv.platformScope.connectSocket({
+      url: `ws://${this.serverAddr}/ws`,
+    });
     this.socket.onOpen(() => {
       this.connected = true;
       this.socketDidConnect();
@@ -25,12 +26,19 @@ export class WXDebugger implements Debugger {
       if (this.connected) {
         this.engine.componentFactory.cachedElement = {};
         this.engine.componentFactory.cachedView = {};
-        wx.reLaunch({
-          url:
-            "/" +
-            wx.getLaunchOptionsSync().path +
-            "?" +
-            this.encodePathParams(wx.getLaunchOptionsSync().query),
+        MPEnv.platformScope.reLaunch({
+          url: (() => {
+            try {
+              "/" +
+                MPEnv.platformScope.getLaunchOptionsSync().path +
+                "?" +
+                this.encodePathParams(
+                  MPEnv.platformScope.getLaunchOptionsSync().query
+                );
+            } catch (error) {
+              return "/pages/index/index";
+            }
+          })(),
         });
       }
       this.connected = false;

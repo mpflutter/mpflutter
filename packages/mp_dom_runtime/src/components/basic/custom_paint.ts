@@ -1,5 +1,3 @@
-declare var wx: any;
-
 import { Engine } from "../../engine";
 import { MPEnv, PlatformType } from "../../env";
 import { ComponentView } from "../component_view";
@@ -13,9 +11,13 @@ export class MPDrawable {
   decodedDrawables: { [key: string]: HTMLImageElement } = {};
 
   async decodeDrawable(params: any) {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (
+      MPEnv.platformType === PlatformType.wxMiniProgram ||
+      MPEnv.platformType === PlatformType.swanMiniProgram
+    ) {
       if (!MPDrawable.offscreenCanvas) {
-        MPDrawable.offscreenCanvas = wx.createOffscreenCanvas();
+        MPDrawable.offscreenCanvas =
+          MPEnv.platformScope.createOffscreenCanvas();
       }
     }
     try {
@@ -68,7 +70,10 @@ export class MPDrawable {
   ): Promise<{ width: number; height: number }> {
     return new Promise((res, rej) => {
       const img = (() => {
-        if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+        if (
+          MPEnv.platformType === PlatformType.wxMiniProgram ||
+          MPEnv.platformType === PlatformType.swanMiniProgram
+        ) {
           return MPDrawable.offscreenCanvas.createImage();
         }
         return document.createElement("img");
@@ -90,7 +95,10 @@ export class MPDrawable {
   ): Promise<{ width: number; height: number }> {
     return new Promise((res, rej) => {
       const img = (() => {
-        if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+        if (
+          MPEnv.platformType === PlatformType.wxMiniProgram ||
+          MPEnv.platformType === PlatformType.swanMiniProgram
+        ) {
           return MPDrawable.offscreenCanvas.createImage();
         }
         return document.createElement("img");
@@ -148,7 +156,10 @@ export class CustomPaint extends ComponentView {
   }
 
   async createContext(): Promise<CanvasRenderingContext2D | null> {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (
+      MPEnv.platformType === PlatformType.wxMiniProgram ||
+      MPEnv.platformType === PlatformType.swanMiniProgram
+    ) {
       return new Promise((res) => {
         setTimeout(async () => {
           const fields = await (this.htmlElement as any).getFields({
@@ -157,7 +168,7 @@ export class CustomPaint extends ComponentView {
           });
           const canvas = fields.node;
           const ctx = canvas.getContext("2d");
-          const dpr = wx.getSystemInfoSync().pixelRatio;
+          const dpr = MPEnv.platformScope.getSystemInfoSync().pixelRatio;
           canvas.width = fields.width * dpr;
           canvas.height = fields.height * dpr;
           ctx.scale(dpr, dpr);

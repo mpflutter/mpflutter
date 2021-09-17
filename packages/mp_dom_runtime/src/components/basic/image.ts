@@ -47,7 +47,11 @@ export class Image extends ComponentView {
         }
       })(),
     });
-    if (attributes.fit && MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (
+      attributes.fit &&
+      (MPEnv.platformType === PlatformType.wxMiniProgram ||
+        MPEnv.platformType === PlatformType.swanMiniProgram)
+    ) {
       setDOMAttribute(
         this.htmlElement,
         "mode",
@@ -90,7 +94,10 @@ export class Image extends ComponentView {
             return `assets/${attributes.assetName}`;
           }
         })();
-        if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+        if (
+          MPEnv.platformType === PlatformType.wxMiniProgram ||
+          MPEnv.platformType === PlatformType.swanMiniProgram
+        ) {
           assetUrl = "/" + assetUrl;
         }
         setDOMAttribute(this.htmlElement, "src", assetUrl);

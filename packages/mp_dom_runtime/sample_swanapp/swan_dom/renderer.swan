@@ -1,19 +1,7 @@
 <import-sjs module="tools">
-var domData = {};
 var dictCSSKeys = ["_","position","top","left","width","height","z-index","border-radius","overflow","background-color","display", "user-select", "-webkit-user-select", "text-align", "-webkit-line-clamp", "opacity", "max-width", "max-height"];
 var dictCSSValues = {"_1":"absolute","_2":"unset","_3":"start"};
-var setDomData = function(data) {
-    domData = data;
-}
-var getDomData = function(key, subkey) {
-    return domData[key] ? domData[key][subkey] : undefined;
-}
-var getDom = function() {
-    return domData;
-}
-var style = function(id) {
-    var params = domData[id] ? domData[id].s : undefined;
-    console.log(params);
+var style = function(params) {
     var output = "";
     if (!params) return output;
     for (var i = 0; i < dictCSSKeys.length; i++) {
@@ -35,65 +23,62 @@ var style = function(id) {
     return output;
 }
 var tag = function(value) {
-    if (!value || value === 'div') {
-        return 'fdiv';
+    if (value) {
+        return 'f' + value;
     }
     else {
-        return 'f' + value;
+        return 'fdiv';
     }
 }
 module.exports = {
-    setDomData: setDomData,
-    getDomData: getDomData,
-    getDom: getDom,
     style: style,
     tag: tag,
 };
 </import-sjs>
 
 <block s-if="{{dom[root]}}">
-    <template is="{{tools.tag(dom[root].tag)}}" data="{{{_: tools.setDomData(dom),style,id:root}}}" />
+    <template is="{{tools.tag(dom[root].tag)}}" data="{{{style,id:root,dom:dom}}}" />
 </block>
 <template name="fdiv">
-    <view id="d_{{tools.getDomData(id, 'id')}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.onclick}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" class="{{tools.getDomData(id, 'class')}}" style="{{tools.style(id)}};{{style}}">
-        <block wx:key="*this" s-for="{{tools.getDomData(id, 'n')}}">
-            <template is="{{tools.tag(tools.getDomData(item, 'tag'))}}" data="{{{id: item}}}" />
+    <view id="d_{{id}}" class="{{dom[id].class}}" bindtap="{{dom[id].onclick ? 'ontap' : ''}}" style="{{tools.style(dom[id].s)}};{{style}}">
+        <block s-for="{{dom[id].n}} trackBy item">
+            <template is="{{tools.tag(dom[id].tag)}}" data="{{{id: item, dom:dom}}}" />
         </block>
-        <block s-if="{{rt.innerText}}">{{rt.innerText}}</block>
+        <block s-if="{{dom[id].innerText}}">{{dom[id].innerText}}</block>
     </view>
 </template>
 <!-- floop -->
 
 <template name="fcatchmove">
-    <view id="d_{{rt.id}}" class="{{rt.class}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" catchtouchmove="catchmove" style="{{tools.style(rt.s)}}">
-        <block wx:key="*this" s-for="{{rt.n}}">
-            <template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{{rt:tools.getDomData(item),n:n+1}}}" />
+    <view id="d_{{id}}" class="{{dom[id].class}}" bindtap="{{dom[id].onclick ? 'ontap' : ''}}" catchtouchmove="catchmove" style="{{tools.style(id)}}}}">
+        <block s-for="{{dom[id].n}} trackBy item">
+            <template is="{{tools.tag(dom[id].tag)}}" data="{{{id: item, dom:dom}}}" />
         </block>
     </view>
 </template>
 <template name="fimg">
-    <image id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" mode="{{rt.mode}}" src="{{rt.src}}"></image>
+    <image id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(id)}}" mode="{{dom[id].mode}}" src="{{dom[id].src}}"></image>
 </template>
 <template name="fiframe">
-    <web-view id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" src="{{rt.src}}"></web-view>
+    <web-view id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(id)}}" src="{{dom[id].src}}"></web-view>
 </template>
 <template name="fvideo">
-    <video id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" src="{{rt.src}}" controls="{{rt.controls}}" autoplay="{{rt.autoplay}}" loop="{{rt.loop}}" muted="{{rt.muted}}" poster="{{rt.poster}}"></video>
+    <video id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(id)}}" src="{{dom[id].src}}" controls="{{dom[id].controls}}" autoplay="{{dom[id].autoplay}}" loop="{{dom[id].loop}}" muted="{{dom[id].muted}}" poster="{{dom[id].poster}}"></video>
 </template>
 <template name="fcanvas">
-    <canvas id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" type="2d"></canvas>
+    <canvas id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(id)}}" type="2d"></canvas>
 </template>
 <template name="ftextarea">
-    <textarea id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{rt.type}}" password="{{rt.type === 'password'}}" disabled="{{rt.readOnly}}" focus="{{rt.autoFocus}}"></textarea>
+    <textarea id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(id)}}" value="{{dom[id].value}}" placeholder="{{dom[id].placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{dom[id].type}}" password="{{dom[id].type === 'password'}}" disabled="{{dom[id].readOnly}}" focus="{{dom[id].autoFocus}}"></textarea>
 </template>
 <template name="finput">
-    <input id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{rt.type}}" password="{{rt.type === 'password'}}" always-embed="true" disabled="{{rt.readOnly}}" focus="{{rt.autoFocus}}"></input>
+    <input id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(id)}}" value="{{dom[id].value}}" placeholder="{{dom[id].placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{dom[id].type}}" password="{{dom[id].type === 'password'}}" always-embed="true" disabled="{{dom[id].readOnly}}" focus="{{dom[id].autoFocus}}"></input>
 </template>
 <template name="fswiper">
-    <swiper id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" vertical="{{rt.vertical}}" circular="{{rt.circular}}">
-        <block wx:key="*this" s-for="{{rt.n}}">
+    <swiper id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(id)}}" vertical="{{dom[id].vertical}}" circular="{{dom[id].circular}}">
+        <block s-for="{{dom[id].n}} trackBy item">
             <swiper-item>
-                <template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{{rt:tools.getDomData(item),n:n+1}}}" />
+                <template is="{{tools.tag(dom[id].tag)}}" data="{{{id: item, dom:dom}}}" />
             </swiper-item>
         </block>
     </swiper>

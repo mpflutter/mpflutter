@@ -1,18 +1,14 @@
-/**
- * @file app.js
- * @author swan
- */
-
-/* globals swan */
-
 App({
     onLaunch(options) {
-        // do something when launch
+        global.mpDEBUG = true;
+        try {
+        require("./plugins.min");
+        } catch (error) {}
+        const { Engine, WXApp } = require("./mpdom.min");
+        const engine = new Engine();
+        engine.initWithDebuggerServerAddr("192.168.1.158:9898");
+        const app = new WXApp("pages/index/index", engine);
+        global.app = app;
+        engine.start();
     },
-    onShow(options) {
-        // do something when show
-    },
-    onHide() {
-        // do something when hide
-    }
 });

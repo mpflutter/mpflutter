@@ -1,6 +1,7 @@
 declare var require: any;
 declare var global: any;
 declare var wx: any;
+declare var swan: any;
 
 import { BrowserApp, WXApp } from "./app";
 import { MPDrawable } from "./components/basic/custom_paint";
@@ -95,7 +96,8 @@ export class Engine {
         setInterval,
         clearTimeout,
         clearInterval,
-        wx,
+        wx: typeof wx !== "undefined" ? wx : undefined,
+        swan: typeof swan !== "undefined" ? swan : undefined,
         Object,
       };
       (global as any).JSON = JSON;
@@ -103,7 +105,12 @@ export class Engine {
       (global as any).setInterval = setInterval;
       (global as any).clearTimeout = clearTimeout;
       (global as any).clearInterval = clearInterval;
-      (global as any).wx = wx;
+      if (typeof wx !== "undefined") {
+        (global as any).wx = wx;
+      }
+      if (typeof swan !== "undefined") {
+        (global as any).swan = swan;
+      }
       (global as any).Object = Object;
       (global as any).self.engineScope = this.mpJS.engineScope;
     }

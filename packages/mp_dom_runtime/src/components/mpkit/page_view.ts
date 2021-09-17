@@ -87,6 +87,7 @@ class PageViewWeapp extends ComponentView {
 }
 
 export const MPPageView =
-  MPEnv.platformType === PlatformType.wxMiniProgram
+  MPEnv.platformType === PlatformType.wxMiniProgram ||
+  MPEnv.platformType === PlatformType.swanMiniProgram
     ? PageViewWeapp
     : PageViewWeb;

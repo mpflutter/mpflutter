@@ -1,10 +1,11 @@
-declare var wx: any;
-
 import { BrowserApp, WXApp } from "./app";
 import { Engine } from "./engine";
+import { MPEnv } from "./env";
 import { Page } from "./page";
 
 export class Router {
+  static beingPush = false;
+
   constructor(readonly engine: Engine) {}
 
   routeResponseHandler: { [key: string]: (routeId: number) => void } = {};
@@ -156,7 +157,7 @@ export class BrowserRouter extends Router {
     } else {
       const namePath = name.indexOf("?") >= 0 ? name.split("?")[0] : name;
       const paramPath =
-        name.indexOf("?") >= 0 ? name.substr(name.indexOf("?")) : '';
+        name.indexOf("?") >= 0 ? name.substr(name.indexOf("?")) : "";
       if (searchParams.length > 0) {
         return `?route=${encodeURI(namePath)}${encodeURIComponent(
           paramPath
@@ -262,7 +263,7 @@ export class WXRouter extends Router {
     }
     const namePath = name.indexOf("?") >= 0 ? name.split("?")[0] : name;
     const paramPath =
-      name.indexOf("?") >= 0 ? name.substr(name.indexOf("?")) : '';
+      name.indexOf("?") >= 0 ? name.substr(name.indexOf("?")) : "";
     if (searchParams.length > 0) {
       return `/${(this.engine.app as WXApp).indexPage}?route=${encodeURI(
         namePath
@@ -275,30 +276,38 @@ export class WXRouter extends Router {
   }
 
   didPush(message: any) {
+    Router.beingPush = true;
     const routeId = message.routeId;
     this.thePushingRouteId = routeId;
     const name = message.name;
-    wx.navigateTo({
+    MPEnv.platformScope.navigateTo({
       url: this.encodeRelativePath(name, message.params),
       fail: () => {
-        wx.navigateTo({ url: this.encodeIndexPath(name, message.params) });
+        MPEnv.platformScope.navigateTo({
+          url: this.encodeIndexPath(name, message.params),
+        });
       },
     });
+    setTimeout(() => {
+      Router.beingPush = false;
+    }, 1000);
   }
 
   didReplace(message: any) {
     const routeId = message.routeId;
     this.thePushingRouteId = routeId;
     const name = message.name;
-    wx.redirectTo({
+    MPEnv.platformScope.redirectTo({
       url: this.encodeRelativePath(name, message.params),
       fail: () => {
-        wx.redirectTo({ url: this.encodeIndexPath(name, message.params) });
+        MPEnv.platformScope.redirectTo({
+          url: this.encodeIndexPath(name, message.params),
+        });
       },
     });
   }
 
   didPop() {
-    wx.navigateBack();
+    MPEnv.platformScope.navigateBack();
   }
 }
