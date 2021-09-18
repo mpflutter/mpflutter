@@ -1,2 +1,2 @@
 <mpdom id="vdom" />
-<mpdom id="vdom_tm" />
+<mpdom id="vdom_tm" style="position: absolute; top: 0px; left: 0px; opacity: 0.0;" />

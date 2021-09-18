@@ -50,6 +50,9 @@ export class WebDialogs {
         },
       });
     } else if (message["params"]["dialogType"] === "prompt") {
+      if (MPEnv.platformType === PlatformType.swanMiniProgram) {
+        throw '百度小程序不支持 prompt';
+      }
       MPEnv.platformScope.showModal({
         title: message["params"]["message"],
         content: message["params"]["defaultValue"] ?? "",

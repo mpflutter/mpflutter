@@ -44,7 +44,7 @@ export class TextMeasurer {
             MPEnv.platformType === PlatformType.wxMiniProgram ||
             MPEnv.platformType === PlatformType.swanMiniProgram
           ) {
-            (it.htmlElement as any).setClass("tm");
+            (it.htmlElement as any).setClass("mp_text");
           }
           setDOMStyle(it.htmlElement, {
             position: "fixed",
