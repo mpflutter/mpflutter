@@ -184,6 +184,8 @@ class MPChannelBase {
       if (!(widget is GestureDetector)) return;
       if (message['event'] == 'onTap') {
         widget.onTap?.call();
+      } else if (message['event'] == 'onLongPress') {
+        widget.onLongPress?.call();
       }
     } catch (e) {
       print(e);

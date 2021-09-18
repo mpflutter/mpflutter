@@ -5,7 +5,9 @@ import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 export class GestureDetector extends ComponentView {
   classname = "GestureDetector";
   hoverOpacity = false;
-  didSetOnclicked = false;
+  didSetOnClicked = false;
+  didSetOnLongPress = false;
+  longPressTimer: any;
 
   constructor(readonly document: Document) {
     super(document);
@@ -30,8 +32,8 @@ export class GestureDetector extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (!this.didSetOnclicked) {
-      this.didSetOnclicked = true;
+    if (!this.didSetOnClicked) {
+      this.didSetOnClicked = true;
       this.htmlElement.onclick = (e) => {
         this.engine.sendMessage(
           JSON.stringify({
@@ -75,6 +77,22 @@ export class GestureDetector extends ComponentView {
             GestureDetector.activeTouchElement = targetElement;
             targetElement.classList.add("hoverOpacity");
           }
+          if (this.attributes.onLongPress) {
+            this.longPressTimer = setTimeout(() => {
+              if (this.longPressTimer) {
+                this.engine.sendMessage(
+                  JSON.stringify({
+                    type: "gesture_detector",
+                    message: {
+                      event: "onLongPress",
+                      target: this.attributes.onLongPress,
+                    },
+                  })
+                );
+                this.longPressTimer = undefined;
+              }
+            }, 300);
+          }
         },
         true
       );
@@ -83,6 +101,10 @@ export class GestureDetector extends ComponentView {
         () => {
           GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
           GestureDetector.activeTouchElement = undefined;
+          if (this.longPressTimer) {
+            clearTimeout(this.longPressTimer);
+            this.longPressTimer = undefined;
+          }
         },
         true
       );
@@ -91,6 +113,10 @@ export class GestureDetector extends ComponentView {
         () => {
           GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
           GestureDetector.activeTouchElement = undefined;
+          if (this.longPressTimer) {
+            clearTimeout(this.longPressTimer);
+            this.longPressTimer = undefined;
+          }
         },
         true
       );
@@ -99,6 +125,10 @@ export class GestureDetector extends ComponentView {
         () => {
           GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
           GestureDetector.activeTouchElement = undefined;
+          if (this.longPressTimer) {
+            clearTimeout(this.longPressTimer);
+            this.longPressTimer = undefined;
+          }
         },
         true
       );
