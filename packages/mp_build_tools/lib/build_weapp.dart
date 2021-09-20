@@ -105,6 +105,7 @@ _moveDeferedScriptToSubpackages() {
   var currentSubpackageSize = 0.0;
   var currentSubpackageLocation =
       () => Directory(p.join('build', 'dart_package_$currentSubpackageIndex'));
+  var currentSubpackageFiles = <String>[];
   Directory('build')
       .listSync()
       .where((element) => element.path.endsWith('.part.js'))
@@ -113,10 +114,12 @@ _moveDeferedScriptToSubpackages() {
       subpackages[currentSubpackageIndex] = [];
     }
     if (!currentSubpackageLocation().existsSync()) {
+      currentSubpackageFiles = [];
       currentSubpackageLocation().createSync();
     }
     final fileName = element.path.split("/").removeLast();
     subpackages[currentSubpackageIndex]!.add(fileName);
+    currentSubpackageFiles.add(fileName);
     currentSubpackageSize += File(element.path).statSync().size;
     File(element.path).copySync(
       p.join(currentSubpackageLocation().path, fileName),
@@ -130,6 +133,20 @@ _moveDeferedScriptToSubpackages() {
       );
       File(element.path + ".map").deleteSync();
     } catch (e) {}
+    File(currentSubpackageLocation().path + '/loader.json')
+        .writeAsStringSync('{}');
+    File(currentSubpackageLocation().path + '/loader.wxml')
+        .writeAsStringSync('');
+    File(currentSubpackageLocation().path + '/loader.js').writeAsStringSync('''
+    Page({
+        onLoad: function() {
+            ${currentSubpackageFiles.map((e) => '''require('./${e.replaceAll('.part.js', '.part')}').main();''').join('\n')}
+            wx.navigateBack({success: function() {
+                global.dartDeferedLoadedFlag = true;
+            }});
+        },
+    })
+    ''');
     if (currentSubpackageSize >= subpackageSizeLimited) {
       currentSubpackageIndex++;
       currentSubpackageSize = 0;
@@ -152,7 +169,10 @@ _writeSubpackagesToAppJson() {
     appJson['subpackages'] ??= [];
     (appJson['subpackages'] as List)
       ..addAll(subpackages.keys.map((e) {
-        return {"root": "dart_package_$e", "pages": []};
+        return {
+          "root": "dart_package_$e",
+          "pages": ["loader"]
+        };
       }).toList());
     File(p.join('build', 'app.json')).writeAsStringSync(json.encode(appJson));
   }
@@ -170,15 +190,33 @@ _writeSubpackageLoader() {
 var subpackageFileMapping = JSON.parse('${json.encode(fileMapping)}');
 self.dartDeferredLibraryLoader = function(uri, res, rej) {
   if (subpackageFileMapping[uri] !== undefined) {
-    require('dart_package_' + subpackageFileMapping[uri] + '/' + uri, function(result) {
-      if (result.main) {
-        result.main();
-        res();
-      }
-      else {
-        rej();
-      }
-    });
+    if (typeof require === "function" && typeof require.async === "function") {
+      require("dart_package_" + subpackageFileMapping[uri] + "/" + uri, function (result) {
+        if (result.main) {
+          result.main();
+          res();
+        } else {
+          console.log("flkdjslakfhdslk");
+          rej();
+        }
+      });
+    } else {
+      global.dartDeferedLoadedFlag = false;
+      setTimeout(() => {
+        wx.navigateTo({
+          url: "/dart_package_" + subpackageFileMapping[uri] + "/loader",
+          success: function () {
+              var intervalHandler;
+              intervalHandler = setInterval(function () {
+                  if (global.dartDeferedLoadedFlag) {
+                    clearInterval(intervalHandler);
+                    res();
+                  }
+              }, 100);
+          },
+        });
+      }, 300);
+    }
   }
   else {
     rej('File not found.');
