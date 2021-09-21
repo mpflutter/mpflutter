@@ -30,7 +30,7 @@ main(List<String> args) async {
       var pubspecContent = File(p.join('pubspec.yaml')).readAsStringSync();
       pubspecContent = pubspecContent.replaceAllMapped(
           RegExp(r'(mpflutter/mpflutter\n.*?\n.*?ref: ).*'), (match) {
-        return "${match.group(1)}${versionCode}";
+        return '${match.group(1)}${versionCode}';
       });
       File(p.join('pubspec.yaml')).writeAsStringSync(pubspecContent);
       print('Successful upgrade pubspec.');
@@ -70,6 +70,29 @@ main(List<String> args) async {
         );
         File(p.join('weapp', item)).writeAsStringSync(response.body);
         print('Successful upgrade weapp ' + item);
+      }
+    }
+    final swanappFile = File(p.join('swanapp', 'app.js'));
+    if (swanappFile.existsSync()) {
+      final fileList = [
+        'mpdom.min.js',
+        'swan_dom/index.css',
+        'swan_dom/index.js',
+        'swan_dom/index.json',
+        'swan_dom/index.swan',
+        'swan_dom/renderer.css',
+        'swan_dom/renderer.js',
+        'swan_dom/renderer.json',
+        'swan_dom/renderer.swan'
+      ];
+      for (var item in fileList) {
+        final response = await get(
+          Uri.parse(
+              'https://cdn.jsdelivr.net/gh/mpflutter/dist/$versionCode/dist_swanapp/' +
+                  item),
+        );
+        File(p.join('swanapp', item)).writeAsStringSync(response.body);
+        print('Successful upgrade swanapp ' + item);
       }
     }
   }
