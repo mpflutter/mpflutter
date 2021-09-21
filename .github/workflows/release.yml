@@ -23,10 +23,10 @@ jobs:
         git config --global user.email "ci@mpflutter.com"
         git config --global user.name "GitHub CI bot"
         git clone https://github.com/mpflutter/dist.git mpflutter_dist
-        mkdir -p mpflutter_dist/${{ github.ref }}
-        cp -rf dist_web mpflutter_dist/${{ github.ref }}/dist_web
-        cp -rf dist_swan mpflutter_dist/${{ github.ref }}/dist_swan
-        cp -rf dist_weapp mpflutter_dist/${{ github.ref }}/dist_weapp
+        mkdir -p mpflutter_dist/$(echo ${{ github.ref }} | sed -e "s/refs\/tags\///)
+        cp -rf dist_web mpflutter_dist/$(echo ${{ github.ref }} | sed -e "s/refs\/tags\///)/dist_web
+        cp -rf dist_swan mpflutter_dist/$(echo ${{ github.ref }} | sed -e "s/refs\/tags\///)/dist_swan
+        cp -rf dist_weapp mpflutter_dist/$(echo ${{ github.ref }} | sed -e "s/refs\/tags\///)/dist_weapp
         cd mpflutter_dist
         git add .
         git diff-index --quiet HEAD || git commit --message "CI Bot commit"
