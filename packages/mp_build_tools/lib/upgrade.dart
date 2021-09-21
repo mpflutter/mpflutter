@@ -15,7 +15,7 @@ main(List<String> args) async {
             'https://api.github.com/repos/mpflutter/mpflutter/branches/master')))
         .body) as Map;
     print('Current master version >>> ' +
-        (masterBranch['commit']['sha'] as String).substring(0, 8));
+        (masterBranch['commit']['sha'] as String).substring(0, 7));
     print('Current release versions >>>');
     print(
       tags.sublist(0, min(10, tags.length)).map((e) => e['name']).join('\n'),
