@@ -1,10 +1,39 @@
-name: GiteeSync
+name: Build and deploy
 
 on: 
   - push
   - delete
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Build
+      run: |
+        cd packages/mp_dom_runtime/
+        npm install -g browserify uglify-js typescript
+        npm install
+        npm run build
+        git config --global user.email "ci@mpflutter.com"
+        git config --global user.name "GitHub CI bot"
+        git clone https://github.com/mpflutter/dist.git mpflutter_dist
+        mkdir -p mpflutter_dist/$(git rev-parse --short HEAD)
+        cp -rf dist_web mpflutter_dist/$(git rev-parse --short HEAD)/dist_web
+        cp -rf dist_swan mpflutter_dist/$(git rev-parse --short HEAD)/dist_swan
+        cp -rf dist_weapp mpflutter_dist/$(git rev-parse --short HEAD)/dist_weapp
+        cd mpflutter_dist
+        git add .
+        git diff-index --quiet HEAD || git commit --message "CI Bot commit"
+        git push "https://ponycui:${{ secrets.GH_TOKEN }}@github.com/mpflutter/dist.git" --set-upstream "master"
+ 
   sync:
     runs-on: ubuntu-latest
     name: Git Repo Sync
