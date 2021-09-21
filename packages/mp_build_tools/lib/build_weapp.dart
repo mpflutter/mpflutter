@@ -196,7 +196,6 @@ self.dartDeferredLibraryLoader = function(uri, res, rej) {
           result.main();
           res();
         } else {
-          console.log("flkdjslakfhdslk");
           rej();
         }
       });

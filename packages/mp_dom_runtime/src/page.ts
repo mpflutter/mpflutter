@@ -238,7 +238,6 @@ export const WXPage = (
 ) => {
   return {
     onLoad(pageOptions: any) {
-      console.log("fjkdhsakjlfdhsal");
       const document = (this as any).selectComponent(selector).miniDom.document;
       const documentTm = (this as any).selectComponent(selector + "_tm").miniDom
         .document;
