@@ -1,0 +1,9 @@
+{
+  "component": true,
+  "usingComponents": {
+    "renderer": "./renderer"
+  },
+  "componentGenerics": {
+    "genericsTest": true
+  }
+}

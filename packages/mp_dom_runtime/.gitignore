@@ -117,6 +117,6 @@ out
 .DS_Store
 
 dist
-dist_swan
-dist_weapp
-dist_web
+dist_swan/mpdom.min.js
+dist_weapp/mpdom.min.js
+dist_web/mpdom.min.js
