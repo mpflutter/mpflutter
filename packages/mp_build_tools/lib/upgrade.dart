@@ -39,8 +39,8 @@ main(List<String> args) async {
     if (webFile.existsSync()) {
       var webIndexHtml = File(p.join('web', 'index.html')).readAsStringSync();
       webIndexHtml = webIndexHtml.replaceAll(
-        RegExp(r'mpflutter@.*?/'),
-        'mpflutter@${versionCode}/',
+        RegExp(r'mpflutter/dist/.*?/'),
+        'mpflutter/dist/${versionCode}/',
       );
       File(p.join('web', 'index.html')).writeAsStringSync(webIndexHtml);
       print('Successful upgrade web project.');
@@ -65,7 +65,7 @@ main(List<String> args) async {
       for (var item in fileList) {
         final response = await get(
           Uri.parse(
-              'https://cdn.jsdelivr.net/gh/mpflutter/mpflutter@$versionCode/packages/mp_dom_runtime/dist_weapp/' +
+              'https://cdn.jsdelivr.net/gh/mpflutter/dist/$versionCode/dist_weapp/' +
                   item),
         );
         File(p.join('weapp', item)).writeAsStringSync(response.body);
