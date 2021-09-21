@@ -117,3 +117,6 @@ out
 .DS_Store
 
 dist
+dist_swan
+dist_weapp
+dist_web
