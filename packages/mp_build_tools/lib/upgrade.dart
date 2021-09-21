@@ -88,7 +88,7 @@ main(List<String> args) async {
       for (var item in fileList) {
         final response = await get(
           Uri.parse(
-              'https://cdn.jsdelivr.net/gh/mpflutter/dist/$versionCode/dist_swanapp/' +
+              'https://cdn.jsdelivr.net/gh/mpflutter/dist/$versionCode/dist_swan/' +
                   item),
         );
         File(p.join('swanapp', item)).writeAsStringSync(response.body);
