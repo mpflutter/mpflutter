@@ -1,8 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpkit/mpkit.dart';
 
-class WechatMiniProgramButtton extends MPPlatformView {
-  WechatMiniProgramButtton(
+class WechatMiniProgramButton extends MPPlatformView {
+  WechatMiniProgramButton(
       {required Widget child, String? openType, String? appParameter})
       : super(
           viewType: 'wechat_miniprogram_button',

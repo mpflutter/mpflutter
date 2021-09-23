@@ -18,6 +18,7 @@ import 'mpkit/encoder/mpkit_encoder.dart';
 import './mpjs/mpjs.dart' as mpjs;
 
 export './mpkit/mpkit.dart';
+export './wechat_miniprogram/wechat_miniprogram.dart';
 
 part 'document.dart';
 part 'plugin.dart';
