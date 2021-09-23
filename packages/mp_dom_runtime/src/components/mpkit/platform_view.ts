@@ -20,6 +20,4 @@ export class MPPlatformView extends ComponentView {
       })
     );
   }
-
-  setChildren() {}
 }

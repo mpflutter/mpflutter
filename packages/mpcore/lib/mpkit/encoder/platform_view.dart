@@ -8,7 +8,7 @@ MPElement _encodeMPPlatformView(Element element) {
     hashCode: element.hashCode,
     flutterElement: element,
     name: widget.viewType,
-    children: null,
+    children: MPElement.childrenFromFlutterElement(element),
     attributes: widget.viewAttributes,
   );
 }

@@ -6,7 +6,6 @@ import '../mpkit.dart';
 
 part './scaffold.dart';
 part './page_view.dart';
-part './open_button.dart';
 part './icon.dart';
 part './platform_view.dart';
 
@@ -16,8 +15,6 @@ class MPKitEncoder {
       return _encodeMPScaffold(element);
     } else if (element.widget is MPPageView) {
       return _encodeMPPageView(element);
-    } else if (element.widget is MPOpenButton) {
-      return _encodeMPOpenButton(element);
     } else if (element.widget is MPIcon) {
       return _encodeMPIcon(element);
     } else if (element.widget is MPPlatformView) {

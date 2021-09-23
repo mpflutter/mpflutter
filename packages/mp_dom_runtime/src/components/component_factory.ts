@@ -29,6 +29,7 @@ import { SliverPersistentHeader } from "./basic/sliver_persistent_header";
 import { EditableText } from "./basic/editable_text";
 import { MPPlatformView } from "./mpkit/platform_view";
 import { ForegroundDecoratedBox } from "./basic/foreground_decorated_box";
+import { WechatMiniProgramButton } from "./wechat_mini_program/wechat_miniprogram_button";
 
 export class ComponentFactory {
   static components: { [key: string]: typeof ComponentView } = {
@@ -61,6 +62,7 @@ export class ComponentFactory {
     mp_web_view: MPWebView,
     mp_page_view: MPPageView,
     mp_platform_view: MPPlatformView,
+    wechat_miniprogram_button: WechatMiniProgramButton,
   };
 
   static ancestors: { [key: string]: typeof AncestorView } = {

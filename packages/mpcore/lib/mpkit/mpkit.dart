@@ -20,5 +20,4 @@ part 'material_icons.dart';
 part 'page_view.dart';
 part 'video_view.dart';
 part 'platform_view.dart';
-part 'open_button.dart';
 part 'env.dart';

@@ -24,15 +24,17 @@ class MPPlatformView extends StatelessWidget {
   final MPPlatformViewController? controller;
   final String viewType;
   final Map<String, dynamic> viewAttributes;
+  final Widget? child;
 
   MPPlatformView({
     required this.viewType,
     this.viewAttributes = const {},
     this.controller,
+    this.child,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return child ?? Container();
   }
 }

@@ -21,4 +21,6 @@ export class MPWebView extends MPPlatformView {
     setDOMAttribute(this.htmlElement, "src", attributes.url);
     setDOMStyle(this.htmlElement, { border: "none" });
   }
+
+  setChildren() {}
 }

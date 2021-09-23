@@ -26,4 +26,6 @@ export class MPVideoView extends MPPlatformView {
       setDOMAttribute(this.htmlElement, "poster", attributes.poster);
     }
   }
+
+  setChildren() {}
 }
