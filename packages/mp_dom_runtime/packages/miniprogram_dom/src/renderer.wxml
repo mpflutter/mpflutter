@@ -73,7 +73,7 @@ module.exports = {
     </view>
 </template>
 <template name="fbutton">
-    <button id="d_{{rt.id}}" class="{{rt.class}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" plain="true" open-type="{{rt.openType}}" app-parameter="{{rt.appParameter}}" style="{{tools.style(rt.s)}};color:unset;border:unset;font-weight:unset;">
+    <button id="d_{{rt.id}}" class="{{rt.class}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" plain="true" open-type="{{rt.openType}}" app-parameter="{{rt.appParameter}}" style="{{tools.style(rt.s)}};color:unset;border:unset;font-weight:unset;padding:0;">
         <block wx:key="*this" wx:for="{{rt.n}}">
             <template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{rt:tools.getDomData(item),n:n+1}}" />
         </block>

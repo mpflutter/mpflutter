@@ -22,6 +22,7 @@ export class ComponentView {
   additionalConstraints: any;
   collectionViewConstraints: any;
   gestureViewConstraints: any;
+  platformViewConstraints: any;
 
   ancestors: AncestorView[] = [];
   ancestorStyle: any = {};
@@ -67,6 +68,14 @@ export class ComponentView {
     ) {
       x -= this.gestureViewConstraints.x;
       y -= this.gestureViewConstraints.y;
+    }
+    if (
+      this.platformViewConstraints &&
+      this.superview &&
+      this.superview.classname === "PlatformView"
+    ) {
+      x -= this.platformViewConstraints.x;
+      y -= this.platformViewConstraints.y;
     }
 
     setDOMStyle(this.htmlElement, {
