@@ -65,6 +65,7 @@ MPElement _encodeGridView(Element element) {
           // ignore: invalid_use_of_protected_member
           (element.findRenderObject()?.constraints as BoxConstraints).maxWidth,
       'gridDelegate': _encodeGridDelegate(widget.gridDelegate),
+      'restorationId': widget.restorationId,
     },
   );
 }

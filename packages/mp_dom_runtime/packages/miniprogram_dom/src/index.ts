@@ -47,7 +47,7 @@ class _Element {
   constructor(
     readonly hashCode: string,
     readonly controller: MiniDom,
-    readonly tag: string
+    public tag: string
   ) {
     global.miniDomEventHandlers = _Element.eventHandlers;
   }
@@ -80,6 +80,11 @@ class _Element {
     }
     clonedElement.setChildrenLight(this.nodes);
     return clonedElement;
+  }
+
+  setTag(value: string) {
+    this.tag = value;
+    this.controller.pushCommand(`${this.hashCode}.tag`, value);
   }
 
   setStyle(style: CSSStyleDeclaration) {

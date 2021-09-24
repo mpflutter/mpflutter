@@ -1,5 +1,6 @@
 <wxs module="tools">
 var domData = {};
+var domScrollState = {};
 var dictCSSKeys = ["_","position","top","left","width","height","z-index","border-radius","overflow","background-color","display", "user-select", "-webkit-user-select", "text-align", "-webkit-line-clamp", "opacity", "max-width", "max-height"];
 var dictCSSValues = {"_1":"absolute","_2":"unset","_3":"start"};
 var setDomData = function(data) {
@@ -43,12 +44,20 @@ else {
 return 'f' + value;
 }
 }
+var onscroll = function(e, instance) {
+domScrollState[e.target.id] = {x: e.detail.scrollLeft, y: e.detail.scrollTop};
+}
+var getScrollPosition = function(id) {
+return domScrollState[id] ? domScrollState[id] : {x: 0, y: 0};
+}
 module.exports = {
 setDomData: setDomData,
 getDomData: getDomData,
 getDom: getDom,
 style: style,
 tag: tag,
+onscroll: onscroll,
+getScrollPosition: getScrollPosition,
 };
 </wxs>
 
@@ -1867,6 +1876,13 @@ tag: tag,
 <template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{rt:tools.getDomData(item),n:n+1}}" />
 </block>
 </view>
+</template>
+<template name="fscrollview">
+<scroll-view id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" scroll-x="true" scroll-y="true" scroll-left="{{tools.getScrollPosition('d_' + rt.id).x}}" scroll-top="{{tools.getScrollPosition('d_' + rt.id).y}}" bindscroll="{{tools.onscroll}}">
+<block wx:key="*this" wx:for="{{rt.n}}">
+<template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{rt:tools.getDomData(item),n:n+1}}" />
+</block>
+</scroll-view>
 </template>
 <template name="fbutton">
 <button id="d_{{rt.id}}" class="{{rt.class}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" plain="true" open-type="{{rt.openType}}" app-parameter="{{rt.appParameter}}" style="{{tools.style(rt.s)}};color:unset;border:unset;font-weight:unset;padding:0;">

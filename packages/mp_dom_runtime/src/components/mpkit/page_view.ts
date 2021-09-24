@@ -61,6 +61,7 @@ class PageViewWeb extends ComponentView {
     this.subviews.push(view);
     view.superview = this;
     this.wrapperHtmlElement.appendChild(view.htmlElement);
+    view.didMoveToWindow();
   }
 }
 

@@ -75,8 +75,8 @@ export class TextMeasurer {
           it.htmlElement.remove();
           return {
             measureId: it.attributes.measureId,
-            width: rect.width,
-            height: rect.height,
+            width: rect?.width ?? 0,
+            height: rect?.height ?? 0,
           };
         })
       );

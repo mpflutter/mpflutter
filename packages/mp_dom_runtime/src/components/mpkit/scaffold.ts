@@ -63,12 +63,12 @@ export class MPScaffold extends ComponentView {
       bottomBar.additionalConstraints = {
         position: "fixed",
         top: "unset",
-        zIndex: "9999",
       };
       setDOMStyle(bottomBar.htmlElement, {
         position: "fixed",
         top: "unset",
         bottom: "0px",
+        zIndex: "9999",
         paddingBottom:
           bottomBarWithSafeArea === true ? "env(safe-area-inset-bottom)" : "",
         backgroundColor: bottomBarSafeAreaColor

@@ -168,6 +168,11 @@ var _Element = function () {
         return clonedElement;
     };
 
+    _Element.prototype.setTag = function setTag(value) {
+        this.tag = value;
+        this.controller.pushCommand(this.hashCode + ".tag", value);
+    };
+
     _Element.prototype.setStyle = function setStyle(style) {
         var changed = false;
         var changeCount = 0;

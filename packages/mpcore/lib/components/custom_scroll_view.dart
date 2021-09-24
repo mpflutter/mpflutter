@@ -57,6 +57,7 @@ MPElement _encodeCustomScrollView(Element element) {
       'bottomBarWithSafeArea': bottomBarWithSafeArea,
       'scrollDirection':
           (element.widget as CustomScrollView).scrollDirection.toString(),
+      'restorationId': widget.restorationId,
     },
   );
 }

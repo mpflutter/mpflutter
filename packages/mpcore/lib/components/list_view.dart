@@ -61,6 +61,7 @@ MPElement _encodeListView(Element element) {
       'bottomBarWithSafeArea': bottomBarWithSafeArea,
       'padding': widget.padding?.toString(),
       'scrollDirection': widget.scrollDirection.toString(),
+      'restorationId': widget.restorationId,
     },
   );
 }

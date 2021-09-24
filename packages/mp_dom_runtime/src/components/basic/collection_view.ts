@@ -1,3 +1,4 @@
+import { MPEnv, PlatformType } from "../../env";
 import { ComponentView } from "../component_view";
 import { setDOMStyle } from "../dom_utils";
 import { cssColor } from "../utils";
@@ -7,6 +8,8 @@ export class CollectionView extends ComponentView {
   classname = "CollectionView";
   wrapperHtmlElement = this.document.createElement("div");
   appBarPinnedViews: ComponentView[] = [];
+  lastScrollX: number = 0;
+  lastScrollY: number = 0;
   viewWidth: number = 0;
   viewHeight: number = 0;
   bottomBarHeight: number = 0;
@@ -16,6 +19,28 @@ export class CollectionView extends ComponentView {
   constructor(document: Document) {
     super(document);
     this.htmlElement.appendChild(this.wrapperHtmlElement);
+    if (MPEnv.platformType === PlatformType.browser) {
+      this.addBrowserScrollListener();
+    }
+  }
+
+  addBrowserScrollListener() {
+    this.htmlElement.addEventListener("scroll", (e) => {
+      this.lastScrollX = this.htmlElement.scrollLeft;
+      this.lastScrollY = this.htmlElement.scrollTop;
+    });
+  }
+
+  didMoveToWindow() {
+    super.didMoveToWindow();
+    if (MPEnv.platformType === PlatformType.browser) {
+      setTimeout(() => {
+        this.htmlElement.scrollTo({
+          left: this.lastScrollX,
+          top: this.lastScrollY,
+        });
+      }, 1);
+    }
   }
 
   setConstraints(constraints: any) {
@@ -75,6 +100,12 @@ export class CollectionView extends ComponentView {
     });
     this.bottomBarHeight = attributes.bottomBarHeight ?? 0.0;
     this.bottomBarWithSafeArea = attributes.bottomBarWithSafeArea ?? false;
+    if (
+      attributes.restorationId &&
+      MPEnv.platformType == PlatformType.wxMiniProgram
+    ) {
+      (this.htmlElement as any).setTag("scrollview");
+    }
   }
 
   addSubview(view: ComponentView) {
@@ -84,6 +115,7 @@ export class CollectionView extends ComponentView {
     this.subviews.push(view);
     view.superview = this;
     this.wrapperHtmlElement.appendChild(view.htmlElement);
+    view.didMoveToWindow();
   }
 
   setPinnedAppBar(attributes: any) {
@@ -134,6 +166,7 @@ export class CollectionView extends ComponentView {
     }
     view.superview = this;
     this.wrapperHtmlElement.appendChild(view.htmlElement);
+    view.didMoveToWindow();
   }
 }
 

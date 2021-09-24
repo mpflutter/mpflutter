@@ -203,6 +203,11 @@ export class ComponentView {
     this.subviews.push(view);
     view.superview = this;
     this.htmlElement.appendChild(view.htmlElement);
+    view.didMoveToWindow();
+  }
+
+  didMoveToWindow() {
+    this.subviews.forEach((it) => it.didMoveToWindow());
   }
 }
 
