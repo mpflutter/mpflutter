@@ -32,10 +32,7 @@ export class CollectionView extends ComponentView {
 
   didMoveToWindow() {
     super.didMoveToWindow();
-    if (
-      this.enabledRestoration &&
-      MPEnv.platformType === PlatformType.browser
-    ) {
+    if (this.enabledRestoration && MPEnv.platformType === PlatformType.browser) {
       this.htmlElement.scrollTo({
         left: this.lastScrollX,
         top: this.lastScrollY,
@@ -83,8 +80,7 @@ export class CollectionView extends ComponentView {
         persistentYOffset += subview.y + (subview.constraints?.h ?? 0);
         persistentHSum += subview.constraints?.h ?? 0;
         subview.updateLayout();
-      }
-      else if (subview instanceof SliverPersistentHeader && subview.lazying) {
+      } else if (subview instanceof SliverPersistentHeader && subview.lazying) {
         subview.y = subviewLayout.y - persistentYOffset;
         subview.h = persistentHSum;
         persistentYOffset += subview.y + (subview.constraints?.h ?? 0);
@@ -99,9 +95,7 @@ export class CollectionView extends ComponentView {
       left: "0px",
       width: contentSize.width + "px",
       height: this.bottomBarWithSafeArea
-        ? `calc(${
-            contentSize.height + this.bottomBarHeight
-          }px + env(safe-area-inset-bottom))`
+        ? `calc(${contentSize.height + this.bottomBarHeight}px + env(safe-area-inset-bottom))`
         : contentSize.height + this.bottomBarHeight + "px",
     });
   }
@@ -113,15 +107,9 @@ export class CollectionView extends ComponentView {
     });
     this.bottomBarHeight = attributes.bottomBarHeight ?? 0.0;
     this.bottomBarWithSafeArea = attributes.bottomBarWithSafeArea ?? false;
-    if (
-      attributes.restorationId &&
-      MPEnv.platformType == PlatformType.wxMiniProgram
-    ) {
+    if (attributes.restorationId && MPEnv.platformType == PlatformType.wxMiniProgram) {
       (this.htmlElement as any).setTag("scrollview");
-    } else if (
-      attributes.restorationId &&
-      MPEnv.platformType == PlatformType.browser
-    ) {
+    } else if (attributes.restorationId && MPEnv.platformType == PlatformType.browser) {
       this.enabledRestoration = true;
       this.addBrowserScrollListener();
     }
@@ -138,10 +126,7 @@ export class CollectionView extends ComponentView {
   }
 
   setPinnedAppBar(attributes: any) {
-    const appBarPinnedView = this.factory.create(
-      attributes.appBarPinned,
-      this.document
-    );
+    const appBarPinnedView = this.factory.create(attributes.appBarPinned, this.document);
     if (appBarPinnedView) {
       (appBarPinnedView as any).collectionViewFixed = true;
       let appBarH = appBarPinnedView.constraints?.h ?? 0;
@@ -158,12 +143,8 @@ export class CollectionView extends ComponentView {
             position: "sticky",
             zIndex: "9999",
             backgroundColor:
-              appBarPinnedView.attributes?.color ??
-              appBarPinnedView.attributes?.backgroundColor
-                ? cssColor(
-                    appBarPinnedView.attributes?.color ??
-                      appBarPinnedView.attributes?.backgroundColor
-                  )
+              appBarPinnedView.attributes?.color ?? appBarPinnedView.attributes?.backgroundColor
+                ? cssColor(appBarPinnedView.attributes?.color ?? appBarPinnedView.attributes?.backgroundColor)
                 : "unset",
           });
           this.appBarPersistentHeight = cssSizeFromMPElement(it).height;
@@ -172,9 +153,7 @@ export class CollectionView extends ComponentView {
         }
         this.appBarPinnedViews.push(it);
       });
-      this.appBarPinnedViews
-        .reverse()
-        .forEach((it) => this.addSubviewForPinnedAppBar(it));
+      this.appBarPinnedViews.reverse().forEach((it) => this.addSubviewForPinnedAppBar(it));
       setDOMStyle(appBarPinnedView.htmlElement, {
         pointerEvents: "none",
         display: "none",
@@ -188,10 +167,7 @@ export class CollectionView extends ComponentView {
     }
     view.superview = this;
     if (this.wrapperHtmlElement.firstChild) {
-      this.wrapperHtmlElement.insertBefore(
-        view.htmlElement,
-        this.wrapperHtmlElement.firstChild!
-      );
+      this.wrapperHtmlElement.insertBefore(view.htmlElement, this.wrapperHtmlElement.firstChild!);
     } else {
       this.wrapperHtmlElement.appendChild(view.htmlElement);
     }

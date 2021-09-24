@@ -64,6 +64,10 @@ class _Element {
         clonedElement.setChildrenLight(this.nodes);
         return clonedElement;
     }
+    setTag(value) {
+        this.tag = value;
+        this.controller.pushCommand(`${this.hashCode}.tag`, value);
+    }
     setStyle(style) {
         let changed = false;
         let changeCount = 0;

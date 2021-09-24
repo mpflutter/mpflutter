@@ -37,7 +37,10 @@ export class SliverPersistentHeader extends ComponentView {
             window.addEventListener("scroll", eventListener);
           }
         }, 32);
-      } else if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      } else if (
+        MPEnv.platformType === PlatformType.wxMiniProgram ||
+        MPEnv.platformType === PlatformType.swanMiniProgram
+      ) {
         var eventListener: any;
         eventListener = (e: any) => {
           this.updateLazyState((this.document as any).window.scrollY);
@@ -50,7 +53,7 @@ export class SliverPersistentHeader extends ComponentView {
   updateLazyState(currentScrollY: number) {
     if (this.lazying) {
       setDOMStyle(this.htmlElement, {
-        visibility: currentScrollY > this.lazyOffset ? "visible" : "hidden",
+        opacity: currentScrollY > this.lazyOffset ? "1.0" : "0.0",
       });
     }
   }
