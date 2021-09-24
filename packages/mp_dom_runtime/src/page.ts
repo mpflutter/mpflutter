@@ -2,7 +2,6 @@ declare var global: any;
 declare var getCurrentPages: any;
 
 import { WXApp } from "./app";
-import { ComponentFactory } from "./components/component_factory";
 import { ComponentView } from "./components/component_view";
 import { setDOMStyle } from "./components/dom_utils";
 import { MPScaffold, MPScaffoldDelegate } from "./components/mpkit/scaffold";
@@ -10,6 +9,7 @@ import { Engine } from "./engine";
 import { MPEnv, PlatformType } from "./env";
 import { Router } from "./router";
 import { TextMeasurer } from "./text_measurer";
+import EventEmitter from "eventemitter3";
 
 export class Page {
   private _active = true;
@@ -146,6 +146,8 @@ export class Page {
     }
   }
 
+  onPageScroll(scrollTop: number) {}
+
   setOverlays(overlays: any[]) {
     this.overlaysView.forEach((it) => {
       it.htmlElement.remove();
@@ -239,6 +241,8 @@ export const WXPage = (
   return {
     onLoad(pageOptions: any) {
       const document = (this as any).selectComponent(selector).miniDom.document;
+      (this as any).document = document;
+      document.window = new EventEmitter();
       const documentTm = (this as any).selectComponent(selector + "_tm").miniDom
         .document;
       TextMeasurer.activeTextMeasureDocument = documentTm;
@@ -298,6 +302,14 @@ export const WXPage = (
     },
     onReachBottom() {
       (this as any).mpPage.onReachBottom();
+    },
+    onPageScroll(res: any) {
+      (this as any).mpPage.onPageScroll(res.scrollTop);
+      (this as any).document.window.scrollY = res.scrollTop;
+      ((this as any).document.window as EventEmitter).emit(
+        "scroll",
+        res.scrollTop
+      );
     },
   };
 };

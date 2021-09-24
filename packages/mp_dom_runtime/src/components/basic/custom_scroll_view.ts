@@ -74,6 +74,7 @@ export class CustomScrollView extends CollectionView {
     } else if (this.appBarPinnedViews.length) {
       this.appBarPinnedViews.forEach((it) => it.removeFromSuperview());
       this.appBarPinnedViews = [];
+      this.appBarPersistentHeight = 0.0;
     }
   }
 }
@@ -193,7 +194,13 @@ class CustomScrollViewLayout extends CollectionViewLayout {
           width: viewWidth,
           height: elementSize.height,
         };
-        currentVLength += elementSize.height;
+        if (
+          data.name === "sliver_persistent_header" &&
+          data.attributes.lazying
+        ) {
+        } else {
+          currentVLength += elementSize.height;
+        }
       }
       this.maxVLength = currentVLength;
       layouts.push(itemFrame);
