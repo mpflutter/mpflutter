@@ -28,8 +28,8 @@ export class MPVideoView extends MPPlatformView {
       (this.htmlElement as HTMLMediaElement).requestFullscreen();
     } else if (method === "setPlaybackRate") {
       (this.htmlElement as HTMLMediaElement).playbackRate = params.playbackRate;
-    } else if (method === "seekingTo") {
-      (this.htmlElement as HTMLMediaElement).currentTime = params.seekingTo;
+    } else if (method === "seekTo") {
+      (this.htmlElement as HTMLMediaElement).currentTime = params.seekTo;
     }
   }
 

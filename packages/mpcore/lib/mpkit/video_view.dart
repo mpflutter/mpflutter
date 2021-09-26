@@ -7,6 +7,7 @@ class MPVideoView extends MPPlatformView {
   final bool loop;
   final bool muted;
   final String? poster;
+  @override
   final MPVideoController? controller;
 
   MPVideoView({
@@ -64,7 +65,7 @@ class MPVideoController extends MPPlatformViewController {
     invokeMethod('setPlaybackRate', params: {'playbackRate': playbackRate});
   }
 
-  void seekingTo(double seekingTo) {
-    invokeMethod('seekingTo', params: {'seekingTo': seekingTo});
+  void seekTo(double seekTo) {
+    invokeMethod('seekTo', params: {'seekTo': seekTo});
   }
 }
