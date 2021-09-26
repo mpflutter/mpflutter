@@ -69,7 +69,7 @@ export class MPWebDialog {
   }) {
     const div = document.createElement("div");
     div.innerHTML = `<div class="weui-mask" id="iosMask"></div>
-    <div class="weui-actionsheet weui-actionsheet_toggle" id="iosActionsheet">
+    <div class="weui-actionsheet weui-actionsheet_toggle" id="iosActionsheet" style="z-index:10002">
         <div class="weui-actionsheet__menu">
             ${options.itemList
               .map(

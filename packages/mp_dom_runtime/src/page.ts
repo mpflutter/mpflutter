@@ -62,10 +62,7 @@ export class Page {
   async fetchViewport() {
     let viewport = await this.element.getBoundingClientRect();
     if (viewport.height <= 0.1) {
-      if (
-        MPEnv.platformType === PlatformType.wxMiniProgram ||
-        MPEnv.platformType === PlatformType.swanMiniProgram
-      ) {
+      if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
         viewport.height = MPEnv.platformScope.getSystemInfoSync().windowHeight;
       } else {
         viewport.height = window.innerHeight;
@@ -91,10 +88,7 @@ export class Page {
 
   didReceivedFrameData(message: { [key: string]: any }) {
     if (message.ignoreScaffold !== true) {
-      const scaffoldView = this.engine.componentFactory.create(
-        message.scaffold,
-        this.document
-      );
+      const scaffoldView = this.engine.componentFactory.create(message.scaffold, this.document);
       if (!(scaffoldView instanceof MPScaffold)) return;
       if (this.scaffoldView !== scaffoldView) {
         if (this.scaffoldView) {
@@ -110,9 +104,7 @@ export class Page {
             scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document));
             scaffoldView.setAttributes(message.scaffold.attributes);
           } else {
-            scaffoldView.setDelegate(
-              new BrowserPageScaffoldDelegate(this.document)
-            );
+            scaffoldView.setDelegate(new BrowserPageScaffoldDelegate(this.document));
             scaffoldView.setAttributes(message.scaffold.attributes);
           }
         }
@@ -149,13 +141,19 @@ export class Page {
   onPageScroll(scrollTop: number) {}
 
   setOverlays(overlays: any[]) {
+    let overlaysView = overlays
+      .map((it) => this.engine.componentFactory.create(it, this.document))
+      .filter((it) => it) as ComponentView[];
+    if (
+      overlaysView.length === this.overlaysView.length &&
+      overlaysView.every((it, idx) => overlaysView[idx] === this.overlaysView[idx])
+    ) {
+      return;
+    }
     this.overlaysView.forEach((it) => {
       it.htmlElement.remove();
       it.removeFromSuperview();
     });
-    let overlaysView = overlays
-      .map((it) => this.engine.componentFactory.create(it, this.document))
-      .filter((it) => it) as ComponentView[];
     overlaysView.forEach((it) => {
       this.document.body.appendChild(it.htmlElement);
     });
@@ -243,8 +241,7 @@ export const WXPage = (
       const document = (this as any).selectComponent(selector).miniDom.document;
       (this as any).document = document;
       document.window = new EventEmitter();
-      const documentTm = (this as any).selectComponent(selector + "_tm").miniDom
-        .document;
+      const documentTm = (this as any).selectComponent(selector + "_tm").miniDom.document;
       TextMeasurer.activeTextMeasureDocument = documentTm;
       Router.beingPush = false;
       const basePath = (() => {
@@ -272,12 +269,7 @@ export const WXPage = (
         finalOptions.route = decodeURIComponent(finalOptions.route);
       }
 
-      (this as any).mpPage = new Page(
-        document.body,
-        app.engine,
-        finalOptions,
-        document
-      );
+      (this as any).mpPage = new Page(document.body, app.engine, finalOptions, document);
       (this as any).mpPage.isFirst = getCurrentPages().length === 1;
     },
     onUnload() {
@@ -286,9 +278,7 @@ export const WXPage = (
       }
     },
     onShow() {
-      TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(
-        selector + "_tm"
-      ).miniDom.document;
+      TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(selector + "_tm").miniDom.document;
     },
     onPullDownRefresh() {
       (this as any).mpPage.onRefresh().then((it: any) => {
@@ -306,10 +296,7 @@ export const WXPage = (
     onPageScroll(res: any) {
       (this as any).mpPage.onPageScroll(res.scrollTop);
       (this as any).document.window.scrollY = res.scrollTop;
-      ((this as any).document.window as EventEmitter).emit(
-        "scroll",
-        res.scrollTop
-      );
+      ((this as any).document.window as EventEmitter).emit("scroll", res.scrollTop);
     },
   };
 };
