@@ -77,7 +77,7 @@ module.exports = {
     </block>
 </template>
 <template name="fimg">
-    <image id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" mode="{{dom[id].mode}}" src="{{dom[id].src}}"></image>
+    <image id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" mode="{{dom[id].mode}}" src="{{dom[id].src}}" lazy-load="{{dom[id].lazyLoad}}"></image>
 </template>
 <template name="fiframe">
     <web-view id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" src="{{dom[id].src}}"></web-view>

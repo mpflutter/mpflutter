@@ -96,7 +96,7 @@ module.exports = {
     </button>
 </template>
 <template name="fimg">
-    <image id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" mode="{{rt.mode}}" src="{{rt.src}}"></image>
+    <image id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" mode="{{rt.mode}}" src="{{rt.src}}" lazy-load="{{rt.lazyLoad}}"></image>
 </template>
 <template name="fiframe">
     <web-view id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" src="{{rt.src}}"></web-view>

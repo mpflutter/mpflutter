@@ -2,7 +2,6 @@ name: mpcore
 description: The MPFlutter core libs.
 publish_to: none
 version: 0.0.1
-author: /
 homepage: /
 
 environment:

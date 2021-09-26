@@ -12,6 +12,12 @@ MPElement _encodeImage(Element element) {
           return (widget.image as NetworkImage).url;
         }
       })(),
+      'lazyLoad': (() {
+        if (widget.image is NetworkImage) {
+          return widget.lazyLoad;
+        }
+        return false;
+      })(),
       'assetName': (() {
         if (widget.image is AssetImage) {
           return (widget.image as AssetImage).assetName;

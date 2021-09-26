@@ -340,6 +340,7 @@ class Image extends StatefulWidget {
     this.gaplessPlayback = false,
     this.isAntiAlias = false,
     this.filterQuality = FilterQuality.low,
+    this.lazyLoad = false,
   })  : assert(image != null),
         assert(alignment != null),
         assert(repeat != null),
@@ -405,6 +406,7 @@ class Image extends StatefulWidget {
     Map<String, String>? headers,
     int? cacheWidth,
     int? cacheHeight,
+    this.lazyLoad = false,
   })  : image = ResizeImage.resizeIfNeeded(cacheWidth, cacheHeight,
             NetworkImage(src, scale: scale, headers: headers)),
         assert(alignment != null),
@@ -470,6 +472,7 @@ class Image extends StatefulWidget {
     this.filterQuality = FilterQuality.low,
     int? cacheWidth,
     int? cacheHeight,
+    this.lazyLoad = false,
   })  : image = ResizeImage.resizeIfNeeded(
             cacheWidth, cacheHeight, FileImage(file, scale: scale)),
         loadingBuilder = null,
@@ -636,6 +639,7 @@ class Image extends StatefulWidget {
     this.filterQuality = FilterQuality.low,
     int? cacheWidth,
     int? cacheHeight,
+    this.lazyLoad = false,
   })  : image = ResizeImage.resizeIfNeeded(
             cacheWidth,
             cacheHeight,
@@ -707,6 +711,7 @@ class Image extends StatefulWidget {
     this.filterQuality = FilterQuality.low,
     int? cacheWidth,
     int? cacheHeight,
+    this.lazyLoad = false,
   })  : image = ResizeImage.resizeIfNeeded(
             cacheWidth, cacheHeight, MemoryImage(bytes, scale: scale)),
         loadingBuilder = null,
@@ -717,6 +722,8 @@ class Image extends StatefulWidget {
         assert(cacheHeight == null || cacheHeight > 0),
         assert(isAntiAlias != null),
         super(key: key);
+
+  final bool? lazyLoad;
 
   /// The image to display.
   final ImageProvider image;

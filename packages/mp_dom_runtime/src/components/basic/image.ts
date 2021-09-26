@@ -1,6 +1,7 @@
 import { MPEnv, PlatformType } from "../../env";
 import { ComponentView } from "../component_view";
 import { setDOMAttribute, setDOMStyle } from "../dom_utils";
+declare var lazyload: any;
 
 export class Image extends ComponentView {
   elementType() {
@@ -8,10 +9,7 @@ export class Image extends ComponentView {
   }
 
   updateLayout() {
-    if (
-      (!this.attributes?.width || !this.attributes?.height) &&
-      (!this.constraints?.w || !this.constraints?.h)
-    ) {
+    if ((!this.attributes?.width || !this.attributes?.height) && (!this.constraints?.w || !this.constraints?.h)) {
       setDOMStyle(this.htmlElement, {
         position: this.additionalConstraints?.position ?? "absolute",
         left: "0px",
@@ -49,8 +47,7 @@ export class Image extends ComponentView {
     });
     if (
       attributes.fit &&
-      (MPEnv.platformType === PlatformType.wxMiniProgram ||
-        MPEnv.platformType === PlatformType.swanMiniProgram)
+      (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram)
     ) {
       setDOMAttribute(
         this.htmlElement,
@@ -75,7 +72,23 @@ export class Image extends ComponentView {
       );
     }
     if (attributes.src) {
-      setDOMAttribute(this.htmlElement, "src", attributes.src);
+      if (attributes.lazyLoad) {
+        if (MPEnv.platformType === PlatformType.browser) {
+          this.htmlElement.classList.add("lazyload");
+          setDOMAttribute(this.htmlElement, "data-src", attributes.src);
+          lazyload([this.htmlElement]);
+        } else if (
+          MPEnv.platformType === PlatformType.wxMiniProgram ||
+          MPEnv.platformType === PlatformType.swanMiniProgram
+        ) {
+          setDOMAttribute(this.htmlElement, "lazyLoad", "true");
+          setDOMAttribute(this.htmlElement, "src", attributes.src);
+        } else {
+          setDOMAttribute(this.htmlElement, "src", attributes.src);
+        }
+      } else {
+        setDOMAttribute(this.htmlElement, "src", attributes.src);
+      }
     } else if (attributes.assetName) {
       if (this.engine.debugger) {
         const assetUrl = (() => {
@@ -94,10 +107,7 @@ export class Image extends ComponentView {
             return `assets/${attributes.assetName}`;
           }
         })();
-        if (
-          MPEnv.platformType === PlatformType.wxMiniProgram ||
-          MPEnv.platformType === PlatformType.swanMiniProgram
-        ) {
+        if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
           assetUrl = "/" + assetUrl;
         }
         setDOMAttribute(this.htmlElement, "src", assetUrl);
