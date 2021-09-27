@@ -6,10 +6,7 @@ import { MPEnv, PlatformType } from "../../env";
 
 export class WebDialogs {
   static receivedWebDialogsMessage(engine: Engine, message: any) {
-    if (
-      MPEnv.platformType === PlatformType.wxMiniProgram ||
-      MPEnv.platformType === PlatformType.swanMiniProgram
-    ) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
       this.wxMiniProgramReceivedWebDialogsMessage(engine, message);
     } else {
       this.browserMiniProgramReceivedWebDialogsMessage(engine, message);
@@ -51,27 +48,81 @@ export class WebDialogs {
       });
     } else if (message["params"]["dialogType"] === "prompt") {
       if (MPEnv.platformType === PlatformType.swanMiniProgram) {
-        throw '百度小程序不支持 prompt';
+        MPEnv.platformScope.openReplyEditor({
+          contentPlaceholder: message["params"]["message"],
+          content: message["params"]["defaultValue"] ?? "",
+          sendText: "确认",
+          success: (res: any) => {
+            if (res.status === "reply") {
+              engine.sendMessage(
+                JSON.stringify({
+                  type: "action",
+                  message: {
+                    event: "callback",
+                    id: message["id"],
+                    data: res.content,
+                  },
+                })
+              );
+            } else {
+              engine.sendMessage(
+                JSON.stringify({
+                  type: "action",
+                  message: {
+                    event: "callback",
+                    id: message["id"],
+                    data: null,
+                  },
+                })
+              );
+            }
+          },
+          fail: () => {
+            engine.sendMessage(
+              JSON.stringify({
+                type: "action",
+                message: {
+                  event: "callback",
+                  id: message["id"],
+                  data: null,
+                },
+              })
+            );
+          },
+        });
+      } else {
+        MPEnv.platformScope.showModal({
+          title: message["params"]["message"],
+          content: message["params"]["defaultValue"] ?? "",
+          editable: true,
+          cancelText: "取消",
+          confirmText: "确认",
+          success: (res: any) => {
+            engine.sendMessage(
+              JSON.stringify({
+                type: "action",
+                message: {
+                  event: "callback",
+                  id: message["id"],
+                  data: res.content,
+                },
+              })
+            );
+          },
+          fail: () => {
+            engine.sendMessage(
+              JSON.stringify({
+                type: "action",
+                message: {
+                  event: "callback",
+                  id: message["id"],
+                  data: null,
+                },
+              })
+            );
+          },
+        });
       }
-      MPEnv.platformScope.showModal({
-        title: message["params"]["message"],
-        content: message["params"]["defaultValue"] ?? "",
-        editable: true,
-        cancelText: "取消",
-        confirmText: "确认",
-        success: (res: any) => {
-          engine.sendMessage(
-            JSON.stringify({
-              type: "action",
-              message: {
-                event: "callback",
-                id: message["id"],
-                data: res.content,
-              },
-            })
-          );
-        },
-      });
     } else if (message["params"]["dialogType"] === "actionSheet") {
       MPEnv.platformScope.showActionSheet({
         itemList: message["params"]["items"],
@@ -120,10 +171,7 @@ export class WebDialogs {
     }
   }
 
-  static browserMiniProgramReceivedWebDialogsMessage(
-    engine: Engine,
-    message: any
-  ) {
+  static browserMiniProgramReceivedWebDialogsMessage(engine: Engine, message: any) {
     if (message["params"]["dialogType"] === "alert") {
       window.alert(message["params"]["message"]);
       engine.sendMessage(
@@ -141,10 +189,7 @@ export class WebDialogs {
         })
       );
     } else if (message["params"]["dialogType"] === "prompt") {
-      const result = window.prompt(
-        message["params"]["message"],
-        message["params"]["defaultValue"] ?? ""
-      );
+      const result = window.prompt(message["params"]["message"], message["params"]["defaultValue"] ?? "");
       engine.sendMessage(
         JSON.stringify({
           type: "action",
