@@ -53,6 +53,7 @@ export class WebDialogs {
           content: message["params"]["defaultValue"] ?? "",
           sendText: "确认",
           success: (res: any) => {
+            swan.closeReplyEditor();
             if (res.status === "reply") {
               engine.sendMessage(
                 JSON.stringify({

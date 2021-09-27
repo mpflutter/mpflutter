@@ -103,6 +103,11 @@ export class Engine {
         engineScope: this.mpJS.engineScope,
         Object,
       };
+      global.wx = typeof wx !== "undefined" ? wx : undefined;
+      global.swan = typeof swan !== "undefined" ? swan : undefined;
+      global.engineScope = this.mpJS.engineScope;
+      global.Object = Object;
+      global.JSON = JSON;
     }
     if (this.debugger) {
       this.debugger.start();
