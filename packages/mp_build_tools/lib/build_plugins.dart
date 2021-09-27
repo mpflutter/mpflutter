@@ -20,4 +20,7 @@ main(List<String> args) {
   try {
     File('weapp/plugins.min.js').writeAsStringSync(stringBuffer.toString());
   } catch (e) {}
+  try {
+    File('swanapp/plugins.min.js').writeAsStringSync(stringBuffer.toString());
+  } catch (e) {}
 }
