@@ -390,7 +390,11 @@ class MPChannelBase {
         final navigator = MPNavigatorObserver.instance.navigator;
         if (navigator == null) return;
         final target = MPNavigatorObserver.instance.routeCache[routeId];
-        if (target != null && target.isActive) {
+        if (target != null && target.isCurrent) {
+          MPNavigatorObserver.doBacking = true;
+          navigator.pop();
+          MPNavigatorObserver.doBacking = false;
+        } else if (target != null && target.isActive) {
           navigator.removeRoute(target);
         }
       } else if (message['event'] == 'popToRoute') {
