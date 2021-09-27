@@ -136,14 +136,20 @@ _moveDeferedScriptToSubpackages() {
     File(currentSubpackageLocation().path + '/loader.json')
         .writeAsStringSync('{}');
     File(currentSubpackageLocation().path + '/loader.wxml')
-        .writeAsStringSync('');
+        .writeAsStringSync('<view></view>');
     File(currentSubpackageLocation().path + '/loader.js').writeAsStringSync('''
     Page({
         onLoad: function() {
             ${currentSubpackageFiles.map((e) => '''require('./${e.replaceAll('.part.js', '.part')}').main();''').join('\n')}
-            wx.navigateBack({success: function() {
-                global.dartDeferedLoadedFlag = true;
-            }});
+            wx.showLoading({
+              title: '加载中',
+            });
+            setTimeout(() => {
+                wx.hideLoading();
+                wx.navigateBack({success: function() {
+                    global.dartDeferedLoadedFlag = true;
+                }});
+            }, 1000);
         },
     })
     ''');
