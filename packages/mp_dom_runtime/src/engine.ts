@@ -67,10 +67,7 @@ export class Engine {
     };
   }
 
-  public static registerPlatformView(
-    viewType: string,
-    viewClass: typeof MPPlatformView
-  ) {
+  public static registerPlatformView(viewType: string, viewClass: typeof MPPlatformView) {
     ComponentFactory.components[viewType] = viewClass;
   }
 
@@ -91,28 +88,21 @@ export class Engine {
       (self as any).engineScope = this.mpJS.engineScope;
     } else {
       (global as any).self = {
+        ...global,
         JSON,
         setTimeout,
         setInterval,
-        clearTimeout,
-        clearInterval,
+        clearTimeout: function (v: any) {
+          clearTimeout(v);
+        },
+        clearInterval: function (v: any) {
+          clearInterval(v);
+        },
         wx: typeof wx !== "undefined" ? wx : undefined,
         swan: typeof swan !== "undefined" ? swan : undefined,
+        engineScope: this.mpJS.engineScope,
         Object,
       };
-      (global as any).JSON = JSON;
-      (global as any).setTimeout = setTimeout;
-      (global as any).setInterval = setInterval;
-      (global as any).clearTimeout = clearTimeout;
-      (global as any).clearInterval = clearInterval;
-      if (typeof wx !== "undefined") {
-        (global as any).wx = wx;
-      }
-      if (typeof swan !== "undefined") {
-        (global as any).swan = swan;
-      }
-      (global as any).Object = Object;
-      (global as any).self.engineScope = this.mpJS.engineScope;
     }
     if (this.debugger) {
       this.debugger.start();
@@ -160,9 +150,7 @@ export class Engine {
   }
 
   didReceivedMessage(message: string, isDartObject: boolean = false) {
-    let decodedMessage = isDartObject
-      ? wrapDartObject(message)
-      : JSON.parse(message);
+    let decodedMessage = isDartObject ? wrapDartObject(message) : JSON.parse(message);
     if (!decodedMessage) return;
     if (((window ?? global) as any)?.mpDEBUG) {
       console.log(new Date().getTime(), "in", decodedMessage);
@@ -178,19 +166,14 @@ export class Engine {
     } else if (decodedMessage.type === "decode_drawable") {
       this.drawable.decodeDrawable(decodedMessage.message);
     } else if (decodedMessage.type === "route") {
-      (this.app?.router ?? this.router)?.didReceivedRouteData(
-        decodedMessage.message
-      );
+      (this.app?.router ?? this.router)?.didReceivedRouteData(decodedMessage.message);
     } else if (decodedMessage.type === "mpjs") {
       this.didReceivedMPJS(decodedMessage);
     } else if (decodedMessage.type === "action:web_dialogs") {
       WebDialogs.receivedWebDialogsMessage(this, decodedMessage.message);
     } else if (decodedMessage.type === "scaffold") {
       this.didReceivedScaffold(decodedMessage.message);
-    } else if (
-      decodedMessage.type === "rich_text" &&
-      decodedMessage.message?.event === "doMeasure"
-    ) {
+    } else if (decodedMessage.type === "rich_text" && decodedMessage.message?.event === "doMeasure") {
       TextMeasurer.didReceivedDoMeasureData(this, decodedMessage.message);
     } else if (decodedMessage.type === "platform_view") {
       this.didReceivedPlatformView(decodedMessage.message);
@@ -229,17 +212,13 @@ export class Engine {
 
   didReceivedScaffold(message: any) {
     if (message.event === "onRefreshEnd") {
-      let target = this.componentFactory.cachedView[
-        message.target
-      ] as MPScaffold;
+      let target = this.componentFactory.cachedView[message.target] as MPScaffold;
       if (target) {
         target.refreshEndResolver?.(undefined);
         target.refreshEndResolver = undefined;
       }
     } else if (message.event === "onWechatMiniProgramShareAppMessageResolve") {
-      let target = this.componentFactory.cachedView[
-        message.target
-      ] as MPScaffold;
+      let target = this.componentFactory.cachedView[message.target] as MPScaffold;
       if (target) {
         target.onWechatMiniProgramShareAppMessageResolver?.(message.params);
         target.onWechatMiniProgramShareAppMessageResolver = undefined;
@@ -277,9 +256,7 @@ export class Engine {
 
   didReceivedPlatformView(message: any) {
     if (message.event === "methodCall") {
-      let target = this.componentFactory.cachedView[
-        message.hashCode
-      ] as MPPlatformView;
+      let target = this.componentFactory.cachedView[message.hashCode] as MPPlatformView;
       if (target) {
         target.onMethodCall(message.method, message.params);
       }
