@@ -197,11 +197,14 @@ export class BrowserPageScaffoldDelegate implements MPScaffoldDelegate {
 export class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   constructor(readonly document: Document) {}
 
+  currentTitle: string | undefined;
   backgroundElement = this.document.createElement("div");
   backgroundElementAttached = false;
 
   setPageTitle(title: string): void {
+    if (title === this.currentTitle) return;
     MPEnv.platformScope.setNavigationBarTitle({ title });
+    this.currentTitle = title;
   }
 
   setPageBackgroundColor(color: string): void {
