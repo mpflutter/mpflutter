@@ -68,4 +68,8 @@ class MPVideoController extends MPPlatformViewController {
   void seekTo(double seekTo) {
     invokeMethod('seekTo', params: {'seekTo': seekTo});
   }
+
+  Future<double> getCurrentTime() async {
+    return await invokeMethod('getCurrentTime', requireResult: true);
+  }
 }

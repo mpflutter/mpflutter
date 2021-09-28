@@ -30,6 +30,8 @@ export class MPVideoView extends MPPlatformView {
       (this.htmlElement as HTMLMediaElement).playbackRate = params.playbackRate;
     } else if (method === "seekTo") {
       (this.htmlElement as HTMLMediaElement).currentTime = params.seekTo;
+    } else if (method === "getCurrentTime") {
+      return (this.htmlElement as HTMLVideoElement).currentTime;;
     }
   }
 
