@@ -1,9 +1,17 @@
 import { ComponentView } from "../component_view";
 
 export class MPPlatformView extends ComponentView {
+  private static _invokeMethodCompleter: { [key: string]: (result: any) => void } = {};
+
+  static handleInvokeMethodCallback(seqId: string, result: any) {
+    if (this._invokeMethodCompleter[seqId]) {
+      this._invokeMethodCompleter[seqId](result);
+      delete this._invokeMethodCompleter[seqId];
+    }
+  }
 
   classname = "PlatformView";
-  
+
   elementType() {
     return "div";
   }
@@ -21,7 +29,8 @@ export class MPPlatformView extends ComponentView {
 
   onMethodCall(method: string, params: any) {}
 
-  invokeMethod(method: string, params: string) {
+  invokeMethod(method: string, params: string, requireResult: boolean): Promise<any> | undefined {
+    let seqId = `${this.hashCode}_${Math.random()}`;
     this.engine.sendMessage(
       JSON.stringify({
         type: "platform_view",
@@ -30,8 +39,15 @@ export class MPPlatformView extends ComponentView {
           hashCode: this.hashCode,
           method,
           params,
+          seqId,
+          requireResult,
         },
       })
     );
+    if (requireResult) {
+      return new Promise((res) => {
+        MPPlatformView._invokeMethodCompleter[seqId] = res;
+      });
+    }
   }
 }

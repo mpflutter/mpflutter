@@ -105,7 +105,7 @@ export class Engine {
       };
       if (typeof wx !== "undefined") {
         global.wx = wx;
-      } 
+      }
       if (typeof swan !== "undefined") {
         global.swan = swan;
       }
@@ -263,11 +263,28 @@ export class Engine {
     );
   }
 
-  didReceivedPlatformView(message: any) {
+  async didReceivedPlatformView(message: any) {
     if (message.event === "methodCall") {
       let target = this.componentFactory.cachedView[message.hashCode] as MPPlatformView;
       if (target) {
-        target.onMethodCall(message.method, message.params);
+        const result = await target.onMethodCall(message.method, message.params);
+        if (message.requireResult) {
+          this.sendMessage(
+            JSON.stringify({
+              type: "platform_view",
+              message: {
+                event: "methodCallCallback",
+                seqId: message.seqId,
+                result: result,
+              },
+            })
+          );
+        }
+      }
+    } else if (message.event === "methodCallCallback") {
+      const seqId = message["seqId"];
+      if (typeof seqId === "string") {
+        MPPlatformView.handleInvokeMethodCallback(seqId, message["result"]);
       }
     }
   }

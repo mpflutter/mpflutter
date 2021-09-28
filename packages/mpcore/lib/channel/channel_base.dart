@@ -304,12 +304,29 @@ class MPChannelBase {
     }
   }
 
-  static void onPlatformViewTrigger(Map message) {
+  static void onPlatformViewTrigger(Map message) async {
     try {
-      final widget = MPCore.findTargetHashCode(message['hashCode'])?.widget;
-      if (!(widget is MPPlatformView)) return;
       if (message['event'] == 'methodCall') {
-        widget.controller?.onMethodCall(message['method'], message['params']);
+        final widget = MPCore.findTargetHashCode(message['hashCode'])?.widget;
+        if (!(widget is MPPlatformView)) return;
+        final result = await widget.controller
+            ?.onMethodCall(message['method'], message['params']);
+        if (message['requireResult'] == true) {
+          MPChannel.postMessage(json.encode({
+            'type': 'platform_view',
+            'message': {
+              'event': 'methodCallCallback',
+              'seqId': message['seqId'],
+              'result': result,
+            },
+          }));
+        }
+      } else if (message['event'] == 'methodCallCallback') {
+        final seqId = message['seqId'];
+        if (seqId is String) {
+          MPPlatformViewController.handleInvokeMethodCallback(
+              seqId, message['result']);
+        }
       }
     } catch (e) {
       print(e);

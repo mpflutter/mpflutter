@@ -2,7 +2,7 @@ part of 'mpkit.dart';
 
 class MPWebViewController extends MPPlatformViewController {
   void reload() {
-    invokeMethod('reload');
+    invokeMethod('reload', requireResult: true);
   }
 
   void loadUrl(String url) {
