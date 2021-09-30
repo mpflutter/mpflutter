@@ -105,9 +105,11 @@ export class Engine {
       };
       if (typeof wx !== "undefined") {
         global.wx = wx;
+        global.uni = wx;
       }
       if (typeof swan !== "undefined") {
         global.swan = swan;
+        global.uni = swan;
       }
       global.engineScope = this.mpJS.engineScope;
       global.Object = Object;
