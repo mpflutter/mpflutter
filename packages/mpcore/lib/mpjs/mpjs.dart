@@ -149,11 +149,18 @@ class JsObject {
   }
 
   Future<T?> getPropertyValue<T>(String key) async {
-    final result = await JsBridgeInvoker.instance.makeRequest('getValue', {
+    var result = await JsBridgeInvoker.instance.makeRequest('getValue', {
       'objectHandler': objectHandler,
       'callChain': _callChain,
       'key': key,
     });
+    if (result is List) {
+      result = result.map((e) => JsObject.wrapBrowserObject(e)).toList() as T;
+    } else if (result is Map) {
+      result = result.map(
+              (key, value) => MapEntry(key, JsObject.wrapBrowserObject(value)))
+          as T;
+    }
     if (T == dynamic || T == Object) {
       return result;
     } else if (result is T) {

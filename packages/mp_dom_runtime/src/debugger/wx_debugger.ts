@@ -29,12 +29,12 @@ export class WXDebugger implements Debugger {
         MPEnv.platformScope.reLaunch({
           url: (() => {
             try {
-              "/" +
+              return (
+                "/" +
                 MPEnv.platformScope.getLaunchOptionsSync().path +
                 "?" +
-                this.encodePathParams(
-                  MPEnv.platformScope.getLaunchOptionsSync().query
-                );
+                this.encodePathParams(MPEnv.platformScope.getLaunchOptionsSync().query)
+              );
             } catch (error) {
               return "/pages/index/index";
             }

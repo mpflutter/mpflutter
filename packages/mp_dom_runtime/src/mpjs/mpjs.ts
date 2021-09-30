@@ -60,14 +60,8 @@ export class MPJS {
     funcCallback: (funcId: string, args: any[]) => void
   ) {
     const params = message.params as MPJSCallMethodParams;
-    const callingObject = this.getCallee(
-      params.objectHandler,
-      params.callChain
-    );
-    if (
-      typeof callingObject === "object" ||
-      typeof callingObject === "function"
-    ) {
+    const callingObject = this.getCallee(params.objectHandler, params.callChain);
+    if (typeof callingObject === "object" || typeof callingObject === "function") {
       try {
         const result = (callingObject[params.method] as Function).apply(
           callingObject,
@@ -82,40 +76,26 @@ export class MPJS {
 
   getValue(message: MPJSMessage, callback: (result: any) => void) {
     const params = message.params as MPJSGetValueParams;
-    const callingObject = this.getCallee(
-      params.objectHandler,
-      params.callChain
-    );
+    const callingObject = this.getCallee(params.objectHandler, params.callChain);
     callback(this.wrapResult(callingObject[params.key]));
   }
 
   setValue(message: MPJSMessage, callback: (result: any) => void) {
     const params = message.params as MPJSSetValueParams;
-    const callingObject = this.getCallee(
-      params.objectHandler,
-      params.callChain
-    );
+    const callingObject = this.getCallee(params.objectHandler, params.callChain);
     callingObject[params.key] = params.value;
     callback(undefined);
   }
 
   hasProperty(message: MPJSMessage, callback: (result: any) => void) {
     const params = message.params as MPJSGetValueParams;
-    const callingObject = this.getCallee(
-      params.objectHandler,
-      params.callChain
-    );
-    callback(
-      this.wrapResult(callingObject && callingObject.hasOwnProperty(params.key))
-    );
+    const callingObject = this.getCallee(params.objectHandler, params.callChain);
+    callback(this.wrapResult(callingObject && callingObject.hasOwnProperty(params.key)));
   }
 
   deleteProperty(message: MPJSMessage, callback: (result: any) => void) {
     const params = message.params as MPJSGetValueParams;
-    const callingObject = this.getCallee(
-      params.objectHandler,
-      params.callChain
-    );
+    const callingObject = this.getCallee(params.objectHandler, params.callChain);
     if (callingObject) {
       delete callingObject[params.key];
     }
@@ -142,10 +122,7 @@ export class MPJS {
     return currentObject;
   }
 
-  wrapArgument(
-    arg: any,
-    funcCallback: (funcId: string, args: any[]) => void
-  ): any {
+  wrapArgument(arg: any, funcCallback: (funcId: string, args: any[]) => void): any {
     if (typeof arg === "string" && arg.indexOf("func:") === 0) {
       const funcId = arg;
       const self = this;
@@ -172,7 +149,7 @@ export class MPJS {
     }
   }
 
-  wrapResult(result: any) {
+  wrapResult(result: any): any {
     if (
       typeof result === "string" ||
       typeof result === "number" ||
@@ -180,6 +157,8 @@ export class MPJS {
       typeof result === "bigint"
     ) {
       return result;
+    } else if (typeof result === "object" && result instanceof Array) {
+      return result.map((it) => this.wrapResult(it));
     } else {
       const objectHandler = Math.random().toString();
       this.objectRefs[objectHandler] = result;
