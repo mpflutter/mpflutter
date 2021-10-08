@@ -114,6 +114,13 @@ Component({
             var _a, _b;
             (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".onsubmit"]) === null || _b === void 0 ? void 0 : _b.call(_a, event);
         },
+        onButtonCallback: function onButtonCallback(event) {
+            var _a, _b;
+            (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".onbuttoncallback"]) === null || _b === void 0 ? void 0 : _b.call(_a, JSON.stringify({
+                detail: event.detail,
+                type: event.type
+            }));
+        },
         catchmove: function catchmove(event) {}
     }
 });

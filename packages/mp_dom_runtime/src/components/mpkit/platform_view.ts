@@ -29,7 +29,7 @@ export class MPPlatformView extends ComponentView {
 
   onMethodCall(method: string, params: any) {}
 
-  invokeMethod(method: string, params: string, requireResult: boolean): Promise<any> | undefined {
+  invokeMethod(method: string, params: any, requireResult: boolean = false): Promise<any> | undefined {
     let seqId = `${this.hashCode}_${Math.random()}`;
     this.engine.sendMessage(
       JSON.stringify({

@@ -286,6 +286,10 @@ class _Element {
     _Element.eventHandlers[`${this.hashCode}.onsubmit`] = value;
   }
 
+  set onbuttoncallback(value: () => void) {
+    _Element.eventHandlers[`${this.hashCode}.onbuttoncallback`] = value;
+  }
+
   private static toCSSKeyCache: any = {};
 
   private toCSSKey(str: string) {

@@ -384,6 +384,11 @@ var _Element = function () {
         set: function set(value) {
             _Element.eventHandlers[this.hashCode + ".onsubmit"] = value;
         }
+    }, {
+        key: "onbuttoncallback",
+        set: function set(value) {
+            _Element.eventHandlers[this.hashCode + ".onbuttoncallback"] = value;
+        }
     }]);
 
     return _Element;
