@@ -1,12 +1,29 @@
+import { MPEnv, PlatformType } from "../../env";
 import { setDOMAttribute } from "../dom_utils";
 import { MPPlatformView } from "./platform_view";
 
 export class MPVideoView extends MPPlatformView {
+  videoContext: any;
+
   elementType() {
     return "video";
   }
 
-  onMethodCall(method: string, params: any) {
+  async onMethodCall(method: string, params: any) {
+    if (MPEnv.platformType === PlatformType.browser) {
+      this.onBrowserMethodCall(method, params);
+    } else if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      if (!this.videoContext) {
+        const fields = await (this.htmlElement as any).getFields({context: true});
+        this.videoContext = fields.context;
+      }
+      if (this.videoContext) {
+        this.onMiniProgramMethodCall(method, params);
+      }
+    }
+  }
+
+  onBrowserMethodCall(method: string, params: any) {
     if (method === "play") {
       (this.htmlElement as HTMLMediaElement).play();
     } else if (method === "pause") {
@@ -31,7 +48,15 @@ export class MPVideoView extends MPPlatformView {
     } else if (method === "seekTo") {
       (this.htmlElement as HTMLMediaElement).currentTime = params.seekTo;
     } else if (method === "getCurrentTime") {
-      return (this.htmlElement as HTMLVideoElement).currentTime;;
+      return (this.htmlElement as HTMLVideoElement).currentTime;
+    }
+  }
+
+  onMiniProgramMethodCall(method: string, params: any) {
+    if (method === "play") {
+      console.log(this.videoContext);
+      
+      this.videoContext.play();
     }
   }
 
