@@ -14,6 +14,7 @@ export class EditableText extends ComponentView {
     if (maxLines > 1 && this.contentElementType !== "textarea") {
       this.contentElement?.remove();
       this.contentElement = this.document.createElement("textarea");
+      this.contentElementType = "textarea";
       setDOMStyle(this.contentElement, {
         width: "100%",
         height: "100%",
@@ -25,6 +26,7 @@ export class EditableText extends ComponentView {
     } else if (maxLines <= 1 && this.contentElementType !== "input") {
       this.contentElement?.remove();
       this.contentElement = this.document.createElement("input");
+      this.contentElementType = "input";
       setDOMStyle(this.contentElement, {
         width: "100%",
         height: "100%",
@@ -82,7 +84,7 @@ export class EditableText extends ComponentView {
       "pattern",
       this._keyboardPattern(attributes.keyboardType)
     );
-    if (attributes.value) {
+    if (typeof attributes.value === "string") {
       if (
         MPEnv.platformType === PlatformType.wxMiniProgram ||
         MPEnv.platformType === PlatformType.swanMiniProgram
