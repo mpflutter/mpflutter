@@ -1,24 +1,41 @@
+import { MPEnv, PlatformType } from "../../env";
 import { setDOMAttribute } from "../dom_utils";
 import { MPPlatformView } from "./platform_view";
 
 export class MPVideoView extends MPPlatformView {
+  videoContext: any;
+
   elementType() {
     return "video";
   }
 
-  onMethodCall(method: string, params: any) {
+  async onMethodCall(method: string, params: any) {
+    if (MPEnv.platformType === PlatformType.browser) {
+      this.onBrowserMethodCall(method, params);
+    } else if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      if (!this.videoContext) {
+        const fields = await (this.htmlElement as any).getFields({ context: true });
+        this.videoContext = fields.context;
+      }
+      if (this.videoContext) {
+        this.onMiniProgramMethodCall(method, params);
+      }
+    }
+  }
+
+  onBrowserMethodCall(method: string, params: any) {
     if (method === "play") {
       (this.htmlElement as HTMLMediaElement).play();
     } else if (method === "pause") {
       (this.htmlElement as HTMLMediaElement).pause();
-    } else if (method === "setVolumn") {
+    } else if (method === "setVolume") {
       (this.htmlElement as HTMLMediaElement).muted = false;
-      (this.htmlElement as HTMLMediaElement).volume = params.volumn;
-    } else if (method === "volumnUp") {
+      (this.htmlElement as HTMLMediaElement).volume = params.volume;
+    } else if (method === "volumeUp") {
       (this.htmlElement as HTMLMediaElement).muted = false;
       var volume = (this.htmlElement as HTMLMediaElement).volume;
       (this.htmlElement as HTMLMediaElement).volume = volume + 0.1;
-    } else if (method === "volumnDown") {
+    } else if (method === "volumeDown") {
       (this.htmlElement as HTMLMediaElement).muted = false;
       var volume = (this.htmlElement as HTMLMediaElement).volume;
       (this.htmlElement as HTMLMediaElement).volume = volume - 0.1;
@@ -31,7 +48,31 @@ export class MPVideoView extends MPPlatformView {
     } else if (method === "seekTo") {
       (this.htmlElement as HTMLMediaElement).currentTime = params.seekTo;
     } else if (method === "getCurrentTime") {
-      return (this.htmlElement as HTMLVideoElement).currentTime;;
+      return (this.htmlElement as HTMLVideoElement).currentTime;
+    }
+  }
+
+  onMiniProgramMethodCall(method: string, params: any) {
+    if (method === "play") {
+      this.videoContext.play();
+    } else if (method === "pause") {
+      this.videoContext.pause();
+    } else if (method === "setVolume") {
+      // todo
+    } else if (method === "volumeUp") {
+      // todo
+    } else if (method === "volumeDown") {
+      // todo
+    } else if (method === "setMuted") {
+      this.videoContext.muted = params.muted;
+    } else if (method === "fullscreen") {
+      this.videoContext.requestFullScreen();
+    } else if (method === "setPlaybackRate") {
+      this.videoContext.playbackRate(params.playbackRate);
+    } else if (method === "seekTo") {
+      this.videoContext.seek(params.seekTo);
+    } else if (method === "getCurrentTime") {
+      // todo
     }
   }
 
