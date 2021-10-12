@@ -9,6 +9,7 @@ class MPScaffold extends StatefulWidget {
   final Color? appBarTintColor;
   final Widget? body;
   final Function? onRefresh;
+  final Function(double)? onPageScroll;
   final Future<Map> Function()? onWechatMiniProgramShareAppMessage;
   final Function? onReachBottom;
   final PreferredSizeWidget? appBar;
@@ -24,6 +25,7 @@ class MPScaffold extends StatefulWidget {
     this.appBarTintColor,
     this.body,
     this.onRefresh,
+    this.onPageScroll,
     this.onWechatMiniProgramShareAppMessage,
     this.onReachBottom,
     this.appBar,

@@ -104,7 +104,7 @@ export class Page {
             scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document));
             scaffoldView.setAttributes(message.scaffold.attributes);
           } else {
-            scaffoldView.setDelegate(new BrowserPageScaffoldDelegate(this.document));
+            scaffoldView.setDelegate(new BrowserPageScaffoldDelegate(this.document, scaffoldView));
             scaffoldView.setAttributes(message.scaffold.attributes);
           }
         }
@@ -138,7 +138,11 @@ export class Page {
     }
   }
 
-  onPageScroll(scrollTop: number) {}
+  onPageScroll(scrollTop: number) {
+    if (this.scaffoldView instanceof MPScaffold) {
+      this.scaffoldView.onPageScroll(scrollTop);
+    }
+  }
 
   setOverlays(overlays: any[]) {
     let overlaysView = overlays
@@ -181,7 +185,11 @@ export class Page {
 }
 
 export class BrowserPageScaffoldDelegate implements MPScaffoldDelegate {
-  constructor(readonly document: Document) {}
+  observingScroller = false;
+
+  constructor(readonly document: Document, readonly scaffoldView: MPScaffold) {
+    this.installPageScrollListener();
+  }
 
   setPageTitle(title: string): void {
     this.document.title = title;
@@ -192,6 +200,22 @@ export class BrowserPageScaffoldDelegate implements MPScaffoldDelegate {
   }
 
   setAppBarColor(color: string, tintColor?: string): void {}
+
+  installPageScrollListener() {
+    var eventListener: any;
+    eventListener = (e: any) => {
+      if (!this.scaffoldView.htmlElement.isConnected) {
+        this.observingScroller = false;
+        window.removeEventListener("scroll", eventListener);
+        return;
+      }
+      this.scaffoldView.onPageScroll(window.scrollY);
+    };
+    if (!this.observingScroller) {
+      this.observingScroller = true;
+      window.addEventListener("scroll", eventListener);
+    }
+  }
 }
 
 export class WXPageScaffoldDelegate implements MPScaffoldDelegate {

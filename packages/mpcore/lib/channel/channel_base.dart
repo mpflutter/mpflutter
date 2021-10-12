@@ -257,6 +257,14 @@ class MPChannelBase {
             'target': message['target'],
           },
         }));
+      } else if (message['event'] == 'onPageScroll') {
+        final scrollTop = message['scrollTop'];
+        if (scrollTop is! num) return;
+        final target = scaffoldStates.firstWhere(
+          (scaffoldState) =>
+              scaffoldState.context.hashCode == message['target'],
+        );
+        target.widget.onPageScroll?.call(scrollTop.toDouble());
       } else if (message['event'] == 'onReachBottom') {
         final target = scaffoldStates.firstWhere(
           (scaffoldState) =>

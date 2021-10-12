@@ -16,7 +16,7 @@ var style = function(params) {
 var output = "";
 if (!params) return output;
 for (var i = 0; i < dictCSSKeys.length; i++) {
-if (params[i.toString()]) {
+if (params[i.toString()] !== undefined) {
 if (dictCSSValues[params[i.toString()]]) {
 output += dictCSSKeys[i] + ":" + dictCSSValues[params[i.toString()]] + ';';
 }
@@ -24,7 +24,7 @@ else {
 output += dictCSSKeys[i] + ":" + params[i.toString()] + ';';
 }
 }
-else if (params[dictCSSKeys[i]]) {
+else if (params[dictCSSKeys[i]] !== undefined) {
 output += dictCSSKeys[i] + ":" + params[dictCSSKeys[i]] + ';';
 }
 }

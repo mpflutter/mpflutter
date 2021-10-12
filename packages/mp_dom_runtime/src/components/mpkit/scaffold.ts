@@ -210,5 +210,18 @@ export class MPScaffold extends ComponentView {
     );
   }
 
+  onPageScroll(scrollTop: number) {
+    this.engine.sendMessage(
+      JSON.stringify({
+        type: "scaffold",
+        message: {
+          event: "onPageScroll",
+          target: this.hashCode,
+          scrollTop,
+        },
+      })
+    );
+  }
+
   setChildren() {}
 }
