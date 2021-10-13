@@ -9,8 +9,7 @@ MPElement _encodeEditableText(Element element) {
     children: [],
     attributes: {
       'style': _encodeTextStyle(widget.style),
-      'value':
-          widget.controller.textDirty == true ? widget.controller.text : null,
+      'value': widget.controller.text,
       'placeholder': widget.placeholder,
       'maxLines': widget.maxLines,
       'obscureText': widget.obscureText,

@@ -16,8 +16,10 @@ export class SliverPersistentHeader extends ComponentView {
     this.lazying = attributes.lazying;
     this.lazyOffset = attributes.lazyOffset;
     this.updateLayout();
-    this.observeScroller();
-    this.updateLazyState(0);
+    if (this.lazying && !this.observingScroller) {
+      this.observeScroller();
+      this.updateLazyState(0);
+    }
   }
 
   observeScroller() {
