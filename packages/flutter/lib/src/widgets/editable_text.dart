@@ -454,6 +454,7 @@ class EditableText extends StatefulWidget {
     this.textAlign = TextAlign.start,
     this.textDirection,
     this.placeholder,
+    this.placeholderStyle,
     this.locale,
     this.textScaleFactor,
     this.maxLines = 1,
@@ -729,6 +730,7 @@ class EditableText extends StatefulWidget {
   final TextDirection? textDirection;
 
   final String? placeholder;
+  final TextStyle? placeholderStyle;
 
   /// {@template flutter.widgets.editableText.textCapitalization}
   /// Configures how the platform keyboard will select an uppercase or
@@ -2833,7 +2835,7 @@ class _Editable extends LeafRenderObjectWidget {
     this.promptRectRange,
     this.promptRectColor,
     required this.clipBehavior,
-  })   : assert(textDirection != null),
+  })  : assert(textDirection != null),
         assert(rendererIgnoresPointer != null),
         super(key: key);
 

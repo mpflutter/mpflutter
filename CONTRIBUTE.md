@@ -37,7 +37,7 @@ Dart 端分别有两个子工程，在 [mpflutter/mpflutter](https://github.com/
 
 ### Native 端
 
-小程序 / Web 端由 [mpflutter/mp_dom_runtime](https://github.com/mpflutter/mpflutter/packages/mp_dom_runtime) 负责渲染，具体架构请参见该仓库。
+小程序 / Web 端由 [mpflutter/mp_dom_runtime](https://github.com/mpflutter/mpflutter/tree/master/packages/mp_dom_runtime) 负责渲染，具体架构请参见该仓库。
 
 ## 开发环境配置说明
 
@@ -46,7 +46,6 @@ Dart 端分别有两个子工程，在 [mpflutter/mpflutter](https://github.com/
 创建一个文件夹，一般是 `~/Document/mpflutter` ，然后在该文件夹下克隆以下仓库。
 
 * https://github.com/mpflutter/mpflutter
-* https://github.com/mpflutter/mp_dom_runtime
 * https://github.com/mpflutter/mpflutter_sample
 
 ### 安装依赖

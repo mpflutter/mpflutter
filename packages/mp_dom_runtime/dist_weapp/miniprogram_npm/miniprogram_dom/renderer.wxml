@@ -1904,10 +1904,10 @@ getScrollPosition: getScrollPosition,
 <canvas id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" type="2d"></canvas>
 </template>
 <template name="ftextarea">
-<textarea id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{rt.type}}" password="{{rt.type === 'password'}}" disabled="{{rt.readOnly}}" focus="{{rt.autoFocus}}"></textarea>
+<textarea id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" placeholder-style="{{rt.placeholderStyle}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{rt.type}}" password="{{rt.type === 'password'}}" disabled="{{rt.readOnly}}" focus="{{rt.autoFocus}}" maxlength="-1"></textarea>
 </template>
 <template name="finput">
-<input id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{rt.type}}" password="{{rt.type === 'password'}}" always-embed="true" disabled="{{rt.readOnly}}" focus="{{rt.autoFocus}}"></input>
+<input id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" placeholder-style="{{rt.placeholderStyle}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{rt.type}}" password="{{rt.type === 'password'}}" always-embed="true" disabled="{{rt.readOnly}}" focus="{{rt.autoFocus}}" maxlength="-1"></input>
 </template>
 <template name="fswiper">
 <swiper id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" vertical="{{rt.vertical}}" circular="{{rt.circular}}">

@@ -1,7 +1,7 @@
 import { MPEnv, PlatformType } from "../../env";
 import { ComponentView } from "../component_view";
 import { setDOMAttribute, setDOMStyle } from "../dom_utils";
-import { cssTextAlign, cssTextStyle } from "../utils";
+import { cssColor, cssTextAlign, cssTextStyle } from "../utils";
 
 export class EditableText extends ComponentView {
   contentElement?: HTMLInputElement | HTMLTextAreaElement;
@@ -36,31 +36,26 @@ export class EditableText extends ComponentView {
       this.htmlElement.appendChild(this.contentElement);
     }
     if (!this.contentElement) return;
+    if (attributes.placeholderStyle) {
+      let placeholderStyle = "";
+      if (attributes.placeholderStyle.color) {
+        placeholderStyle += `color: ${cssColor(attributes.placeholderStyle.color)};`;
+      }
+      setDOMAttribute(this.contentElement, "placeholderStyle", placeholderStyle);
+    }
     this.contentElement.onkeyup = (event) => {
       if (event.key === "Enter" || event.keyCode === 13) {
-        this._onSubmitted(
-          event.target as HTMLInputElement,
-          (event.target as HTMLInputElement).value
-        );
+        this._onSubmitted(event.target as HTMLInputElement, (event.target as HTMLInputElement).value);
       }
     };
     this.contentElement.onsubmit = (event: any) => {
-      this._onSubmitted(
-        event.target,
-        event.detail?.value ?? (event.target as HTMLInputElement).value
-      );
+      this._onSubmitted(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
     };
     this.contentElement.oninput = (event: any) => {
-      this._onChanged(
-        event.target,
-        event.detail?.value ?? (event.target as HTMLInputElement).value
-      );
+      this._onChanged(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
     };
     this.contentElement.onchange = (event: any) => {
-      this._onChanged(
-        event.target,
-        event.detail?.value ?? (event.target as HTMLInputElement).value
-      );
+      this._onChanged(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
     };
     if (attributes.style) {
       let textStyle: any = cssTextStyle(attributes.style);
@@ -75,20 +70,11 @@ export class EditableText extends ComponentView {
     setDOMAttribute(
       this.contentElement,
       "type",
-      attributes.obscureText
-        ? "password"
-        : this._keyboardType(attributes.keyboardType)
+      attributes.obscureText ? "password" : this._keyboardType(attributes.keyboardType)
     );
-    setDOMAttribute(
-      this.contentElement,
-      "pattern",
-      this._keyboardPattern(attributes.keyboardType)
-    );
+    setDOMAttribute(this.contentElement, "pattern", this._keyboardPattern(attributes.keyboardType));
     if (typeof attributes.value === "string") {
-      if (
-        MPEnv.platformType === PlatformType.wxMiniProgram ||
-        MPEnv.platformType === PlatformType.swanMiniProgram
-      ) {
+      if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
         setDOMAttribute(this.contentElement, "value", attributes.value);
       } else {
         this.contentElement.value = attributes.value;
@@ -98,24 +84,12 @@ export class EditableText extends ComponentView {
       setDOMAttribute(this.contentElement, "autoFocus", attributes.autofocus);
     }
     if (attributes.autoCorrect) {
-      setDOMAttribute(
-        this.contentElement,
-        "autoCorrect",
-        attributes.autoCorrect
-      );
+      setDOMAttribute(this.contentElement, "autoCorrect", attributes.autoCorrect);
     }
     if (attributes.placeholder) {
-      setDOMAttribute(
-        this.contentElement,
-        "placeholder",
-        attributes.placeholder
-      );
+      setDOMAttribute(this.contentElement, "placeholder", attributes.placeholder);
     }
-    setDOMAttribute(
-      this.contentElement,
-      "readOnly",
-      attributes.readOnly ? "true" : undefined
-    );
+    setDOMAttribute(this.contentElement, "readOnly", attributes.readOnly ? "true" : undefined);
   }
 
   setChildren() {}
