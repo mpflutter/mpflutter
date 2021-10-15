@@ -225,7 +225,7 @@ export class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   backgroundElementAttached = false;
 
   setPageTitle(title: string): void {
-    if (title === this.currentTitle) return;
+    if (MPEnv.platformType == PlatformType.wxMiniProgram && title === this.currentTitle) return;
     MPEnv.platformScope.setNavigationBarTitle({ title });
     this.currentTitle = title;
   }
