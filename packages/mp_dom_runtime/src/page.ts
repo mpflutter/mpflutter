@@ -1,4 +1,3 @@
-declare var global: any;
 declare var getCurrentPages: any;
 
 import { WXApp } from "./app";
@@ -261,7 +260,7 @@ export class WXPageScaffoldDelegate implements MPScaffoldDelegate {
 export const WXPage = (
   options: { route: string; params: any } | undefined,
   selector: string = "#vdom",
-  app: WXApp = global.app
+  app: WXApp = MPEnv.platformGlobal().app
 ) => {
   return {
     onLoad(pageOptions: any) {

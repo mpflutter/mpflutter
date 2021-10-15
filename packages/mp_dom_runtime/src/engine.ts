@@ -1,5 +1,4 @@
 declare var require: any;
-declare var global: any;
 declare var wx: any;
 declare var swan: any;
 
@@ -18,11 +17,6 @@ import { BrowserRouter, Router } from "./router";
 import { TextMeasurer } from "./text_measurer";
 import { WindowInfo } from "./window_info";
 import { wrapDartObject } from "./components/dart_object";
-
-try {
-  let self = window ?? global;
-  (self as any).mpDEBUG = (self as any).mpDEBUG ?? false;
-} catch (error) {}
 
 export class Engine {
   private started: boolean = false;
@@ -84,36 +78,29 @@ export class Engine {
     if (!this.codeBlock && !this.debugger) return;
     this.windowInfo.updateWindowInfo();
     this.listenViewport();
-    if (self) {
-      (self as any).engineScope = this.mpJS.engineScope;
+    MPEnv.platformGlobal();
+    if (MPEnv.platformType === PlatformType.browser) {
+      MPEnv.platformGlobal().engineScope = this.mpJS.engineScope;
     } else {
-      (global as any).self = {
-        ...global,
-        JSON,
-        setTimeout,
-        setInterval,
-        clearTimeout: function (v: any) {
-          clearTimeout(v);
-        },
-        clearInterval: function (v: any) {
-          clearInterval(v);
-        },
-        wx: typeof wx !== "undefined" ? wx : undefined,
-        swan: typeof swan !== "undefined" ? swan : undefined,
-        engineScope: this.mpJS.engineScope,
-        Object,
+      MPEnv.platformGlobal().JSON = JSON;
+      MPEnv.platformGlobal().setTimeout = setTimeout;
+      MPEnv.platformGlobal().setInterval = setInterval;
+      MPEnv.platformGlobal().clearTimeout = function (v: any) {
+        clearTimeout(v);
       };
+      MPEnv.platformGlobal().clearInterval = function (v: any) {
+        clearInterval(v);
+      };
+      MPEnv.platformGlobal().engineScope = this.mpJS.engineScope;
+      MPEnv.platformGlobal().Object = Object;
       if (typeof wx !== "undefined") {
-        global.wx = wx;
-        global.uni = wx;
+        MPEnv.platformGlobal().wx = wx;
+        MPEnv.platformGlobal().uni = wx;
       }
       if (typeof swan !== "undefined") {
-        global.swan = swan;
-        global.uni = swan;
+        MPEnv.platformGlobal().swan = swan;
+        MPEnv.platformGlobal().uni = swan;
       }
-      global.engineScope = this.mpJS.engineScope;
-      global.Object = Object;
-      global.JSON = JSON;
     }
     if (this.debugger) {
       this.debugger.start();
@@ -134,7 +121,7 @@ export class Engine {
   }
 
   sendMessage(message: string) {
-    if (((window ?? global) as any)?.mpDEBUG) {
+    if (MPEnv.platformGlobal()?.mpDEBUG) {
       console.log(new Date().getTime(), "out", JSON.parse(message));
     }
     if (this.debugger) {
@@ -163,7 +150,7 @@ export class Engine {
   didReceivedMessage(message: string, isDartObject: boolean = false) {
     let decodedMessage = isDartObject ? wrapDartObject(message) : JSON.parse(message);
     if (!decodedMessage) return;
-    if (((window ?? global) as any)?.mpDEBUG) {
+    if (MPEnv.platformGlobal()?.mpDEBUG) {
       console.log(new Date().getTime(), "in", decodedMessage);
     }
     if (decodedMessage.type === "frame_data") {

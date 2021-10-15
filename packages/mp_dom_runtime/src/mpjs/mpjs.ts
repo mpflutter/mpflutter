@@ -1,6 +1,5 @@
 import { Engine } from "../engine";
-
-declare var global: any;
+import { MPEnv } from "../env";
 
 interface MPJSMessage {
   event: string;
@@ -27,8 +26,6 @@ interface MPJSSetValueParams {
   key: string;
   value: any;
 }
-
-let self: any = window ?? global;
 
 export class MPJS {
   engineScope: { [key: string]: any } = {};
@@ -103,7 +100,7 @@ export class MPJS {
   }
 
   getCallee(objectHandler: string, callChain: string[]): any {
-    const rootObject = this.objectRefs[objectHandler] ?? self;
+    const rootObject = this.objectRefs[objectHandler] ?? MPEnv.platformGlobal();
     let currentObject: any = rootObject;
     if (callChain[0] === "engineScope") {
       currentObject = this.engineScope;

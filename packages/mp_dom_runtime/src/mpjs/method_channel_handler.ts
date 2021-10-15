@@ -1,10 +1,8 @@
-declare var global: any;
-
-let self = window ?? global;
+import { MPEnv } from "../env";
 
 export class MethodChannelHandler {
   static installHandler() {
-    (self as any).mp_core_methodChannelHandlerWebOnly = this.handler;
+    MPEnv.platformGlobal().mp_core_methodChannelHandlerWebOnly = this.handler;
   }
 
   static async handler(
@@ -14,16 +12,16 @@ export class MethodChannelHandler {
     resultCallback: (jsonEncodedResult: string) => void,
     eventSink?: (data: string) => void
   ) {
-    if (!Object.prototype.hasOwnProperty.call(self, method)) {
+    if (!Object.prototype.hasOwnProperty.call(MPEnv.platformGlobal(), method)) {
       resultCallback("NOTIMPLEMENTED");
       return;
     }
-    if (!(typeof (self as any)[method][beInvokeMethod] === "function")) {
+    if (!(typeof MPEnv.platformGlobal()[method][beInvokeMethod] === "function")) {
       resultCallback("NOTIMPLEMENTED");
       return;
     }
     try {
-      let result = await (self as any)[method][beInvokeMethod](beInvokeParams, eventSink);
+      let result = await MPEnv.platformGlobal()[method][beInvokeMethod](beInvokeParams, eventSink);
       resultCallback(JSON.stringify(result));
     } catch (error) {
       resultCallback("ERROR:" + error);

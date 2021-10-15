@@ -1,5 +1,3 @@
-declare var global: any;
-
 import { Engine } from "../engine";
 import { AbsorbPointer } from "./basic/absorb_pointer";
 import { ClipOval } from "./basic/clip_oval";
@@ -30,6 +28,7 @@ import { EditableText } from "./basic/editable_text";
 import { MPPlatformView } from "./mpkit/platform_view";
 import { ForegroundDecoratedBox } from "./basic/foreground_decorated_box";
 import { WechatMiniProgramButton } from "./wechat_mini_program/wechat_miniprogram_button";
+import { MPEnv } from "../env";
 
 export class ComponentFactory {
   static components: { [key: string]: typeof ComponentView } = {
@@ -96,8 +95,7 @@ export class ComponentFactory {
     if (!same) {
       this.cachedElement[hashCode] = data;
     }
-    const cachedView =
-      !ComponentFactory.disableCache && this.cachedView[hashCode];
+    const cachedView = !ComponentFactory.disableCache && this.cachedView[hashCode];
     if (cachedView) {
       document = cachedView.document;
       if (data.ancestors) {
@@ -120,7 +118,7 @@ export class ComponentFactory {
       clazz = ComponentView;
     }
     const view = new clazz(document);
-    if (((window ?? global) as any)?.mpDEBUG) {
+    if (MPEnv.platformGlobal()?.mpDEBUG) {
       view.htmlElement.setAttribute("mp-component", name);
     }
     view.factory = this;
@@ -206,10 +204,7 @@ export class ComponentFactory {
 
   private markedNeedsFlushTextMeasureResult = false;
 
-  callbackTextMeasureResult(
-    measureId: number,
-    size: { width: number; height: number }
-  ) {
+  callbackTextMeasureResult(measureId: number, size: { width: number; height: number }) {
     this.textMeasureResults.push({ measureId, size });
     if (!this.markedNeedsFlushTextMeasureResult) {
       this.markedNeedsFlushTextMeasureResult = true;

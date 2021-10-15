@@ -18,7 +18,9 @@ main(List<String> args) {
     File('web/plugins.min.js').writeAsStringSync(stringBuffer.toString());
   } catch (e) {}
   try {
-    File('weapp/plugins.min.js').writeAsStringSync(stringBuffer.toString());
+    File('weapp/plugins.min.js').writeAsStringSync(
+        '''var MPEnv = require("./mpdom.min").MPEnv;var pluginRegisterer = {env: MPEnv,registerPlugin: function(name, target) {MPEnv.platformGlobal()[name] = target;}};''' +
+            stringBuffer.toString());
   } catch (e) {}
   try {
     File('swanapp/plugins.min.js').writeAsStringSync(stringBuffer.toString());
