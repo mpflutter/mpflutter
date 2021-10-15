@@ -17,7 +17,7 @@ jobs:
     - name: Build
       run: |
         cd packages/mp_dom_runtime/
-        npm install -g browserify uglify-js typescript
+        npm install -g browserify uglify-js typescript terser
         npm install
         npm run build
         git config --global user.email "ci@mpflutter.com"

@@ -2,7 +2,8 @@ declare var require: any;
 declare var wx: any;
 declare var swan: any;
 
-import { BrowserApp, WXApp } from "./app";
+import { BrowserApp } from "./browser_app";
+import { WXApp } from "./wx_app";
 import { MPDrawable } from "./components/basic/custom_paint";
 import { WebDialogs } from "./components/basic/web_dialogs";
 import { ComponentFactory } from "./components/component_factory";
@@ -13,7 +14,7 @@ import { MPEnv, PlatformType } from "./env";
 import { MethodChannelHandler } from "./mpjs/method_channel_handler";
 import { MPJS } from "./mpjs/mpjs";
 import { Page } from "./page";
-import { BrowserRouter, Router } from "./router";
+import { Router } from "./router";
 import { TextMeasurer } from "./text_measurer";
 import { WindowInfo } from "./window_info";
 import { wrapDartObject } from "./components/dart_object";
@@ -294,7 +295,7 @@ export class Engine {
     }
     this.sendViewportHandler = setTimeout(() => {
       this.windowInfo.updateWindowInfo();
-      (this.app?.router as BrowserRouter)?.history.forEach((it) => {
+      (this.app?.router as any)?.history.forEach((it: any) => {
         it.item.viewportChanged();
       });
       this.sendViewportHandler = undefined;

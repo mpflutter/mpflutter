@@ -61,7 +61,7 @@ export class ComponentFactory {
     mp_web_view: MPWebView,
     mp_page_view: MPPageView,
     mp_platform_view: MPPlatformView,
-    wechat_miniprogram_button: WechatMiniProgramButton,
+    wechat_miniprogram_button: __MP_TARGET_WEAPP__ ? WechatMiniProgramButton : undefined!,
   };
 
   static ancestors: { [key: string]: typeof AncestorView } = {

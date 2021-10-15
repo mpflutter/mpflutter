@@ -10,7 +10,10 @@
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "eventemitter3": "^4.0.7"
+  "devDependencies": {
+    "browserify": "^17.0.0",
+    "eventemitter3": "^4.0.7",
+    "terser": "^5.9.0",
+    "typescript": "^4.4.4"
   }
 }

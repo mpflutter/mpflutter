@@ -24,6 +24,7 @@ export class MPVideoView extends MPPlatformView {
   }
 
   onBrowserMethodCall(method: string, params: any) {
+    if (!__MP_TARGET_BROWSER__) return;
     if (method === "play") {
       (this.htmlElement as HTMLMediaElement).play();
     } else if (method === "pause") {
@@ -53,6 +54,7 @@ export class MPVideoView extends MPPlatformView {
   }
 
   onMiniProgramMethodCall(method: string, params: any) {
+    if (!(__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__)) return;
     if (method === "play") {
       this.videoContext.play();
     } else if (method === "pause") {

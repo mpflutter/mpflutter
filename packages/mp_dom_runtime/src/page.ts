@@ -1,14 +1,9 @@
-declare var getCurrentPages: any;
-
-import { WXApp } from "./app";
 import { ComponentView } from "./components/component_view";
 import { setDOMStyle } from "./components/dom_utils";
 import { MPScaffold, MPScaffoldDelegate } from "./components/mpkit/scaffold";
 import { Engine } from "./engine";
 import { MPEnv, PlatformType } from "./env";
 import { Router } from "./router";
-import { TextMeasurer } from "./text_measurer";
-import EventEmitter from "eventemitter3";
 
 export class Page {
   private _active = true;
@@ -100,11 +95,15 @@ export class Page {
             MPEnv.platformType === PlatformType.wxMiniProgram ||
             MPEnv.platformType === PlatformType.swanMiniProgram
           ) {
-            scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document));
-            scaffoldView.setAttributes(message.scaffold.attributes);
+            if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+              scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document));
+              scaffoldView.setAttributes(message.scaffold.attributes);
+            }
           } else {
-            scaffoldView.setDelegate(new BrowserPageScaffoldDelegate(this.document, scaffoldView));
-            scaffoldView.setAttributes(message.scaffold.attributes);
+            if (__MP_TARGET_BROWSER__) {
+              scaffoldView.setDelegate(new BrowserPageScaffoldDelegate(this.document, scaffoldView));
+              scaffoldView.setAttributes(message.scaffold.attributes);
+            }
           }
         }
       }
@@ -183,7 +182,7 @@ export class Page {
   }
 }
 
-export class BrowserPageScaffoldDelegate implements MPScaffoldDelegate {
+class BrowserPageScaffoldDelegate implements MPScaffoldDelegate {
   observingScroller = false;
 
   constructor(readonly document: Document, readonly scaffoldView: MPScaffold) {
@@ -217,7 +216,7 @@ export class BrowserPageScaffoldDelegate implements MPScaffoldDelegate {
   }
 }
 
-export class WXPageScaffoldDelegate implements MPScaffoldDelegate {
+class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   constructor(readonly document: Document) {}
 
   currentTitle: string | undefined;
@@ -256,73 +255,3 @@ export class WXPageScaffoldDelegate implements MPScaffoldDelegate {
     });
   }
 }
-
-export const WXPage = (
-  options: { route: string; params: any } | undefined,
-  selector: string = "#vdom",
-  app: WXApp = MPEnv.platformGlobal().app
-) => {
-  return {
-    onLoad(pageOptions: any) {
-      const document = (this as any).selectComponent(selector).miniDom.document;
-      (this as any).document = document;
-      document.window = new EventEmitter();
-      const documentTm = (this as any).selectComponent(selector + "_tm").miniDom.document;
-      TextMeasurer.activeTextMeasureDocument = documentTm;
-      Router.beingPush = false;
-      const basePath = (() => {
-        let c = app.indexPage.split("/");
-        c.pop();
-        return c.join("/");
-      })();
-      let finalOptions = options;
-      if (!options || pageOptions.route) {
-        let params = { ...pageOptions };
-        delete params["route"];
-        if (pageOptions.route) {
-          finalOptions = { route: pageOptions.route, params: params };
-        } else {
-          finalOptions = {
-            route: (this as any).route.replace(basePath, ""),
-            params: params,
-          };
-          if (finalOptions.route === "/index") {
-            finalOptions.route = "/";
-          }
-        }
-      }
-      if (finalOptions?.route) {
-        finalOptions.route = decodeURIComponent(finalOptions.route);
-      }
-
-      (this as any).mpPage = new Page(document.body, app.engine, finalOptions, document);
-      (this as any).mpPage.isFirst = getCurrentPages().length === 1;
-    },
-    onUnload() {
-      if ((this as any).mpPage.viewId) {
-        app.router.disposeRoute((this as any).mpPage.viewId);
-      }
-    },
-    onShow() {
-      TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(selector + "_tm").miniDom.document;
-    },
-    onPullDownRefresh() {
-      (this as any).mpPage.onRefresh().then((it: any) => {
-        MPEnv.platformScope.stopPullDownRefresh();
-      });
-    },
-    onShareAppMessage() {
-      return {
-        promise: (this as any).mpPage.onWechatMiniProgramShareAppMessage(),
-      };
-    },
-    onReachBottom() {
-      (this as any).mpPage.onReachBottom();
-    },
-    onPageScroll(res: any) {
-      (this as any).mpPage.onPageScroll(res.scrollTop);
-      (this as any).document.window.scrollY = res.scrollTop;
-      ((this as any).document.window as EventEmitter).emit("scroll", res.scrollTop);
-    },
-  };
-};

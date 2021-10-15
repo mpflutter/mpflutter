@@ -14,6 +14,7 @@ export class WebDialogs {
   }
 
   static wxMiniProgramReceivedWebDialogsMessage(engine: Engine, message: any) {
+    if (!(__MP_TARGET_WEAPP__ && __MP_TARGET_SWANAPP__)) return;
     if (message["params"]["dialogType"] === "alert") {
       MPEnv.platformScope.showModal({
         content: message["params"]["message"],
@@ -173,6 +174,7 @@ export class WebDialogs {
   }
 
   static browserMiniProgramReceivedWebDialogsMessage(engine: Engine, message: any) {
+    if (!__MP_TARGET_BROWSER__) return;
     if (message["params"]["dialogType"] === "alert") {
       window.alert(message["params"]["message"]);
       engine.sendMessage(
