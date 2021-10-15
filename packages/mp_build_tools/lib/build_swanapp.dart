@@ -62,7 +62,9 @@ String _buildDartJS(List<String> args) {
   codeSource = codeSource
       .replaceAll(RegExp(r"\n}\)\(\);"), "\n});")
       .replaceAll("else s([])})})()", "else s([])})})");
-  codeSource = "self = global.self;" + codeSource;
+  codeSource =
+      "let MPEnv = require('./mpdom.min').MPEnv;self = MPEnv.platformGlobal();" +
+          codeSource;
   codeSource = codeSource.replaceFirst("""(function dartProgram()""",
       """var \$__dart_deferred_initializers__ = self.\$__dart_deferred_initializers__;module.exports.main = (function dartProgram()""");
   File('./build/main.dart.js').writeAsStringSync(codeSource);
@@ -157,7 +159,7 @@ _moveDeferedScriptToSubpackages() {
 _modulizeDeferedJSCode(File file) {
   var code = file.readAsStringSync();
   code =
-      "self = global.self;var \$__dart_deferred_initializers__ = self.\$__dart_deferred_initializers__;module.exports.main = function() {$code};";
+      "self = getApp();var \$__dart_deferred_initializers__ = self.\$__dart_deferred_initializers__;module.exports.main = function() {$code};";
   file.writeAsStringSync(code);
 }
 

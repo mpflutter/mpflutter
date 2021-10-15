@@ -165,7 +165,7 @@ _moveDeferedScriptToSubpackages() {
 _modulizeDeferedJSCode(File file) {
   var code = file.readAsStringSync();
   code =
-      "self = global.self;var \$__dart_deferred_initializers__ = self.\$__dart_deferred_initializers__;module.exports.main = function() {$code};";
+      "self = getApp();var \$__dart_deferred_initializers__ = self.\$__dart_deferred_initializers__;module.exports.main = function() {$code};";
   file.writeAsStringSync(code);
 }
 
