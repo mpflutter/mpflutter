@@ -27,26 +27,19 @@ class PageViewWeb extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    this.direction =
-      attributes.scrollDirection === "Axis.vertical"
-        ? "vertical"
-        : "horizontal";
+    this.direction = attributes.scrollDirection === "Axis.vertical" ? "vertical" : "horizontal";
     this.loop = attributes.loop;
-    this.wrapperHtmlElement.style.flexDirection =
-      attributes.scrollDirection === "Axis.vertical" ? "column" : "row";
+    this.wrapperHtmlElement.style.flexDirection = attributes.scrollDirection === "Axis.vertical" ? "column" : "row";
     this.setupSwiperInstance();
   }
 
   setupSwiperInstance() {
     setTimeout(() => {
       if (!this.swiperInstance) {
-        this.swiperInstance = new (window as any).Swiper(
-          "#d_" + this.hashCode,
-          {
-            direction: this.direction,
-            loop: this.loop,
-          }
-        );
+        this.swiperInstance = new (window as any).Swiper("#d_" + this.hashCode, {
+          direction: this.direction,
+          loop: this.loop,
+        });
       } else {
         this.swiperInstance.changeDirection(this.direction);
         this.swiperInstance.update();
@@ -75,20 +68,21 @@ class PageViewWeapp extends ComponentView {
     setDOMAttribute(
       this.htmlElement,
       "vertical",
-      attributes.scrollDirection === "Axis.vertical"
-        ? (true as any)
-        : (false as any)
+      attributes.scrollDirection === "Axis.vertical" ? (true as any) : (false as any)
     );
-    setDOMAttribute(
-      this.htmlElement,
-      "circular",
-      attributes.loop ? (true as any) : (false as any)
-    );
+    setDOMAttribute(this.htmlElement, "circular", attributes.loop ? (true as any) : (false as any));
   }
 }
 
-export const MPPageView =
-  MPEnv.platformType === PlatformType.wxMiniProgram ||
-  MPEnv.platformType === PlatformType.swanMiniProgram
-    ? PageViewWeapp
-    : PageViewWeb;
+export const MPPageView = (() => {
+  if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+      return PageViewWeapp;
+    }
+  } else if (MPEnv.platformType === PlatformType.browser) {
+    if (__MP_TARGET_BROWSER__) {
+      return PageViewWeb;
+    }
+  }
+  throw "None of PageView class.";
+})();

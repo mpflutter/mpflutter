@@ -5,6 +5,7 @@ cd dist
 browserify index.js --standalone MPDOM > ./mpdom.js
 browserify index.miniprogram.js --standalone MPDOM > ./mpdom.miniprogram.js
 cd ..
+node scripts/inject_global.js
 
 # Build web
 node scripts/change_env.js __MP_TARGET_BROWSER__
