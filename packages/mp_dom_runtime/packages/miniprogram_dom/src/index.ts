@@ -44,11 +44,7 @@ class _Element {
     return this.nodes[0];
   }
 
-  constructor(
-    readonly hashCode: string,
-    readonly controller: MiniDom,
-    public tag: string
-  ) {
+  constructor(readonly hashCode: string, readonly controller: MiniDom, public tag: string) {
     global.miniDomEventHandlers = _Element.eventHandlers;
   }
 
@@ -100,10 +96,7 @@ class _Element {
       }
     }
     if (changed && changeCount > 1) {
-      this.controller.pushCommand(
-        `${this.hashCode}.s`,
-        this.transformStyle(this.currentStyle)
-      );
+      this.controller.pushCommand(`${this.hashCode}.s`, this.transformStyle(this.currentStyle));
     } else if (changed && changeCount === 1) {
       const cssKey = this.toCSSKey(changeKey);
       if (dictCSSKeys[cssKey]) {
@@ -113,10 +106,7 @@ class _Element {
         );
       } else {
         let transformedStyle = this.transformStyle(this.currentStyle);
-        this.controller.pushCommand(
-          `${this.hashCode}.s.other`,
-          transformedStyle["other"]
-        );
+        this.controller.pushCommand(`${this.hashCode}.s.other`, transformedStyle["other"]);
       }
     }
   }
@@ -272,10 +262,27 @@ class _Element {
 
   set onclick(value: () => void) {
     _Element.eventHandlers[`${this.hashCode}.onclick`] = value;
-    this.controller.pushCommand(
-      `${this.hashCode}.onclick`,
-      value ? this.hashCode : undefined
-    );
+    this.controller.pushCommand(`${this.hashCode}.onclick`, value ? this.hashCode : undefined);
+  }
+
+  set ontouchstart(value: () => void) {
+    _Element.eventHandlers[`${this.hashCode}.ontouchstart`] = value;
+    this.controller.pushCommand(`${this.hashCode}.ontouchstart`, value ? this.hashCode : undefined);
+  }
+
+  set ontouchmove(value: () => void) {
+    _Element.eventHandlers[`${this.hashCode}.ontouchmove`] = value;
+    this.controller.pushCommand(`${this.hashCode}.ontouchmove`, value ? this.hashCode : undefined);
+  }
+
+  set ontouchcancel(value: () => void) {
+    _Element.eventHandlers[`${this.hashCode}.ontouchcancel`] = value;
+    this.controller.pushCommand(`${this.hashCode}.ontouchcancel`, value ? this.hashCode : undefined);
+  }
+
+  set ontouchend(value: () => void) {
+    _Element.eventHandlers[`${this.hashCode}.ontouchend`] = value;
+    this.controller.pushCommand(`${this.hashCode}.ontouchend`, value ? this.hashCode : undefined);
   }
 
   set oninput(value: () => void) {
@@ -294,10 +301,7 @@ class _Element {
 
   private toCSSKey(str: string) {
     if (_Element.toCSSKeyCache[str]) return _Element.toCSSKeyCache[str];
-    let snakeCase = str.replace(
-      /[A-Z]/g,
-      (letter) => `-${letter.toLowerCase()}`
-    );
+    let snakeCase = str.replace(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`);
     if (snakeCase.startsWith("webkit")) {
       snakeCase = `-${snakeCase}`;
     }
@@ -361,8 +365,7 @@ class MiniDom {
           data[`dom.${parentKey.replace(".s", "")}`] &&
           data[`dom.${parentKey.replace(".s", "")}`]["s"]
         ) {
-          data[`dom.${parentKey.replace(".s", "")}`]["s"][myKey] =
-            command.value;
+          data[`dom.${parentKey.replace(".s", "")}`]["s"][myKey] = command.value;
         } else {
           data[`dom.${command.key}`] = command.value;
         }

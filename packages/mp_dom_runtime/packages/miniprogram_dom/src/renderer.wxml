@@ -65,7 +65,7 @@ module.exports = {
     <template is="f{{dom[root].tag}}" data="{{_: tools.setDomData(dom),style,rt:dom[root],n:1}}" />
 </block>
 <template name="fdiv">
-    <view id="d_{{rt.id}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.onclick}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" class="{{rt.class}}" style="{{tools.style(rt.s)}};{{style}}">
+    <view id="d_{{rt.id}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.onclick}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" bindtouchstart="{{rt.ontouchstart ? 'ontouchstart' : ''}}" bindtouchmove="{{rt.ontouchmove ? 'ontouchmove' : ''}}" bindtouchcancel="{{rt.ontouchcancel ? 'ontouchcancel' : ''}}" bindtouchend="{{rt.ontouchend ? 'ontouchend' : ''}}" class="{{rt.class}}" style="{{tools.style(rt.s)}};{{style}}">
         <block wx:key="*this" wx:for="{{rt.n}}">
             <template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{rt:tools.getDomData(item),n:n+1}}" />
         </block>

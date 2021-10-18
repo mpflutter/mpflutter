@@ -11,6 +11,11 @@ MPElement _encodeGestureDetector(Element element) {
     attributes: {
       'onTap': widget.onTap != null ? element.hashCode : null,
       'onLongPress': widget.onLongPress != null ? element.hashCode : null,
+      'onLongPressStart':
+          widget.onLongPressStart != null ? element.hashCode : null,
+      'onLongPressMoveUpdate':
+          widget.onLongPressMoveUpdate != null ? element.hashCode : null,
+      'onLongPressEnd': widget.onLongPressEnd != null ? element.hashCode : null,
       'hoverOpacity': widget.hoverOpacity,
     },
   );

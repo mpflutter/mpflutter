@@ -8,6 +8,7 @@ export class GestureDetector extends ComponentView {
   didSetOnClicked = false;
   didSetOnLongPress = false;
   longPressTimer: any;
+  longPressing = false;
 
   constructor(readonly document: Document) {
     super(document);
@@ -65,58 +66,42 @@ export class GestureDetector extends ComponentView {
   }
 
   setupGestureCatcher() {
-    if (MPEnv.platformType === PlatformType.browser) {
+    if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
       this.htmlElement.addEventListener(
         "touchstart",
         (e: TouchEvent) => {
-          if (GestureDetector.activeTouchElement) return;
-          const targetElement = this.findGestureDetectorElement(
-            e.composedPath() as any
-          );
-          if (targetElement.hoverOpacity) {
+          const targetElement = this.findGestureDetectorElement(e.composedPath() as any);
+          if (!GestureDetector.activeTouchElement && targetElement.hoverOpacity) {
             GestureDetector.activeTouchElement = targetElement;
             targetElement.classList.add("hoverOpacity");
           }
-          if (this.attributes.onLongPress) {
-            this.longPressTimer = setTimeout(() => {
-              if (this.longPressTimer) {
-                this.engine.sendMessage(
-                  JSON.stringify({
-                    type: "gesture_detector",
-                    message: {
-                      event: "onLongPress",
-                      target: this.attributes.onLongPress,
-                    },
-                  })
-                );
-                this.longPressTimer = undefined;
-              }
-            }, 300);
-          }
+          this._onTouchStart(e);
         },
         true
       );
       this.htmlElement.addEventListener(
         "touchmove",
-        () => {
+        (e) => {
           GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
           GestureDetector.activeTouchElement = undefined;
           if (this.longPressTimer) {
             clearTimeout(this.longPressTimer);
             this.longPressTimer = undefined;
           }
+          this._onTouchMove(e);
         },
         true
       );
       this.htmlElement.addEventListener(
         "touchend",
-        () => {
+        (e) => {
           GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
           GestureDetector.activeTouchElement = undefined;
           if (this.longPressTimer) {
             clearTimeout(this.longPressTimer);
             this.longPressTimer = undefined;
           }
+          this._onTouchEnd(e);
         },
         true
       );
@@ -129,9 +114,94 @@ export class GestureDetector extends ComponentView {
             clearTimeout(this.longPressTimer);
             this.longPressTimer = undefined;
           }
+          this.longPressing = false;
         },
         true
       );
+    } else if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
+      this.htmlElement.ontouchstart = (e) => {
+        this._onTouchStart(e);
+      };
+      this.htmlElement.ontouchmove = (e) => {
+        this._onTouchMove(e);
+      };
+      this.htmlElement.ontouchend = (e) => {
+        this._onTouchEnd(e);
+      };
+      this.htmlElement.ontouchcancel = (e) => {
+        this.longPressing = false;
+      };
     }
+  }
+
+  _onTouchStart(e: TouchEvent) {
+    if (
+      this.attributes.onLongPress ||
+      this.attributes.onLongPressStart ||
+      this.attributes.onLongPressEnd ||
+      this.attributes.onLongPressMoveUpdate
+    ) {
+      this.longPressTimer = setTimeout(() => {
+        if (this.longPressTimer) {
+          this.longPressing = true;
+          if (this.attributes.onLongPress) {
+            this.engine.sendMessage(
+              JSON.stringify({
+                type: "gesture_detector",
+                message: {
+                  event: "onLongPress",
+                  target: this.attributes.onLongPress,
+                },
+              })
+            );
+          }
+          if (this.attributes.onLongPressStart) {
+            this.engine.sendMessage(
+              JSON.stringify({
+                type: "gesture_detector",
+                message: {
+                  event: "onLongPressStart",
+                  target: this.attributes.onLongPressStart,
+                  globalX: e.touches[0].clientX,
+                  globalY: e.touches[0].clientY,
+                },
+              })
+            );
+          }
+          this.longPressTimer = undefined;
+        }
+      }, 300);
+    }
+  }
+
+  _onTouchMove(e: TouchEvent) {
+    if (this.longPressing && this.attributes.onLongPressMoveUpdate) {
+      this.engine.sendMessage(
+        JSON.stringify({
+          type: "gesture_detector",
+          message: {
+            event: "onLongPressMoveUpdate",
+            target: this.attributes.onLongPressMoveUpdate,
+            globalX: e.touches[0].clientX,
+            globalY: e.touches[0].clientY,
+          },
+        })
+      );
+    }
+  }
+
+  _onTouchEnd(e: TouchEvent) {
+    if (this.longPressing && this.attributes.onLongPressEnd) {
+      this.engine.sendMessage(
+        JSON.stringify({
+          type: "gesture_detector",
+          message: {
+            event: "onLongPressEnd",
+            target: this.attributes.onLongPressEnd,
+          },
+        })
+      );
+    }
+    this.longPressing = false;
   }
 }

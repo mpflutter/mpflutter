@@ -15,11 +15,11 @@ export class WXApp {
   }
 }
 
-export const WXPage = (
+export const WXPage = function (
   options: { route: string; params: any } | undefined,
   selector: string = "#vdom",
   app: WXApp = MPEnv.platformGlobal().app
-) => {
+) {
   if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)) return;
   return {
     onLoad(pageOptions: any) {

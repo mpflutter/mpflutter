@@ -186,6 +186,22 @@ class MPChannelBase {
         widget.onTap?.call();
       } else if (message['event'] == 'onLongPress') {
         widget.onLongPress?.call();
+      } else if (message['event'] == 'onLongPressStart') {
+        widget.onLongPressStart?.call(LongPressStartDetails(
+          globalPosition: Offset(
+            (message['globalX'] as num).toDouble(),
+            (message['globalY'] as num).toDouble(),
+          ),
+        ));
+      } else if (message['event'] == 'onLongPressMoveUpdate') {
+        widget.onLongPressMoveUpdate?.call(LongPressMoveUpdateDetails(
+          globalPosition: Offset(
+            (message['globalX'] as num).toDouble(),
+            (message['globalY'] as num).toDouble(),
+          ),
+        ));
+      } else if (message['event'] == 'onLongPressEnd') {
+        widget.onLongPressEnd?.call(LongPressEndDetails());
       }
     } catch (e) {
       print(e);

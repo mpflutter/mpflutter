@@ -375,6 +375,30 @@ var _Element = function () {
             this.controller.pushCommand(this.hashCode + ".onclick", value ? this.hashCode : undefined);
         }
     }, {
+        key: "ontouchstart",
+        set: function set(value) {
+            _Element.eventHandlers[this.hashCode + ".ontouchstart"] = value;
+            this.controller.pushCommand(this.hashCode + ".ontouchstart", value ? this.hashCode : undefined);
+        }
+    }, {
+        key: "ontouchmove",
+        set: function set(value) {
+            _Element.eventHandlers[this.hashCode + ".ontouchmove"] = value;
+            this.controller.pushCommand(this.hashCode + ".ontouchmove", value ? this.hashCode : undefined);
+        }
+    }, {
+        key: "ontouchcancel",
+        set: function set(value) {
+            _Element.eventHandlers[this.hashCode + ".ontouchcancel"] = value;
+            this.controller.pushCommand(this.hashCode + ".ontouchcancel", value ? this.hashCode : undefined);
+        }
+    }, {
+        key: "ontouchend",
+        set: function set(value) {
+            _Element.eventHandlers[this.hashCode + ".ontouchend"] = value;
+            this.controller.pushCommand(this.hashCode + ".ontouchend", value ? this.hashCode : undefined);
+        }
+    }, {
         key: "oninput",
         set: function set(value) {
             _Element.eventHandlers[this.hashCode + ".oninput"] = value;
