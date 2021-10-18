@@ -1,5 +1,5 @@
 const fs = require("fs");
-const loopCount = 256;
+const loopCount = 64;
 
 const template = fs.readFileSync("./base.wxml", { encoding: "utf-8" });
 let output = "";
@@ -9,7 +9,7 @@ for (let index = 1; index < loopCount + 1; index++) {
 
 output += `
 <template name="f${loopCount + 1}">
-    <renderer id="renderer" dom="{dom: tools.getDom()}" root="{{rt.id}}" />
+    <renderer id="renderer" root="{{rt.id}}" />
 </template>
 `;
 

@@ -3,7 +3,7 @@ var domData = {};
 var domScrollState = {};
 var dictCSSKeys = ["_","position","top","left","width","height","z-index","border-radius","overflow","background-color","display", "user-select", "-webkit-user-select", "text-align", "-webkit-line-clamp", "opacity", "max-width", "max-height"];
 var dictCSSValues = {"_1":"absolute","_2":"unset","_3":"start"};
-var setDomData = function(data) {
+var setDomData = function(root, data) {
     domData = data;
 }
 var getDomData = function(key) {
@@ -62,7 +62,10 @@ module.exports = {
 </wxs>
 
 <block wx:if="{{dom[root]}}">
-    <template is="f{{dom[root].tag}}" data="{{_: tools.setDomData(dom),style,rt:dom[root],n:1}}" />
+    <template is="{{tools.tag(dom[root].tag)}}" data="{{_: tools.setDomData(root, dom),style,rt:dom[root],n:1}}" />
+</block>
+<block wx:elif="{{tools.getDom(root)}}">
+    <template is="{{tools.tag(tools.getDomData(root).tag)}}" data="{{rt:tools.getDomData(root),n:1}}" />
 </block>
 <template name="fdiv">
     <view id="d_{{rt.id}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.onclick}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" bindtouchstart="{{rt.ontouchstart ? 'ontouchstart' : ''}}" bindtouchmove="{{rt.ontouchmove ? 'ontouchmove' : ''}}" bindtouchcancel="{{rt.ontouchcancel ? 'ontouchcancel' : ''}}" bindtouchend="{{rt.ontouchend ? 'ontouchend' : ''}}" class="{{rt.class}}" style="{{tools.style(rt.s)}};{{style}}">
