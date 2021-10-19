@@ -28,6 +28,7 @@ export const WXPage = function (
       document.window = new EventEmitter();
       const documentTm = (this as any).selectComponent(selector + "_tm").miniDom.document;
       TextMeasurer.activeTextMeasureDocument = documentTm;
+      Router.clearBeingPushTimeout();
       Router.beingPush = false;
       const basePath = (() => {
         let c = app.indexPage.split("/");
@@ -64,6 +65,8 @@ export const WXPage = function (
     },
     onShow() {
       TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(selector + "_tm").miniDom.document;
+      Router.clearBeingPushTimeout();
+      Router.beingPush = false;
     },
     onPullDownRefresh() {
       (this as any).mpPage.onRefresh().then((it: any) => {
@@ -120,6 +123,7 @@ class WXRouter extends Router {
   }
 
   didPush(message: any) {
+    Router.clearBeingPushTimeout();
     Router.beingPush = true;
     const routeId = message.routeId;
     this.thePushingRouteId = routeId;
@@ -132,12 +136,13 @@ class WXRouter extends Router {
         });
       },
     });
-    setTimeout(() => {
+    Router.beingPushTimeout = setTimeout(() => {
       Router.beingPush = false;
     }, 1000);
   }
 
   didReplace(message: any) {
+    Router.clearBeingPushTimeout();
     Router.beingPush = true;
     const routeId = message.routeId;
     this.thePushingRouteId = routeId;
@@ -150,12 +155,17 @@ class WXRouter extends Router {
         });
       },
     });
-    setTimeout(() => {
+    Router.beingPushTimeout = setTimeout(() => {
       Router.beingPush = false;
     }, 1000);
   }
 
   didPop() {
+    Router.clearBeingPushTimeout();
+    Router.beingPush = true;
     MPEnv.platformScope.navigateBack();
+    Router.beingPushTimeout = setTimeout(() => {
+      Router.beingPush = false;
+    }, 1000);
   }
 }

@@ -2,6 +2,14 @@ import { Engine } from "./engine";
 
 export class Router {
   static beingPush = false;
+  static beingPushTimeout: any;
+
+  static clearBeingPushTimeout() {
+    if (this.beingPushTimeout) {
+      clearTimeout(this.beingPushTimeout);
+      this.beingPushTimeout = undefined;
+    }
+  }
 
   constructor(readonly engine: Engine) {}
 
