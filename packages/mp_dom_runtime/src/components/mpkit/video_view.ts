@@ -54,7 +54,7 @@ export class MPVideoView extends MPPlatformView {
   }
 
   onMiniProgramMethodCall(method: string, params: any) {
-    if (!(__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__)) return;
+    if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_WEAPP__)) return;
     if (method === "play") {
       this.videoContext.play();
     } else if (method === "pause") {
