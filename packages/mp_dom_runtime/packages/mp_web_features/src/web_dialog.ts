@@ -1,13 +1,10 @@
 export class MPWebDialog {
-  private static currentToastElement?: HTMLDivElement;
+  private static currentToastElement?: HTMLElement;
   private static currentToastHandler?: any;
 
-  static showToast(options: {
-    title: string;
-    icon: string;
-    duration: number;
-    mask: boolean;
-  }) {
+  static weuiShadowRoot: any;
+
+  static showToast(options: { title: string; icon: string; duration: number; mask: boolean }) {
     if (this.currentToastElement) {
       this.currentToastElement.remove();
       this.currentToastElement = undefined;
@@ -16,16 +13,13 @@ export class MPWebDialog {
       clearTimeout(this.currentToastHandler);
       this.currentToastHandler = undefined;
     }
-    const div = document.createElement("div");
+    const div = document.createElement("body");
+    div.style.position = "absolute";
+    div.style.width = "100%";
+    div.style.height = "100%";
     div.innerHTML = `<div class="weui-mask_transparent"></div>
     <div class="weui-toast${options.icon === "none" ? " weui-toast_text" : ""}">
-        ${
-          options.icon === "none"
-            ? ``
-            : `<span class="${this.toastIcon(
-                options.icon
-              )} weui-icon_toast"></span>`
-        }
+        ${options.icon === "none" ? `` : `<span class="${this.toastIcon(options.icon)} weui-icon_toast"></span>`}
         <p class="weui-toast__content">${options.title}</p>
     </div>`;
     if (options.mask === true) {
@@ -33,7 +27,7 @@ export class MPWebDialog {
         e.preventDefault();
       };
     }
-    document.body.appendChild(div);
+    this.weuiShadowRoot.appendChild(div);
     this.currentToastElement = div;
     this.currentToastHandler = setTimeout(() => {
       div.remove();
@@ -67,15 +61,15 @@ export class MPWebDialog {
     success: (res: { tapIndex: number }) => void;
     fail: () => void;
   }) {
-    const div = document.createElement("div");
+    const div = document.createElement("body");
+    div.style.position = "absolute";
+    div.style.width = "100%";
+    div.style.height = "100%";
     div.innerHTML = `<div class="weui-mask" id="iosMask"></div>
-    <div class="weui-actionsheet weui-actionsheet_toggle" id="iosActionsheet" style="z-index:10002">
+    <div class="weui-actionsheet weui-actionsheet_toggle" id="iosActionsheet" style="z-index:10002;">
         <div class="weui-actionsheet__menu">
             ${options.itemList
-              .map(
-                (it, idx) =>
-                  `<div data-index="${idx}" class="weui-actionsheet__cell">${it}</div>`
-              )
+              .map((it, idx) => `<div data-index="${idx}" class="weui-actionsheet__cell">${it}</div>`)
               .join("")}
         </div>
         <div class="weui-actionsheet__action">
@@ -85,8 +79,8 @@ export class MPWebDialog {
     div.ontouchmove = (e) => {
       e.preventDefault();
     };
-    document.body.appendChild(div);
-    const cells = document.getElementsByClassName("weui-actionsheet__cell");
+    this.weuiShadowRoot.appendChild(div);
+    const cells = div.getElementsByClassName("weui-actionsheet__cell");
     for (let index = 0; index < cells.length; index++) {
       const element = cells[index];
       (element as HTMLDivElement).onclick = () => {

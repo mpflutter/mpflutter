@@ -211,6 +211,7 @@ export class MPScaffold extends ComponentView {
   }
 
   onPageScroll(scrollTop: number) {
+    if (!this.attributes.onPageScroll) return;
     this.engine.sendMessage(
       JSON.stringify({
         type: "scaffold",

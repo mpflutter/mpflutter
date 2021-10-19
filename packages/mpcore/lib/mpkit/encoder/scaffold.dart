@@ -44,6 +44,7 @@ MPElement _encodeMPScaffold(Element element) {
       'body': bodyElement != null
           ? MPElement.fromFlutterElement(bodyElement)
           : null,
+      'onPageScroll': widget.onPageScroll != null ? element.hashCode : null,
       'floatingBody': floatingBodyElement != null
           ? MPElement.fromFlutterElement(floatingBodyElement)
           : null,
