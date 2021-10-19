@@ -138,6 +138,7 @@ class WXRouter extends Router {
   }
 
   didReplace(message: any) {
+    Router.beingPush = true;
     const routeId = message.routeId;
     this.thePushingRouteId = routeId;
     const name = message.name;
@@ -149,6 +150,9 @@ class WXRouter extends Router {
         });
       },
     });
+    setTimeout(() => {
+      Router.beingPush = false;
+    }, 1000);
   }
 
   didPop() {
