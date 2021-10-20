@@ -202,6 +202,22 @@ class MPChannelBase {
         ));
       } else if (message['event'] == 'onLongPressEnd') {
         widget.onLongPressEnd?.call(LongPressEndDetails());
+      } else if (message['event'] == 'onPanStart') {
+        widget.onPanStart?.call(DragStartDetails(
+          globalPosition: Offset(
+            (message['globalX'] as num).toDouble(),
+            (message['globalY'] as num).toDouble(),
+          ),
+        ));
+      } else if (message['event'] == 'onPanUpdate') {
+        widget.onPanUpdate?.call(DragUpdateDetails(
+          globalPosition: Offset(
+            (message['globalX'] as num).toDouble(),
+            (message['globalY'] as num).toDouble(),
+          ),
+        ));
+      } else if (message['event'] == 'onPanEnd') {
+        widget.onPanEnd?.call(DragEndDetails());
       }
     } catch (e) {
       print(e);

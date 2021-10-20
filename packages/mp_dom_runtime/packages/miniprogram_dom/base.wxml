@@ -1,5 +1,5 @@
 <template name="fn">
-    <view id="d_{{rt.id}}" class="{{rt.class}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.onclick}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" bindtouchstart="{{rt.ontouchstart ? 'ontouchstart' : ''}}" bindtouchmove="{{rt.ontouchmove ? 'ontouchmove' : ''}}" bindtouchcancel="{{rt.ontouchcancel ? 'ontouchcancel' : ''}}" bindtouchend="{{rt.ontouchend ? 'ontouchend' : ''}}" style="{{tools.style(rt.s)}}">
+    <view id="d_{{rt.id}}" class="{{rt.class}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.onclick}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" style="{{tools.style(rt.s)}}">
         <block wx:key="*this" wx:for="{{rt.n}}">
             <template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{rt:tools.getDomData(item),n:n+1}}" />
         </block>

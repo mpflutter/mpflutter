@@ -6,14 +6,15 @@ export class GestureDetector extends ComponentView {
   classname = "GestureDetector";
   hoverOpacity = false;
   didSetOnClicked = false;
-  didSetOnLongPress = false;
+  didSetOnLongPressOrPan = false;
   longPressTimer: any;
   longPressing = false;
+  touchStartPosition?: { x: number; y: number };
 
   constructor(readonly document: Document) {
     super(document);
     (this.htmlElement as any).isGestureDetector = true;
-    this.setupGestureCatcher();
+    this.setupHoverOpacity();
   }
 
   elementType() {
@@ -33,20 +34,39 @@ export class GestureDetector extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (!this.didSetOnClicked) {
-      this.didSetOnClicked = true;
-      this.htmlElement.onclick = (e) => {
-        this.engine.sendMessage(
-          JSON.stringify({
-            type: "gesture_detector",
-            message: {
-              event: "onTap",
-              target: attributes.onTap,
-            },
-          })
-        );
-        if (e) e.stopPropagation();
-      };
+    if (attributes.onTap) {
+      if (!this.didSetOnClicked) {
+        this.didSetOnClicked = true;
+        this.htmlElement.onclick = (e) => {
+          this.engine.sendMessage(
+            JSON.stringify({
+              type: "gesture_detector",
+              message: {
+                event: "onTap",
+                target: attributes.onTap,
+              },
+            })
+          );
+          if (e) e.stopPropagation();
+        };
+      }
+    }
+    if (
+      attributes.onLongPress ||
+      attributes.onLongPressStart ||
+      attributes.onLongPressMoveUpdate ||
+      attributes.onLongPressEnd ||
+      attributes.onPanStart ||
+      attributes.onPanUpdate ||
+      attributes.onPanEnd
+    ) {
+      if (!this.didSetOnLongPressOrPan) {
+        this.didSetOnLongPressOrPan = true;
+        this.setupLongPressOrPanCatcher();
+        if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+          (this.htmlElement as any).setTag("touchmove");
+        }
+      }
     }
     this.hoverOpacity = attributes.hoverOpacity;
     (this.htmlElement as any).hoverOpacity = this.hoverOpacity;
@@ -65,7 +85,7 @@ export class GestureDetector extends ComponentView {
     return undefined;
   }
 
-  setupGestureCatcher() {
+  setupHoverOpacity() {
     if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
       this.htmlElement.addEventListener(
         "touchstart",
@@ -75,7 +95,6 @@ export class GestureDetector extends ComponentView {
             GestureDetector.activeTouchElement = targetElement;
             targetElement.classList.add("hoverOpacity");
           }
-          this._onTouchStart(e);
         },
         true
       );
@@ -88,7 +107,6 @@ export class GestureDetector extends ComponentView {
             clearTimeout(this.longPressTimer);
             this.longPressTimer = undefined;
           }
-          this._onTouchMove(e);
         },
         true
       );
@@ -101,7 +119,6 @@ export class GestureDetector extends ComponentView {
             clearTimeout(this.longPressTimer);
             this.longPressTimer = undefined;
           }
-          this._onTouchEnd(e);
         },
         true
       );
@@ -110,6 +127,38 @@ export class GestureDetector extends ComponentView {
         () => {
           GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
           GestureDetector.activeTouchElement = undefined;
+        },
+        true
+      );
+    }
+  }
+
+  setupLongPressOrPanCatcher() {
+    if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
+      this.htmlElement.addEventListener(
+        "touchstart",
+        (e: TouchEvent) => {
+          this._onTouchStart(e);
+        },
+        true
+      );
+      this.htmlElement.addEventListener(
+        "touchmove",
+        (e) => {
+          this._onTouchMove(e);
+        },
+        true
+      );
+      this.htmlElement.addEventListener(
+        "touchend",
+        (e) => {
+          this._onTouchEnd(e);
+        },
+        true
+      );
+      this.htmlElement.addEventListener(
+        "touchcancel",
+        () => {
           if (this.longPressTimer) {
             clearTimeout(this.longPressTimer);
             this.longPressTimer = undefined;
@@ -129,78 +178,101 @@ export class GestureDetector extends ComponentView {
         this._onTouchEnd(e);
       };
       this.htmlElement.ontouchcancel = (e) => {
+        if (this.longPressTimer) {
+          clearTimeout(this.longPressTimer);
+          this.longPressTimer = undefined;
+        }
         this.longPressing = false;
       };
     }
   }
 
   _onTouchStart(e: TouchEvent) {
+    console.log(e);
+    
+    let isPan = this.attributes.onPanStart || this.attributes.onPanUpdate || this.attributes.onPanEnd;
     if (
       this.attributes.onLongPress ||
       this.attributes.onLongPressStart ||
       this.attributes.onLongPressEnd ||
-      this.attributes.onLongPressMoveUpdate
+      this.attributes.onLongPressMoveUpdate ||
+      isPan
     ) {
-      this.longPressTimer = setTimeout(() => {
-        if (this.longPressTimer) {
-          this.longPressing = true;
-          if (this.attributes.onLongPress) {
-            this.engine.sendMessage(
-              JSON.stringify({
-                type: "gesture_detector",
-                message: {
-                  event: "onLongPress",
-                  target: this.attributes.onLongPress,
-                },
-              })
-            );
+      this.touchStartPosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      this.longPressTimer = setTimeout(
+        () => {
+          if (this.longPressTimer) {
+            this.longPressing = true;
+            if (this.attributes.onLongPress) {
+              this.engine.sendMessage(
+                JSON.stringify({
+                  type: "gesture_detector",
+                  message: {
+                    event: "onLongPress",
+                    target: this.attributes.onLongPress,
+                  },
+                })
+              );
+            }
+            if (this.attributes.onLongPressStart || this.attributes.onPanStart) {
+              this.engine.sendMessage(
+                JSON.stringify({
+                  type: "gesture_detector",
+                  message: {
+                    event: this.attributes.onPanStart ? "onPanStart" : "onLongPressStart",
+                    target: this.attributes.onPanStart ? this.attributes.onPanStart : this.attributes.onLongPressStart,
+                    globalX: e.touches[0].clientX,
+                    globalY: e.touches[0].clientY,
+                  },
+                })
+              );
+            }
+            this.longPressTimer = undefined;
           }
-          if (this.attributes.onLongPressStart) {
-            this.engine.sendMessage(
-              JSON.stringify({
-                type: "gesture_detector",
-                message: {
-                  event: "onLongPressStart",
-                  target: this.attributes.onLongPressStart,
-                  globalX: e.touches[0].clientX,
-                  globalY: e.touches[0].clientY,
-                },
-              })
-            );
-          }
-          this.longPressTimer = undefined;
-        }
-      }, 300);
+        },
+        isPan ? 0 : 300
+      );
     }
   }
 
   _onTouchMove(e: TouchEvent) {
-    if (this.longPressing && this.attributes.onLongPressMoveUpdate) {
+    if (this.longPressing && (this.attributes.onLongPressMoveUpdate || this.attributes.onPanUpdate)) {
       this.engine.sendMessage(
         JSON.stringify({
           type: "gesture_detector",
           message: {
-            event: "onLongPressMoveUpdate",
-            target: this.attributes.onLongPressMoveUpdate,
+            event: this.attributes.onPanUpdate ? "onPanUpdate" : "onLongPressMoveUpdate",
+            target: this.attributes.onPanUpdate ? this.attributes.onPanUpdate : this.attributes.onLongPressMoveUpdate,
             globalX: e.touches[0].clientX,
             globalY: e.touches[0].clientY,
           },
         })
       );
+    } else if (this.longPressTimer && this.touchStartPosition) {
+      const touchMovePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      const deltaX = Math.abs(touchMovePosition.x - this.touchStartPosition.x);
+      const deltaY = Math.abs(touchMovePosition.y - this.touchStartPosition.y);
+      if (deltaX > 8 || deltaY > 8) {
+        clearTimeout(this.longPressTimer);
+        this.longPressTimer = undefined;
+      }
     }
   }
 
   _onTouchEnd(e: TouchEvent) {
-    if (this.longPressing && this.attributes.onLongPressEnd) {
+    if (this.longPressing && (this.attributes.onLongPressEnd || this.attributes.onPanEnd)) {
       this.engine.sendMessage(
         JSON.stringify({
           type: "gesture_detector",
           message: {
-            event: "onLongPressEnd",
-            target: this.attributes.onLongPressEnd,
+            event: this.attributes.onPanEnd ? "onPanEnd" : "onLongPressEnd",
+            target: this.attributes.onPanEnd ? this.attributes.onPanEnd : this.attributes.onLongPressEnd,
           },
         })
       );
+    } else if (this.longPressTimer) {
+      clearTimeout(this.longPressTimer);
+      this.longPressTimer = undefined;
     }
     this.longPressing = false;
   }

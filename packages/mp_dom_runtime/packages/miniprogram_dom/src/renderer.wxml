@@ -68,7 +68,7 @@ module.exports = {
     <template is="{{tools.tag(tools.getDomData(root).tag)}}" data="{{rt:tools.getDomData(root),n:1}}" />
 </block>
 <template name="fdiv">
-    <view id="d_{{rt.id}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.onclick}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" bindtouchstart="{{rt.ontouchstart ? 'ontouchstart' : ''}}" bindtouchmove="{{rt.ontouchmove ? 'ontouchmove' : ''}}" bindtouchcancel="{{rt.ontouchcancel ? 'ontouchcancel' : ''}}" bindtouchend="{{rt.ontouchend ? 'ontouchend' : ''}}" class="{{rt.class}}" style="{{tools.style(rt.s)}};{{style}}">
+    <view id="d_{{rt.id}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.onclick}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" class="{{rt.class}}" style="{{tools.style(rt.s)}};{{style}}">
         <block wx:key="*this" wx:for="{{rt.n}}">
             <template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{rt:tools.getDomData(item),n:n+1}}" />
         </block>
@@ -82,6 +82,14 @@ module.exports = {
         <block wx:key="*this" wx:for="{{rt.n}}">
             <template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{rt:tools.getDomData(item),n:n+1}}" />
         </block>
+    </view>
+</template>
+<template name="ftouchmove">
+    <view id="d_{{rt.id}}" hover-class="{{rt.onclick && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.onclick}}" catchtap="{{rt.onclick ? 'ontap' : ''}}" catchtouchstart="{{rt.ontouchstart ? 'ontouchstart' : ''}}" catchtouchmove="{{rt.ontouchmove ? 'ontouchmove' : ''}}" catchtouchcancel="{{rt.ontouchcancel ? 'ontouchcancel' : ''}}" catchtouchend="{{rt.ontouchend ? 'ontouchend' : ''}}" class="{{rt.class}}" style="{{tools.style(rt.s)}};{{style}}">
+        <block wx:key="*this" wx:for="{{rt.n}}">
+            <template is="{{tools.tag(tools.getDomData(item).tag, n)}}" data="{{rt:tools.getDomData(item),n:n+1}}" />
+        </block>
+        <block wx:if="{{rt.innerText}}">{{rt.innerText}}</block>
     </view>
 </template>
 <template name="fscrollview">

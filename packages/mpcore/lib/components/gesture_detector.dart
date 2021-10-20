@@ -16,6 +16,9 @@ MPElement _encodeGestureDetector(Element element) {
       'onLongPressMoveUpdate':
           widget.onLongPressMoveUpdate != null ? element.hashCode : null,
       'onLongPressEnd': widget.onLongPressEnd != null ? element.hashCode : null,
+      'onPanStart': widget.onPanStart != null ? element.hashCode : null,
+      'onPanUpdate': widget.onPanUpdate != null ? element.hashCode : null,
+      'onPanEnd': widget.onPanEnd != null ? element.hashCode : null,
       'hoverOpacity': widget.hoverOpacity,
     },
   );
