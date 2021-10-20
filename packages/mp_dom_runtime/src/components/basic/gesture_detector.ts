@@ -63,7 +63,7 @@ export class GestureDetector extends ComponentView {
       if (!this.didSetOnLongPressOrPan) {
         this.didSetOnLongPressOrPan = true;
         this.setupLongPressOrPanCatcher();
-        if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+        if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
           (this.htmlElement as any).setTag("touchmove");
         }
       }
@@ -167,7 +167,10 @@ export class GestureDetector extends ComponentView {
         },
         true
       );
-    } else if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
+    } else if (
+      (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) &&
+      (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)
+    ) {
       this.htmlElement.ontouchstart = (e) => {
         this._onTouchStart(e);
       };
@@ -188,8 +191,6 @@ export class GestureDetector extends ComponentView {
   }
 
   _onTouchStart(e: TouchEvent) {
-    console.log(e);
-    
     let isPan = this.attributes.onPanStart || this.attributes.onPanUpdate || this.attributes.onPanEnd;
     if (
       this.attributes.onLongPress ||

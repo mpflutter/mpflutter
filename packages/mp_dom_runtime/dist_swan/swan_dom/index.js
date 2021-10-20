@@ -245,6 +245,22 @@ class _Element {
         _Element.eventHandlers[`${this.hashCode}.onclick`] = value;
         this.controller.pushCommand(`${this.hashCode}.onclick`, value ? this.hashCode : undefined);
     }
+    set ontouchstart(value) {
+        _Element.eventHandlers[`${this.hashCode}.ontouchstart`] = value;
+        this.controller.pushCommand(`${this.hashCode}.ontouchstart`, value ? this.hashCode : undefined);
+    }
+    set ontouchmove(value) {
+        _Element.eventHandlers[`${this.hashCode}.ontouchmove`] = value;
+        this.controller.pushCommand(`${this.hashCode}.ontouchmove`, value ? this.hashCode : undefined);
+    }
+    set ontouchcancel(value) {
+        _Element.eventHandlers[`${this.hashCode}.ontouchcancel`] = value;
+        this.controller.pushCommand(`${this.hashCode}.ontouchcancel`, value ? this.hashCode : undefined);
+    }
+    set ontouchend(value) {
+        _Element.eventHandlers[`${this.hashCode}.ontouchend`] = value;
+        this.controller.pushCommand(`${this.hashCode}.ontouchend`, value ? this.hashCode : undefined);
+    }
     set oninput(value) {
         _Element.eventHandlers[`${this.hashCode}.oninput`] = value;
     }
@@ -324,8 +340,7 @@ class MiniDom {
                 else if (parentKey.endsWith(".s") &&
                     data[`dom.${parentKey.replace(".s", "")}`] &&
                     data[`dom.${parentKey.replace(".s", "")}`]["s"]) {
-                    data[`dom.${parentKey.replace(".s", "")}`]["s"][myKey] =
-                        command.value;
+                    data[`dom.${parentKey.replace(".s", "")}`]["s"][myKey] = command.value;
                 }
                 else {
                     data[`dom.${command.key}`] = command.value;

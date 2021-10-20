@@ -76,6 +76,22 @@ module.exports = {
         </view>
     </block>
 </template>
+<template name="ftouchmove">
+    <block s-if="{{dom[id].onclick}}">
+        <view id="d_{{id}}" class="{{dom[id].class}}" catchtap="ontap" style="{{tools.style(dom[id].s)}}">
+            <block s-for="{{dom[id].n}} trackBy item">
+                <template is="{{tools.tag(dom[item].tag)}}" data="{{{id: item, dom:dom}}}" />
+            </block>
+        </view>
+    </block>
+    <block s-else>
+         <view id="d_{{id}}" class="{{dom[id].class}}" catchtouchstart="ontouchstart" catchtouchmove="ontouchmove" catchtouchcancel="ontouchcancel" catchtouchend="ontouchend" style="{{tools.style(dom[id].s)}}">
+            <block s-for="{{dom[id].n}} trackBy item">
+                <template is="{{tools.tag(dom[item].tag)}}" data="{{{id: item, dom:dom}}}" />
+            </block>
+        </view>
+    </block>
+</template>
 <template name="fimg">
     <image id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" mode="{{dom[id].mode}}" src="{{dom[id].src}}" lazy-load="{{dom[id].lazyLoad}}"></image>
 </template>
@@ -89,10 +105,10 @@ module.exports = {
     <canvas id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" type="2d"></canvas>
 </template>
 <template name="ftextarea">
-    <textarea id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" value="{{dom[id].value}}" placeholder="{{dom[id].placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{dom[id].type}}" password="{{dom[id].type === 'password'}}" disabled="{{dom[id].readOnly}}" focus="{{dom[id].autoFocus}}"></textarea>
+    <textarea id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" value="{{dom[id].value}}" placeholder="{{dom[id].placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{dom[id].type}}" password="{{dom[id].type === 'password'}}" disabled="{{dom[id].readOnly}}" auto-focus="{{dom[id].autoFocus}}"></textarea>
 </template>
 <template name="finput">
-    <input id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" value="{{dom[id].value}}" placeholder="{{dom[id].placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{dom[id].type}}" password="{{dom[id].type === 'password'}}" always-embed="true" disabled="{{dom[id].readOnly}}" focus="{{dom[id].autoFocus}}"></input>
+    <input id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" value="{{dom[id].value}}" placeholder="{{dom[id].placeholder}}" bindinput="onTextInput" bindconfirm="onTextSubmit" type="{{dom[id].type}}" password="{{dom[id].type === 'password'}}" always-embed="true" disabled="{{dom[id].readOnly}}" auto-focus="{{dom[id].autoFocus}}"></input>
 </template>
 <template name="fswiper">
     <swiper id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" vertical="{{dom[id].vertical}}" circular="{{dom[id].circular}}">
