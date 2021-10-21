@@ -16,5 +16,6 @@ output += `
 let code = fs.readFileSync("./miniprogram_dist/renderer.wxml", {
   encoding: "utf-8",
 });
-code = code.replace("<!-- floop -->", output).replace(/    /g, '');
+code = code.replace("<!-- floop -->", output).replace(/    /g, "");
 fs.writeFileSync("./miniprogram_dist/renderer.wxml", code);
+fs.copyFileSync("./src/event_emitter.js", "./miniprogram_dist/event_emitter.js");

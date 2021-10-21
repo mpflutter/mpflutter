@@ -29,7 +29,7 @@ export class RichText extends ComponentView {
       MPEnv.platformType === PlatformType.wxMiniProgram ||
       MPEnv.platformType === PlatformType.swanMiniProgram
     ) {
-      (this.htmlElement as any).setClass("mp_text");
+      this.htmlElement.classList.add("mp_text");
     }
     const maxWidth = attributes.maxWidth;
     if (typeof maxWidth === "string") {

@@ -95,8 +95,13 @@ module.exports =
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var EventEmitter = __webpack_require__(2);
 var dictCSSKeys = {
     position: 1,
     top: 2,
@@ -122,25 +127,68 @@ var dictCSSValues = {
     start: "_3"
 };
 
-var _Element = function () {
+var _ClassList = function () {
+    function _ClassList(element) {
+        _classCallCheck(this, _ClassList);
+
+        this.element = element;
+        this.value = [];
+    }
+
+    _ClassList.prototype.add = function add(v) {
+        if (this.value.indexOf(v) < 0) {
+            this.value.push(v);
+            this.element.setAttribute("class", this.value.join(" "));
+        }
+    };
+
+    _ClassList.prototype.remove = function remove(v) {
+        var idx = this.value.indexOf(v);
+        if (idx >= 0) {
+            this.value.splice(idx, 1);
+            this.element.setAttribute("class", this.value.join(" "));
+        }
+    };
+
+    _ClassList.prototype.toggle = function toggle(v) {
+        var idx = this.value.indexOf(v);
+        if (idx >= 0) {
+            this.value.splice(idx, 1);
+        } else {
+            this.value.push(v);
+        }
+        this.element.setAttribute("class", this.value.join(" "));
+    };
+
+    return _ClassList;
+}();
+
+var _Element = function (_EventEmitter) {
+    _inherits(_Element, _EventEmitter);
+
     function _Element(hashCode, controller, tag) {
         _classCallCheck(this, _Element);
 
-        this.hashCode = hashCode;
-        this.controller = controller;
-        this.tag = tag;
-        this.currentStyle = {};
-        this.attributes = {};
-        this.nodes = [];
-        this.nodesHash = [];
-        global.miniDomEventHandlers = _Element.eventHandlers;
-    }
+        var _this = _possibleConstructorReturn(this, _EventEmitter.call(this));
 
-    _Element.prototype.setClass = function setClass(value) {
-        if (this.class === value) return;
-        this.class = value !== null && value !== void 0 ? value : "";
-        this.setAttribute("class", value !== null && value !== void 0 ? value : "");
-    };
+        _this.hashCode = hashCode;
+        _this.controller = controller;
+        _this.tag = tag;
+        _this.classList = new _ClassList(_this);
+        _this.attributes = {};
+        _this.nodes = [];
+        _this.nodesHash = [];
+        _this.style = new Proxy({}, {
+            set: function set(obj, prop, value) {
+                if (obj[prop] === value) return true;
+                obj[prop] = value;
+                _this.controller.pushCommand(_this.hashCode + ".s", _this.transformStyle(obj));
+                return true;
+            }
+        });
+        global.miniDomEventHandlers = _Element.eventHandlers;
+        return _this;
+    }
 
     _Element.prototype.cloneNode = function cloneNode() {
         var deep = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
@@ -171,23 +219,6 @@ var _Element = function () {
     _Element.prototype.setTag = function setTag(value) {
         this.tag = value;
         this.controller.pushCommand(this.hashCode + ".tag", value);
-    };
-
-    _Element.prototype.setStyle = function setStyle(style) {
-        var changed = false;
-        var changeCount = 0;
-        var changeKey = undefined;
-        for (var key in style) {
-            if (this.currentStyle[key] !== style[key]) {
-                this.currentStyle[key] = style[key];
-                changed = true;
-                changeCount++;
-                changeKey = key;
-            }
-        }
-        if (changed) {
-            this.controller.pushCommand(this.hashCode + ".s", this.transformStyle(this.currentStyle));
-        }
     };
 
     _Element.prototype.transformStyle = function transformStyle(style) {
@@ -269,23 +300,24 @@ var _Element = function () {
     };
 
     _Element.prototype.getBoundingClientRect = function getBoundingClientRect() {
-        var _this = this;
+        var _this2 = this;
 
-        if (this.class) {
+        if (this.classList.value.length > 0) {
             return this.getBoundingClientRectWithClass();
         }
         return new Promise(function (res) {
-            wx.createSelectorQuery().in(_this.controller.componentInstance.selectComponent("#renderer")).select("#d_" + _this.hashCode).boundingClientRect(function (result) {
+            wx.createSelectorQuery().in(_this2.controller.componentInstance.selectComponent("#renderer")).select("#d_" + _this2.hashCode).boundingClientRect(function (result) {
                 res(result);
             }).exec();
         });
     };
 
     _Element.prototype.getBoundingClientRectWithClass = function getBoundingClientRectWithClass() {
-        var _this2 = this;
+        var _this3 = this;
 
-        if (!_Element.classBoundingClientRectQuery[this.class]) {
-            _Element.classBoundingClientRectQuery[this.class] = wx.createSelectorQuery().in(this.controller.componentInstance.selectComponent("#renderer")).selectAll("." + this.class).boundingClientRect(function (result) {
+        var className = this.classList.value[0];
+        if (!_Element.classBoundingClientRectQuery[className]) {
+            _Element.classBoundingClientRectQuery[className] = wx.createSelectorQuery().in(this.controller.componentInstance.selectComponent("#renderer")).selectAll("." + className).boundingClientRect(function (result) {
                 if (result instanceof Array) {
                     result.forEach(function (it) {
                         var _a, _b;
@@ -298,23 +330,29 @@ var _Element = function () {
                 }
             });
             setTimeout(function () {
-                _Element.classBoundingClientRectQuery[_this2.class].exec();
-                delete _Element.classBoundingClientRectQuery[_this2.class];
+                _Element.classBoundingClientRectQuery[className].exec();
+                delete _Element.classBoundingClientRectQuery[className];
             }, 16);
         }
         return new Promise(function (res) {
-            _Element.classBoundingClientRectCallback["d_" + _this2.hashCode] = res;
+            _Element.classBoundingClientRectCallback["d_" + _this3.hashCode] = res;
         });
     };
 
     _Element.prototype.getFields = function getFields(fields) {
-        var _this3 = this;
+        var _this4 = this;
 
         return new Promise(function (res) {
-            wx.createSelectorQuery().in(_this3.controller.componentInstance.selectComponent("#renderer")).select("#d_" + _this3.hashCode).fields(fields).exec(function (result) {
+            wx.createSelectorQuery().in(_this4.controller.componentInstance.selectComponent("#renderer")).select("#d_" + _this4.hashCode).fields(fields).exec(function (result) {
                 res(result[0]);
             });
         });
+    };
+
+    _Element.prototype.addEventListener = function addEventListener(event, callback) {
+        _Element.eventHandlers["" + this.hashCode] = this;
+        this.controller.pushCommand(this.hashCode + "." + event, true);
+        this.on(event, callback);
     };
 
     _Element.prototype.toCSSKey = function toCSSKey(str) {
@@ -360,55 +398,10 @@ var _Element = function () {
         get: function get() {
             return wx.getSystemInfoSync().pixelRatio;
         }
-    }, {
-        key: "onclick",
-        set: function set(value) {
-            _Element.eventHandlers[this.hashCode + ".onclick"] = value;
-            this.controller.pushCommand(this.hashCode + ".onclick", value ? this.hashCode : undefined);
-        }
-    }, {
-        key: "ontouchstart",
-        set: function set(value) {
-            _Element.eventHandlers[this.hashCode + ".ontouchstart"] = value;
-            this.controller.pushCommand(this.hashCode + ".ontouchstart", value ? this.hashCode : undefined);
-        }
-    }, {
-        key: "ontouchmove",
-        set: function set(value) {
-            _Element.eventHandlers[this.hashCode + ".ontouchmove"] = value;
-            this.controller.pushCommand(this.hashCode + ".ontouchmove", value ? this.hashCode : undefined);
-        }
-    }, {
-        key: "ontouchcancel",
-        set: function set(value) {
-            _Element.eventHandlers[this.hashCode + ".ontouchcancel"] = value;
-            this.controller.pushCommand(this.hashCode + ".ontouchcancel", value ? this.hashCode : undefined);
-        }
-    }, {
-        key: "ontouchend",
-        set: function set(value) {
-            _Element.eventHandlers[this.hashCode + ".ontouchend"] = value;
-            this.controller.pushCommand(this.hashCode + ".ontouchend", value ? this.hashCode : undefined);
-        }
-    }, {
-        key: "oninput",
-        set: function set(value) {
-            _Element.eventHandlers[this.hashCode + ".oninput"] = value;
-        }
-    }, {
-        key: "onsubmit",
-        set: function set(value) {
-            _Element.eventHandlers[this.hashCode + ".onsubmit"] = value;
-        }
-    }, {
-        key: "onbuttoncallback",
-        set: function set(value) {
-            _Element.eventHandlers[this.hashCode + ".onbuttoncallback"] = value;
-        }
     }]);
 
     return _Element;
-}();
+}(EventEmitter);
 
 _Element.eventHandlers = {};
 _Element.classBoundingClientRectQuery = {};
@@ -435,10 +428,10 @@ var _Document = function () {
     };
 
     _Document.prototype.awaitSetState = function awaitSetState() {
-        var _this4 = this;
+        var _this5 = this;
 
         return new Promise(function (res) {
-            _this4.controller.commandPromises.push(res);
+            _this5.controller.commandPromises.push(res);
         });
     };
 
@@ -453,18 +446,19 @@ var MiniDom = function () {
 
         this.document = new _Document(this);
         this.commands = [];
+        this.commandsKeyPosition = {};
         this.commandPromises = [];
         this.needsSetData = false;
     }
 
     MiniDom.prototype.markNeedsSetData = function markNeedsSetData() {
-        var _this5 = this;
+        var _this6 = this;
 
         if (this.needsSetData) return;
         this.needsSetData = true;
         setTimeout(function () {
             var data = {};
-            _this5.commands.forEach(function (command) {
+            _this6.commands.forEach(function (command) {
                 var myKey = "";
                 var parentKey = function () {
                     var k = command.key.split(".");
@@ -481,7 +475,7 @@ var MiniDom = function () {
             });
             // console.log("start set data", new Date().getTime());
             // const a = new Date().getTime();
-            _this5.setData(data);
+            _this6.setData(data);
             // const b = new Date().getTime();
             // console.log(
             //   new Date().getTime(),
@@ -491,17 +485,24 @@ var MiniDom = function () {
             //   JSON.stringify(data).length
             // );
             // console.log("setdata", b - a);
-            _this5.commandPromises.forEach(function (it) {
+            _this6.commandPromises.forEach(function (it) {
                 return it(null);
             });
-            _this5.commands = [];
-            _this5.commandPromises = [];
-            _this5.needsSetData = false;
-        }, 16);
+            _this6.commands = [];
+            _this6.commandsKeyPosition = {};
+            _this6.commandPromises = [];
+            _this6.needsSetData = false;
+        }, 4);
     };
 
     MiniDom.prototype.pushCommand = function pushCommand(key, value) {
-        this.commands.push({ key: key, value: value });
+        var position = this.commands.length;
+        if (this.commandsKeyPosition[key] !== undefined) {
+            this.commands[this.commandsKeyPosition[key]] = { key: key, value: value };
+        } else {
+            this.commands.push({ key: key, value: value });
+            this.commandsKeyPosition[key] = position;
+        }
         this.markNeedsSetData();
     };
 
@@ -517,15 +518,107 @@ Component({
     },
     lifetimes: {
         attached: function attached() {
-            var _this6 = this;
+            var _this7 = this;
 
             this.miniDom = new MiniDom();
             this.miniDom.componentInstance = this;
             this.miniDom.setData = function (data) {
-                _this6.selectComponent("#renderer").doSetData(data);
+                _this7.selectComponent("#renderer").doSetData(data);
             };
         }
     }
+});
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;var require;var require;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+!function (e) {
+  "object" == ( false ? undefined : _typeof(exports)) && "undefined" != typeof module ? module.exports = e() :  true ? !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (e),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__)) : undefined;
+}(function () {
+  return function i(s, f, c) {
+    function u(t, e) {
+      if (!f[t]) {
+        if (!s[t]) {
+          var n = "function" == typeof require && require;if (!e && n) return require(t, !0);if (a) return a(t, !0);var r = new Error("Cannot find module '" + t + "'");throw r.code = "MODULE_NOT_FOUND", r;
+        }var o = f[t] = { exports: {} };s[t][0].call(o.exports, function (e) {
+          return u(s[t][1][e] || e);
+        }, o, o.exports, i, s, f, c);
+      }return f[t].exports;
+    }for (var a = "function" == typeof require && require, e = 0; e < c.length; e++) {
+      u(c[e]);
+    }return u;
+  }({ 1: [function (e, t, n) {
+      "use strict";
+      var r = Object.prototype.hasOwnProperty,
+          v = "~";function o() {}function f(e, t, n) {
+        this.fn = e, this.context = t, this.once = n || !1;
+      }function i(e, t, n, r, o) {
+        if ("function" != typeof n) throw new TypeError("The listener must be a function");var i = new f(n, r || e, o),
+            s = v ? v + t : t;return e._events[s] ? e._events[s].fn ? e._events[s] = [e._events[s], i] : e._events[s].push(i) : (e._events[s] = i, e._eventsCount++), e;
+      }function u(e, t) {
+        0 == --e._eventsCount ? e._events = new o() : delete e._events[t];
+      }function s() {
+        this._events = new o(), this._eventsCount = 0;
+      }Object.create && (o.prototype = Object.create(null), new o().__proto__ || (v = !1)), s.prototype.eventNames = function () {
+        var e,
+            t,
+            n = [];if (0 === this._eventsCount) return n;for (t in e = this._events) {
+          r.call(e, t) && n.push(v ? t.slice(1) : t);
+        }return Object.getOwnPropertySymbols ? n.concat(Object.getOwnPropertySymbols(e)) : n;
+      }, s.prototype.listeners = function (e) {
+        var t = v ? v + e : e,
+            n = this._events[t];if (!n) return [];if (n.fn) return [n.fn];for (var r = 0, o = n.length, i = new Array(o); r < o; r++) {
+          i[r] = n[r].fn;
+        }return i;
+      }, s.prototype.listenerCount = function (e) {
+        var t = v ? v + e : e,
+            n = this._events[t];return n ? n.fn ? 1 : n.length : 0;
+      }, s.prototype.emit = function (e, t, n, r, o, i) {
+        var s = v ? v + e : e;if (!this._events[s]) return !1;var f,
+            c = this._events[s],
+            u = arguments.length;if (c.fn) {
+          switch (c.once && this.removeListener(e, c.fn, void 0, !0), u) {case 1:
+              return c.fn.call(c.context), !0;case 2:
+              return c.fn.call(c.context, t), !0;case 3:
+              return c.fn.call(c.context, t, n), !0;case 4:
+              return c.fn.call(c.context, t, n, r), !0;case 5:
+              return c.fn.call(c.context, t, n, r, o), !0;case 6:
+              return c.fn.call(c.context, t, n, r, o, i), !0;}for (p = 1, f = new Array(u - 1); p < u; p++) {
+            f[p - 1] = arguments[p];
+          }c.fn.apply(c.context, f);
+        } else for (var a, l = c.length, p = 0; p < l; p++) {
+          switch (c[p].once && this.removeListener(e, c[p].fn, void 0, !0), u) {case 1:
+              c[p].fn.call(c[p].context);break;case 2:
+              c[p].fn.call(c[p].context, t);break;case 3:
+              c[p].fn.call(c[p].context, t, n);break;case 4:
+              c[p].fn.call(c[p].context, t, n, r);break;default:
+              if (!f) for (a = 1, f = new Array(u - 1); a < u; a++) {
+                f[a - 1] = arguments[a];
+              }c[p].fn.apply(c[p].context, f);}
+        }return !0;
+      }, s.prototype.on = function (e, t, n) {
+        return i(this, e, t, n, !1);
+      }, s.prototype.once = function (e, t, n) {
+        return i(this, e, t, n, !0);
+      }, s.prototype.removeListener = function (e, t, n, r) {
+        var o = v ? v + e : e;if (!this._events[o]) return this;if (!t) return u(this, o), this;var i = this._events[o];if (i.fn) i.fn !== t || r && !i.once || n && i.context !== n || u(this, o);else {
+          for (var s = 0, f = [], c = i.length; s < c; s++) {
+            (i[s].fn !== t || r && !i[s].once || n && i[s].context !== n) && f.push(i[s]);
+          }f.length ? this._events[o] = 1 === f.length ? f[0] : f : u(this, o);
+        }return this;
+      }, s.prototype.removeAllListeners = function (e) {
+        var t;return e ? (t = v ? v + e : e, this._events[t] && u(this, t)) : (this._events = new o(), this._eventsCount = 0), this;
+      }, s.prototype.off = s.prototype.removeListener, s.prototype.addListener = s.prototype.on, s.prefixed = v, s.EventEmitter = s, void 0 !== t && (t.exports = s);
+    }, {}] }, {}, [1])(1);
 });
 
 /***/ })

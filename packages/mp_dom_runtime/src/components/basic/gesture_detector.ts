@@ -37,7 +37,7 @@ export class GestureDetector extends ComponentView {
     if (attributes.onTap) {
       if (!this.didSetOnClicked) {
         this.didSetOnClicked = true;
-        this.htmlElement.onclick = (e) => {
+        this.htmlElement.addEventListener("click", (e) => {
           this.engine.sendMessage(
             JSON.stringify({
               type: "gesture_detector",
@@ -47,8 +47,8 @@ export class GestureDetector extends ComponentView {
               },
             })
           );
-          if (e) e.stopPropagation();
-        };
+          if (e) e.stopPropagation?.();
+        });
       }
     }
     if (
@@ -134,60 +134,38 @@ export class GestureDetector extends ComponentView {
   }
 
   setupLongPressOrPanCatcher() {
-    if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
-      this.htmlElement.addEventListener(
-        "touchstart",
-        (e: TouchEvent) => {
-          this._onTouchStart(e);
-        },
-        true
-      );
-      this.htmlElement.addEventListener(
-        "touchmove",
-        (e) => {
-          this._onTouchMove(e);
-        },
-        true
-      );
-      this.htmlElement.addEventListener(
-        "touchend",
-        (e) => {
-          this._onTouchEnd(e);
-        },
-        true
-      );
-      this.htmlElement.addEventListener(
-        "touchcancel",
-        () => {
-          if (this.longPressTimer) {
-            clearTimeout(this.longPressTimer);
-            this.longPressTimer = undefined;
-          }
-          this.longPressing = false;
-        },
-        true
-      );
-    } else if (
-      (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) &&
-      (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)
-    ) {
-      this.htmlElement.ontouchstart = (e) => {
+    this.htmlElement.addEventListener(
+      "touchstart",
+      (e: TouchEvent) => {
         this._onTouchStart(e);
-      };
-      this.htmlElement.ontouchmove = (e) => {
+      },
+      true
+    );
+    this.htmlElement.addEventListener(
+      "touchmove",
+      (e) => {
         this._onTouchMove(e);
-      };
-      this.htmlElement.ontouchend = (e) => {
+      },
+      true
+    );
+    this.htmlElement.addEventListener(
+      "touchend",
+      (e) => {
         this._onTouchEnd(e);
-      };
-      this.htmlElement.ontouchcancel = (e) => {
+      },
+      true
+    );
+    this.htmlElement.addEventListener(
+      "touchcancel",
+      () => {
         if (this.longPressTimer) {
           clearTimeout(this.longPressTimer);
           this.longPressTimer = undefined;
         }
         this.longPressing = false;
-      };
-    }
+      },
+      true
+    );
   }
 
   _onTouchStart(e: TouchEvent) {

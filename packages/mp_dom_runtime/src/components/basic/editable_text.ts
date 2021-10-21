@@ -6,6 +6,7 @@ import { cssColor, cssTextAlign, cssTextStyle } from "../utils";
 export class EditableText extends ComponentView {
   contentElement?: HTMLInputElement | HTMLTextAreaElement;
   contentElementType = "";
+  didSetListener = false;
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
@@ -14,6 +15,7 @@ export class EditableText extends ComponentView {
     if (maxLines > 1 && this.contentElementType !== "textarea") {
       this.contentElement?.remove();
       this.contentElement = this.document.createElement("textarea");
+      this.didSetListener = false;
       this.contentElementType = "textarea";
       setDOMStyle(this.contentElement, {
         width: "100%",
@@ -26,6 +28,7 @@ export class EditableText extends ComponentView {
     } else if (maxLines <= 1 && this.contentElementType !== "input") {
       this.contentElement?.remove();
       this.contentElement = this.document.createElement("input");
+      this.didSetListener = false;
       this.contentElementType = "input";
       setDOMStyle(this.contentElement, {
         width: "100%",
@@ -48,12 +51,15 @@ export class EditableText extends ComponentView {
         this._onSubmitted(event.target as HTMLInputElement, (event.target as HTMLInputElement).value);
       }
     };
-    this.contentElement.onsubmit = (event: any) => {
-      this._onSubmitted(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
-    };
-    this.contentElement.oninput = (event: any) => {
-      this._onChanged(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
-    };
+    if (!this.didSetListener) {
+      this.didSetListener = true;
+      this.contentElement.addEventListener("submit", (event: any) => {
+        this._onSubmitted(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
+      });
+      this.contentElement.addEventListener("input", (event: any) => {
+        this._onChanged(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
+      });
+    }
     this.contentElement.onchange = (event: any) => {
       this._onChanged(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
     };

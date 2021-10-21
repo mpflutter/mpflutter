@@ -457,10 +457,7 @@ interface CSSStyleDeclaration {
   zoom?: string;
 }
 
-export const setDOMStyle = (
-  element: HTMLElement,
-  style: CSSStyleDeclaration
-) => {
+export const setDOMStyle = (element: HTMLElement, style: CSSStyleDeclaration) => {
   if (Object.keys(style).length === 0) return;
   for (const key in style) {
     const value = (style as any)[key];
@@ -468,20 +465,12 @@ export const setDOMStyle = (
       (style as any)[key] = value.replace(".0px", "px");
     }
   }
-  if (typeof HTMLElement === "function" && element instanceof HTMLElement) {
-    for (const key in style) {
-      (element.style as any)[key] = (style as any)[key];
-    }
-  } else {
-    (element as any).setStyle(style);
+  for (const key in style) {
+    (element.style as any)[key] = (style as any)[key];
   }
 };
 
-export const setDOMAttribute = (
-  element: HTMLElement,
-  name: string,
-  value: any
-) => {
+export const setDOMAttribute = (element: HTMLElement, name: string, value: any) => {
   if (element.attributes === undefined) {
     (element as any).attributes = {};
   }

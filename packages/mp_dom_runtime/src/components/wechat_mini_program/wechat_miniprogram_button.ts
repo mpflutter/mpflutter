@@ -4,9 +4,9 @@ import { MPPlatformView } from "../mpkit/platform_view";
 export class WechatMiniProgramButton extends MPPlatformView {
   constructor(document: Document) {
     super(document);
-    (this.htmlElement as any).onbuttoncallback = (value: string) => {
-      this.invokeMethod("onButtonCallback", JSON.parse(value));
-    };
+    this.htmlElement.addEventListener("getphonenumber", (e: any) => {
+      this.invokeMethod("onButtonCallback", { type: e.type, detail: e.detail });
+    });
   }
 
   elementType() {

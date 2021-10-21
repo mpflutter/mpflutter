@@ -1,5 +1,7 @@
 declare var global: any;
 
+var EventEmitter = require("./event_emitter");
+
 const dictCSSKeys = {
   position: 1,
   top: 2,
@@ -26,11 +28,41 @@ const dictCSSValues = {
   start: "_3",
 };
 
-class _Element {
+class _ClassList {
+  value = [];
+
+  constructor(readonly element: _Element) {}
+
+  add(v: string) {
+    if (this.value.indexOf(v) < 0) {
+      this.value.push(v);
+      this.element.setAttribute("class", this.value.join(" "));
+    }
+  }
+
+  remove(v: string) {
+    const idx = this.value.indexOf(v);
+    if (idx >= 0) {
+      this.value.splice(idx, 1);
+      this.element.setAttribute("class", this.value.join(" "));
+    }
+  }
+
+  toggle(v: string) {
+    const idx = this.value.indexOf(v);
+    if (idx >= 0) {
+      this.value.splice(idx, 1);
+    } else {
+      this.value.push(v);
+    }
+    this.element.setAttribute("class", this.value.join(" "));
+  }
+}
+
+class _Element extends EventEmitter {
   static eventHandlers = {};
 
-  private class: string | undefined;
-  private currentStyle: CSSStyleDeclaration = {} as CSSStyleDeclaration;
+  private classList: _ClassList = new _ClassList(this);
   private attributes: { [key: string]: any } = {};
   private nodes: _Element[] = [];
   private nodesHash: string[] = [];
@@ -45,13 +77,8 @@ class _Element {
   }
 
   constructor(readonly hashCode: string, readonly controller: MiniDom, public tag: string) {
+    super();
     global.miniDomEventHandlers = _Element.eventHandlers;
-  }
-
-  setClass(value: string | undefined) {
-    if (this.class === value) return;
-    this.class = value ?? "";
-    this.setAttribute("class", value ?? "");
   }
 
   cloneNode(deep: boolean = false) {
@@ -83,22 +110,17 @@ class _Element {
     this.controller.pushCommand(`${this.hashCode}.tag`, value);
   }
 
-  setStyle(style: CSSStyleDeclaration) {
-    let changed = false;
-    let changeCount = 0;
-    let changeKey = undefined;
-    for (const key in style) {
-      if (this.currentStyle[key] !== style[key]) {
-        this.currentStyle[key] = style[key];
-        changed = true;
-        changeCount++;
-        changeKey = key;
-      }
+  style = new Proxy(
+    {},
+    {
+      set: (obj, prop, value) => {
+        if (obj[prop] === value) return true;
+        obj[prop] = value;
+        this.controller.pushCommand(`${this.hashCode}.s`, this.transformStyle(obj));
+        return true;
+      },
     }
-    if (changed) {
-      this.controller.pushCommand(`${this.hashCode}.s`, this.transformStyle(this.currentStyle));
-    }
-  }
+  );
 
   transformStyle(style: any) {
     let output: any = {};
@@ -176,7 +198,7 @@ class _Element {
   }
 
   getBoundingClientRect() {
-    if (this.class) {
+    if (this.classList.value.length > 0) {
       return this.getBoundingClientRectWithClass();
     }
     return new Promise((res) => {
@@ -191,11 +213,12 @@ class _Element {
   }
 
   getBoundingClientRectWithClass() {
-    if (!_Element.classBoundingClientRectQuery[this.class]) {
-      _Element.classBoundingClientRectQuery[this.class] = wx
+    let className = this.classList.value[0];
+    if (!_Element.classBoundingClientRectQuery[className]) {
+      _Element.classBoundingClientRectQuery[className] = wx
         .createSelectorQuery()
         .in(this.controller.componentInstance.selectComponent("#renderer"))
-        .selectAll("." + this.class)
+        .selectAll("." + className)
         .boundingClientRect((result) => {
           if (result instanceof Array) {
             result.forEach((it) => {
@@ -208,8 +231,8 @@ class _Element {
           }
         });
       setTimeout(() => {
-        _Element.classBoundingClientRectQuery[this.class].exec();
-        delete _Element.classBoundingClientRectQuery[this.class];
+        _Element.classBoundingClientRectQuery[className].exec();
+        delete _Element.classBoundingClientRectQuery[className];
       }, 16);
     }
     return new Promise((res) => {
@@ -249,41 +272,10 @@ class _Element {
     return wx.getSystemInfoSync().pixelRatio;
   }
 
-  set onclick(value: () => void) {
-    _Element.eventHandlers[`${this.hashCode}.onclick`] = value;
-    this.controller.pushCommand(`${this.hashCode}.onclick`, value ? this.hashCode : undefined);
-  }
-
-  set ontouchstart(value: () => void) {
-    _Element.eventHandlers[`${this.hashCode}.ontouchstart`] = value;
-    this.controller.pushCommand(`${this.hashCode}.ontouchstart`, value ? this.hashCode : undefined);
-  }
-
-  set ontouchmove(value: () => void) {
-    _Element.eventHandlers[`${this.hashCode}.ontouchmove`] = value;
-    this.controller.pushCommand(`${this.hashCode}.ontouchmove`, value ? this.hashCode : undefined);
-  }
-
-  set ontouchcancel(value: () => void) {
-    _Element.eventHandlers[`${this.hashCode}.ontouchcancel`] = value;
-    this.controller.pushCommand(`${this.hashCode}.ontouchcancel`, value ? this.hashCode : undefined);
-  }
-
-  set ontouchend(value: () => void) {
-    _Element.eventHandlers[`${this.hashCode}.ontouchend`] = value;
-    this.controller.pushCommand(`${this.hashCode}.ontouchend`, value ? this.hashCode : undefined);
-  }
-
-  set oninput(value: () => void) {
-    _Element.eventHandlers[`${this.hashCode}.oninput`] = value;
-  }
-
-  set onsubmit(value: () => void) {
-    _Element.eventHandlers[`${this.hashCode}.onsubmit`] = value;
-  }
-
-  set onbuttoncallback(value: () => void) {
-    _Element.eventHandlers[`${this.hashCode}.onbuttoncallback`] = value;
+  addEventListener(event: string, callback: (e: any) => void) {
+    _Element.eventHandlers[`${this.hashCode}`] = this;
+    this.controller.pushCommand(`${this.hashCode}.${event}`, true);
+    this.on(event, callback);
   }
 
   private static toCSSKeyCache: any = {};
@@ -331,6 +323,7 @@ class MiniDom {
   setData?: (data: any) => void;
 
   private commands: any[] = [];
+  private commandsKeyPosition = {};
   commandPromises: ((i: any) => void)[] = [];
 
   private needsSetData = false;
@@ -374,13 +367,20 @@ class MiniDom {
       // console.log("setdata", b - a);
       this.commandPromises.forEach((it) => it(null));
       this.commands = [];
+      this.commandsKeyPosition = {};
       this.commandPromises = [];
       this.needsSetData = false;
-    }, 16);
+    }, 4);
   }
 
   pushCommand(key: any, value: any) {
-    this.commands.push({ key, value });
+    let position = this.commands.length;
+    if (this.commandsKeyPosition[key] !== undefined) {
+      this.commands[this.commandsKeyPosition[key]] = { key, value };
+    } else {
+      this.commands.push({ key, value });
+      this.commandsKeyPosition[key] = position;
+    }
     this.markNeedsSetData();
   }
 }

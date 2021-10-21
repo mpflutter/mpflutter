@@ -92,6 +92,10 @@ module.exports =
 "use strict";
 
 
+var eventMap = {
+    tap: "click",
+    confirm: "submit"
+};
 Component({
     properties: {
         root: { type: String },
@@ -102,42 +106,10 @@ Component({
         dom: { body: { id: "body", tag: "div", s: "", n: [] } }
     },
     methods: {
-        ontap: function ontap(event) {
+        onEvent: function onEvent(event) {
             var _a, _b;
-            (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".onclick"]) === null || _b === void 0 ? void 0 : _b.call(_a);
+            (_a = global.miniDomEventHandlers["" + event.currentTarget.id.replace("d_", "")]) === null || _a === void 0 ? void 0 : _a.emit((_b = eventMap[event.type]) !== null && _b !== void 0 ? _b : event.type, event);
         },
-        ontouchstart: function ontouchstart(event) {
-            var _a, _b;
-            (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".ontouchstart"]) === null || _b === void 0 ? void 0 : _b.call(_a, event);
-        },
-        ontouchmove: function ontouchmove(event) {
-            var _a, _b;
-            (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".ontouchmove"]) === null || _b === void 0 ? void 0 : _b.call(_a, event);
-        },
-        ontouchcancel: function ontouchcancel(event) {
-            var _a, _b;
-            (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".ontouchcancel"]) === null || _b === void 0 ? void 0 : _b.call(_a, event);
-        },
-        ontouchend: function ontouchend(event) {
-            var _a, _b;
-            (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".ontouchend"]) === null || _b === void 0 ? void 0 : _b.call(_a, event);
-        },
-        onTextInput: function onTextInput(event) {
-            var _a, _b;
-            (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".oninput"]) === null || _b === void 0 ? void 0 : _b.call(_a, event);
-        },
-        onTextSubmit: function onTextSubmit(event) {
-            var _a, _b;
-            (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".onsubmit"]) === null || _b === void 0 ? void 0 : _b.call(_a, event);
-        },
-        onButtonCallback: function onButtonCallback(event) {
-            var _a, _b;
-            (_b = (_a = global.miniDomEventHandlers)[event.currentTarget.id.replace("d_", "") + ".onbuttoncallback"]) === null || _b === void 0 ? void 0 : _b.call(_a, JSON.stringify({
-                detail: event.detail,
-                type: event.type
-            }));
-        },
-        catchmove: function catchmove(event) {},
         filterIndexes: function filterIndexes(dom, targetIndex) {
             var _this = this;
 

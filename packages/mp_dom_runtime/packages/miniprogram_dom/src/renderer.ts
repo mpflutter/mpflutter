@@ -1,3 +1,8 @@
+let eventMap = {
+  tap: "click",
+  confirm: "submit",
+};
+
 Component({
   properties: {
     root: { type: String },
@@ -8,36 +13,12 @@ Component({
     dom: { body: { id: "body", tag: "div", s: "", n: [] } },
   },
   methods: {
-    ontap: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.onclick`]?.();
-    },
-    ontouchstart: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.ontouchstart`]?.(event);
-    },
-    ontouchmove: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.ontouchmove`]?.(event);
-    },
-    ontouchcancel: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.ontouchcancel`]?.(event);
-    },
-    ontouchend: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.ontouchend`]?.(event);
-    },
-    onTextInput: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.oninput`]?.(event);
-    },
-    onTextSubmit: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.onsubmit`]?.(event);
-    },
-    onButtonCallback: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.onbuttoncallback`]?.(
-        JSON.stringify({
-          detail: event.detail,
-          type: event.type,
-        })
+    onEvent: (event) => {
+      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}`]?.emit(
+        eventMap[event.type] ?? event.type,
+        event
       );
     },
-    catchmove: (event) => {},
     filterIndexes: function (dom, targetIndex) {
       let result = [];
       if (dom[targetIndex] && dom[targetIndex].n) {
