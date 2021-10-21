@@ -94,12 +94,12 @@ module.exports =
 
 Component({
     properties: {
-        dom: { type: Object },
         root: { type: String },
         style: { type: String }
     },
     data: {
-        name: "renderer"
+        name: "renderer",
+        dom: { body: { id: "body", tag: "div", s: "", n: [] } }
     },
     methods: {
         ontap: function ontap(event) {
@@ -137,7 +137,44 @@ Component({
                 type: event.type
             }));
         },
-        catchmove: function catchmove(event) {}
+        catchmove: function catchmove(event) {},
+        filterIndexes: function filterIndexes(dom, targetIndex) {
+            var _this = this;
+
+            var result = [];
+            if (dom[targetIndex] && dom[targetIndex].n) {
+                result.push.apply(result, dom[targetIndex].n);
+                dom[targetIndex].n.forEach(function (it) {
+                    result.push.apply(result, _this.filterIndexes(dom, it));
+                });
+            }
+            return result;
+        },
+        filterData: function filterData(data, targetIndexes) {
+            var result = {};
+            var targetIndexMap = {};
+            targetIndexes.forEach(function (it) {
+                targetIndexMap["dom." + it] = true;
+            });
+            for (var key in data) {
+                var split = key.split(".");
+                var prefixKey = split[0] + "." + split[1];
+                if (targetIndexMap[prefixKey] === true) {
+                    result[key] = data[key];
+                }
+            }
+            return result;
+        },
+        doSetData: function doSetData(data, dom) {
+            var _this2 = this;
+
+            this.setData(data);
+            this.selectAllComponents(".renderer").forEach(function (component) {
+                var targetIndexes = [component.data.root];
+                targetIndexes.push.apply(targetIndexes, _this2.filterIndexes(dom !== null && dom !== void 0 ? dom : _this2.data.dom, component.data.root));
+                component.doSetData(_this2.filterData(data, targetIndexes), dom !== null && dom !== void 0 ? dom : _this2.data.dom);
+            });
+        }
     }
 });
 

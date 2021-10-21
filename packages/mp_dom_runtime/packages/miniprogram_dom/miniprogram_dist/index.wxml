@@ -1,1 +1,1 @@
-<renderer id="renderer" dom="{{dom}}" style="{{style}}" root="body" />
+<renderer id="renderer" style="{{style}}" root="body" />

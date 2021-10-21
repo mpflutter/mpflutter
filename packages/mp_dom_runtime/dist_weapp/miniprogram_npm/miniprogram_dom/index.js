@@ -185,16 +185,8 @@ var _Element = function () {
                 changeKey = key;
             }
         }
-        if (changed && changeCount > 1) {
+        if (changed) {
             this.controller.pushCommand(this.hashCode + ".s", this.transformStyle(this.currentStyle));
-        } else if (changed && changeCount === 1) {
-            var cssKey = this.toCSSKey(changeKey);
-            if (dictCSSKeys[cssKey]) {
-                this.controller.pushCommand(this.hashCode + ".s." + dictCSSKeys[cssKey], this.transformCSSValue(this.currentStyle[changeKey]));
-            } else {
-                var transformedStyle = this.transformStyle(this.currentStyle);
-                this.controller.pushCommand(this.hashCode + ".s.other", transformedStyle["other"]);
-            }
         }
     };
 
@@ -525,9 +517,13 @@ Component({
     },
     lifetimes: {
         attached: function attached() {
+            var _this6 = this;
+
             this.miniDom = new MiniDom();
             this.miniDom.componentInstance = this;
-            this.miniDom.setData = this.setData.bind(this);
+            this.miniDom.setData = function (data) {
+                _this6.selectComponent("#renderer").doSetData(data);
+            };
         }
     }
 });

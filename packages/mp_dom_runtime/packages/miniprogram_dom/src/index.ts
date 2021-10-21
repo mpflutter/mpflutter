@@ -95,19 +95,8 @@ class _Element {
         changeKey = key;
       }
     }
-    if (changed && changeCount > 1) {
+    if (changed) {
       this.controller.pushCommand(`${this.hashCode}.s`, this.transformStyle(this.currentStyle));
-    } else if (changed && changeCount === 1) {
-      const cssKey = this.toCSSKey(changeKey);
-      if (dictCSSKeys[cssKey]) {
-        this.controller.pushCommand(
-          `${this.hashCode}.s.${dictCSSKeys[cssKey]}`,
-          this.transformCSSValue(this.currentStyle[changeKey])
-        );
-      } else {
-        let transformedStyle = this.transformStyle(this.currentStyle);
-        this.controller.pushCommand(`${this.hashCode}.s.other`, transformedStyle["other"]);
-      }
     }
   }
 
@@ -407,7 +396,9 @@ Component({
     attached() {
       this.miniDom = new MiniDom();
       this.miniDom.componentInstance = this;
-      this.miniDom.setData = this.setData.bind(this);
+      this.miniDom.setData = (data) => {
+        this.selectComponent("#renderer").doSetData(data);
+      };
     },
   },
 });
