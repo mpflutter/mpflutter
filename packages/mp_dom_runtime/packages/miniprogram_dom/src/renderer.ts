@@ -44,11 +44,27 @@ Component({
       }
       return result;
     },
+    getComponent: function (target) {
+      let targetComponent: any;
+      this.selectAllComponents(".renderer").forEach((component) => {
+        if (targetComponent) return;
+        if (component.targetIndexes && component.targetIndexes.indexOf(target) >= 0) {
+          targetComponent = component;
+        } else {
+          let nextTargetComponent = component.getComponent(target);
+          if (nextTargetComponent) {
+            targetComponent = nextTargetComponent;
+          }
+        }
+      });
+      return targetComponent;
+    },
     doSetData: function (data, dom) {
       this.setData(data);
       this.selectAllComponents(".renderer").forEach((component) => {
         const targetIndexes = [component.data.root];
         targetIndexes.push(...this.filterIndexes(dom ?? this.data.dom, component.data.root));
+        component.targetIndexes = targetIndexes;
         component.doSetData(this.filterData(data, targetIndexes), dom ?? this.data.dom);
       });
     },

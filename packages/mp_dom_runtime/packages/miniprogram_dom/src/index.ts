@@ -201,9 +201,13 @@ class _Element extends EventEmitter {
     if (this.classList.value.length > 0) {
       return this.getBoundingClientRectWithClass();
     }
+    let targetComponent = this.controller.componentInstance.selectComponent("#renderer").getComponent(this.hashCode);
+    if (!targetComponent) {
+      targetComponent = this.controller.componentInstance.selectComponent("#renderer");
+    }
     return new Promise((res) => {
       wx.createSelectorQuery()
-        .in(this.controller.componentInstance.selectComponent("#renderer"))
+        .in(targetComponent)
         .select("#d_" + this.hashCode)
         .boundingClientRect((result) => {
           res(result);
@@ -242,8 +246,12 @@ class _Element extends EventEmitter {
 
   getFields(fields: any) {
     return new Promise((res) => {
+      let targetComponent = this.controller.componentInstance.selectComponent("#renderer").getComponent(this.hashCode);
+      if (!targetComponent) {
+        targetComponent = this.controller.componentInstance.selectComponent("#renderer");
+      }
       wx.createSelectorQuery()
-        .in(this.controller.componentInstance.selectComponent("#renderer"))
+        .in(targetComponent)
         .select("#d_" + this.hashCode)
         .fields(fields)
         .exec((result: any) => {

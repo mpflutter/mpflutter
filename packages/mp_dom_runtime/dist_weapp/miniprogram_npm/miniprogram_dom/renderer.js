@@ -137,6 +137,21 @@ Component({
             }
             return result;
         },
+        getComponent: function getComponent(target) {
+            var targetComponent = void 0;
+            this.selectAllComponents(".renderer").forEach(function (component) {
+                if (targetComponent) return;
+                if (component.targetIndexes && component.targetIndexes.indexOf(target) >= 0) {
+                    targetComponent = component;
+                } else {
+                    var nextTargetComponent = component.getComponent(target);
+                    if (nextTargetComponent) {
+                        targetComponent = nextTargetComponent;
+                    }
+                }
+            });
+            return targetComponent;
+        },
         doSetData: function doSetData(data, dom) {
             var _this2 = this;
 
@@ -144,6 +159,7 @@ Component({
             this.selectAllComponents(".renderer").forEach(function (component) {
                 var targetIndexes = [component.data.root];
                 targetIndexes.push.apply(targetIndexes, _this2.filterIndexes(dom !== null && dom !== void 0 ? dom : _this2.data.dom, component.data.root));
+                component.targetIndexes = targetIndexes;
                 component.doSetData(_this2.filterData(data, targetIndexes), dom !== null && dom !== void 0 ? dom : _this2.data.dom);
             });
         }

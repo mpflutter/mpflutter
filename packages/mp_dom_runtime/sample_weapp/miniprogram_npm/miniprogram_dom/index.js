@@ -305,8 +305,12 @@ var _Element = function (_EventEmitter) {
         if (this.classList.value.length > 0) {
             return this.getBoundingClientRectWithClass();
         }
+        var targetComponent = this.controller.componentInstance.selectComponent("#renderer").getComponent(this.hashCode);
+        if (!targetComponent) {
+            targetComponent = this.controller.componentInstance.selectComponent("#renderer");
+        }
         return new Promise(function (res) {
-            wx.createSelectorQuery().in(_this2.controller.componentInstance.selectComponent("#renderer")).select("#d_" + _this2.hashCode).boundingClientRect(function (result) {
+            wx.createSelectorQuery().in(targetComponent).select("#d_" + _this2.hashCode).boundingClientRect(function (result) {
                 res(result);
             }).exec();
         });
@@ -343,7 +347,11 @@ var _Element = function (_EventEmitter) {
         var _this4 = this;
 
         return new Promise(function (res) {
-            wx.createSelectorQuery().in(_this4.controller.componentInstance.selectComponent("#renderer")).select("#d_" + _this4.hashCode).fields(fields).exec(function (result) {
+            var targetComponent = _this4.controller.componentInstance.selectComponent("#renderer").getComponent(_this4.hashCode);
+            if (!targetComponent) {
+                targetComponent = _this4.controller.componentInstance.selectComponent("#renderer");
+            }
+            wx.createSelectorQuery().in(targetComponent).select("#d_" + _this4.hashCode).fields(fields).exec(function (result) {
                 res(result[0]);
             });
         });
