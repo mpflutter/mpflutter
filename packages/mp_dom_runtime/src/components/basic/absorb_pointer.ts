@@ -1,19 +1,28 @@
 import { MPEnv, PlatformType } from "../../env";
 import { ComponentView } from "../component_view";
+import { GestureDetector } from "./gesture_detector";
 
 export class AbsorbPointer extends ComponentView {
+  didSetListener = false;
+
   elementType() {
     return "div";
   }
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (MPEnv.platformType === PlatformType.browser) {
-      this.htmlElement.onclick = (e) => {
-        if (e) e.stopPropagation();
-      };
-    } else {
-      this.htmlElement.onclick = (e) => {};
+    if (!this.didSetListener) {
+      this.didSetListener = true;
+      if (MPEnv.platformType === PlatformType.browser) {
+        this.htmlElement.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
+        this.htmlElement.addEventListener("touchstart", (e) => {
+          GestureDetector.activeTouchElement = undefined;
+        });
+      } else {
+        this.htmlElement.addEventListener("click", (e) => {});
+      }
     }
   }
 }

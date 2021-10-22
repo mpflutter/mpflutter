@@ -10,6 +10,7 @@ export class GestureDetector extends ComponentView {
   longPressTimer: any;
   longPressing = false;
   touchStartPosition?: { x: number; y: number };
+  hoverStartPosition?: { x: number; y: number };
 
   constructor(readonly document: Document) {
     super(document);
@@ -90,10 +91,15 @@ export class GestureDetector extends ComponentView {
       this.htmlElement.addEventListener(
         "touchstart",
         (e: TouchEvent) => {
+          this.hoverStartPosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
           const targetElement = this.findGestureDetectorElement(e.composedPath() as any);
           if (!GestureDetector.activeTouchElement && targetElement.hoverOpacity) {
             GestureDetector.activeTouchElement = targetElement;
-            targetElement.classList.add("hoverOpacity");
+            setTimeout(() => {
+              if (GestureDetector.activeTouchElement === targetElement) {
+                targetElement.classList.add("hoverOpacity");
+              }
+            }, 100);
           }
         },
         true
@@ -101,11 +107,14 @@ export class GestureDetector extends ComponentView {
       this.htmlElement.addEventListener(
         "touchmove",
         (e) => {
-          GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
-          GestureDetector.activeTouchElement = undefined;
-          if (this.longPressTimer) {
-            clearTimeout(this.longPressTimer);
-            this.longPressTimer = undefined;
+          if (this.hoverStartPosition) {
+            const touchMovePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            const deltaX = Math.abs(touchMovePosition.x - this.hoverStartPosition.x);
+            const deltaY = Math.abs(touchMovePosition.y - this.hoverStartPosition.y);
+            if (deltaX > 8 || deltaY > 8) {
+              GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
+              GestureDetector.activeTouchElement = undefined;
+            }
           }
         },
         true
@@ -115,10 +124,6 @@ export class GestureDetector extends ComponentView {
         (e) => {
           GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
           GestureDetector.activeTouchElement = undefined;
-          if (this.longPressTimer) {
-            clearTimeout(this.longPressTimer);
-            this.longPressTimer = undefined;
-          }
         },
         true
       );

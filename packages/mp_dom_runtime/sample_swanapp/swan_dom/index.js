@@ -1,3 +1,4 @@
+var EventEmitter = require("./event_emitter");
 const dictCSSKeys = {
     position: 1,
     top: 2,
@@ -22,25 +23,58 @@ const dictCSSValues = {
     unset: "_2",
     start: "_3",
 };
-class _Element {
+class _ClassList {
+    constructor(element) {
+        this.element = element;
+        this.value = [];
+    }
+    add(v) {
+        if (this.value.indexOf(v) < 0) {
+            this.value.push(v);
+            this.element.setAttribute("class", this.value.join(" "));
+        }
+    }
+    remove(v) {
+        const idx = this.value.indexOf(v);
+        if (idx >= 0) {
+            this.value.splice(idx, 1);
+            this.element.setAttribute("class", this.value.join(" "));
+        }
+    }
+    toggle(v) {
+        const idx = this.value.indexOf(v);
+        if (idx >= 0) {
+            this.value.splice(idx, 1);
+        }
+        else {
+            this.value.push(v);
+        }
+        this.element.setAttribute("class", this.value.join(" "));
+    }
+}
+class _Element extends EventEmitter {
     constructor(hashCode, controller, tag) {
+        super();
         this.hashCode = hashCode;
         this.controller = controller;
         this.tag = tag;
-        this.currentStyle = {};
+        this.classList = new _ClassList(this);
         this.attributes = {};
         this.nodes = [];
         this.nodesHash = [];
+        this.style = new Proxy({}, {
+            set: (obj, prop, value) => {
+                if (obj[prop] === value)
+                    return true;
+                obj[prop] = value;
+                this.controller.pushCommand(`${this.hashCode}.s`, this.transformStyle(obj));
+                return true;
+            },
+        });
         global.miniDomEventHandlers = _Element.eventHandlers;
     }
     get firstChild() {
         return this.nodes[0];
-    }
-    setClass(value) {
-        if (this.class === value)
-            return;
-        this.class = value !== null && value !== void 0 ? value : "";
-        this.setAttribute("class", value !== null && value !== void 0 ? value : "");
     }
     cloneNode(deep = false) {
         const clonedElement = this.controller.document.createElement(this.tag);
@@ -67,32 +101,6 @@ class _Element {
     setTag(value) {
         this.tag = value;
         this.controller.pushCommand(`${this.hashCode}.tag`, value);
-    }
-    setStyle(style) {
-        let changed = false;
-        let changeCount = 0;
-        let changeKey = undefined;
-        for (const key in style) {
-            if (this.currentStyle[key] !== style[key]) {
-                this.currentStyle[key] = style[key];
-                changed = true;
-                changeCount++;
-                changeKey = key;
-            }
-        }
-        if (changed && changeCount > 1) {
-            this.controller.pushCommand(`${this.hashCode}.s`, this.transformStyle(this.currentStyle));
-        }
-        else if (changed && changeCount === 1) {
-            const cssKey = this.toCSSKey(changeKey);
-            if (dictCSSKeys[cssKey]) {
-                this.controller.pushCommand(`${this.hashCode}.s.${dictCSSKeys[cssKey]}`, this.transformCSSValue(this.currentStyle[changeKey]));
-            }
-            else {
-                let transformedStyle = this.transformStyle(this.currentStyle);
-                this.controller.pushCommand(`${this.hashCode}.s.other`, transformedStyle["other"]);
-            }
-        }
     }
     transformStyle(style) {
         let output = {};
@@ -241,31 +249,11 @@ class _Element {
     get devicePixelRatio() {
         return swan.getSystemInfoSync().pixelRatio;
     }
-    set onclick(value) {
-        _Element.eventHandlers[`${this.hashCode}.onclick`] = value;
-        this.controller.pushCommand(`${this.hashCode}.onclick`, value ? this.hashCode : undefined);
-    }
-    set ontouchstart(value) {
-        _Element.eventHandlers[`${this.hashCode}.ontouchstart`] = value;
-        this.controller.pushCommand(`${this.hashCode}.ontouchstart`, value ? this.hashCode : undefined);
-    }
-    set ontouchmove(value) {
-        _Element.eventHandlers[`${this.hashCode}.ontouchmove`] = value;
-        this.controller.pushCommand(`${this.hashCode}.ontouchmove`, value ? this.hashCode : undefined);
-    }
-    set ontouchcancel(value) {
-        _Element.eventHandlers[`${this.hashCode}.ontouchcancel`] = value;
-        this.controller.pushCommand(`${this.hashCode}.ontouchcancel`, value ? this.hashCode : undefined);
-    }
-    set ontouchend(value) {
-        _Element.eventHandlers[`${this.hashCode}.ontouchend`] = value;
-        this.controller.pushCommand(`${this.hashCode}.ontouchend`, value ? this.hashCode : undefined);
-    }
-    set oninput(value) {
-        _Element.eventHandlers[`${this.hashCode}.oninput`] = value;
-    }
-    set onsubmit(value) {
-        _Element.eventHandlers[`${this.hashCode}.onsubmit`] = value;
+    addEventListener(event, callback) {
+        console.log('addEventListener', event);
+        _Element.eventHandlers[`${this.hashCode}`] = this;
+        this.controller.pushCommand(`${this.hashCode}.${event}`, true);
+        this.on(event, callback);
     }
     toCSSKey(str) {
         if (_Element.toCSSKeyCache[str])
@@ -362,7 +350,7 @@ class MiniDom {
             this.commands = [];
             this.commandPromises = [];
             this.needsSetData = false;
-        }, 16);
+        }, 4);
     }
     pushCommand(key, value) {
         this.commands.push({ key, value });

@@ -1,3 +1,8 @@
+let eventMap = {
+  tap: "click",
+  confirm: "submit",
+};
+
 Component({
   properties: {
     dom: { type: Object },
@@ -8,27 +13,11 @@ Component({
     name: "renderer",
   },
   methods: {
-    ontap: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.onclick`]?.();
+    onEvent: (event) => {
+      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}`]?.emit(
+        eventMap[event.type] ?? event.type,
+        event
+      );
     },
-    ontouchstart: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.ontouchstart`]?.(event);
-    },
-    ontouchmove: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.ontouchmove`]?.(event);
-    },
-    ontouchcancel: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.ontouchcancel`]?.(event);
-    },
-    ontouchend: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.ontouchend`]?.(event);
-    },
-    onTextInput: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.oninput`]?.(event);
-    },
-    onTextSubmit: (event) => {
-      global.miniDomEventHandlers[`${event.currentTarget.id.replace("d_", "")}.onsubmit`]?.(event);
-    },
-    catchmove: (event) => {},
   },
 });

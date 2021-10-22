@@ -62,7 +62,7 @@ class _ClassList {
 class _Element extends EventEmitter {
   static eventHandlers = {};
 
-  private classList: _ClassList = new _ClassList(this);
+  classList: _ClassList = new _ClassList(this);
   private attributes: { [key: string]: any } = {};
   private nodes: _Element[] = [];
   private nodesHash: string[] = [];
