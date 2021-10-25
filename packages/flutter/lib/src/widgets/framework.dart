@@ -2767,7 +2767,6 @@ class BuildOwner {
         assert(element._inDirtyList);
         element._inDirtyList = false;
       }
-      BuildOwner.recentDirtyElements.clear();
       BuildOwner.recentDirtyElements.addAll(_dirtyElements);
       _dirtyElements.clear();
       _scheduledFlushDirtyElements = false;
