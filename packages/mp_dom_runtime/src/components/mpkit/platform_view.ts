@@ -1,3 +1,5 @@
+import { MPEnv } from "../..";
+import { PlatformType } from "../../env";
 import { ComponentView } from "../component_view";
 
 export class MPPlatformView extends ComponentView {
@@ -12,8 +14,25 @@ export class MPPlatformView extends ComponentView {
 
   classname = "PlatformView";
 
+  constructor(readonly document: Document) {
+    super(document);
+    if (this.elementType().indexOf(".") > 0 && MPEnv.platformType === PlatformType.browser) {
+      this.htmlElement = this.createFromWebTemplate();
+    }
+  }
+
   elementType() {
     return "div";
+  }
+
+  createFromWebTemplate(): HTMLElement {
+    if (!__MP_TARGET_BROWSER__) return null!;
+    let templateNode = document.getElementsByName(this.elementType())[0] as HTMLTemplateElement;
+    if (!templateNode) {
+      throw `Template ${this.elementType()} not found.`;
+    }
+    let clone = document.importNode(templateNode.content, true);
+    return clone.children[0] as HTMLElement;
   }
 
   setChildren(children: any) {

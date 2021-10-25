@@ -17,7 +17,6 @@
 
     <script src="mpdom.min.js"></script>
     <script src="mp_web_features.min.js"></script>
-    <script src="plugins.min.js"></script>
     <script>
         const { Engine, View, Page, BrowserApp } = MPDOM;
         const engine = new Engine();
@@ -26,6 +25,11 @@
         // app.enablePathRewrite();
         app.setupFirstPage();
         engine.start();
+    </script>
+    <script>
+        let scriptElement = document.createElement("script");
+        scriptElement.src = 'http://' + new URL(window.location.href).hostname + ':9898/plugins.min.js';
+        document.body.appendChild(scriptElement);
     </script>
 </body>
 

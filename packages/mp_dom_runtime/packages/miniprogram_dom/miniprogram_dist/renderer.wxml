@@ -32,7 +32,7 @@ return 'f' + n;
 return 'fdiv';
 }
 else {
-return 'f' + value;
+return value;
 }
 }
 var onscroll = function(e, instance) {
@@ -402,14 +402,14 @@ getScrollPosition: getScrollPosition,
 </template>
 
 
-<template name="fcatchmove">
+<template name="catchmove">
 <view id="d_{{rt.id}}" class="{{rt.class}}" catchtap="{{rt.click ? 'onEvent' : ''}}" catchtouchmove="onEvent" style="{{tools.style(rt.s)}}">
 <block wx:key="*this" wx:for="{{rt.n}}">
 <template is="{{tools.tag(dom[item].tag, n)}}" data="{{dom,rt:dom[item],n:n+1}}" />
 </block>
 </view>
 </template>
-<template name="ftouchmove">
+<template name="touchmove">
 <view id="d_{{rt.id}}" hover-class="{{rt.click && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.click}}" catchtap="{{rt.click ? 'onEvent' : ''}}" catchtouchstart="{{rt.touchstart ? 'onEvent' : ''}}" catchtouchmove="{{rt.touchmove ? 'onEvent' : ''}}" catchtouchcancel="{{rt.touchcancel ? 'onEvent' : ''}}" catchtouchend="{{rt.touchend ? 'onEvent' : ''}}" class="{{rt.class}}" style="{{tools.style(rt.s)}};{{style}}">
 <block wx:key="*this" wx:for="{{rt.n}}">
 <template is="{{tools.tag(dom[item].tag, n)}}" data="{{dom,rt:dom[item],n:n+1}}" />
@@ -417,39 +417,39 @@ getScrollPosition: getScrollPosition,
 <block wx:if="{{rt.innerText}}">{{rt.innerText}}</block>
 </view>
 </template>
-<template name="fscrollview">
+<template name="scrollview">
 <scroll-view id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" scroll-x="true" scroll-y="true" scroll-left="{{tools.getScrollPosition('d_' + rt.id).x}}" scroll-top="{{tools.getScrollPosition('d_' + rt.id).y}}" bindscroll="{{tools.onscroll}}">
 <block wx:key="*this" wx:for="{{rt.n}}">
 <template is="{{tools.tag(dom[item].tag, n)}}" data="{{dom,rt:dom[item],n:n+1}}" />
 </block>
 </scroll-view>
 </template>
-<template name="fbutton">
+<template name="button">
 <button id="d_{{rt.id}}" class="{{rt.class}}" catchtap="{{rt.click ? 'onEvent' : ''}}" plain="true" open-type="{{rt.openType}}" app-parameter="{{rt.appParameter}}" bindgetphonenumber="onEvent" style="{{tools.style(rt.s)}};color:unset;border:unset;font-weight:unset;padding:0;">
 <block wx:key="*this" wx:for="{{rt.n}}">
 <template is="{{tools.tag(dom[item].tag, n)}}" data="{{dom,rt:dom[item],n:n+1}}" />
 </block>
 </button>
 </template>
-<template name="fimg">
+<template name="img">
 <image id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" mode="{{rt.mode}}" src="{{rt.src}}" lazy-load="{{rt.lazyLoad}}"></image>
 </template>
-<template name="fiframe">
+<template name="iframe">
 <web-view id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" src="{{rt.src}}"></web-view>
 </template>
-<template name="fvideo">
+<template name="video">
 <video id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" src="{{rt.src}}" controls="{{rt.controls}}" autoplay="{{rt.autoplay}}" loop="{{rt.loop}}" muted="{{rt.muted}}" poster="{{rt.poster}}"></video>
 </template>
-<template name="fcanvas">
+<template name="canvas">
 <canvas id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" type="2d"></canvas>
 </template>
-<template name="ftextarea">
+<template name="textarea">
 <textarea id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" placeholder-style="{{rt.placeholderStyle}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onEvent" bindconfirm="onEvent" type="{{rt.type}}" password="{{rt.type === 'password'}}" disabled="{{rt.readOnly}}" auto-focus="{{rt.autoFocus}}" maxlength="-1"></textarea>
 </template>
-<template name="finput">
+<template name="input">
 <input id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" placeholder-style="{{rt.placeholderStyle}}" value="{{rt.value}}" placeholder="{{rt.placeholder}}" bindinput="onEvent" bindconfirm="onEvent" type="{{rt.type}}" password="{{rt.type === 'password'}}" always-embed="true" disabled="{{rt.readOnly}}" auto-focus="{{rt.autoFocus}}" maxlength="-1"></input>
 </template>
-<template name="fswiper">
+<template name="swiper">
 <swiper id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" vertical="{{rt.vertical}}" circular="{{rt.circular}}">
 <block wx:key="*this" wx:for="{{rt.n}}">
 <swiper-item>
@@ -458,3 +458,4 @@ getScrollPosition: getScrollPosition,
 </block>
 </swiper>
 </template>
+<import src="../../plugins.wxml" />

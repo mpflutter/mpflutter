@@ -24,10 +24,10 @@ var style = function(params) {
 }
 var tag = function(value) {
     if (value) {
-        return 'f' + value;
+        return value;
     }
     else {
-        return 'fdiv';
+        return 'div';
     }
 }
 module.exports = {
@@ -39,7 +39,7 @@ module.exports = {
 <block s-if="{{dom[root]}}">
     <template is="{{tools.tag(dom[root].tag)}}" data="{{{style,id:root,dom:dom}}}" />
 </block>
-<template name="fdiv">
+<template name="div">
     <block s-if="{{dom[id].click}}">
         <view id="d_{{id}}" class="{{dom[id].class}}" catchtap="{{dom[id].click ? 'onEvent' : ''}}" style="{{tools.style(dom[id].s)}};{{style}}">
             <block s-for="{{dom[id].n}} trackBy item">
@@ -60,7 +60,7 @@ module.exports = {
 </template>
 <!-- floop -->
 
-<template name="fcatchmove">
+<template name="catchmove">
     <block s-if="{{dom[id].click}}">
         <view id="d_{{id}}" class="{{dom[id].class}}" catchtap="onEvent" catchtouchmove="onEvent" style="{{tools.style(dom[id].s)}}">
             <block s-for="{{dom[id].n}} trackBy item">
@@ -76,7 +76,7 @@ module.exports = {
         </view>
     </block>
 </template>
-<template name="ftouchmove">
+<template name="touchmove">
     <block s-if="{{dom[id].click}}">
         <view id="d_{{id}}" class="{{dom[id].class}}" catchtap="onEvent" style="{{tools.style(dom[id].s)}}">
             <block s-for="{{dom[id].n}} trackBy item">
@@ -92,25 +92,25 @@ module.exports = {
         </view>
     </block>
 </template>
-<template name="fimg">
+<template name="img">
     <image id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" mode="{{dom[id].mode}}" src="{{dom[id].src}}" lazy-load="{{dom[id].lazyLoad}}"></image>
 </template>
-<template name="fiframe">
+<template name="iframe">
     <web-view id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" src="{{dom[id].src}}"></web-view>
 </template>
-<template name="fvideo">
+<template name="video">
     <video id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" src="{{dom[id].src}}" controls="{{dom[id].controls}}" autoplay="{{dom[id].autoplay}}" loop="{{dom[id].loop}}" muted="{{dom[id].muted}}" poster="{{dom[id].poster}}"></video>
 </template>
-<template name="fcanvas">
+<template name="canvas">
     <canvas id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" type="2d"></canvas>
 </template>
-<template name="ftextarea">
+<template name="textarea">
     <textarea id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" value="{{dom[id].value}}" placeholder="{{dom[id].placeholder}}" bindinput="onEvent" bindconfirm="onEvent" type="{{dom[id].type}}" password="{{dom[id].type === 'password'}}" disabled="{{dom[id].readOnly}}" auto-focus="{{dom[id].autoFocus}}"></textarea>
 </template>
-<template name="finput">
+<template name="input">
     <input id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" value="{{dom[id].value}}" placeholder="{{dom[id].placeholder}}" bindinput="onEvent" bindconfirm="onEvent" type="{{dom[id].type}}" password="{{dom[id].type === 'password'}}" always-embed="true" disabled="{{dom[id].readOnly}}" auto-focus="{{dom[id].autoFocus}}"></input>
 </template>
-<template name="fswiper">
+<template name="swiper">
     <swiper id="d_{{id}}" class="{{dom[id].class}}" style="{{tools.style(dom[id].s)}}" vertical="{{dom[id].vertical}}" circular="{{dom[id].circular}}">
         <block s-for="{{dom[id].n}} trackBy item">
             <swiper-item>
@@ -119,3 +119,4 @@ module.exports = {
         </block>
     </swiper>
 </template>
+<import src="../../plugins.swan" />
