@@ -349,8 +349,9 @@ class MPChannelBase {
       if (message['event'] == 'methodCall') {
         final widget = MPCore.findTargetHashCode(message['hashCode'])?.widget;
         if (!(widget is MPPlatformView)) return;
-        final result = await widget.controller
-            ?.onMethodCall(message['method'], message['params']);
+        final result = await (widget.controller
+                ?.onMethodCall(message['method'], message['params']) ??
+            widget.onMethodCall?.call(message['method'], message['params']));
         if (message['requireResult'] == true) {
           MPChannel.postMessage(json.encode({
             'type': 'platform_view',
@@ -361,6 +362,15 @@ class MPChannelBase {
             },
           }));
         }
+      } else if (message['event'] == 'setSize') {
+        final state = MPCore.findTargetHashCode(message['hashCode'])
+            ?.findAncestorStateOfType<
+                MPPlatformViewWithIntrinsicContentSizeState>();
+        if (state == null) return;
+        state.size = Size(
+          (message['size']['width'] as num).toDouble(),
+          (message['size']['height'] as num).toDouble(),
+        );
       } else if (message['event'] == 'methodCallCallback') {
         final seqId = message['seqId'];
         if (seqId is String) {

@@ -38,17 +38,50 @@ class MPPlatformViewController {
   }
 }
 
+class MPPlatformViewWithIntrinsicContentSize extends StatefulWidget {
+  final Widget child;
+
+  MPPlatformViewWithIntrinsicContentSize({required this.child});
+
+  @override
+  State<MPPlatformViewWithIntrinsicContentSize> createState() =>
+      MPPlatformViewWithIntrinsicContentSizeState();
+}
+
+class MPPlatformViewWithIntrinsicContentSizeState
+    extends State<MPPlatformViewWithIntrinsicContentSize> {
+  Size? _size;
+
+  Size? get size => _size;
+
+  set size(Size? size) {
+    _size = size;
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size?.width ?? 1.0,
+      height: size?.height ?? 1.0,
+      child: widget.child,
+    );
+  }
+}
+
 class MPPlatformView extends StatelessWidget {
   final MPPlatformViewController? controller;
   final String viewType;
   final Map<String, dynamic> viewAttributes;
   final Widget? child;
+  final Future? Function(String method, Map? params)? onMethodCall;
 
   MPPlatformView({
     required this.viewType,
     this.viewAttributes = const {},
     this.controller,
     this.child,
+    this.onMethodCall,
   });
 
   @override
