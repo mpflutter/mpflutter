@@ -39,9 +39,9 @@ class MPPlatformViewController {
 }
 
 class MPPlatformViewWithIntrinsicContentSize extends StatefulWidget {
-  final Widget child;
+  final WidgetBuilder builder;
 
-  MPPlatformViewWithIntrinsicContentSize({required this.child});
+  MPPlatformViewWithIntrinsicContentSize({required this.builder});
 
   @override
   State<MPPlatformViewWithIntrinsicContentSize> createState() =>
@@ -62,9 +62,11 @@ class MPPlatformViewWithIntrinsicContentSizeState
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: size?.width ?? 1.0,
-      height: size?.height ?? 1.0,
-      child: widget.child,
+      constraints: BoxConstraints(
+        minWidth: 1.0,
+        minHeight: 1.0,
+      ),
+      child: widget.builder(context),
     );
   }
 }
@@ -86,6 +88,17 @@ class MPPlatformView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return child ?? Container();
+    final sizeFromIntrinsicContentSize = context
+        .findAncestorStateOfType<MPPlatformViewWithIntrinsicContentSizeState>();
+    if (sizeFromIntrinsicContentSize != null &&
+        sizeFromIntrinsicContentSize.size != null) {
+      return Container(
+        width: sizeFromIntrinsicContentSize.size!.width,
+        height: sizeFromIntrinsicContentSize.size!.height,
+        child: child,
+      );
+    } else {
+      return child ?? Container();
+    }
   }
 }
