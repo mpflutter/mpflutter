@@ -257,7 +257,7 @@ class MPCore {
         .whereType<Element>()
         .toList();
     _Document? diffDoc;
-    if (recentDirtyElements.isNotEmpty) {
+    if (recentDirtyElements.isNotEmpty && recentDirtyElements.length < 10) {
       recentDirtyElements = recentDirtyElements
           .map((e) => _findDiffableElement(e))
           .where((element) => element != null)
