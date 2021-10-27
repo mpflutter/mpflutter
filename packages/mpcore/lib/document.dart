@@ -49,6 +49,7 @@ class MPElement {
   @override
   final int hashCode;
 
+  final int? renderObjectHashCode;
   final Element? flutterElement;
   final Rect? constraints;
   final String name;
@@ -64,7 +65,8 @@ class MPElement {
     this.attributes,
     bool mergable = false,
     Rect? additionalConstraints,
-  }) : constraints = additionalConstraints ?? _getConstraints(flutterElement) {
+  })  : renderObjectHashCode = flutterElement?.renderObject.hashCode,
+        constraints = additionalConstraints ?? _getConstraints(flutterElement) {
     if (name.endsWith('_span')) {
       return;
     }
