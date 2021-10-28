@@ -18,6 +18,7 @@ import { Router } from "./router";
 import { TextMeasurer } from "./text_measurer";
 import { WindowInfo } from "./window_info";
 import { wrapDartObject } from "./components/dart_object";
+import { WebPickers } from "./components/basic/web_pickers";
 
 export class Engine {
   private started: boolean = false;
@@ -176,6 +177,8 @@ export class Engine {
       TextMeasurer.didReceivedDoMeasureData(this, decodedMessage.message);
     } else if (decodedMessage.type === "platform_view") {
       this.didReceivedPlatformView(decodedMessage.message);
+    } else if (decodedMessage.type === "action:web_pickers") {
+      WebPickers.receivedWebPickersMessage(this, decodedMessage.message);
     }
   }
 

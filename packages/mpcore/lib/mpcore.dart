@@ -50,6 +50,7 @@ part './components/sliver_persistent_header.dart';
 part './components/web_dialogs.dart';
 part './components/custom_paint.dart';
 part './channel/channel_base.dart';
+part './components/web_pickers.dart';
 
 class MPCore {
   static NavigatorObserver getNavigationObserver() {
