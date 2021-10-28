@@ -1,3 +1,5 @@
+import 'weui';
+// import weui from 'weui.js';
 export class MPPicker {
   private static currentPickerElement?: HTMLElement;
 
@@ -20,6 +22,31 @@ export class MPPicker {
     // this.weuiShadowRoot.appendChild(div);
     options.divElement.onclick = () => {
       // weui;
+      this.weuiShadowRoot.weui.picker([{
+        label: '飞机票',
+        value: 0
+    }, {
+        label: '火车票',
+        value: 1
+    }, {
+        label: '的士票',
+        value: 2
+    },{
+        label: '公交票 (disabled)',
+        disabled: true,
+        value: 3
+    }, {
+        label: '其他',
+        value: 4
+    }], {
+        onChange: function () {
+            console.log('result');
+        },
+        onConfirm: function () {
+            console.log('result');
+        },
+        title: '单列选择器'
+    });;
     };
 
     // const cells = div.getElementsByClassName("weui-btn weui-btn_default");
