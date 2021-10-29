@@ -97,4 +97,21 @@ class MPWebDialogs {
   static void hideLoading() {
     hideToast();
   }
+
+  static Future<int?> showSinglePicker({
+    required String title,
+    required List<String> items,
+  }) async {
+    final result = await MPAction(
+      type: 'web_dialogs',
+      params: {
+        'dialogType': 'singlePicker',
+        'title': title,
+        'items': items,
+      },
+    ).send();
+    if (result is int) {
+      return result;
+    }
+  }
 }

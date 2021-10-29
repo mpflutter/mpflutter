@@ -170,6 +170,8 @@ export class WebDialogs {
       MPEnv.platformScope.showToast(params);
     } else if (message["params"]["dialogType"] === "hideToast") {
       MPEnv.platformScope.hideToast();
+    } else if (message["params"]["dialogType"] === "singlePicker") {
+      // todo
     }
   }
 
@@ -244,6 +246,23 @@ export class WebDialogs {
       (window as any).MPWebDialog.showToast(params);
     } else if (message["params"]["dialogType"] === "hideToast") {
       (window as any).MPWebDialog.hideToast();
+    } else if (message["params"]["dialogType"] === "singlePicker") {
+      (window as any).MPWebDialog.showSinglePicker({
+        title: message["params"]["title"],
+        itemList: message["params"]["items"],
+        success: (res: any) => {
+          engine.sendMessage(
+            JSON.stringify({
+              type: "action",
+              message: {
+                event: "callback",
+                id: message["id"],
+                data: res.tapIndex,
+              },
+            })
+          );
+        },
+      });
     }
   }
 }
