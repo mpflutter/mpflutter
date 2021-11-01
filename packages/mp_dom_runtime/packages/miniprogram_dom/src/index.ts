@@ -178,7 +178,7 @@ class _Element extends EventEmitter {
     child.parent = this;
     this.nodes.push(child);
     this.nodesHash.push(child.hashCode);
-    return this.controller.pushCommand(`${this.hashCode}.n`, this.nodesHash);
+    return this.controller.pushCommand(`${this.hashCode}.n.${(this.nodesHash.length - 1).toFixed(0)}`, child.hashCode);
   }
 
   removeChild(child: _Element) {
