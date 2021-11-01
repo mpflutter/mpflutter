@@ -7,6 +7,31 @@ enum ToastIcon {
   none,
 }
 
+class PickerItem {
+  final String label;
+  final bool disabled;
+  final List<PickerItem>? subItems;
+
+  PickerItem({
+    required this.label,
+    this.disabled = false,
+    this.subItems,
+  });
+
+  PickerItem.fromJson(Map<String, dynamic> json)
+      : label = json['label'],
+        disabled = json['disabled'],
+        subItems = json['subItems'];
+
+  Map toJson() {
+    return {
+      'label': label,
+      'disabled': disabled,
+      'subItems': subItems,
+    };
+  }
+}
+
 class MPWebDialogs {
   static Future alert({required String message}) {
     return MPAction(
@@ -98,9 +123,11 @@ class MPWebDialogs {
     hideToast();
   }
 
-  static Future<int?> showSinglePicker({
+  static Future<List?> showSinglePicker({
     required String title,
-    required List<String> items,
+    required List<PickerItem> items,
+    String? confirmText,
+    List<num>? disabledIds,
   }) async {
     final result = await MPAction(
       type: 'web_dialogs',
@@ -108,9 +135,10 @@ class MPWebDialogs {
         'dialogType': 'singlePicker',
         'title': title,
         'items': items,
+        'confirmText': confirmText,
       },
     ).send();
-    if (result is int) {
+    if (result is List) {
       return result;
     }
   }
