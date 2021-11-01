@@ -106,63 +106,29 @@ export class MPWebDialog {
     div.style.position = "absolute";
     div.style.width = "100%";
     div.style.height = "100%";
-    div.innerHTML = `<div class="weui-mask" id="iosMask"></div>
-    <div class="">
-        <div class="weui-mask weui-animate-fade-in"></div>
-        <div class="weui-half-screen-dialog weui-picker weui-animate-slide-up">
-            <div class="weui-half-screen-dialog__hd">
-                <div class="weui-half-screen-dialog__hd__side">
-                    <button class="weui-icon-btn weui-icon-btn_close weui-picker__btn">关闭</button>
-                </div>
-                <div class="weui-half-screen-dialog__hd__main">
-                    <strong class="weui-half-screen-dialog__title">${options.title}</strong>
-                </div>
-            </div>
-            <div class="weui-half-screen-dialog__bd">
-                <div class="weui-picker__bd">
-                    <div class="weui-picker__group">
-                        <div class="weui-picker__mask"></div>
-                        <div class="weui-picker__indicator"></div>
-                        <div class="weui-picker__content" style="transform: translate3d(0px, 0px, 0px);">
-                            ${options.itemList
-                              .map((it, idx) => `<div data-index="${idx}" class="weui-picker__item">${it}</div>`)
-                              .join("")}
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="weui-half-screen-dialog__ft">
-                <a href="javascript:;" class="weui-btn weui-btn_primary weui-picker__btn" id="weui-picker-confirm" data-action="select">确定</a>
-            </div>
-          </div>
-    </div>
-    `;
-    div.style.overflow = 'auto';
-    div.ontouchmove = (e) => {
-      e.preventDefault();
-    };
     this.weuiShadowRoot.appendChild(div);
-    // (window as any).weui.picker(
-    //   options.itemList.map((it, idx) => {
-    //     return {
-    //       label: it,
-    //       value: idx,
-    //     };
-    //   }),
-    //   {
-    //     onChange: function (result: any) {
-    //       options.success?.({
-    //         tapIndex: parseInt(result.value),
-    //       });
-    //     },
-    //     onConfirm: function (result: any) {
-    //       options.success?.({
-    //         tapIndex: parseInt(result.value),
-    //       });
-    //       div.remove();
-    //     },
-    //     title: options.title,
-    //   },
-    // );
+    (window as any).weui.picker(
+      options.itemList.map((it, idx) => {
+        return {
+          label: it,
+          value: idx,
+        };
+      }),
+      {
+        onChange: function (result: any) {
+          options.success?.({
+            tapIndex: parseInt(result.value),
+          });
+        },
+        onConfirm: function (result: any) {
+          options.success?.({
+            tapIndex: parseInt(result.value),
+          });
+          // div.remove();
+        },
+        title: options.title,
+        container: div,
+      }
+    );
   }
 }
