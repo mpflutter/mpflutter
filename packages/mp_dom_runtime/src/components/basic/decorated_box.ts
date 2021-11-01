@@ -16,7 +16,7 @@ export class DecoratedBox extends ComponentView {
     if (attributes.color) {
       style.backgroundColor = cssColor(attributes.color);
     } else {
-      style.backgroundColor = "unset";
+      style.backgroundColor = "transparent";
     }
     if (attributes.image) {
       style.backgroundImage = `url("${(() => {
