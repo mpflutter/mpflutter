@@ -118,4 +118,8 @@ module.exports = {
         </block>
     </swiper>
 </template>
+<template name="picker">
+    <picker id="d_{{rt.id}}" class="{{rt.class}}" style="{{tools.style(rt.s)}}" mode="{{rt.mode}}" header-text="{{rt.headerText}}" bindchange="{{rt.bindchange}}" range="{{rt.range}}">
+    </picker>
+</template>
 <import src="../../plugins.wxml" />
