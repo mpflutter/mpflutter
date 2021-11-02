@@ -101,7 +101,7 @@ export class MPWebDialog {
     }
   }
 
-  static showSinglePicker(options: {
+  static showPicker(options: {
     title: string;
     itemList: PickerItem[];
     confirmText?: string;
@@ -144,5 +144,32 @@ export class MPWebDialog {
         container: div,
       }
     );
+  }
+
+  static showDatePicker(options: {
+    start: number | string | Date;
+    end: number | string | Date;
+    defaultValue: any[];
+    success: (res: { tapIndex: any }) => void;
+  }) {
+    const div = document.createElement("body");
+    div.style.position = "absolute";
+    div.style.width = "100%";
+    div.style.height = "100%";
+    this.weuiShadowRoot.appendChild(div);
+    (window as any).weui.datePicker({
+      start: options.start,
+      end: options.end,
+      defaultValue: options.defaultValue,
+      onConfirm: function (result: any) {
+        options.success?.({
+          tapIndex: result,
+        });
+      },
+      onClose: function () {
+        div.remove();
+      },
+      container: div,
+    });
   }
 }

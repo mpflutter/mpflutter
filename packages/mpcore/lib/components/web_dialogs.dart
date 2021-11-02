@@ -123,7 +123,7 @@ class MPWebDialogs {
     hideToast();
   }
 
-  static Future<List?> showSinglePicker({
+  static Future<List?> showPicker({
     required String title,
     required List<PickerItem> items,
     String? confirmText,
@@ -132,14 +132,29 @@ class MPWebDialogs {
     final result = await MPAction(
       type: 'web_dialogs',
       params: {
-        'dialogType': 'singlePicker',
+        'dialogType': 'picker',
         'title': title,
         'items': items,
         'confirmText': confirmText,
       },
     ).send();
-    if (result is List) {
-      return result;
-    }
+    return result;
+  }
+
+  static Future<List?> showDatePicker({
+    required int start,
+    required int end,
+    List? defaultValue,
+  }) async {
+    final result = await MPAction(
+      type: 'web_dialogs',
+      params: {
+        'dialogType': 'datePicker',
+        'start': start,
+        'end': end,
+        'defaultValue': defaultValue,
+      },
+    ).send();
+    return result;
   }
 }
