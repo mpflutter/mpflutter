@@ -12,7 +12,7 @@ export class TextMeasurer {
     return new Promise((res) => {
       setTimeout(() => {
         res(null);
-      }, 32);
+      }, 300);
     });
   }
 
