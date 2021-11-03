@@ -58,7 +58,6 @@ main(List<String> args) async {
         'kbone/miniprogram-element/index.wxss',
         'kbone/miniprogram-element/index-vhost.json',
         'kbone/miniprogram-element/base.js',
-        'kbone/miniprogram-element/custom-component',
         'kbone/miniprogram-element/custom-component/index.wxml',
         'kbone/miniprogram-element/custom-component/index.js',
         'kbone/miniprogram-element/custom-component/index.wxss',
