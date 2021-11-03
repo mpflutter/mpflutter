@@ -117,7 +117,7 @@ export class ComponentFactory {
     if (!clazz) {
       clazz = ComponentView;
     }
-    const view = new clazz(document);
+    const view = new clazz(document, data.attributes);
     if (MPEnv.platformGlobal()?.mpDEBUG) {
       view.htmlElement.setAttribute("mp-component", name);
     }

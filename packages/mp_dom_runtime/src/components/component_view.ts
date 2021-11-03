@@ -27,7 +27,7 @@ export class ComponentView {
   ancestors: AncestorView[] = [];
   ancestorStyle: any = {};
 
-  constructor(readonly document: Document) {
+  constructor(readonly document: Document, readonly initialAttributes?: any) {
     this.htmlElement = document.createElement(this.elementType());
   }
 

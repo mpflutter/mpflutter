@@ -5,8 +5,8 @@ import { GridListLayout } from "./grid_list_layout";
 export class CustomScrollView extends CollectionView {
   listChildren: any[] = [];
 
-  constructor(document: Document) {
-    super(document);
+  constructor(document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
     this.layout = new CustomScrollViewLayout(this);
   }
 

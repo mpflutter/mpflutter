@@ -8,8 +8,8 @@ class PageViewWeb extends ComponentView {
   direction = "horizontal";
   loop = false;
 
-  constructor(document: Document) {
-    super(document);
+  constructor(document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
     this.wrapperHtmlElement.className = "swiper-wrapper";
     this.htmlElement.appendChild(this.wrapperHtmlElement);
   }

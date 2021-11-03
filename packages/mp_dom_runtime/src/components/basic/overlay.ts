@@ -5,8 +5,8 @@ import { setDOMStyle } from "../dom_utils";
 export class Overlay extends ComponentView {
   didSetListener = false;
 
-  constructor(document: Document) {
-    super(document);
+  constructor(document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
     this.additionalConstraints = { position: "fixed" };
     setDOMStyle(this.htmlElement, {
       position: "fixed",

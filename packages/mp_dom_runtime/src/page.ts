@@ -116,8 +116,6 @@ export class Page {
       }
       if (this.scaffoldView && this.active && !this.scaffoldView.attached) {
         this.scaffoldView.attached = true;
-        console.log(this.scaffoldView.htmlElement);
-        
         this.element.appendChild(this.scaffoldView.htmlElement);
         setDOMStyle(this.scaffoldView.htmlElement, { display: "contents" });
       }

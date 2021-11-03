@@ -17,13 +17,24 @@ export class CollectionView extends ComponentView {
   bottomBarHeight: number = 0;
   bottomBarWithSafeArea = false;
   layout!: CollectionViewLayout;
+  didAddScrollListener = false;
 
-  constructor(document: Document) {
-    super(document);
+  constructor(document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
     this.htmlElement.appendChild(this.wrapperHtmlElement);
   }
 
-  addBrowserScrollListener() {
+  elementType() {
+    if (this.initialAttributes?.restorationId && MPEnv.platformType == PlatformType.wxMiniProgram) {
+      return "wx-scroll-view";
+    } else {
+      return "div";
+    }
+  }
+
+  addScrollListener() {
+    if (this.didAddScrollListener) return;
+    this.didAddScrollListener = true;
     this.htmlElement.addEventListener("scroll", (e) => {
       this.lastScrollX = this.htmlElement.scrollLeft;
       this.lastScrollY = this.htmlElement.scrollTop;
@@ -42,6 +53,13 @@ export class CollectionView extends ComponentView {
           left: this.lastScrollX,
           top: this.lastScrollY,
         });
+      }, 0);
+    } else if (this.enabledRestoration && MPEnv.platformType === PlatformType.wxMiniProgram) {
+      this.htmlElement.setAttribute("scroll-top", this.lastScrollY.toFixed(0));
+      this.htmlElement.setAttribute("scroll-left", this.lastScrollX.toFixed(0));
+      setTimeout(() => {
+        this.htmlElement.setAttribute("scroll-top", this.lastScrollY.toFixed(0));
+        this.htmlElement.setAttribute("scroll-left", this.lastScrollX.toFixed(0));
       }, 0);
     }
   }
@@ -108,10 +126,13 @@ export class CollectionView extends ComponentView {
     this.bottomBarHeight = attributes.bottomBarHeight ?? 0.0;
     this.bottomBarWithSafeArea = attributes.bottomBarWithSafeArea ?? false;
     if (attributes.restorationId && MPEnv.platformType == PlatformType.wxMiniProgram) {
-      // (this.htmlElement as any).setTag("scrollview");
+      this.htmlElement.setAttribute("scroll-x", "true");
+      this.htmlElement.setAttribute("scroll-y", "true");
+      this.enabledRestoration = true;
+      this.addScrollListener();
     } else if (attributes.restorationId && MPEnv.platformType == PlatformType.browser) {
       this.enabledRestoration = true;
-      this.addBrowserScrollListener();
+      this.addScrollListener();
     }
   }
 
