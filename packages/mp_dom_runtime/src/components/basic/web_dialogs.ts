@@ -170,7 +170,9 @@ export class WebDialogs {
       MPEnv.platformScope.showToast(params);
     } else if (message["params"]["dialogType"] === "hideToast") {
       MPEnv.platformScope.hideToast();
-    } else if (message["params"]["dialogType"] === "singlePicker") {
+    } else if (message["params"]["dialogType"] === "picker") {
+      // todo
+    } else if (message["params"]["dialogType"] === "datePicker") {
       // todo
     }
   }
