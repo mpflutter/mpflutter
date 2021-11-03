@@ -100,7 +100,7 @@ class Style {
      * 对外属性和方法
      */
     get cssText() {
-        const joinText = styleList.filter(name => this[`$_${name}`]).map(name => `${tool.toDash(name)}:${this['$_' + name]}`).join(';').trim()
+        const joinText = styleList.filter(name => this[`$_${name}`]).map(name => `${tool.toCSSDash(name)}:${this['$_' + name]}`).join(';').trim()
         return joinText ? `${joinText};` : ''
     }
 

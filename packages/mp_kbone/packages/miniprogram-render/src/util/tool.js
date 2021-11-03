@@ -34,6 +34,17 @@ function toDash(str) {
 }
 
 /**
+ * 驼峰转连字符
+ */
+function toCSSDash(str) {
+    let v = str.replace(/[A-Z]/g, all => `-${all.toLowerCase()}`)
+    if (v.indexOf('webkit') === 0) {
+        v = '-' + v
+    }
+    return v
+}
+
+/**
  * 连字符转驼峰
  */
 function toCamel(str) {
@@ -172,6 +183,7 @@ function setData(instance, data) {
 module.exports = {
     checkIsWxComponent,
     toDash,
+    toCSSDash,
     toCamel,
     getId,
     getPageRoute,

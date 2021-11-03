@@ -44,36 +44,23 @@ export class RichText extends ComponentView {
     } else {
       this.maxHeight = undefined;
     }
-    if (
-      MPEnv.platformType === PlatformType.wxMiniProgram ||
-      MPEnv.platformType === PlatformType.swanMiniProgram
-    ) {
-      setDOMStyle(this.htmlElement, {
-        textAlign: cssTextAlign(attributes.textAlign),
-        lineHeight: attributes.height?.toString(),
-        webkitLineClamp: attributes.maxLines
-          ? attributes.maxLines.toString()
-          : "99999",
-      });
-    } else {
-      setDOMStyle(this.htmlElement, {
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        textAlign: cssTextAlign(attributes.textAlign),
-        display: "-webkit-box",
-        fontSize: "11px",
-        fontFamily: "sans-serif",
-        lineHeight: attributes.height?.toString(),
-        overflowWrap: "anywhere",
-        wordBreak: "break-all",
-        wordWrap: "break-word",
-        whiteSpace: "pre-line",
-        webkitBoxOrient: "vertical",
-        webkitLineClamp: attributes.maxLines
-          ? attributes.maxLines.toString()
-          : "99999",
-      });
-    }
+    setDOMStyle(this.htmlElement, {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      textAlign: cssTextAlign(attributes.textAlign),
+      display: "-webkit-box",
+      fontSize: "11px",
+      fontFamily: "sans-serif",
+      lineHeight: attributes.height?.toString(),
+      overflowWrap: "anywhere",
+      wordBreak: "break-all",
+      wordWrap: "break-word",
+      whiteSpace: "pre-line",
+      webkitBoxOrient: "vertical",
+      webkitLineClamp: attributes.maxLines
+        ? attributes.maxLines.toString()
+        : "99999",
+    });
 
     this.measureId = attributes.measureId;
   }
