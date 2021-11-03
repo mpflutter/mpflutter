@@ -20,6 +20,10 @@ jobs:
         npm install -g browserify uglify-js typescript terser
         npm install
         npm run build
+        cd ../mp_kbone
+        npm install
+        npm run build
+        cd ../mp_dom_runtime
         git config --global user.email "ci@mpflutter.com"
         git config --global user.name "GitHub CI bot"
         git clone https://github.com/mpflutter/dist.git mpflutter_dist

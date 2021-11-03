@@ -1,0 +1,17 @@
+<import src="./template/subtree.wxml"/>
+<import src="./template/subtree-cover.wxml"/>
+<!-- 视图容器 -->
+<view
+    wx:if="{{wxCompName === 'view'}}"
+    id="{{id}}"
+    class="{{className}}"
+    style="{{style}}"
+    hidden="{{hidden}}"
+    hover-class="{{hoverClass}}"
+    hover-stop-propagation="{{hoverStopPropagation}}"
+    hover-start-time="{{hoverStartTime}}"
+    hover-stay-time="{{hoverStayTime}}"
+><template is="subtree" data="{{childNodes: childNodes, inCover}}"/></view>
+<!-- 子节点 -->
+<template wx:elif="{{inCover === true}}" is="subtree-cover" data="{{childNodes, inCover}}"></template>
+<template wx:else is="subtree" data="{{childNodes, inCover}}"></template>

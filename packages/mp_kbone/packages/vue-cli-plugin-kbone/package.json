@@ -1,0 +1,26 @@
+{
+    "name": "vue-cli-plugin-kbone",
+    "version": "1.5.1",
+    "description": "kbone plugin for vue-cli",
+    "main": "src/index.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/wechat-miniprogram/kbone.git"
+    },
+    "keywords": [
+        "vue",
+        "cli",
+        "kbone"
+    ],
+    "author": "wechat-miniprogram",
+    "license": "MIT",
+    "homepage": "https://github.com/wechat-miniprogram/kbone#readme",
+    "dependencies": {
+        "cross-env": "^5.2.0",
+        "cssnano": "^4.1.10",
+        "mp-webpack-plugin": "^1.5.1",
+        "optimize-css-assets-webpack-plugin": "^5.0.3",
+        "webpack": "^4.41.6"
+    },
+    "gitHead": "335714e2b6cd9c12d159dfc0753c697e800974a4"
+}
