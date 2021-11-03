@@ -68,10 +68,10 @@ export class TextMeasurer {
             MPEnv.platformType === PlatformType.wxMiniProgram ||
             MPEnv.platformType === PlatformType.swanMiniProgram
           ) {
-            await (this.activeTextMeasureDocument as any).awaitSetState();
+            // await (this.activeTextMeasureDocument as any).awaitSetState();
             await this.delay();
           }
-          const rect = await it.htmlElement.getBoundingClientRect();
+          const rect = await (it.htmlElement as any).getBoundingClientRect();
           it.htmlElement.remove();
           return {
             measureId: it.attributes.measureId,

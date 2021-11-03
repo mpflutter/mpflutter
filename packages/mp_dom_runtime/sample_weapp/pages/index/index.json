@@ -1,6 +1,6 @@
 {
   "usingComponents": {
-    "mpdom": "miniprogram_dom/index"
+    "element": "../../kbone/miniprogram-element"
   },
   "enablePullDownRefresh": false,
   "backgroundTextStyle": "dark"

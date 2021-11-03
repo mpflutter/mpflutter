@@ -1,8 +1,13 @@
+import { MPEnv } from "../..";
+import { PlatformType } from "../../env";
 import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 import { MPPlatformView } from "./platform_view";
 
 export class MPWebView extends MPPlatformView {
   elementType() {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      return "wx-web-view";
+    }
     return "iframe";
   }
 

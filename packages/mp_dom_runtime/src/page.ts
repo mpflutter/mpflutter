@@ -54,8 +54,15 @@ export class Page {
   }
 
   async fetchViewport() {
-    let viewport = await this.element.getBoundingClientRect();
-    if (viewport.height <= 0.1) {
+    let viewport = await (this.element as any).getBoundingClientRect();
+    if (!viewport.width || viewport.width <= 0.1) {
+      if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+        viewport.width = MPEnv.platformScope.getSystemInfoSync().windowWidth;
+      } else {
+        viewport.width = window.innerWidth;
+      }
+    }
+    if (!viewport.height || viewport.height <= 0.1) {
       if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
         viewport.height = MPEnv.platformScope.getSystemInfoSync().windowHeight;
       } else {
@@ -109,6 +116,8 @@ export class Page {
       }
       if (this.scaffoldView && this.active && !this.scaffoldView.attached) {
         this.scaffoldView.attached = true;
+        console.log(this.scaffoldView.htmlElement);
+        
         this.element.appendChild(this.scaffoldView.htmlElement);
         setDOMStyle(this.scaffoldView.htmlElement, { display: "contents" });
       }

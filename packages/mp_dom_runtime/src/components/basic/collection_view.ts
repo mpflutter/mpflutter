@@ -108,7 +108,7 @@ export class CollectionView extends ComponentView {
     this.bottomBarHeight = attributes.bottomBarHeight ?? 0.0;
     this.bottomBarWithSafeArea = attributes.bottomBarWithSafeArea ?? false;
     if (attributes.restorationId && MPEnv.platformType == PlatformType.wxMiniProgram) {
-      (this.htmlElement as any).setTag("scrollview");
+      // (this.htmlElement as any).setTag("scrollview");
     } else if (attributes.restorationId && MPEnv.platformType == PlatformType.browser) {
       this.enabledRestoration = true;
       this.addBrowserScrollListener();

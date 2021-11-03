@@ -1,7 +1,6 @@
 {
   "pages": [
-    "pages/index/index",
-    "pages/index/second"
+    "pages/index/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
@@ -10,5 +9,8 @@
     "navigationBarTextStyle": "black"
   },
   "style": "v2",
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "useExtendedLib": {
+    "kbone": true
+  }
 }

@@ -19,6 +19,9 @@ export class GestureDetector extends ComponentView {
   }
 
   elementType() {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      return 'wx-catch';
+    }
     return "div";
   }
 
@@ -48,7 +51,7 @@ export class GestureDetector extends ComponentView {
               },
             })
           );
-          if (e) e.stopPropagation?.();
+          e.stopPropagation();
         });
       }
     }
@@ -64,9 +67,9 @@ export class GestureDetector extends ComponentView {
       if (!this.didSetOnLongPressOrPan) {
         this.didSetOnLongPressOrPan = true;
         this.setupLongPressOrPanCatcher();
-        if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
-          (this.htmlElement as any).setTag("touchmove");
-        }
+        // if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+        //   (this.htmlElement as any).setTag("touchmove");
+        // }
       }
     }
     this.hoverOpacity = attributes.hoverOpacity;

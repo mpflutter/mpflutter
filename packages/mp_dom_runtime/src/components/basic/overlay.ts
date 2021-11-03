@@ -3,6 +3,7 @@ import { ComponentView } from "../component_view";
 import { setDOMStyle } from "../dom_utils";
 
 export class Overlay extends ComponentView {
+  didSetListener = false;
 
   constructor(document: Document) {
     super(document);
@@ -24,8 +25,10 @@ export class Overlay extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (attributes.onBackgroundTap) {
-      this.htmlElement.onclick = () => {
+    if (attributes.onBackgroundTap && !this.didSetListener) {
+      this.didSetListener = true;
+      this.htmlElement.addEventListener("click", (e) => {
+        if (!attributes.onBackgroundTap) return;
         this.engine.sendMessage(
           JSON.stringify({
             type: "overlay",
@@ -35,10 +38,8 @@ export class Overlay extends ComponentView {
             },
           })
         );
-      };
-    } else {
-      this.htmlElement.onclick = null;
+        e.stopPropagation();
+      });
     }
   }
-
 }

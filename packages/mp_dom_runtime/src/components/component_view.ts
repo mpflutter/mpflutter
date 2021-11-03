@@ -191,6 +191,7 @@ export class ComponentView {
     if (!this.superview) return;
     const index = this.superview.subviews.indexOf(this);
     if (index >= 0) {
+      this.superview.subviews[index].htmlElement.remove();
       this.superview?.subviews.splice(index, 1);
     }
     this.htmlElement.remove();

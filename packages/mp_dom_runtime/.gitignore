@@ -118,5 +118,6 @@ out
 
 dist
 dist_swan/mpdom.min.js
+dist_weapp/kbone
 dist_weapp/mpdom.min.js
 dist_web/mpdom.min.js

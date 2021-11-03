@@ -95,7 +95,11 @@ export class EditableText extends ComponentView {
     if (attributes.placeholder) {
       setDOMAttribute(this.contentElement, "placeholder", attributes.placeholder);
     }
-    setDOMAttribute(this.contentElement, "readOnly", attributes.readOnly ? "true" : undefined);
+    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      setDOMAttribute(this.contentElement, "disabled", attributes.readOnly ? "true" : undefined);
+    } else {
+      setDOMAttribute(this.contentElement, "readOnly", attributes.readOnly ? "true" : undefined);
+    }
   }
 
   setChildren() {}
