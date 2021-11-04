@@ -13,6 +13,8 @@ export class Page {
   overlaysView: ComponentView[] = [];
   isFirst: boolean = false;
   miniProgramPage: any;
+  bodyElement: HTMLElement;
+  overlayElement: HTMLElement;
 
   constructor(
     readonly element: HTMLElement,
@@ -20,6 +22,12 @@ export class Page {
     readonly options?: { route: string; params: any },
     readonly document: Document = self?.document
   ) {
+    this.bodyElement = MPEnv.platformType === PlatformType.browser ? element : document.createElement("wx-view");
+    this.overlayElement = MPEnv.platformType === PlatformType.browser ? element : document.createElement("wx-view");
+    if (this.bodyElement !== element || this.overlayElement !== element) {
+      this.element.appendChild(this.bodyElement);
+      this.element.appendChild(this.overlayElement);
+    }
     this.requestRoute().then((viewId: number) => {
       this.viewId = viewId;
       engine.managedViews[this.viewId] = this;
@@ -88,7 +96,15 @@ export class Page {
     }
   }
 
-  didReceivedFrameData(message: { [key: string]: any }) {
+  async didReceivedFrameData(message: { [key: string]: any }) {
+    if (!message.overlays || (message.overlays && message.overlays instanceof Array && message.overlays.length === 0)) {
+      if (this.overlaysView.length > 0) {
+        this.overlaysView.forEach((it) => {
+          it.htmlElement.style.visibility = "hidden";
+        });
+        await this.removeOverlays();
+      }
+    }
     if (message.ignoreScaffold !== true) {
       const scaffoldView = this.engine.componentFactory.create(message.scaffold, this.document);
       if (!(scaffoldView instanceof MPScaffold)) return;
@@ -117,7 +133,7 @@ export class Page {
       }
       if (this.scaffoldView && this.active && !this.scaffoldView.attached) {
         this.scaffoldView.attached = true;
-        this.element.appendChild(this.scaffoldView.htmlElement);
+        this.bodyElement.appendChild(this.scaffoldView.htmlElement);
         setDOMStyle(this.scaffoldView.htmlElement, { display: "contents" });
       }
     }
@@ -150,6 +166,19 @@ export class Page {
     }
   }
 
+  async removeOverlays() {
+    return new Promise((res) => {
+      this.overlaysView.forEach((it) => {
+        it.htmlElement.remove();
+        it.removeFromSuperview();
+      });
+      this.overlaysView = [];
+      setTimeout(() => {
+        res(null);
+      }, 100);
+    });
+  }
+
   setOverlays(overlays: any[]) {
     let overlaysView = overlays
       .map((it) => this.engine.componentFactory.create(it, this.document))
@@ -165,7 +194,7 @@ export class Page {
       it.removeFromSuperview();
     });
     overlaysView.forEach((it) => {
-      this.document.body.appendChild(it.htmlElement);
+      this.overlayElement.appendChild(it.htmlElement);
     });
     this.overlaysView = overlaysView;
   }
