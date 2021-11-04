@@ -45,6 +45,11 @@ export const WXPage = function (
 ) {
   if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)) return;
   return {
+    data: {
+      pageMeta: {
+        naviBar: {},
+      },
+    },
     kboneRender: undefined as any,
     kboneDocument: undefined as any,
     kbonePageId: undefined as any,
@@ -94,6 +99,7 @@ export const WXPage = function (
       }
 
       (this as any).mpPage = new Page(document.body, app.engine, finalOptions, document);
+      (this as any).mpPage.miniProgramPage = this;
       (this as any).mpPage.isFirst = getCurrentPages().length === 1;
     },
     onUnload() {

@@ -165,11 +165,13 @@ class MPChannelBase {
       DeviceInfo.windowPadding = ui.MockWindowPadding(
         left: 0.0,
         top: message['window']['padding']['top'] is num
-            ? message['window']['padding']['top'].toDouble()
+            ? (message['window']['padding']['top'].toDouble() *
+                devicePixelRatio.toDouble())
             : 0.0,
         right: 0.0,
         bottom: message['window']['padding']['bottom'] is num
-            ? message['window']['padding']['bottom'].toDouble()
+            ? (message['window']['padding']['bottom'].toDouble() *
+                devicePixelRatio.toDouble())
             : 0.0,
       );
       DeviceInfo.deviceSizeChangeCallback?.call();

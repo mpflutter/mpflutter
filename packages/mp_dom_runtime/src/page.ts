@@ -12,6 +12,7 @@ export class Page {
   viewId: number = -1;
   overlaysView: ComponentView[] = [];
   isFirst: boolean = false;
+  miniProgramPage: any;
 
   constructor(
     readonly element: HTMLElement,
@@ -103,7 +104,7 @@ export class Page {
             MPEnv.platformType === PlatformType.swanMiniProgram
           ) {
             if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
-              scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document));
+              scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document, this.miniProgramPage));
               scaffoldView.setAttributes(message.scaffold.attributes);
             }
           } else {
@@ -224,16 +225,15 @@ class BrowserPageScaffoldDelegate implements MPScaffoldDelegate {
 }
 
 class WXPageScaffoldDelegate implements MPScaffoldDelegate {
-  constructor(readonly document: Document) {}
+  constructor(readonly document: Document, readonly miniProgramPage: any) {}
 
-  currentTitle: string | undefined;
   backgroundElement = this.document.createElement("div");
   backgroundElementAttached = false;
 
   setPageTitle(title: string): void {
-    if (MPEnv.platformType == PlatformType.wxMiniProgram && title === this.currentTitle) return;
-    MPEnv.platformScope.setNavigationBarTitle({ title });
-    this.currentTitle = title;
+    this.miniProgramPage.setData({
+      "pageMeta.naviBar.title": title,
+    });
   }
 
   setPageBackgroundColor(color: string): void {
@@ -252,13 +252,12 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
     if (this.backgroundElementAttached) return;
     this.document.body.appendChild(this.backgroundElement);
     this.backgroundElementAttached = true;
-    MPEnv.platformScope.setBackgroundColor({ backgroundColor: color });
   }
 
   setAppBarColor(color: string, tintColor?: string): void {
-    MPEnv.platformScope.setNavigationBarColor({
-      backgroundColor: color,
-      frontColor: tintColor,
+    this.miniProgramPage.setData({
+      "pageMeta.naviBar.backgroundColor": color,
+      "pageMeta.naviBar.frontColor": tintColor,
     });
   }
 }
