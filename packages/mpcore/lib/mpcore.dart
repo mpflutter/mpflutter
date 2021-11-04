@@ -368,7 +368,6 @@ class MPCore {
         }
       });
     }
-    activeOverlayParentRoute = null;
     for (var scaffoldElement in scaffoldElements) {
       if (scaffoldElement.widget is MPOverlayScaffold) {
         overlays.add(_encodeOverlay(scaffoldElement));

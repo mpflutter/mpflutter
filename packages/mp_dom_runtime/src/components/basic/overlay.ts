@@ -29,6 +29,9 @@ export class Overlay extends ComponentView {
       this.didSetListener = true;
       this.htmlElement.addEventListener("click", (e) => {
         if (!attributes.onBackgroundTap) return;
+        if (attributes.barrierDismissible === true) {
+          this.htmlElement.remove();
+        }
         this.engine.sendMessage(
           JSON.stringify({
             type: "overlay",
