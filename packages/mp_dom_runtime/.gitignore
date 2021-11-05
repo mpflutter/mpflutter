@@ -117,6 +117,7 @@ out
 .DS_Store
 
 dist
+dist_swan/kbone
 dist_swan/mpdom.min.js
 dist_weapp/kbone
 dist_weapp/mpdom.min.js
