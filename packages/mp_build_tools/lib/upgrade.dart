@@ -49,18 +49,25 @@ main(List<String> args) async {
     if (weappFile.existsSync()) {
       final fileList = [
         'mpdom.min.js',
-        'miniprogram_npm/miniprogram_dom/index.js',
-        'miniprogram_npm/miniprogram_dom/index.js.map',
-        'miniprogram_npm/miniprogram_dom/index.json',
-        'miniprogram_npm/miniprogram_dom/index.wxml',
-        'miniprogram_npm/miniprogram_dom/index.wxss',
-        'miniprogram_npm/miniprogram_dom/lib.js',
-        'miniprogram_npm/miniprogram_dom/lib.js.map',
-        'miniprogram_npm/miniprogram_dom/renderer.js',
-        'miniprogram_npm/miniprogram_dom/renderer.js.map',
-        'miniprogram_npm/miniprogram_dom/renderer.json',
-        'miniprogram_npm/miniprogram_dom/renderer.wxml',
-        'miniprogram_npm/miniprogram_dom/renderer.wxss',
+        'kbone/miniprogram-element/index-vhost.js',
+        'kbone/miniprogram-element/index.wxml',
+        'kbone/miniprogram-element/template/subtree.wxml',
+        'kbone/miniprogram-element/template/inner-component.wxml',
+        'kbone/miniprogram-element/template/subtree-cover.wxml',
+        'kbone/miniprogram-element/index.js',
+        'kbone/miniprogram-element/index.wxss',
+        'kbone/miniprogram-element/index-vhost.json',
+        'kbone/miniprogram-element/base.js',
+        'kbone/miniprogram-element/custom-component/index.wxml',
+        'kbone/miniprogram-element/custom-component/index.js',
+        'kbone/miniprogram-element/custom-component/index.wxss',
+        'kbone/miniprogram-element/custom-component/index.json',
+        'kbone/miniprogram-element/index-vhost.wxss',
+        'kbone/miniprogram-element/base.js.map',
+        'kbone/miniprogram-element/index.json',
+        'kbone/miniprogram-element/index-vhost.wxml',
+        'kbone/miniprogram-render/index.js',
+        'kbone/miniprogram-render/index.js.map'
       ];
       for (var item in fileList) {
         final response = await get(

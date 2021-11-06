@@ -9,6 +9,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 import 'binding.dart';
@@ -871,8 +872,12 @@ class PipelineOwner {
         _nodesNeedingLayout = <RenderObject>[];
         for (final RenderObject node in dirtyNodes
           ..sort((RenderObject a, RenderObject b) => a.depth - b.depth)) {
-          if (node._needsLayout && node.owner == this)
+          if (node._needsLayout && node.owner == this) {
+            if (node.buildContext is Element) {
+              BuildOwner.recentDirtyElements.add(node.buildContext as Element);
+            }
             node._layoutWithoutResize();
+          }
         }
       }
     } finally {
@@ -1130,6 +1135,8 @@ abstract class RenderObject extends AbstractNode
   RenderObject() {
     _needsCompositing = isRepaintBoundary || alwaysNeedsCompositing;
   }
+
+  BuildContext? buildContext;
 
   /// Cause the entire subtree rooted at the given [RenderObject] to be marked
   /// dirty for layout, paint, etc, so that the effects of a hot reload can be

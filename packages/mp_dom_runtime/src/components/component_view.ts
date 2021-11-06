@@ -27,7 +27,7 @@ export class ComponentView {
   ancestors: AncestorView[] = [];
   ancestorStyle: any = {};
 
-  constructor(readonly document: Document) {
+  constructor(readonly document: Document, readonly initialAttributes?: any) {
     this.htmlElement = document.createElement(this.elementType());
   }
 
@@ -191,6 +191,7 @@ export class ComponentView {
     if (!this.superview) return;
     const index = this.superview.subviews.indexOf(this);
     if (index >= 0) {
+      this.superview.subviews[index].htmlElement.remove();
       this.superview?.subviews.splice(index, 1);
     }
     this.htmlElement.remove();

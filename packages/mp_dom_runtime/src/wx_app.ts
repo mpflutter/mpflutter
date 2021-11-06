@@ -1,4 +1,5 @@
 declare var getCurrentPages: any;
+declare var require: any;
 
 import { Engine } from "./engine";
 import { MPEnv } from "./env";
@@ -6,6 +7,28 @@ import { Page } from "./page";
 import { Router } from "./router";
 import { TextMeasurer } from "./text_measurer";
 import EventEmitter from "eventemitter3";
+
+const kboneConfig = {
+  router: {},
+  runtime: {
+    subpackagesMap: {},
+    tabBarMap: {},
+    usingComponents: {},
+  },
+  pages: {
+    index: {},
+  },
+  redirect: {},
+  optimization: {
+    domSubTreeLevel: 10,
+    elementMultiplexing: true,
+    textMultiplexing: true,
+    commentMultiplexing: true,
+    domExtendMultiplexing: true,
+    styleValueReduce: 5000,
+    attrValueReduce: 5000,
+  },
+};
 
 export class WXApp {
   router: WXRouter = new WXRouter(this.engine);
@@ -22,11 +45,31 @@ export const WXPage = function (
 ) {
   if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)) return;
   return {
+    data: {
+      pageMeta: {
+        naviBar: {},
+      },
+    },
+    kboneRender: undefined as any,
+    kboneDocument: undefined as any,
+    kbonePageId: undefined as any,
+    prepare() {
+      const mpRes = this.kboneRender.createPage((this as any).route, kboneConfig);
+      this.kbonePageId = mpRes.pageId;
+      const window = mpRes.window;
+      this.kboneDocument = mpRes.document;
+      window.$$createSelectorQuery = () => MPEnv.platformScope.createSelectorQuery().in(this);
+      window.$$createIntersectionObserver = (options: any) =>
+        MPEnv.platformScope.createIntersectionObserver(this, options);
+      (this as any).setData({
+        pageId: this.kbonePageId,
+      });
+    },
     onLoad(pageOptions: any) {
-      const document = (this as any).selectComponent(selector).miniDom.document;
-      (this as any).document = document;
+      this.prepare();
+      const document = this.kboneDocument;
       document.window = new EventEmitter();
-      const documentTm = (this as any).selectComponent(selector + "_tm").miniDom.document;
+      const documentTm = this.kboneDocument;
       TextMeasurer.activeTextMeasureDocument = documentTm;
       Router.clearBeingPushTimeout();
       Router.beingPush = false;
@@ -56,6 +99,7 @@ export const WXPage = function (
       }
 
       (this as any).mpPage = new Page(document.body, app.engine, finalOptions, document);
+      (this as any).mpPage.miniProgramPage = this;
       (this as any).mpPage.isFirst = getCurrentPages().length === 1;
     },
     onUnload() {
@@ -64,7 +108,8 @@ export const WXPage = function (
       }
     },
     onShow() {
-      TextMeasurer.activeTextMeasureDocument = (this as any).selectComponent(selector + "_tm").miniDom.document;
+      TextMeasurer.activeTextMeasureDocument =
+        this.kboneDocument ?? (this as any).selectComponent(selector + "_tm").miniDom.document;
       Router.clearBeingPushTimeout();
       Router.beingPush = false;
     },
@@ -83,8 +128,10 @@ export const WXPage = function (
     },
     onPageScroll(res: any) {
       (this as any).mpPage.onPageScroll(res.scrollTop);
-      (this as any).document.window.scrollY = res.scrollTop;
-      ((this as any).document.window as EventEmitter).emit("scroll", res.scrollTop);
+      this.kboneDocument.window.scrollY = res.scrollTop;
+      this.kboneDocument.window.scrollY = res.scrollTop;
+      this.kboneDocument.window.scrollY = res.scrollTop;
+      this.kboneDocument.window.emit("scroll", res.scrollTop);
     },
   };
 };

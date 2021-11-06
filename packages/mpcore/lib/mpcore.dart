@@ -65,6 +65,7 @@ class MPCore {
   Element get renderView => WidgetsBinding.instance!.renderViewElement!;
 
   final Set<int> _diffableElements = {};
+  final Map<int, Element> _renderObjectMapElement = {};
 
   void connectToHostChannel() async {
     if (kReleaseMode) {
@@ -240,7 +241,7 @@ class MPCore {
         // ignore: empty_catches
       } catch (e) {}
     }
-    final recentDirtyElements = BuildOwner.recentDirtyElements
+    var recentDirtyElements = BuildOwner.recentDirtyElements
         .where((element) {
           return element.isInactive() != true &&
               ModalRoute.of(element)?.isCurrent == true;
@@ -256,10 +257,15 @@ class MPCore {
         .whereType<Element>()
         .toList();
     _Document? diffDoc;
-    if (recentDirtyElements.isNotEmpty &&
-        recentDirtyElements
-            .every((element) => _diffableElements.contains(element.hashCode))) {
-      diffDoc = toDiffDocument(recentDirtyElements);
+    if (recentDirtyElements.isNotEmpty && recentDirtyElements.length < 10) {
+      recentDirtyElements = recentDirtyElements
+          .map((e) => _findDiffableElement(e))
+          .where((element) => element != null)
+          .toList()
+          .cast();
+      if (recentDirtyElements.isNotEmpty) {
+        diffDoc = toDiffDocument(recentDirtyElements);
+      }
     }
     if (diffDoc != null) {
       MPChannel.postMapMessage({
@@ -269,6 +275,7 @@ class MPCore {
     } else {
       final doc = toDocument();
       _diffableElements.clear();
+      _renderObjectMapElement.clear();
       if (doc != null) {
         _updateDiffableDocument(doc);
       }
@@ -361,7 +368,6 @@ class MPCore {
         }
       });
     }
-    activeOverlayParentRoute = null;
     for (var scaffoldElement in scaffoldElements) {
       if (scaffoldElement.widget is MPOverlayScaffold) {
         overlays.add(_encodeOverlay(scaffoldElement));
@@ -404,9 +410,23 @@ class MPCore {
 
   void _updateDiffableElement(MPElement element) {
     _diffableElements.add(element.hashCode);
+    if (element.renderObjectHashCode != null &&
+        element.flutterElement != null) {
+      _renderObjectMapElement[element.renderObjectHashCode!] =
+          element.flutterElement!;
+    }
     element.children?.forEach((element) {
       _updateDiffableElement(element);
     });
+  }
+
+  Element? _findDiffableElement(Element element) {
+    if (_diffableElements.contains(element.hashCode)) {
+      return element;
+    } else if (_renderObjectMapElement
+        .containsKey(element.renderObject.hashCode)) {
+      return _renderObjectMapElement[element.renderObject.hashCode];
+    }
   }
 
   static Element? findTarget<T>(

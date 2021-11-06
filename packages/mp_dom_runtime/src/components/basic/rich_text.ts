@@ -7,6 +7,7 @@ import { cssTextAlign, cssTextStyle } from "../utils";
 
 export class RichText extends ComponentView {
   private measuring = false;
+  didSetOnClicked = false;
   measureId: number | undefined;
   maxWidth: number | string | undefined;
   maxHeight: number | string | undefined;
@@ -43,36 +44,23 @@ export class RichText extends ComponentView {
     } else {
       this.maxHeight = undefined;
     }
-    if (
-      MPEnv.platformType === PlatformType.wxMiniProgram ||
-      MPEnv.platformType === PlatformType.swanMiniProgram
-    ) {
-      setDOMStyle(this.htmlElement, {
-        textAlign: cssTextAlign(attributes.textAlign),
-        lineHeight: attributes.height?.toString(),
-        webkitLineClamp: attributes.maxLines
-          ? attributes.maxLines.toString()
-          : "99999",
-      });
-    } else {
-      setDOMStyle(this.htmlElement, {
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        textAlign: cssTextAlign(attributes.textAlign),
-        display: "-webkit-box",
-        fontSize: "11px",
-        fontFamily: "sans-serif",
-        lineHeight: attributes.height?.toString(),
-        overflowWrap: "anywhere",
-        wordBreak: "break-all",
-        wordWrap: "break-word",
-        whiteSpace: "pre-line",
-        webkitBoxOrient: "vertical",
-        webkitLineClamp: attributes.maxLines
-          ? attributes.maxLines.toString()
-          : "99999",
-      });
-    }
+    setDOMStyle(this.htmlElement, {
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+      textAlign: cssTextAlign(attributes.textAlign),
+      display: "-webkit-box",
+      fontSize: "11px",
+      fontFamily: "sans-serif",
+      lineHeight: attributes.height?.toString(),
+      overflowWrap: "anywhere",
+      wordBreak: "break-all",
+      wordWrap: "break-word",
+      whiteSpace: "pre-line",
+      webkitBoxOrient: "vertical",
+      webkitLineClamp: attributes.maxLines
+        ? attributes.maxLines.toString()
+        : "99999",
+    });
 
     this.measureId = attributes.measureId;
   }
@@ -99,14 +87,15 @@ export class RichText extends ComponentView {
         );
       }
     }
-    if (children[0].attributes.onTap_el && children[0].attributes.onTap_span) {
-      this.htmlElement.onclick = (e) => {
+    if (children[0].attributes.onTap_el && children[0].attributes.onTap_span && !this.didSetOnClicked) {
+      this.didSetOnClicked = true;
+      this.htmlElement.addEventListener("click", (e) => {
         this.onClick(
           children[0].attributes.onTap_el,
           children[0].attributes.onTap_span
         );
         if (e) e.stopPropagation();
-      };
+      })
     }
     setDOMStyle(this.htmlElement, style);
   }
@@ -139,6 +128,9 @@ export class RichText extends ComponentView {
 }
 
 export class TextSpan extends ComponentView {
+
+  didSetOnClicked = false;
+
   elementType() {
     return "div";
   }
@@ -170,11 +162,12 @@ export class TextSpan extends ComponentView {
         setDOMAttribute(this.htmlElement, "innerText", attributes.text);
       }
     }
-    if (attributes.onTap_el && attributes.onTap_span) {
-      this.htmlElement.onclick = (e) => {
+    if (attributes.onTap_el && attributes.onTap_span && !this.didSetOnClicked) {
+      this.didSetOnClicked = true;
+      this.htmlElement.addEventListener("click", (e) => {
         this.onClick();
         if (e) e.stopPropagation();
-      };
+      })
     }
     setDOMStyle(this.htmlElement, style);
   }

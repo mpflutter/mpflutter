@@ -167,12 +167,14 @@ class MPScaffoldState extends State<MPScaffold> {
 }
 
 class MPOverlayScaffold extends MPScaffold {
+  final bool? barrierDismissible;
   final Function? onBackgroundTap;
   final ModalRoute? parentRoute;
 
   MPOverlayScaffold({
     Widget? body,
     Color? backgroundColor,
+    this.barrierDismissible,
     this.onBackgroundTap,
     this.parentRoute,
   }) : super(body: body, backgroundColor: backgroundColor);

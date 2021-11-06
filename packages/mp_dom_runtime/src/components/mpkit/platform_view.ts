@@ -13,6 +13,7 @@ export class MPPlatformView extends ComponentView {
   }
 
   classname = "PlatformView";
+  _currentSize?: { width: number; height: number };
 
   constructor(readonly document: Document) {
     super(document);
@@ -23,6 +24,21 @@ export class MPPlatformView extends ComponentView {
 
   elementType() {
     return "div";
+  }
+
+  setSize(size: { width: number; height: number }) {
+    if (this._currentSize && this._currentSize.width === size.width && this._currentSize.height === size.height) return;
+    this._currentSize = size;
+    this.engine.sendMessage(
+      JSON.stringify({
+        type: "platform_view",
+        message: {
+          event: "setSize",
+          hashCode: this.hashCode,
+          size,
+        },
+      })
+    );
   }
 
   createFromWebTemplate(): HTMLElement {

@@ -11,10 +11,11 @@ export class MPIcon extends ComponentView {
       backgroundColor: cssColor(attributes.color),
       mask: `url(${attributes.iconUrl}) no-repeat center`,
       webkitMask: `url(${attributes.iconUrl}) no-repeat center`,
+      WebkitMask: `url(${attributes.iconUrl}) no-repeat center`,
       width: "24px",
       height: "24px",
       transform: `scale(${attributes.size / 24}, ${attributes.size / 24})`,
       transformOrigin: "top left",
-    });
+    } as any);
   }
 }

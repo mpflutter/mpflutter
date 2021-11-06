@@ -1,0 +1,17 @@
+{
+	"name": "file-wrapper-loader",
+	"version": "0.0.4",
+	"description": "a loader for wrapper the import file",
+	"main": "src/index.js",
+	"miniprogram": "src",
+	"scripts": {},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/wechat-miniprogram/kbone.git"
+	},
+	"author": "wechat-miniprogram",
+	"license": "MIT",
+	"devDependencies": {
+		"loader-utils": "^2.0.0"
+	}
+}

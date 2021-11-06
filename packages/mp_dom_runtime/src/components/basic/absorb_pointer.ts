@@ -21,7 +21,9 @@ export class AbsorbPointer extends ComponentView {
           GestureDetector.activeTouchElement = undefined;
         });
       } else {
-        this.htmlElement.addEventListener("click", (e) => {});
+        this.htmlElement.addEventListener("click", (e) => {
+          e.stopPropagation();
+        });
       }
     }
   }

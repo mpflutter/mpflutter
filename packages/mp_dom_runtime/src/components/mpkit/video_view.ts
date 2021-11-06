@@ -14,8 +14,7 @@ export class MPVideoView extends MPPlatformView {
       this.onBrowserMethodCall(method, params);
     } else if (MPEnv.platformType === PlatformType.wxMiniProgram) {
       if (!this.videoContext) {
-        const fields = await (this.htmlElement as any).getFields({ context: true });
-        this.videoContext = fields.context;
+        this.videoContext = await (this.htmlElement as any).$$getContext();
       }
       if (this.videoContext) {
         this.onMiniProgramMethodCall(method, params);

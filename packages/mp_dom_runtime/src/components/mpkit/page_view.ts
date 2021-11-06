@@ -8,8 +8,8 @@ class PageViewWeb extends ComponentView {
   direction = "horizontal";
   loop = false;
 
-  constructor(document: Document) {
-    super(document);
+  constructor(document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
     this.wrapperHtmlElement.className = "swiper-wrapper";
     this.htmlElement.appendChild(this.wrapperHtmlElement);
   }
@@ -60,7 +60,7 @@ class PageViewWeb extends ComponentView {
 
 class PageViewWeapp extends ComponentView {
   elementType() {
-    return "swiper";
+    return "wx-swiper";
   }
 
   setAttributes(attributes: any) {
@@ -71,6 +71,18 @@ class PageViewWeapp extends ComponentView {
       attributes.scrollDirection === "Axis.vertical" ? (true as any) : (false as any)
     );
     setDOMAttribute(this.htmlElement, "circular", attributes.loop ? (true as any) : (false as any));
+  }
+
+  addSubview(view: ComponentView) {
+    if (view.superview) {
+      view.removeFromSuperview();
+    }
+    this.subviews.push(view);
+    view.superview = this;
+    let swiperItemElement = this.document.createElement("wx-swiper-item");
+    swiperItemElement.appendChild(view.htmlElement);
+    this.htmlElement.appendChild(swiperItemElement);
+    view.didMoveToWindow();
   }
 }
 

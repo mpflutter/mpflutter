@@ -5434,6 +5434,7 @@ abstract class RenderObjectElement extends Element {
       return true;
     }());
     _renderObject = widget.createRenderObject(this);
+    _renderObject?.buildContext = this;
     assert(() {
       _debugDoingBuild = false;
       return true;

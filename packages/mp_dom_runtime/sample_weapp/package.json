@@ -7,8 +7,5 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "miniprogram_dom": "file:../../miniprogram_dom"
-  }
+  "license": "ISC"
 }

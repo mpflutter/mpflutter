@@ -1,8 +1,0 @@
-<template name="fn">
-    <view id="d_{{rt.id}}" class="{{rt.class}}" hover-class="{{rt.click && rt.hoverOpacity ? 'mp_hover_opacity' : ''}}" hover-stop-propagation="{{rt.click}}" catchtap="{{rt.click ? 'onEvent' : ''}}" style="{{tools.style(rt.s)}}">
-        <block wx:key="*this" wx:for="{{rt.n}}">
-            <template is="{{tools.tag(dom[item].tag, n)}}" data="{{dom,rt:dom[item],n:n+1}}" />
-        </block>
-        <block wx:if="{{rt.innerText}}">{{rt.innerText}}</block>
-    </view>
-</template>
