@@ -1,6 +1,6 @@
 {
     "navigationBarTitleText": "",
     "usingComponents": {
-        "mpdom": "/swan_dom/index"
+        "element": "../../kbone/miniprogram-element/index"
     }
 }

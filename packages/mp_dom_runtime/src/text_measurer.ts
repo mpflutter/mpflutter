@@ -40,12 +40,12 @@ export class TextMeasurer {
       ComponentFactory.disableCache = false;
       const rects = await Promise.all(
         views.map(async (it) => {
-          if (
-            MPEnv.platformType === PlatformType.wxMiniProgram ||
-            MPEnv.platformType === PlatformType.swanMiniProgram
-          ) {
-            it.htmlElement.classList.add("mp_text");
-          }
+          // if (
+          //   MPEnv.platformType === PlatformType.wxMiniProgram ||
+          //   MPEnv.platformType === PlatformType.swanMiniProgram
+          // ) {
+          //   it.htmlElement.classList.add("mp_text");
+          // }
           setDOMStyle(it.htmlElement, {
             position: "fixed",
             top: "0px",
@@ -72,11 +72,11 @@ export class TextMeasurer {
             await this.delay();
           }
           const rect = await (it.htmlElement as any).getBoundingClientRect();
-          it.htmlElement.remove();
+          // it.htmlElement.remove();
           return {
             measureId: it.attributes.measureId,
-            width: rect?.width ?? 0,
-            height: rect?.height ?? 0,
+            width: Math.ceil(rect?.width ?? 0.0) + 1.0,
+            height: Math.ceil(rect?.height ?? 0.0) + 1.0,
           };
         })
       );

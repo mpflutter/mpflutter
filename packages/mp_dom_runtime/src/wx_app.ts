@@ -67,9 +67,9 @@ export const WXPage = function (
     },
     onLoad(pageOptions: any) {
       this.prepare();
-      const document = this.kboneDocument ?? (this as any).selectComponent(selector).miniDom.document;
+      const document = this.kboneDocument;
       document.window = new EventEmitter();
-      const documentTm = this.kboneDocument ?? (this as any).selectComponent(selector + "_tm").miniDom.document;
+      const documentTm = this.kboneDocument;
       TextMeasurer.activeTextMeasureDocument = documentTm;
       Router.clearBeingPushTimeout();
       Router.beingPush = false;

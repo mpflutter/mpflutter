@@ -260,6 +260,10 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   backgroundElementAttached = false;
 
   setPageTitle(title: string): void {
+    if (MPEnv.platformType == PlatformType.swanMiniProgram) {
+      MPEnv.platformScope.setNavigationBarTitle({title});
+      return;
+    }
     this.miniProgramPage.setData({
       "pageMeta.naviBar.title": title,
     });
@@ -284,6 +288,13 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   }
 
   setAppBarColor(color: string, tintColor?: string): void {
+    if (MPEnv.platformType == PlatformType.swanMiniProgram) {
+      MPEnv.platformScope.setNavigationBarColor({
+        frontColor: tintColor,
+        backgroundColor: color,
+      });
+      return;
+    }
     this.miniProgramPage.setData({
       "pageMeta.naviBar.backgroundColor": color,
       "pageMeta.naviBar.frontColor": tintColor,

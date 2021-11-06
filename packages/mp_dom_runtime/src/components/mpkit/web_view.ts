@@ -5,7 +5,7 @@ import { MPPlatformView } from "./platform_view";
 
 export class MPWebView extends MPPlatformView {
   elementType() {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
       return "wx-web-view";
     }
     return "iframe";
