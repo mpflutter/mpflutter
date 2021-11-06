@@ -1,3 +1,7 @@
+export class PickerItem {
+  constructor(readonly label: string, readonly disabled: boolean, readonly subItems: PickerItem[]) {}
+}
+
 export class MPWebDialog {
   private static currentToastElement?: HTMLElement;
   private static currentToastHandler?: any;
@@ -95,5 +99,77 @@ export class MPWebDialog {
         div.remove();
       };
     }
+  }
+
+  static showPicker(options: {
+    title: string;
+    itemList: PickerItem[];
+    confirmText?: string;
+    success: (res: { tapIndex: any }) => void;
+  }) {
+    const div = document.createElement("body");
+    div.style.position = "absolute";
+    div.style.width = "100%";
+    div.style.height = "100%";
+    this.weuiShadowRoot.appendChild(div);
+    (window as any).weui.picker(
+      options.itemList.map((it, idx) => {
+        return {
+          label: it.label,
+          value: idx,
+          disabled: it.disabled,
+          children: it.subItems?.map((it, idx) => {
+            return {
+              label: it.label,
+              value: idx,
+              disabled: it.disabled,
+              children: it.subItems?.map((it, idx) => {
+                return { label: it.label, value: idx, disabled: it.disabled };
+              }),
+            };
+          }),
+        };
+      }),
+      {
+        onConfirm: function (result: any[]) {
+          options.success?.({
+            tapIndex: result,
+          });
+        },
+        onClose: function () {
+          div.remove();
+        },
+        confirmText: options.confirmText ?? "确定",
+        title: options.title,
+        container: div,
+      }
+    );
+  }
+
+  static showDatePicker(options: {
+    start: number | string | Date;
+    end: number | string | Date;
+    defaultValue: any[];
+    success: (res: { tapIndex: any }) => void;
+  }) {
+    const div = document.createElement("body");
+    div.style.position = "absolute";
+    div.style.width = "100%";
+    div.style.height = "100%";
+    this.weuiShadowRoot.appendChild(div);
+    (window as any).weui.datePicker({
+      start: options.start,
+      end: options.end,
+      defaultValue: options.defaultValue,
+      onConfirm: function (result: any) {
+        options.success?.({
+          tapIndex: result,
+        });
+      },
+      onClose: function () {
+        div.remove();
+      },
+      container: div,
+    });
   }
 }
