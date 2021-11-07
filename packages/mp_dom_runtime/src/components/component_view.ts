@@ -23,12 +23,17 @@ export class ComponentView {
   collectionViewConstraints: any;
   gestureViewConstraints: any;
   platformViewConstraints: any;
+  protected disposed: boolean = false;
 
   ancestors: AncestorView[] = [];
   ancestorStyle: any = {};
 
   constructor(readonly document: Document, readonly initialAttributes?: any) {
     this.htmlElement = document.createElement(this.elementType());
+  }
+
+  dispose() {
+    this.disposed = true;
   }
 
   elementType(): string {

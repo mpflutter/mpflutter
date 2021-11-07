@@ -32,13 +32,62 @@ export class CollectionView extends ComponentView {
     }
   }
 
+  dispose() {
+    if (this.didAddScrollListener) {
+      window.removeEventListener("scroll", this.onWindowScrollEvent);
+      this.htmlElement.removeEventListener("scroll", this.onScrollEvent);
+    }
+  }
+
+  onWindowScrollEvent() {
+    if ((window as any).mpCurrentScrollView !== this) return;
+    if (window.scrollX === this.lastScrollX && window.scrollY === this.lastScrollY) return;
+    this.lastScrollX = window.scrollX;
+    this.lastScrollY = window.scrollY;
+    if (this.attributes.onScroll) {
+      this.engine.sendMessage(
+        JSON.stringify({
+          type: "scroll_view",
+          message: {
+            event: "onScroll",
+            target: this.attributes.onScroll,
+            scrollLeft: window.scrollX,
+            scrollTop: window.scrollY,
+          },
+        })
+      );
+    }
+  }
+
+  addWindowScrollListener() {
+    if (this.didAddScrollListener) return;
+    this.didAddScrollListener = true;
+    window.addEventListener("scroll", this.onWindowScrollEvent.bind(this));
+  }
+
+  onScrollEvent() {
+    if (this.htmlElement.scrollLeft === this.lastScrollX && this.htmlElement.scrollTop === this.lastScrollY) return;
+    this.lastScrollX = this.htmlElement.scrollLeft;
+    this.lastScrollY = this.htmlElement.scrollTop;
+    if (this.attributes.onScroll) {
+      this.engine.sendMessage(
+        JSON.stringify({
+          type: "scroll_view",
+          message: {
+            event: "onScroll",
+            target: this.attributes.onScroll,
+            scrollLeft: this.htmlElement.scrollLeft,
+            scrollTop: this.htmlElement.scrollTop,
+          },
+        })
+      );
+    }
+  }
+
   addScrollListener() {
     if (this.didAddScrollListener) return;
     this.didAddScrollListener = true;
-    this.htmlElement.addEventListener("scroll", (e) => {
-      this.lastScrollX = this.htmlElement.scrollLeft;
-      this.lastScrollY = this.htmlElement.scrollTop;
-    });
+    this.htmlElement.addEventListener("scroll", this.onScrollEvent.bind(this));
   }
 
   didMoveToWindow() {
@@ -129,9 +178,13 @@ export class CollectionView extends ComponentView {
       this.htmlElement.setAttribute("scroll-x", "true");
       this.htmlElement.setAttribute("scroll-y", "true");
       this.enabledRestoration = true;
-      this.addScrollListener();
     } else if (attributes.restorationId && MPEnv.platformType == PlatformType.browser) {
       this.enabledRestoration = true;
+    }
+    if (attributes.isRoot) {
+      (window as any).mpCurrentScrollView = this;
+      this.addWindowScrollListener();
+    } else {
       this.addScrollListener();
     }
   }

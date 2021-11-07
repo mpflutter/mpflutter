@@ -45,6 +45,19 @@ MPElement _encodeListView(Element element) {
     bottomBarWithSafeArea =
         scaffoldState?.widget.bottomBarWithSafeArea ?? false;
   }
+  final hasScrollNotificationListener = (() {
+    var hasResult = false;
+    element.visitAncestorElements((element) {
+      if (element.widget is NotificationListener<ScrollNotification>) {
+        hasResult = true;
+      }
+      return false;
+    });
+    return hasResult;
+  })();
+  if (hasScrollNotificationListener) {
+    MPCore.addElementToHashCodeCache(element);
+  }
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
@@ -62,6 +75,7 @@ MPElement _encodeListView(Element element) {
       'padding': widget.padding?.toString(),
       'scrollDirection': widget.scrollDirection.toString(),
       'restorationId': widget.restorationId,
+      'onScroll': hasScrollNotificationListener ? element.hashCode : null,
     },
   );
 }

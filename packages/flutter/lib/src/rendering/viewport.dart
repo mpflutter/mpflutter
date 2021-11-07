@@ -98,7 +98,7 @@ class RevealedOffset {
   const RevealedOffset({
     required this.offset,
     required this.rect,
-  })   : assert(offset != null),
+  })  : assert(offset != null),
         assert(rect != null);
 
   /// Offset for the viewport to reveal a specific element in the viewport.
@@ -1401,7 +1401,17 @@ class RenderViewport
 
   // Out-of-band data computed during layout.
   late double _minScrollExtent;
+
+  double minScrollExtent() {
+    return _minScrollExtent;
+  }
+
   late double _maxScrollExtent;
+
+  double maxScrollExtent() {
+    return _maxScrollExtent;
+  }
+
   bool _hasVisualOverflow = false;
 
   @override

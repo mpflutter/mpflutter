@@ -146,6 +146,8 @@ class MPChannelBase {
         mpjs.JsBridgeInvoker.instance.makeResponse(obj['message']);
       } else if (obj['type'] == 'platform_view') {
         MPChannelBase.onPlatformViewTrigger(obj['message']);
+      } else if (obj['type'] == 'scroll_view') {
+        MPChannelBase.onScrollViewTrigger(obj['message']);
       } else {
         MPChannelBase.onPluginMessage(obj);
       }
@@ -475,6 +477,31 @@ class MPChannelBase {
           return route.hashCode == routeId;
         });
         MPNavigatorObserver.doBacking = false;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static void onScrollViewTrigger(Map message) async {
+    try {
+      if (message['event'] == 'onScroll') {
+        final element = MPCore.findTargetHashCode(message['target']);
+        if (element != null) {
+          final renderBox = element.findRenderObject() as RenderViewport;
+          ScrollUpdateNotification(
+            context: element,
+            metrics: FixedScrollMetrics(
+              minScrollExtent: renderBox.minScrollExtent(),
+              maxScrollExtent: renderBox.maxScrollExtent(),
+              pixels: renderBox.axis == Axis.horizontal
+                  ? (message['scrollLeft'] as num).toDouble()
+                  : (message['scrollTop'] as num).toDouble(),
+              viewportDimension: renderBox.size.height,
+              axisDirection: AxisDirection.down,
+            ),
+          ).dispatch(element);
+        }
       }
     } catch (e) {
       print(e);

@@ -204,6 +204,7 @@ export class Engine {
 
   didReceivedElementGC(elements: number[]) {
     elements.forEach((it) => {
+      this.componentFactory.cachedView[it]?.dispose();
       delete this.componentFactory.cachedElement[it];
       delete this.componentFactory.cachedView[it];
     });
