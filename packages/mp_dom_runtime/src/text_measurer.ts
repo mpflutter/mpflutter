@@ -72,7 +72,7 @@ export class TextMeasurer {
             await this.delay();
           }
           const rect = await (it.htmlElement as any).getBoundingClientRect();
-          // it.htmlElement.remove();
+          it.htmlElement.remove();
           return {
             measureId: it.attributes.measureId,
             width: Math.ceil(rect?.width ?? 0.0) + 1.0,
