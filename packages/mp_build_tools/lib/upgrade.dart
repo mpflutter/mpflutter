@@ -83,14 +83,25 @@ main(List<String> args) async {
     if (swanappFile.existsSync()) {
       final fileList = [
         'mpdom.min.js',
-        'swan_dom/index.css',
-        'swan_dom/index.js',
-        'swan_dom/index.json',
-        'swan_dom/index.swan',
-        'swan_dom/renderer.css',
-        'swan_dom/renderer.js',
-        'swan_dom/renderer.json',
-        'swan_dom/renderer.swan'
+        'kbone/miniprogram-element/index-vhost.js',
+        'kbone/miniprogram-element/index.swan',
+        'kbone/miniprogram-element/template/subtree.swan',
+        'kbone/miniprogram-element/template/inner-component.swan',
+        'kbone/miniprogram-element/template/subtree-cover.swan',
+        'kbone/miniprogram-element/index.js',
+        'kbone/miniprogram-element/index.css',
+        'kbone/miniprogram-element/index-vhost.json',
+        'kbone/miniprogram-element/base.js',
+        'kbone/miniprogram-element/custom-component/index.swan',
+        'kbone/miniprogram-element/custom-component/index.js',
+        'kbone/miniprogram-element/custom-component/index.css',
+        'kbone/miniprogram-element/custom-component/index.json',
+        'kbone/miniprogram-element/index-vhost.css',
+        'kbone/miniprogram-element/base.js.map',
+        'kbone/miniprogram-element/index.json',
+        'kbone/miniprogram-element/index-vhost.swan',
+        'kbone/miniprogram-render/index.js',
+        'kbone/miniprogram-render/index.js.map'
       ];
       for (var item in fileList) {
         final response = await get(

@@ -37,7 +37,7 @@ Dart 端分别有两个子工程，在 [mpflutter/mpflutter](https://github.com/
 
 ### Native 端
 
-小程序 / Web 端由 [mpflutter/mp_dom_runtime](https://github.com/mpflutter/mpflutter/tree/master/packages/mp_dom_runtime) 负责渲染，具体架构请参见该仓库。
+小程序 / Web 端由 [mp_dom_runtime](https://github.com/mpflutter/mpflutter/tree/master/packages/mp_dom_runtime) 负责渲染，具体架构请参见该仓库。
 
 ## 开发环境配置说明
 
@@ -50,11 +50,9 @@ Dart 端分别有两个子工程，在 [mpflutter/mpflutter](https://github.com/
 
 ### 安装依赖
 
-打开 `mpflutter` 工程，使用命令行执行 `dart pub get` 安装依赖。
+打开 `mpflutter` 工程，在工程根目录下，使用命令行执行 `sh build.sh`。
 
 打开 `mpflutter_sample` 工程，使用命令行执行 `dart pub get` 安装依赖。
-
-打开 `mp_dom_runtime` 工程，使用命令行执行 `npm i -g typescript uglify-js browserify http-server` 全局安装依赖。
 
 ### 尝试运行 sample 工程
 
