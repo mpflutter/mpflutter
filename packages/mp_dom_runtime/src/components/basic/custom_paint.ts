@@ -11,13 +11,9 @@ export class MPDrawable {
   decodedDrawables: { [key: string]: HTMLImageElement } = {};
 
   async decodeDrawable(params: any) {
-    if (
-      MPEnv.platformType === PlatformType.wxMiniProgram ||
-      MPEnv.platformType === PlatformType.swanMiniProgram
-    ) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
       if (!MPDrawable.offscreenCanvas) {
-        MPDrawable.offscreenCanvas =
-          MPEnv.platformScope.createOffscreenCanvas();
+        MPDrawable.offscreenCanvas = MPEnv.platformScope.createOffscreenCanvas();
       }
     }
     try {
@@ -64,16 +60,10 @@ export class MPDrawable {
     }
   }
 
-  async decodeNetworkImage(
-    url: string,
-    hashCode: number
-  ): Promise<{ width: number; height: number }> {
+  async decodeNetworkImage(url: string, hashCode: number): Promise<{ width: number; height: number }> {
     return new Promise((res, rej) => {
       const img = (() => {
-        if (
-          MPEnv.platformType === PlatformType.wxMiniProgram ||
-          MPEnv.platformType === PlatformType.swanMiniProgram
-        ) {
+        if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
           return MPDrawable.offscreenCanvas.createImage();
         }
         return document.createElement("img");
@@ -89,16 +79,10 @@ export class MPDrawable {
     });
   }
 
-  async decodeMemoryImage(
-    data: string,
-    hashCode: number
-  ): Promise<{ width: number; height: number }> {
+  async decodeMemoryImage(data: string, hashCode: number): Promise<{ width: number; height: number }> {
     return new Promise((res, rej) => {
       const img = (() => {
-        if (
-          MPEnv.platformType === PlatformType.wxMiniProgram ||
-          MPEnv.platformType === PlatformType.swanMiniProgram
-        ) {
+        if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
           return MPDrawable.offscreenCanvas.createImage();
         }
         return document.createElement("img");
@@ -120,6 +104,13 @@ export class CustomPaint extends ComponentView {
   canvasHeight: number = 0;
   ctx?: CanvasRenderingContext2D;
 
+  constructor(readonly document: any) {
+    super(document);
+    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+      this.htmlElement.setAttribute("type", "2d");
+    }
+  }
+
   elementType() {
     return "canvas";
   }
@@ -130,12 +121,7 @@ export class CustomPaint extends ComponentView {
     let y: number = constraints.y;
     let w: number = constraints.w;
     let h: number = constraints.h;
-    if (
-      typeof x === "number" &&
-      typeof y === "number" &&
-      typeof w === "number" &&
-      typeof h === "number"
-    ) {
+    if (typeof x === "number" && typeof y === "number" && typeof w === "number" && typeof h === "number") {
       setDOMStyle(this.htmlElement, {
         left: x + "px",
         top: y + "px",
@@ -146,33 +132,32 @@ export class CustomPaint extends ComponentView {
         this.canvasWidth = w;
         this.canvasHeight = h;
         setDOMAttribute(this.htmlElement, "width", this.canvasWidth.toString());
-        setDOMAttribute(
-          this.htmlElement,
-          "height",
-          this.canvasHeight.toString()
-        );
+        setDOMAttribute(this.htmlElement, "height", this.canvasHeight.toString());
       }
     }
   }
 
   async createContext(): Promise<CanvasRenderingContext2D | null> {
-    if (
-      MPEnv.platformType === PlatformType.wxMiniProgram ||
-      MPEnv.platformType === PlatformType.swanMiniProgram
-    ) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
       return new Promise((res) => {
         setTimeout(async () => {
-          const fields = await (this.htmlElement as any).getFields({
-            node: true,
-            size: true,
-          });
-          const canvas = fields.node;
-          const ctx = canvas.getContext("2d");
-          const dpr = MPEnv.platformScope.getSystemInfoSync().pixelRatio;
-          canvas.width = fields.width * dpr;
-          canvas.height = fields.height * dpr;
-          ctx.scale(dpr, dpr);
-          res(ctx);
+          (await (this.htmlElement as any).$$getNodesRef())
+            .fields(
+              {
+                node: true,
+                size: true,
+              },
+              (fields: any) => {
+                const canvas = fields.node;
+                const ctx = canvas.getContext("2d");
+                const dpr = MPEnv.platformScope.getSystemInfoSync().pixelRatio;
+                canvas.width = fields.width * dpr;
+                canvas.height = fields.height * dpr;
+                ctx.scale(dpr, dpr);
+                res(ctx);
+              }
+            )
+            .exec();
         }, 16);
       });
     } else {
@@ -287,13 +272,7 @@ export class CustomPaint extends ComponentView {
           it.sweepAngle < 0.0
         );
       } else if (it.action === "arcToPoint") {
-        ctx.arcTo(
-          it.arcControlX,
-          it.arcControlY,
-          it.arcEndX,
-          it.arcEndY,
-          it.radiusX
-        );
+        ctx.arcTo(it.arcControlX, it.arcControlY, it.arcEndX, it.arcEndY, it.radiusX);
       } else if (it.action === "close") {
         ctx.closePath();
       }
