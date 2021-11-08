@@ -3,7 +3,7 @@ import { MPWebDialog } from "./web_dialog";
 export const installWeui = () => {
   let shadowDiv = document.createElement("div");
   document.body.appendChild(shadowDiv);
-  MPWebDialog.weuiShadowRoot = shadowDiv.attachShadow({ mode: "closed" });
+  MPWebDialog.weuiShadowRoot = shadowDiv.attachShadow ? shadowDiv.attachShadow({ mode: "closed" }) : shadowDiv;
   const script = document.createElement("script");
   script.src = "https://res.wx.qq.com/open/libs/weuijs/1.2.1/weui.min.js";
   document.body.appendChild(script);

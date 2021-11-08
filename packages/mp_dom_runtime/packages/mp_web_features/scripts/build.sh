@@ -9,7 +9,7 @@ cd ..
 cp mp_web_features.min.js ../../dist_web/mp_web_features.min.js
 cp mp_web_features.css ../../dist_web/mp_web_features.css
 cp mp_web_features.min.js ../../sample_web/mp_web_features.min.js
-cp mp_web_features.css ../../dist_web/mp_web_features.css
+cp mp_web_features.css ../../sample_web/mp_web_features.css
 rm -rf dist
 
 ## Clean

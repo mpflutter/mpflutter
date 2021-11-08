@@ -63,7 +63,7 @@ export class Page {
   }
 
   async fetchViewport() {
-    let viewport = await (this.element as any).getBoundingClientRect();
+    let viewport = {...await (this.element as any).getBoundingClientRect()};
     if (!viewport.width || viewport.width <= 0.1) {
       if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
         viewport.width = MPEnv.platformScope.getSystemInfoSync().windowWidth;

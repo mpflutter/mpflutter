@@ -58,6 +58,7 @@ export const WXPage = function (
       this.kbonePageId = mpRes.pageId;
       const window = mpRes.window;
       this.kboneDocument = mpRes.document;
+      this.kboneDocument.window = window;
       window.$$createSelectorQuery = () => MPEnv.platformScope.createSelectorQuery().in(this);
       window.$$createIntersectionObserver = (options: any) =>
         MPEnv.platformScope.createIntersectionObserver(this, options);
@@ -68,7 +69,6 @@ export const WXPage = function (
     onLoad(pageOptions: any) {
       this.prepare();
       const document = this.kboneDocument;
-      document.window = new EventEmitter();
       const documentTm = this.kboneDocument;
       TextMeasurer.activeTextMeasureDocument = documentTm;
       Router.clearBeingPushTimeout();
@@ -131,7 +131,7 @@ export const WXPage = function (
       this.kboneDocument.window.scrollY = res.scrollTop;
       this.kboneDocument.window.scrollY = res.scrollTop;
       this.kboneDocument.window.scrollY = res.scrollTop;
-      this.kboneDocument.window.emit("scroll", res.scrollTop);
+      this.kboneDocument.window.$$trigger("scroll", res.scrollTop);
     },
   };
 };

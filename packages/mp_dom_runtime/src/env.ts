@@ -43,4 +43,13 @@ export const MPEnv = {
       return mpGlobal;
     }
   },
+  platformWindow: (document?: any): any | undefined => {
+    if (document && document.window) {
+      return document.window;
+    } else if (typeof window !== "undefined") {
+      return window;
+    } else {
+      return undefined;
+    }
+  },
 };

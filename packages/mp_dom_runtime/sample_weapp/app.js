@@ -8,7 +8,7 @@ App({
       require("./plugins.min");
     } catch (error) {}
     const engine = new Engine();
-    engine.initWithDebuggerServerAddr("192.168.1.111:9898");
+    engine.initWithDebuggerServerAddr("127.0.0.1:9898");
     const app = new WXApp("pages/index/index", engine);
     this.app = app;
     engine.start();

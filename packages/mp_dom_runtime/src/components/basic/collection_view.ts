@@ -25,7 +25,13 @@ export class CollectionView extends ComponentView {
   }
 
   elementType() {
-    if (this.initialAttributes?.restorationId && MPEnv.platformType == PlatformType.wxMiniProgram) {
+    if (
+      (this.initialAttributes?.restorationId || this.initialAttributes?.onScroll) &&
+      (MPEnv.platformType == PlatformType.wxMiniProgram || MPEnv.platformType == PlatformType.swanMiniProgram)
+    ) {
+      if (this.initialAttributes?.isRoot) {
+        return "div";
+      }
       return "wx-scroll-view";
     } else {
       return "div";
@@ -34,13 +40,15 @@ export class CollectionView extends ComponentView {
 
   dispose() {
     if (this.didAddScrollListener) {
-      window.removeEventListener("scroll", this.onWindowScrollEvent);
+      MPEnv.platformWindow(this.document)?.removeEventListener("scroll", this.onWindowScrollEvent);
       this.htmlElement.removeEventListener("scroll", this.onScrollEvent);
     }
   }
 
   onWindowScrollEvent() {
-    if ((window as any).mpCurrentScrollView !== this) return;
+    if (MPEnv.platformWindow(this.document)?.mpCurrentScrollView !== this) return;
+    const window = MPEnv.platformWindow(this.document);
+    if (!window) return;
     if (window.scrollX === this.lastScrollX && window.scrollY === this.lastScrollY) return;
     this.lastScrollX = window.scrollX;
     this.lastScrollY = window.scrollY;
@@ -62,7 +70,7 @@ export class CollectionView extends ComponentView {
   addWindowScrollListener() {
     if (this.didAddScrollListener) return;
     this.didAddScrollListener = true;
-    window.addEventListener("scroll", this.onWindowScrollEvent.bind(this));
+    MPEnv.platformWindow(this.document)?.addEventListener("scroll", this.onWindowScrollEvent.bind(this));
   }
 
   onScrollEvent() {
@@ -175,14 +183,17 @@ export class CollectionView extends ComponentView {
     this.bottomBarHeight = attributes.bottomBarHeight ?? 0.0;
     this.bottomBarWithSafeArea = attributes.bottomBarWithSafeArea ?? false;
     if (attributes.restorationId && MPEnv.platformType == PlatformType.wxMiniProgram) {
-      this.htmlElement.setAttribute("scroll-x", "true");
-      this.htmlElement.setAttribute("scroll-y", "true");
       this.enabledRestoration = true;
     } else if (attributes.restorationId && MPEnv.platformType == PlatformType.browser) {
       this.enabledRestoration = true;
     }
+    this.htmlElement.setAttribute("scroll-x", "true");
+    this.htmlElement.setAttribute("scroll-y", "true");
     if (attributes.isRoot) {
-      (window as any).mpCurrentScrollView = this;
+      let window = MPEnv.platformWindow(this.document);
+      if (window) {
+        window.mpCurrentScrollView = this;
+      }
       this.addWindowScrollListener();
     } else {
       this.addScrollListener();
