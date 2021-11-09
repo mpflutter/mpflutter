@@ -9,8 +9,6 @@ MPElement _encodeSliverPersistentHeader(Element element) {
     children: MPElement.childrenFromFlutterElement(element),
     attributes: {
       'pinned': widget.pinned,
-      'lazying': widget.lazying,
-      'lazyOffset': widget.lazyOffset,
     },
   );
 }

@@ -19,7 +19,6 @@ MPElement _encodeGestureDetector(Element element) {
       'onPanStart': widget.onPanStart != null ? element.hashCode : null,
       'onPanUpdate': widget.onPanUpdate != null ? element.hashCode : null,
       'onPanEnd': widget.onPanEnd != null ? element.hashCode : null,
-      'hoverOpacity': widget.hoverOpacity,
     },
   );
 }

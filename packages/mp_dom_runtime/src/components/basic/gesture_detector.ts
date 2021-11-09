@@ -4,7 +4,6 @@ import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 
 export class GestureDetector extends ComponentView {
   classname = "GestureDetector";
-  hoverOpacity = false;
   didSetOnClicked = false;
   didSetOnLongPressOrPan = false;
   longPressTimer: any;
@@ -15,12 +14,11 @@ export class GestureDetector extends ComponentView {
   constructor(readonly document: Document) {
     super(document);
     (this.htmlElement as any).isGestureDetector = true;
-    this.setupHoverOpacity();
   }
 
   elementType() {
     if (MPEnv.platformType === PlatformType.wxMiniProgram) {
-      return 'wx-catch';
+      return "wx-catch";
     }
     return "div";
   }
@@ -72,9 +70,6 @@ export class GestureDetector extends ComponentView {
         // }
       }
     }
-    this.hoverOpacity = attributes.hoverOpacity;
-    (this.htmlElement as any).hoverOpacity = this.hoverOpacity;
-    setDOMAttribute(this.htmlElement, "hoverOpacity", attributes.hoverOpacity);
   }
 
   static activeTouchElement?: HTMLElement;
@@ -87,58 +82,6 @@ export class GestureDetector extends ComponentView {
       }
     }
     return undefined;
-  }
-
-  setupHoverOpacity() {
-    if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
-      this.htmlElement.addEventListener(
-        "touchstart",
-        (e: TouchEvent) => {
-          this.hoverStartPosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-          const targetElement = this.findGestureDetectorElement(e.composedPath() as any);
-          if (!GestureDetector.activeTouchElement && targetElement.hoverOpacity) {
-            GestureDetector.activeTouchElement = targetElement;
-            setTimeout(() => {
-              if (GestureDetector.activeTouchElement === targetElement) {
-                targetElement.classList.add("hoverOpacity");
-              }
-            }, 100);
-          }
-        },
-        true
-      );
-      this.htmlElement.addEventListener(
-        "touchmove",
-        (e) => {
-          if (this.hoverStartPosition) {
-            const touchMovePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            const deltaX = Math.abs(touchMovePosition.x - this.hoverStartPosition.x);
-            const deltaY = Math.abs(touchMovePosition.y - this.hoverStartPosition.y);
-            if (deltaX > 8 || deltaY > 8) {
-              GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
-              GestureDetector.activeTouchElement = undefined;
-            }
-          }
-        },
-        true
-      );
-      this.htmlElement.addEventListener(
-        "touchend",
-        (e) => {
-          GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
-          GestureDetector.activeTouchElement = undefined;
-        },
-        true
-      );
-      this.htmlElement.addEventListener(
-        "touchcancel",
-        () => {
-          GestureDetector.activeTouchElement?.classList.remove("hoverOpacity");
-          GestureDetector.activeTouchElement = undefined;
-        },
-        true
-      );
-    }
   }
 
   setupLongPressOrPanCatcher() {

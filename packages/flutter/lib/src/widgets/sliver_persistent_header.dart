@@ -123,8 +123,6 @@ class SliverPersistentHeader extends StatelessWidget {
     required this.delegate,
     this.pinned = false,
     this.floating = false,
-    this.lazying = false,
-    this.lazyOffset = 0.0,
   })  : assert(delegate != null),
         assert(pinned != null),
         assert(floating != null),
@@ -157,9 +155,6 @@ class SliverPersistentHeader extends StatelessWidget {
   /// The [delegate]'s [SliverPersistentHeaderDelegate.snapConfiguration] is
   /// ignored unless [floating] is true.
   final bool floating;
-
-  final bool lazying;
-  final double lazyOffset;
 
   @override
   Widget build(BuildContext context) {

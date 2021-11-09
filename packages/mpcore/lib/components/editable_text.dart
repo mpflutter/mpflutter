@@ -2,6 +2,7 @@ part of '../mpcore.dart';
 
 MPElement _encodeEditableText(Element element) {
   final widget = element.widget as EditableText;
+  var mpWidget = widget is MPEditableText ? widget : null;
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
@@ -10,9 +11,9 @@ MPElement _encodeEditableText(Element element) {
     attributes: {
       'style': _encodeTextStyle(widget.style),
       'value': widget.controller.text,
-      'placeholder': widget.placeholder,
-      'placeholderStyle': widget.placeholderStyle != null
-          ? _encodeTextStyle(widget.placeholderStyle!)
+      'placeholder': mpWidget?.placeholder,
+      'placeholderStyle': mpWidget?.placeholderStyle != null
+          ? _encodeTextStyle(mpWidget!.placeholderStyle!)
           : null,
       'maxLines': widget.maxLines,
       'obscureText': widget.obscureText,
