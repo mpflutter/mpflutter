@@ -15,7 +15,7 @@ part 'app_bar.dart';
 part 'app_bar_pinned.dart';
 part 'page_route.dart';
 part 'scaffold.dart';
-part 'sliver_waterfall_delegate.dart';
+part 'waterfall.dart';
 part 'web_view.dart';
 part 'dialog.dart';
 part 'icon.dart';
