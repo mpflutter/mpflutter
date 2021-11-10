@@ -12,6 +12,7 @@ main(List<String> args) {
   _buildDartJS(args);
   plugin_builder.main(args);
   _copyWebSource();
+  print(I18n.buildSuccess('build'));
 }
 
 _checkPubspec() {

@@ -72,12 +72,12 @@ class I18n {
     switch (currentLang) {
       case Lang.zh:
         return '''
-* Welcome to mpflutter help center, enter the number to solve problem.
-1. Run MPFlutter Doctor.
-2. Upgrade MPFlutter core-libs.
-3. Build Web Application.
-4. Build Wechat-MiniProgram Application.
-5. Build Baidu-MiniProgram Application.
+* 欢迎使用 MPFlutter 帮助中心，请输入编号解决问题。
+1. 运行 MPFlutter 诊断程序。
+2. 升级 MPFlutter 核心库。
+3. 构建 Web 应用。
+4. 构建微信小程序应用。
+5. 构建百度小程序应用.
         ''';
       default:
         return '''
@@ -88,6 +88,15 @@ class I18n {
 4. Build Wechat-MiniProgram Application.
 5. Build Baidu-MiniProgram Application.
         ''';
+    }
+  }
+
+  static buildSuccess(String locate) {
+    switch (currentLang) {
+      case Lang.zh:
+        return '构建成功，产物位于 ${locate} 目录。';
+      default:
+        return 'Build successful, locate at ${locate} directory.';
     }
   }
 }

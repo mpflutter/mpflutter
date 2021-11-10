@@ -13,6 +13,7 @@ main(List<String> args) {
   plugin_builder.main(args);
   _copySwanappSource();
   _buildDartJS(args);
+  print(I18n.buildSuccess('build'));
 }
 
 _checkPubspec() {
