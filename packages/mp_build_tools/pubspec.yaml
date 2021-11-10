@@ -7,5 +7,6 @@ environment:
 dependencies:
   path: any
   crypto: ^3.0.1
+  cli_dialog: ^0.5.0
   http: 
     git: https://github.com/mpflutter-plugins/http

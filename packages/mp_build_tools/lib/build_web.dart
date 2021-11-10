@@ -7,6 +7,7 @@ import 'package:crypto/crypto.dart';
 import 'build_plugins.dart' as plugin_builder;
 
 main(List<String> args) {
+  print(I18n.building());
   _checkPubspec();
   _createBuildDir();
   _buildDartJS(args);

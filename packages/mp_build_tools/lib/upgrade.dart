@@ -2,30 +2,35 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 import 'package:path/path.dart' as p;
-
 import 'package:http/http.dart';
+import 'package:cli_dialog/cli_dialog.dart';
 
 import 'i18n.dart';
 
 main(List<String> args) async {
-  final versionCode = args.isNotEmpty ? args[0] : null;
-  if (versionCode == null) {
-    final tags = json.decode((await get(
-            Uri.parse('https://api.github.com/repos/mpflutter/mpflutter/tags')))
-        .body) as List;
-    final masterBranch = json.decode((await get(Uri.parse(
-            'https://api.github.com/repos/mpflutter/mpflutter/branches/master')))
-        .body) as Map;
-    print('${I18n.currentMasterVersion()} >>> ' +
-        (masterBranch['commit']['sha'] as String).substring(0, 7));
-    print('${I18n.currentReleaseVersion()} >>>');
-    print(
-      tags.sublist(0, min(10, tags.length)).map((e) => e['name']).join('\n'),
-    );
-    print(
-      '${I18n.retryWithVersionCode()}\n> dart scripts/upgrade.dart ' +
-          tags.first['name'],
-    );
+  print(I18n.fetchingVersionInfoFromRemote());
+
+  final tags = json.decode((await get(
+          Uri.parse('https://api.github.com/repos/mpflutter/mpflutter/tags')))
+      .body) as List;
+  final masterBranch = json.decode((await get(Uri.parse(
+          'https://api.github.com/repos/mpflutter/mpflutter/branches/master')))
+      .body) as Map;
+  final versions = <String>[];
+  versions.add((masterBranch['commit']['sha'] as String).substring(0, 7));
+  versions.addAll(tags.sublist(0, min(10, tags.length)).map((e) => e['name']));
+  final versionDialog = CLI_Dialog(listQuestions: [
+    [
+      {
+        'question': I18n.selectVersionCode(),
+        'options': [...versions, 'Cancel']
+      },
+      'versionCode'
+    ]
+  ]);
+  final versionCode = versionDialog.ask()['versionCode'];
+  if (versionCode == null || versionCode == '/') {
+    return;
   } else {
     final pubspecFile = File(p.join('pubspec.yaml'));
     if (pubspecFile.existsSync()) {

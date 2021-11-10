@@ -32,6 +32,15 @@ class I18n {
     }
   }
 
+  static building() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '正在构建...';
+      default:
+        return 'Building...';
+    }
+  }
+
   static currentMasterVersion() {
     switch (currentLang) {
       case Lang.zh:
@@ -50,12 +59,12 @@ class I18n {
     }
   }
 
-  static retryWithVersionCode() {
+  static selectVersionCode() {
     switch (currentLang) {
       case Lang.zh:
-        return '请添加版本标识，以执行版本更新，以下是例子。';
+        return '请选择 mpflutter 版本号：';
       default:
-        return 'Retry with version code to upgrade for example.';
+        return 'Select the mpflutter version code:';
     }
   }
 
@@ -72,21 +81,11 @@ class I18n {
     switch (currentLang) {
       case Lang.zh:
         return '''
-* 欢迎使用 MPFlutter 帮助中心，请输入编号解决问题。
-1. 运行 MPFlutter 诊断程序。
-2. 升级 MPFlutter 核心库。
-3. 构建 Web 应用。
-4. 构建微信小程序应用。
-5. 构建百度小程序应用.
+* 欢迎使用 MPFlutter 帮助中心，请选择你要解决的问题：
         ''';
       default:
         return '''
-* Welcome to mpflutter help center, enter the number to solve problem.
-1. Run MPFlutter Doctor.
-2. Upgrade MPFlutter core-libs.
-3. Build Web Application.
-4. Build Wechat-MiniProgram Application.
-5. Build Baidu-MiniProgram Application.
+* Welcome to mpflutter help center, select the problem solver:
         ''';
     }
   }
@@ -97,6 +96,69 @@ class I18n {
         return '构建成功，产物位于 ${locate} 目录。';
       default:
         return 'Build successful, locate at ${locate} directory.';
+    }
+  }
+
+  static confirmRemoveGitOrigin() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '是否移除模板工程自带的 Git 源？';
+      default:
+        return 'Remove the git source from template project?';
+    }
+  }
+
+  static askTemplateProjectName() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '请输入工程名称，合法字符为全小写英文和下划线：';
+      default:
+        return 'Enter the project name please, can only be lower-case and under-dash:';
+    }
+  }
+
+  static reserveWebProject() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '该工程需要输出到 Web 吗？(如果选择否，将删除 Web 目录。)';
+      default:
+        return 'Will this project build to web?(If choose false, will remove web dir.)';
+    }
+  }
+
+  static reserveWeappProject() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '该工程需要输出到微信小程序吗？(如果选择否，将删除 weapp 目录。)';
+      default:
+        return 'Will this project build to wechat miniprogram?(If choose false, will remove weapp dir.)';
+    }
+  }
+
+  static reserveSwanappProject() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '该工程需要输出到百度小程序吗？(如果选择否，将删除 swanapp 目录。)';
+      default:
+        return 'Will this project build to baidu miniprogram?(If choose false, will remove swanapp dir.)';
+    }
+  }
+
+  static reserveFlutterappProject() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '该工程需要输出到原生Flutter吗？(如果选择否，将删除 flutterapp 目录。)';
+      default:
+        return 'Will this project build to native flutter?(If choose false, will remove flutterapp dir.)';
+    }
+  }
+
+  static fetchingVersionInfoFromRemote() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '正在获取版本信息...';
+      default:
+        return 'Fetching version info from remote...';
     }
   }
 }

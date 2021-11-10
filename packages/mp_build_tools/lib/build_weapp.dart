@@ -8,6 +8,7 @@ final Map<int, List<String>> subpackages = {};
 final subpackageSizeLimited = 1024 * 1024 * 1.9;
 
 main(List<String> args) {
+  print(I18n.building());
   _checkPubspec();
   _createBuildDir();
   plugin_builder.main(args);
