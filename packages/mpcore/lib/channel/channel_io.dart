@@ -47,9 +47,15 @@ class MPChannel {
     _serverSetupped = true;
     try {
       server = await HttpServer.bind('0.0.0.0', 9898, shared: false);
-      print('Serve on 0.0.0.0:9898');
-      print(
-          'Use browser open http://0.0.0.0:9898/index.html or use MiniProgram Developer Tools import \'./dist/weapp\' for dev.');
+      if (Platform.isWindows) {
+        print('Serve on 127.0.0.1:9898');
+        print(
+            'Use browser open http://127.0.0.1:9898/index.html or use MiniProgram Developer Tools import \'./dist/weapp\' for dev.');
+      } else {
+        print('Serve on 0.0.0.0:9898');
+        print(
+            'Use browser open http://0.0.0.0:9898/index.html or use MiniProgram Developer Tools import \'./dist/weapp\' for dev.');
+      }
       await for (var req in server) {
         if (req.uri.path == '/ws') {
           final socket = await WebSocketTransformer.upgrade(req);
