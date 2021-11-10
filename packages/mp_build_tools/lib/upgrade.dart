@@ -5,6 +5,8 @@ import 'package:path/path.dart' as p;
 
 import 'package:http/http.dart';
 
+import 'i18n.dart';
+
 main(List<String> args) async {
   final versionCode = args.isNotEmpty ? args[0] : null;
   if (versionCode == null) {
@@ -14,14 +16,14 @@ main(List<String> args) async {
     final masterBranch = json.decode((await get(Uri.parse(
             'https://api.github.com/repos/mpflutter/mpflutter/branches/master')))
         .body) as Map;
-    print('Current master version >>> ' +
+    print('${I18n.currentMasterVersion()} >>> ' +
         (masterBranch['commit']['sha'] as String).substring(0, 7));
-    print('Current release versions >>>');
+    print('${I18n.currentReleaseVersion()} >>>');
     print(
       tags.sublist(0, min(10, tags.length)).map((e) => e['name']).join('\n'),
     );
     print(
-      'Retry with version code to upgrade for example \n> dart scripts/upgrade.dart ' +
+      '${I18n.retryWithVersionCode()}\n> dart scripts/upgrade.dart ' +
           tags.first['name'],
     );
   } else {
@@ -33,7 +35,7 @@ main(List<String> args) async {
         return '${match.group(1)}${versionCode}';
       });
       File(p.join('pubspec.yaml')).writeAsStringSync(pubspecContent);
-      print('Successful upgrade pubspec.');
+      print(I18n.successfulUpgrade('pubspec'));
     }
     final webFile = File(p.join('web', 'index.html'));
     if (webFile.existsSync()) {
@@ -43,7 +45,7 @@ main(List<String> args) async {
         'mpflutter/dist/${versionCode}/',
       );
       File(p.join('web', 'index.html')).writeAsStringSync(webIndexHtml);
-      print('Successful upgrade web project.');
+      print(I18n.successfulUpgrade('web'));
     }
     final weappFile = File(p.join('weapp', 'app.js'));
     if (weappFile.existsSync()) {
@@ -76,7 +78,7 @@ main(List<String> args) async {
                   item),
         );
         File(p.join('weapp', item)).writeAsStringSync(response.body);
-        print('Successful upgrade weapp ' + item);
+        print(I18n.successfulUpgrade('微信小程序' + item));
       }
     }
     final swanappFile = File(p.join('swanapp', 'app.js'));
@@ -110,7 +112,7 @@ main(List<String> args) async {
                   item),
         );
         File(p.join('swanapp', item)).writeAsStringSync(response.body);
-        print('Successful upgrade swanapp ' + item);
+        print(I18n.successfulUpgrade('百度小程序' + item));
       }
     }
   }

@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'i18n.dart';
+
 main(List<String> args) {
   _checkPubspec();
   _createBuildDir();
@@ -11,10 +13,7 @@ main(List<String> args) {
 
 _checkPubspec() {
   if (!File('pubspec.yaml').existsSync()) {
-    throw '''
-    The pubspec.yaml not exists, confirm you are in the mpflutter project root dir. [EN]
-    pubspec.yaml 文件不存在，请确认您当前处于 mpflutter 工程根目录。[ZH]
-    ''';
+    throw I18n.pubspecYamlNotExists();
   }
 }
 

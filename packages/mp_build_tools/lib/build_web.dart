@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:mp_build_tools/i18n.dart';
 import 'package:path/path.dart' as p;
 import 'package:crypto/crypto.dart';
 
@@ -15,10 +16,7 @@ main(List<String> args) {
 
 _checkPubspec() {
   if (!File('pubspec.yaml').existsSync()) {
-    throw '''
-    The pubspec.yaml not exists, confirm you are in the mpflutter project root dir. [EN]
-    pubspec.yaml 文件不存在，请确认您当前处于 mpflutter 工程根目录。[ZH]
-    ''';
+    throw I18n.pubspecYamlNotExists();
   }
 }
 
@@ -50,7 +48,7 @@ void _buildDartJS(List<String> args) {
   if (dart2JsResult.exitCode != 0) {
     print(dart2JsResult.stdout);
     print(dart2JsResult.stderr);
-    throw 'dart2js execute failed.';
+    throw I18n.executeFail('dart2js');
   }
   _fixDefererLoader();
   final buildBundleResult = Process.runSync(
@@ -64,7 +62,7 @@ void _buildDartJS(List<String> args) {
   if (buildBundleResult.exitCode != 0) {
     print(buildBundleResult.stdout);
     print(buildBundleResult.stderr);
-    throw 'flutter build bundle execute failed.';
+    throw I18n.executeFail('flutter build bundle');
   }
   if (Directory('./build/flutter_assets').existsSync()) {
     Directory('./build/flutter_assets').renameSync('./build/assets');
