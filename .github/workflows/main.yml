@@ -39,6 +39,11 @@ jobs:
         git add .
         git diff-index --quiet HEAD || git commit --message "CI Bot commit"
         git push "https://ponycui:${{ secrets.GH_TOKEN }}@github.com/mpflutter/dist.git" --set-upstream "master"
+        export GITHUB_REF_NAME=0.0.1-master
+        cd ../../../
+        cd deployer
+        npm install
+        node ./release.js
  
   sync:
     runs-on: ubuntu-latest

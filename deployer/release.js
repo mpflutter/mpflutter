@@ -120,7 +120,9 @@ class DartPackageDeployer {
             }
           })();
           pkgJSON["name"] = this.name;
-          pkgJSON["latest"] = pubspec;
+          if (currentVersion !== '0.0.1-master') {
+            pkgJSON["latest"] = pubspec;
+          }
           if (!pkgJSON["versions"]) {
             pkgJSON["versions"] = [];
           }
