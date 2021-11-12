@@ -79,13 +79,9 @@ class DartPackageDeployer {
         environment: {
           sdk: originYaml.environment?.sdk
             ? originYaml.environment.sdk
-                .replace(/>/g, "&gt;")
-                .replace(/</g, "&lt;")
             : undefined,
           flutter: originYaml.environment?.flutter
             ? originYaml.environment.flutter
-                .replace(/>/g, "&gt;")
-                .replace(/</g, "&lt;")
             : undefined,
         },
         dependencies: originYaml.dependencies || {},
