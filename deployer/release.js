@@ -24,10 +24,21 @@ class DartPackageDeployer {
   }
 
   async deploy() {
+    this.replaceVersion();
     this.makeArchive();
     const archiveUrl = await this.uploadArchive();
     const pubspec = this.makePubspec(archiveUrl);
     await this.updatePackage(pubspec);
+  }
+
+  replaceVersion() {
+    const originYaml = YAML.parse(
+      readFileSync(`../packages/${this.name}/pubspec.yaml`, {
+        encoding: "utf-8",
+      })
+    );
+    originYaml.version = currentVersion;
+    writeFileSync(`../packages/${this.name}/pubspec.yaml`, YAML.stringify(originYaml))
   }
 
   makeArchive() {
