@@ -166,3 +166,4 @@ class DartPackageDeployer {
 new DartPackageDeployer("flutter").deploy();
 new DartPackageDeployer("flutter_web_plugins").deploy();
 new DartPackageDeployer("mpcore").deploy();
+new DartPackageDeployer("mp_build_tools").deploy();
