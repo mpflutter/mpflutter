@@ -25,3 +25,4 @@ part 'video_view.dart';
 part 'platform_view.dart';
 part 'env.dart';
 part 'editable_text.dart';
+part 'switch.dart';

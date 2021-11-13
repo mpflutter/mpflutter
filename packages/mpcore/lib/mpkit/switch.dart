@@ -1,7 +1,7 @@
-import 'package:mpcore/mpkit/mpkit.dart';
+part of 'mpkit.dart';
 
-class WechatMiniProgramSwitchController extends MPPlatformViewController {
-  WechatMiniProgramSwitch? _host;
+class MPSwitchController extends MPPlatformViewController {
+  MPSwitch? _host;
 
   @override
   Future? onMethodCall(String method, Map? params) {
@@ -13,19 +13,19 @@ class WechatMiniProgramSwitchController extends MPPlatformViewController {
   }
 }
 
-class WechatMiniProgramSwitch extends MPPlatformView {
+class MPSwitch extends MPPlatformView {
   final Function(Map)? onCallback;
 
   /// param type - switch, checkbox default switch
-  WechatMiniProgramSwitch({
+  MPSwitch({
     bool? checked,
     bool? disabled,
     String? type,
     String? color,
-    WechatMiniProgramSwitchController? controller,
+    MPSwitchController? controller,
     this.onCallback,
   }) : super(
-          viewType: 'wechat_miniprogram_switch',
+          viewType: 'mp_switch',
           viewAttributes: {
             'checked': checked,
             'disabled': disabled,
@@ -35,8 +35,8 @@ class WechatMiniProgramSwitch extends MPPlatformView {
           controller: controller,
         ) {
     if (onCallback != null) {
-      assert(controller != null,
-          'You need to set WechatMiniProgramSwitchController.controller');
+      assert(
+          controller != null, 'You need to set MPSwitchController.controller');
     }
     controller?._host = this;
   }
