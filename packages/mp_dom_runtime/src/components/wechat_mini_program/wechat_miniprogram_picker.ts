@@ -18,7 +18,7 @@ export class WechatMiniProgramPicker extends MPPlatformView {
     setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
     setDOMAttribute(this.htmlElement, "mode", attributes.mode);
     setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
-    setDOMAttribute(this.htmlElement, "bindcancel", attributes.bindcancel);123
+    setDOMAttribute(this.htmlElement, "bindcancel", attributes.bindcancel);
     // setDOMAttribute(this.htmlElement, "appParameter", attributes.appParameter);
   }
 }
