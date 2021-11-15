@@ -27,3 +27,4 @@ part 'env.dart';
 part 'editable_text.dart';
 part 'switch.dart';
 part 'slider.dart';
+part 'picker.dart';
