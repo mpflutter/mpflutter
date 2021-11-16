@@ -30,6 +30,7 @@ import { ForegroundDecoratedBox } from "./basic/foreground_decorated_box";
 import { WechatMiniProgramButton } from "./wechat_mini_program/wechat_miniprogram_button";
 import { MPEnv } from "../env";
 import { WechatMiniProgramPicker } from "./wechat_mini_program/wechat_miniprogram_picker";
+import { MPMiniProgramView } from "./mpkit/miniprogram_view";
 
 export class ComponentFactory {
   static components: { [key: string]: typeof ComponentView } = {
@@ -62,6 +63,7 @@ export class ComponentFactory {
     mp_web_view: MPWebView,
     mp_page_view: MPPageView,
     mp_platform_view: MPPlatformView,
+    mp_mini_program_view: MPMiniProgramView,
     wechat_miniprogram_button: __MP_TARGET_WEAPP__ ? WechatMiniProgramButton : undefined!,
     wechat_miniprogram_picker: __MP_TARGET_WEAPP__ ? WechatMiniProgramPicker : undefined!,
   };
