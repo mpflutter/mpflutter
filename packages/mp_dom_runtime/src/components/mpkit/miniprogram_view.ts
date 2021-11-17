@@ -1,4 +1,4 @@
-import { MPPlatformView } from "../..";
+import { MPPlatformView } from "../../components/mpkit/platform_view";
 import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 
 export class MPMiniProgramView extends MPPlatformView {

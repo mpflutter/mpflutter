@@ -21,6 +21,7 @@ import { MPIcon } from "./mpkit/icon";
 import { MPVideoView } from "./mpkit/video_view";
 import { MPWebView } from "./mpkit/web_view";
 import { MPPageView } from "./mpkit/page_view";
+import { MPMiniProgramView } from "./mpkit/miniprogram_view";
 import { Overlay } from "./basic/overlay";
 import { Visibility } from "./basic/visibility";
 import { SliverPersistentHeader } from "./basic/sliver_persistent_header";
@@ -28,7 +29,6 @@ import { EditableText } from "./basic/editable_text";
 import { MPPlatformView } from "./mpkit/platform_view";
 import { ForegroundDecoratedBox } from "./basic/foreground_decorated_box";
 import { MPEnv } from "../env";
-import { MPMiniProgramView } from "./mpkit/miniprogram_view";
 
 export class ComponentFactory {
   static components: { [key: string]: typeof ComponentView } = {
