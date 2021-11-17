@@ -63,7 +63,7 @@ export class Page {
   }
 
   async fetchViewport() {
-    let viewport = {...await (this.element as any).getBoundingClientRect()};
+    let viewport = { ...(await (this.element as any).getBoundingClientRect()) };
     if (!viewport.width || viewport.width <= 0.1) {
       if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
         viewport.width = MPEnv.platformScope.getSystemInfoSync().windowWidth;
@@ -260,13 +260,22 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   backgroundElementAttached = false;
 
   setPageTitle(title: string): void {
-    if (MPEnv.platformType == PlatformType.swanMiniProgram) {
-      MPEnv.platformScope.setNavigationBarTitle({title});
+    if (MPEnv.platformType === PlatformType.swanMiniProgram) {
+      MPEnv.platformScope.setNavigationBarTitle({ title });
       return;
     }
-    this.miniProgramPage.setData({
-      "pageMeta.naviBar.title": title,
-    });
+    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      if (
+        MPEnv.platformScope.getSystemInfoSync().platform === "mac" ||
+        MPEnv.platformScope.getSystemInfoSync().platform === "windows"
+      ) {
+        MPEnv.platformScope.setNavigationBarTitle({ title });
+      } else {
+        this.miniProgramPage.setData({
+          "pageMeta.naviBar.title": title,
+        });
+      }
+    }
   }
 
   setPageBackgroundColor(color: string): void {
