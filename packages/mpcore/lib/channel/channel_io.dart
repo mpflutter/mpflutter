@@ -58,6 +58,14 @@ class MPChannel {
       }
       await for (var req in server) {
         if (req.uri.path == '/ws') {
+          if (req.uri.queryParameters['clientType'] == 'browser') {
+            MPEnv.debugEnvHost = MPEnvHostType.browser;
+          } else if (req.uri.queryParameters['clientType'] ==
+              'wechatMiniProgram') {
+            MPEnv.debugEnvHost = MPEnvHostType.wechatMiniProgram;
+          } else {
+            MPEnv.debugEnvHost = null;
+          }
           final socket = await WebSocketTransformer.upgrade(req);
           sockets.add(socket);
           socket.listen(MPChannelBase.handleClientMessage)
