@@ -5,8 +5,6 @@ export class MPMiniProgramView extends MPPlatformView {
   eventListened: any = {};
 
   elementType() {
-    console.log(this.initialAttributes);
-
     return "wx-" + this.initialAttributes?.tag;
   }
 
