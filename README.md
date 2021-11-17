@@ -27,16 +27,3 @@ MPFlutter 提供了丰富的组件、接口，开发者可以轻松地为应用�
 [Flutter 中文站 https://flutter-io.cn](https://flutter-io.cn)
 
 [《Flutter 实战》 https://book.flutterchina.club](https://book.flutterchina.club)
-
-## 案例
-
-MPFlutter 已经投入生产环境中使用，以下是一些公开案例。
-
-|  Web   |
-|  ----  |
-| ![](./assets/users/web-yidoutang.png)  |
-
-
-|  微信小程序   |
-|  ----  |
-| ![](./assets/users/weapp-yidoutang.png)  |
