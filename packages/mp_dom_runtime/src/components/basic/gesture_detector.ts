@@ -14,6 +14,13 @@ export class GestureDetector extends ComponentView {
   constructor(readonly document: Document) {
     super(document);
     (this.htmlElement as any).isGestureDetector = true;
+    this.setupCursor();
+  }
+
+  setupCursor() {
+    if (MPEnv.platformPC()) {
+      this.htmlElement.style.cursor = "pointer";
+    }
   }
 
   elementType() {

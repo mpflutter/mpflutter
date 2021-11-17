@@ -264,18 +264,12 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
       MPEnv.platformScope.setNavigationBarTitle({ title });
       return;
     }
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
-      if (
-        MPEnv.platformScope.getSystemInfoSync().platform === "mac" ||
-        MPEnv.platformScope.getSystemInfoSync().platform === "windows"
-      ) {
-        MPEnv.platformScope.setNavigationBarTitle({ title });
-      } else {
-        this.miniProgramPage.setData({
-          "pageMeta.naviBar.title": title,
-        });
-      }
+    if (MPEnv.platformPC()) {
+      MPEnv.platformScope.setNavigationBarTitle({ title });
     }
+    this.miniProgramPage.setData({
+      "pageMeta.naviBar.title": title,
+    });
   }
 
   setPageBackgroundColor(color: string): void {
@@ -303,6 +297,9 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
         backgroundColor: color,
       });
       return;
+    }
+    if (MPEnv.platformPC()) {
+      MPEnv.platformScope.setNavigationBarColor({ frontColor: tintColor, backgroundColor: color });
     }
     this.miniProgramPage.setData({
       "pageMeta.naviBar.backgroundColor": color,
