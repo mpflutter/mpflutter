@@ -425,6 +425,8 @@ module.exports = Behavior({
                 }
 
                 domNode._needCallTap = needCallTap
+            } else if (eventName === 'touchmove' && domNode._needCallTap) {
+                domNode._needCallTap = false
             }
         },
 
