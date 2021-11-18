@@ -21,13 +21,13 @@ import { MPIcon } from "./mpkit/icon";
 import { MPVideoView } from "./mpkit/video_view";
 import { MPWebView } from "./mpkit/web_view";
 import { MPPageView } from "./mpkit/page_view";
+import { MPMiniProgramView } from "./mpkit/miniprogram_view";
 import { Overlay } from "./basic/overlay";
 import { Visibility } from "./basic/visibility";
 import { SliverPersistentHeader } from "./basic/sliver_persistent_header";
 import { EditableText } from "./basic/editable_text";
 import { MPPlatformView } from "./mpkit/platform_view";
 import { ForegroundDecoratedBox } from "./basic/foreground_decorated_box";
-import { WechatMiniProgramButton } from "./wechat_mini_program/wechat_miniprogram_button";
 import { MPEnv } from "../env";
 import { MPSwitch } from "./mpkit/switch";
 import { MPSlider } from "./mpkit/slider";
@@ -64,10 +64,10 @@ export class ComponentFactory {
     mp_web_view: MPWebView,
     mp_page_view: MPPageView,
     mp_platform_view: MPPlatformView,
-    wechat_miniprogram_button: __MP_TARGET_WEAPP__ ? WechatMiniProgramButton : undefined!,
     mp_switch: MPSwitch,
     mp_slider: MPSlider,
     mp_picker: MPPicker,
+    mp_mini_program_view: MPMiniProgramView,
   };
 
   static ancestors: { [key: string]: typeof AncestorView } = {

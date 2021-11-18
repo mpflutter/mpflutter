@@ -15,6 +15,9 @@ jobs:
       with:
         node-version: 16.x
     - name: Build
+      env:
+        COS_SECRET_ID: ${{ secrets.COS_SECRET_ID }}
+        COS_SECRET_KEY: ${{ secrets.COS_SECRET_KEY }}
       run: |
         cd packages/mp_dom_runtime/
         npm install -g browserify uglify-js typescript terser
@@ -39,4 +42,8 @@ jobs:
         git add .
         git diff-index --quiet HEAD || git commit --message "CI Bot commit"
         git push "https://ponycui:${{ secrets.GH_TOKEN }}@github.com/mpflutter/dist.git" --set-upstream "master"
+        cd ../../../
+        cd deployer
+        npm install
+        node ./release.js
  

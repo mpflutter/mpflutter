@@ -28,3 +28,4 @@ part 'editable_text.dart';
 part 'switch.dart';
 part 'slider.dart';
 part 'picker.dart';
+part 'mini_program_view.dart';

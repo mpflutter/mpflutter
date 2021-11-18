@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'i18n.dart';
 import 'init_android_studio.dart' as init_android_studio;
+import 'init_github_to_gitee.dart' as init_github_to_gitee;
 import 'init_template_project.dart' as init_template_project;
 import 'upgrade.dart' as upgrade;
 import 'build_web.dart' as build_web;
@@ -15,6 +14,14 @@ final features = <Map>[
     'title.zh': '初始化 MPFlutter 模板工程',
     'action': () {
       init_template_project.main([]);
+    },
+  },
+  {
+    'title.en':
+        'Change GitHub dependencies to Gitee (easy to get from China MainLand).',
+    'title.zh': '修改 GitHub 依赖至 Gitee（用于国内加速下载）',
+    'action': () {
+      init_github_to_gitee.main([]);
     },
   },
   {

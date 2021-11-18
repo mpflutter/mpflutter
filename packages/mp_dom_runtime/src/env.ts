@@ -43,6 +43,17 @@ export const MPEnv = {
       return mpGlobal;
     }
   },
+  platformPC: (): boolean => {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      const platform = MPEnv.platformScope.getSystemInfoSync().platform;
+      if (platform === "mac" || platform === "windows") {
+        return true;
+      }
+    } else if (MPEnv.platformType === PlatformType.browser) {
+      return MPEnv.platformScope.navigator?.maxTouchPoints === 1;
+    }
+    return false;
+  },
   platformWindow: (document?: any): any | undefined => {
     if (document && document.window) {
       return document.window;

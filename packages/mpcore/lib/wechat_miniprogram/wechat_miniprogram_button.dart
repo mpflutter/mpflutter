@@ -1,41 +1,66 @@
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpkit/mpkit.dart';
 
-class WechatMiniProgramButtonController extends MPPlatformViewController {
-  WechatMiniProgramButton? _host;
-
-  @override
-  Future? onMethodCall(String method, Map? params) {
-    if (method == 'onButtonCallback') {
-      _host?.onButtonCallback?.call(params ?? {});
-      print(params);
-    }
-    return super.onMethodCall(method, params);
-  }
-}
-
-class WechatMiniProgramButton extends MPPlatformView {
-  final Function(Map)? onButtonCallback;
-
+/// 请参考文档 https://developers.weixin.qq.com/miniprogram/dev/component/button.html
+class WechatMiniProgramButton extends MPMiniProgramView {
   WechatMiniProgramButton({
     required Widget child,
     String? openType,
     String? appParameter,
-    WechatMiniProgramButtonController? controller,
-    this.onButtonCallback,
+    String? sessionFrom,
+    String? sendMessageTitle,
+    String? sendMessagePath,
+    String? sendMessageImg,
+    bool? showMessageCard,
+    Function(Map?)? onGetUserInfo,
+    Function(Map?)? onContact,
+    Function(Map?)? onGetPhoneNumber,
+    Function(Map?)? onError,
+    Function(Map?)? onOpenSetting,
+    Function(Map?)? onLaunchApp,
   }) : super(
-          viewType: 'wechat_miniprogram_button',
-          viewAttributes: {
-            'openType': openType,
-            'appParameter': appParameter,
-          }..removeWhere((key, value) => value == null),
+          tag: 'button',
+          style: {
+            'backgroundColor': 'unset',
+            'fontWeight': 'unset',
+          },
+          attributes: {
+            'open-type': openType,
+            'app-parameter': appParameter,
+            'session-from': sessionFrom,
+            'send-message-title': sendMessageTitle,
+            'send-message-path': sendMessagePath,
+            'send-message-img': sendMessageImg,
+            'show-message-card': showMessageCard,
+          },
+          eventListeners: (() {
+            final eventListeners = <MPMiniProgramEvent>[];
+            if (onGetUserInfo != null) {
+              eventListeners.add(MPMiniProgramEvent(
+                  event: 'getuserinfo', callback: onGetUserInfo));
+            }
+            if (onContact != null) {
+              eventListeners.add(
+                  MPMiniProgramEvent(event: 'contact', callback: onContact));
+            }
+            if (onGetPhoneNumber != null) {
+              eventListeners.add(MPMiniProgramEvent(
+                  event: 'getphonenumber', callback: onGetPhoneNumber));
+            }
+            if (onError != null) {
+              eventListeners
+                  .add(MPMiniProgramEvent(event: 'error', callback: onError));
+            }
+            if (onOpenSetting != null) {
+              eventListeners.add(MPMiniProgramEvent(
+                  event: 'opensetting', callback: onOpenSetting));
+            }
+            if (onLaunchApp != null) {
+              eventListeners.add(MPMiniProgramEvent(
+                  event: 'launchapp', callback: onLaunchApp));
+            }
+            return eventListeners;
+          })(),
           child: child,
-          controller: controller,
-        ) {
-    if (onButtonCallback != null) {
-      assert(controller != null,
-          'You need to set WechatMiniProgramButton.controller');
-    }
-    controller?._host = this;
-  }
+        );
 }

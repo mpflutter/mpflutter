@@ -17,14 +17,8 @@ void main(List<String> args) {
   final projectName = projectNameDialog.ask()['projectName'];
   if (File('pubspec.yaml').existsSync()) {
     var code = File('pubspec.yaml').readAsStringSync();
-    code = code.replaceAllMapped(
-        RegExp('^name: .*?'), (match) => 'name: ${projectName}');
-    File('pubspec.yaml').writeAsStringSync(code);
-  }
-  if (File('pubspec.yaml').existsSync()) {
-    var code = File('pubspec.yaml').readAsStringSync();
-    code = code.replaceAllMapped(
-        RegExp('^name: .*?'), (match) => 'name: ${projectName}');
+    code = code.replaceAllMapped(RegExp('^name:[ |a-zA-Z0-9_]+', dotAll: true),
+        (match) => 'name: ${projectName}');
     File('pubspec.yaml').writeAsStringSync(code);
   }
   if (File('lib/main.dart').existsSync()) {

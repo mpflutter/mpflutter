@@ -2,10 +2,7 @@ import { Engine } from "../engine";
 import { MPEnv, PlatformType } from "../env";
 
 export function createDebugger(serverAddr: string, engine: Engine): Debugger {
-  if (
-    MPEnv.platformType === PlatformType.wxMiniProgram ||
-    MPEnv.platformType === PlatformType.swanMiniProgram
-  ) {
+  if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
     if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)) return null!;
     return new WXDebugger(serverAddr, engine);
   } else {
@@ -20,6 +17,17 @@ export interface Debugger {
   sendMessage(message: string): void;
 }
 
+const clientType = () => {
+  switch (MPEnv.platformType) {
+    case PlatformType.browser:
+      return "browser";
+    case PlatformType.wxMiniProgram:
+      return "wechatMiniProgram";
+    default:
+      return "unknown";
+  }
+}
+
 class WXDebugger implements Debugger {
   private messageQueue: string[] = [];
   private socket?: any;
@@ -29,7 +37,7 @@ class WXDebugger implements Debugger {
 
   start() {
     this.socket = MPEnv.platformScope.connectSocket({
-      url: `ws://${this.serverAddr}/ws`,
+      url: `ws://${this.serverAddr}/ws?clientType=${clientType()}`,
     });
     this.socket.onOpen(() => {
       this.connected = true;
@@ -113,7 +121,9 @@ class BrowserDebugger implements Debugger {
     if (new URL(location.href).protocol === "https:") {
       scheme = "wss";
     }
-    this.socket = new WebSocket(`${scheme}://${this.serverAddr}/ws`);
+    this.socket = new WebSocket(
+      `${scheme}://${this.serverAddr}/ws?clientType=${clientType()}`
+    );
     this.socket.onopen = () => {
       if (this.needReload) {
         location.href = "?";

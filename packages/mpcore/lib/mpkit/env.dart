@@ -9,7 +9,12 @@ enum MPEnvHostType {
 }
 
 class MPEnv {
+  static MPEnvHostType? debugEnvHost;
+
   static MPEnvHostType envHost() {
+    if (debugEnvHost != null) {
+      return debugEnvHost!;
+    }
     if (hostType == 'wechatMiniProgram') {
       return MPEnvHostType.wechatMiniProgram;
     } else if (hostType == 'browser') {
