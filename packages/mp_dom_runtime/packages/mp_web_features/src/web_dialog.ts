@@ -18,6 +18,7 @@ export class MPWebDialog {
       this.currentToastHandler = undefined;
     }
     const div = document.createElement("body");
+    div.setAttribute("data-weui-theme", "light");
     div.style.position = "absolute";
     div.style.width = "100%";
     div.style.height = "100%";
@@ -66,6 +67,7 @@ export class MPWebDialog {
     fail: () => void;
   }) {
     const div = document.createElement("body");
+    div.setAttribute("data-weui-theme", "light");
     div.style.position = "absolute";
     div.style.width = "100%";
     div.style.height = "100%";
@@ -108,6 +110,7 @@ export class MPWebDialog {
     success: (res: { tapIndex: any }) => void;
   }) {
     const div = document.createElement("body");
+    div.setAttribute("data-weui-theme", "light");
     div.style.position = "absolute";
     div.style.width = "100%";
     div.style.height = "100%";
@@ -153,6 +156,7 @@ export class MPWebDialog {
     success: (res: { tapIndex: any }) => void;
   }) {
     const div = document.createElement("body");
+    div.setAttribute("data-weui-theme", "light");
     div.style.position = "absolute";
     div.style.width = "100%";
     div.style.height = "100%";

@@ -6,13 +6,18 @@ import { cssColorHex } from "../utils";
 export class MPSlider extends MPPlatformView {
   constructor(document: Document) {
     super(document);
-    if (MPEnv.platformType == PlatformType.wxMiniProgram) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
       this.htmlElement.addEventListener("change", (e: any) => {
         this.invokeMethod("onSliderChange", { value: e.detail.value });
       });
       this.htmlElement.addEventListener("changing", (e: any) => {
         this.invokeMethod("onSliderChanging", { value: e.detail.value });
       });
+    } else if (MPEnv.platformType === PlatformType.browser) {
+      this.htmlElement.addEventListener("change", (value) => {
+        console.log(value);
+      });
+      (window as any).mpAttachWeuiSlider(this.htmlElement);
     }
   }
 
@@ -49,8 +54,6 @@ export class MPSlider extends MPPlatformView {
         attributes.blockColor ? cssColorHex(attributes.blockColor) : null
       );
       setDOMAttribute(this.htmlElement, "show-value", attributes.showValue);
-    } else {
-      setDOMAttribute(this.htmlElement, "class", "weui-slider-box");
-    }
+    } 
   }
 }
