@@ -49,7 +49,7 @@ export class MPPicker extends MPPlatformView {
           }),
           {
             container: div,
-            onConfirm: function (result: any) {
+            onConfirm: (result: any) => {
               console.log(result);
               this.invokeMethod("onChangeCallback", { result: result });
             },
