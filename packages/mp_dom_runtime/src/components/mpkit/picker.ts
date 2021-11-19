@@ -29,35 +29,11 @@ export class MPPicker extends MPPlatformView {
         div.style.width = "100%";
         div.style.height = "100%";
         this.weuiShadowRoot.appendChild(div);
-        (window as any).weui.picker(
-          (this.attributes.items as PickerItem[])?.map((it, idx) => {
-            return {
-              label: it.label,
-              value: idx,
-              disabled: it.disabled,
-              children: it.subItems?.map((it, idx) => {
-                return {
-                  label: it.label,
-                  value: idx,
-                  disabled: it.disabled,
-                  children: it.subItems?.map((it, idx) => {
-                    return { label: it.label, value: idx, disabled: it.disabled };
-                  }),
-                };
-              }),
-            };
-          }),
-          {
-            container: div,
-            onConfirm: (result: any) => {
-              console.log(result);
-              this.invokeMethod("onChangeCallback", { result: result });
-            },
-            onClose: function () {
-              div.remove();
-            },
-          }
-        );
+        if (this.attributes.mode === "date") {
+          this.showDatePicker(div);
+        } else {
+          this.showPicker(div);
+        }
       });
     }
     this.htmlElement.addEventListener("change", (e: any) => {
@@ -80,5 +56,75 @@ export class MPPicker extends MPPlatformView {
     setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
     setDOMAttribute(this.htmlElement, "mode", attributes.mode ? attributes.mode.replace("MPPickerMode.", "") : null);
     setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
+    setDOMAttribute(this.htmlElement, "range", this.getPickerItem());
+  }
+
+  getPickerItem(): any {
+    const mode = this.attributes.mode?.replace("MPPickerMode.", "") ?? "selector";
+    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      return (this.attributes.items as PickerItem[])?.map((it, idx) => {
+        return it.label;
+      });
+    } else {
+      return (this.attributes.items as PickerItem[])?.map((it, idx) => {
+        return {
+          label: it.label,
+          value: idx,
+          disabled: it.disabled,
+          children:
+            mode === "selector"
+              ? null
+              : it.subItems?.map((it, idx) => {
+                  return { label: it.label, value: idx, disabled: it.disabled };
+                }),
+        };
+      });
+    }
+  }
+
+  showPicker(div: any) {
+    (window as any).weui.picker(
+      (this.attributes.items as PickerItem[])?.map((it, idx) => {
+        return {
+          label: it.label,
+          value: idx,
+          disabled: it.disabled,
+          children: it.subItems?.map((it, idx) => {
+            return {
+              label: it.label,
+              value: idx,
+              disabled: it.disabled,
+              children: it.subItems?.map((it, idx) => {
+                return { label: it.label, value: idx, disabled: it.disabled };
+              }),
+            };
+          }),
+        };
+      }),
+      {
+        container: div,
+        onConfirm: (result: any) => {
+          this.invokeMethod("onChangeCallback", { result: result });
+        },
+        onClose: function () {
+          div.remove();
+        },
+      }
+    );
+  }
+
+  showDatePicker(div: any) {
+    (window as any).weui.datePicker({
+      start: this.attributes.start,
+      end: this.attributes.end,
+      defaultValue: this.attributes.defaultValue,
+      onConfirm: function (result: any) {
+        this.invokeMethod("onChangeCallback", { result: result });
+      },
+      onClose: function () {
+        div.remove();
+      },
+      container: div,
+    });
   }
 }
