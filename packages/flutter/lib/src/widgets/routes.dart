@@ -10,6 +10,7 @@ import 'package:flutter/scheduler.dart';
 
 import 'actions.dart';
 import 'basic.dart';
+import 'container.dart';
 import 'focus_manager.dart';
 import 'focus_scope.dart';
 import 'framework.dart';
@@ -674,7 +675,7 @@ class _ModalScopeStatus extends InheritedWidget {
     required this.canPop,
     required this.route,
     required Widget child,
-  })   : assert(isCurrent != null),
+  })  : assert(isCurrent != null),
         assert(canPop != null),
         assert(route != null),
         assert(child != null),
@@ -730,12 +731,6 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
   @override
   void initState() {
     super.initState();
-    final List<Listenable> animations = <Listenable>[
-      if (widget.route.animation != null) widget.route.animation!,
-      if (widget.route.secondaryAnimation != null)
-        widget.route.secondaryAnimation!,
-    ];
-    _listenable = Listenable.merge(animations);
     if (widget.route.isCurrent) {
       widget.route.navigator!.focusScopeNode.setFirstFocus(focusScopeNode);
     }
@@ -769,8 +764,7 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
   }
 
   bool get _shouldIgnoreFocusRequest {
-    return widget.route.animation?.status == AnimationStatus.reverse ||
-        (widget.route.navigator?.userGestureInProgress ?? false);
+    return true;
   }
 
   // This should be called to wrap any changes to route.isCurrent, route.canPop,
@@ -796,8 +790,8 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
           controller: primaryScrollController,
           child: widget.route.buildPage(
             context,
-            widget.route.animation!,
-            widget.route.secondaryAnimation!,
+            AlwaysStoppedAnimation(0),
+            AlwaysStoppedAnimation(0),
           ),
         ),
       ),
@@ -813,8 +807,7 @@ class _ModalScopeState<T> extends State<_ModalScope<T>> {
 ///
 /// The `T` type argument is the return value of the route. If there is no
 /// return value, consider using `void` as the return value.
-abstract class ModalRoute<T> extends TransitionRoute<T>
-    with LocalHistoryRoute<T> {
+abstract class ModalRoute<T> extends OverlayRoute<T> with LocalHistoryRoute<T> {
   /// Creates a route that blocks interaction with previous routes.
   ModalRoute({
     RouteSettings? settings,
@@ -1041,8 +1034,6 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   @override
   void install() {
     super.install();
-    _animationProxy = ProxyAnimation(super.animation);
-    _secondaryAnimationProxy = ProxyAnimation(super.secondaryAnimation);
   }
 
   @override
@@ -1262,23 +1253,11 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
     setState(() {
       _offstage = value;
     });
-    _animationProxy!.parent =
-        _offstage ? kAlwaysCompleteAnimation : super.animation;
-    _secondaryAnimationProxy!.parent =
-        _offstage ? kAlwaysDismissedAnimation : super.secondaryAnimation;
     changedInternalState();
   }
 
   /// The build context for the subtree containing the primary content of this route.
   BuildContext? get subtreeContext => _subtreeKey.currentContext;
-
-  @override
-  Animation<double>? get animation => _animationProxy;
-  ProxyAnimation? _animationProxy;
-
-  @override
-  Animation<double>? get secondaryAnimation => _secondaryAnimationProxy;
-  ProxyAnimation? _secondaryAnimationProxy;
 
   final List<WillPopCallback> _willPopCallbacks = <WillPopCallback>[];
 
@@ -1454,51 +1433,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   // one of the builders
   late OverlayEntry _modalBarrier;
   Widget _buildModalBarrier(BuildContext context) {
-    Widget barrier;
-    if (barrierColor != null && barrierColor!.alpha != 0 && !offstage) {
-      // changedInternalState is called if barrierColor or offstage updates
-      assert(barrierColor != barrierColor!.withOpacity(0.0));
-      final Animation<Color?> color = animation!.drive(
-        ColorTween(
-          begin: barrierColor!.withOpacity(0.0),
-          end:
-              barrierColor, // changedInternalState is called if barrierColor updates
-        ).chain(CurveTween(
-            curve:
-                barrierCurve)), // changedInternalState is called if barrierCurve updates
-      );
-      barrier = AnimatedModalBarrier(
-        color: color,
-        dismissible:
-            barrierDismissible, // changedInternalState is called if barrierDismissible updates
-        semanticsLabel:
-            barrierLabel, // changedInternalState is called if barrierLabel updates
-        barrierSemanticsDismissible: semanticsDismissible,
-      );
-    } else {
-      barrier = ModalBarrier(
-        dismissible:
-            barrierDismissible, // changedInternalState is called if barrierDismissible updates
-        semanticsLabel:
-            barrierLabel, // changedInternalState is called if barrierLabel updates
-        barrierSemanticsDismissible: semanticsDismissible,
-      );
-    }
-    if (filter != null) {
-      barrier = BackdropFilter(
-        filter: filter!,
-        child: barrier,
-      );
-    }
-    barrier = IgnorePointer(
-      ignoring: animation!.status ==
-              AnimationStatus
-                  .reverse || // changedInternalState is called when animation.status updates
-          animation!.status ==
-              AnimationStatus
-                  .dismissed, // dismissed is possible when doing a manual pop gesture
-      child: barrier,
-    );
+    Widget barrier = Container();
     return barrier;
   }
 
@@ -1526,8 +1461,7 @@ abstract class ModalRoute<T> extends TransitionRoute<T>
   }
 
   @override
-  String toString() =>
-      '${objectRuntimeType(this, 'ModalRoute')}($settings, animation: $_animation)';
+  String toString() => '${objectRuntimeType(this, 'ModalRoute')}($settings)';
 }
 
 /// A modal route that overlays a widget over the current route.

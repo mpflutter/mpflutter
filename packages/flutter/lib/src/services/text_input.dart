@@ -656,7 +656,7 @@ class RawFloatingCursorPoint {
   RawFloatingCursorPoint({
     this.offset,
     required this.state,
-  })   : assert(state != null),
+  })  : assert(state != null),
         assert(state != FloatingCursorDragState.Update || offset != null);
 
   /// The raw position of the floating cursor as determined by the iOS sdk.
@@ -1117,167 +1117,30 @@ class TextInput {
   /// by [attach] and by [_handleTextInputInvocation] for the
   /// `TextInputClient.requestExistingInputState` method.
   void _attach(
-      TextInputConnection connection, TextInputConfiguration configuration) {
-    assert(connection != null);
-    assert(connection._client != null);
-    assert(configuration != null);
-    assert(_debugEnsureInputActionWorksOnPlatform(configuration.inputAction));
-    _channel.invokeMethod<void>(
-      'TextInput.setClient',
-      <dynamic>[connection._id, configuration.toJson()],
-    );
-    _currentConnection = connection;
-    _currentConfiguration = configuration;
-  }
-
-  static bool _debugEnsureInputActionWorksOnPlatform(
-      TextInputAction inputAction) {
-    assert(() {
-      if (kIsWeb) {
-        // TODO(flutterweb): what makes sense here?
-        return true;
-      }
-      if (Platform.isIOS) {
-        assert(
-          _iOSSupportedInputActions.contains(inputAction),
-          'The requested TextInputAction "$inputAction" is not supported on iOS.',
-        );
-      } else if (Platform.isAndroid) {
-        assert(
-          _androidSupportedInputActions.contains(inputAction),
-          'The requested TextInputAction "$inputAction" is not supported on Android.',
-        );
-      }
-      return true;
-    }());
-    return true;
-  }
+      TextInputConnection connection, TextInputConfiguration configuration) {}
 
   late MethodChannel _channel;
 
   TextInputConnection? _currentConnection;
   late TextInputConfiguration _currentConfiguration;
 
-  Future<dynamic> _handleTextInputInvocation(MethodCall methodCall) async {
-    if (_currentConnection == null) return;
-    final String method = methodCall.method;
-
-    // The requestExistingInputState request needs to be handled regardless of
-    // the client ID, as long as we have a _currentConnection.
-    if (method == 'TextInputClient.requestExistingInputState') {
-      assert(_currentConnection!._client != null);
-      _attach(_currentConnection!, _currentConfiguration);
-      final TextEditingValue editingValue =
-          _currentConnection!._client.currentTextEditingValue;
-      if (editingValue != null) {
-        _setEditingState(editingValue);
-      }
-      return;
-    }
-
-    final List<dynamic> args = methodCall.arguments as List<dynamic>;
-
-    if (method == 'TextInputClient.updateEditingStateWithTag') {
-      final TextInputClient client = _currentConnection!._client;
-      assert(client != null);
-      final AutofillScope? scope = client.currentAutofillScope;
-      final Map<String, dynamic> editingValue = args[1] as Map<String, dynamic>;
-      for (final String tag in editingValue.keys) {
-        final TextEditingValue textEditingValue = TextEditingValue.fromJSON(
-          editingValue[tag] as Map<String, dynamic>,
-        );
-        scope?.getAutofillClient(tag)?.updateEditingValue(textEditingValue);
-      }
-
-      return;
-    }
-
-    final int client = args[0] as int;
-    // The incoming message was for a different client.
-    if (client != _currentConnection!._id) return;
-    switch (method) {
-      case 'TextInputClient.updateEditingState':
-        _currentConnection!._client.updateEditingValue(
-            TextEditingValue.fromJSON(args[1] as Map<String, dynamic>));
-        break;
-      case 'TextInputClient.performAction':
-        _currentConnection!._client
-            .performAction(_toTextInputAction(args[1] as String));
-        break;
-      case 'TextInputClient.performPrivateCommand':
-        _currentConnection!._client.performPrivateCommand(
-            args[1]['action'] as String,
-            args[1]['data'] as Map<String, dynamic>);
-        break;
-      case 'TextInputClient.updateFloatingCursor':
-        _currentConnection!._client.updateFloatingCursor(_toTextPoint(
-          _toTextCursorAction(args[1] as String),
-          args[2] as Map<String, dynamic>,
-        ));
-        break;
-      case 'TextInputClient.onConnectionClosed':
-        _currentConnection!._client.connectionClosed();
-        break;
-      case 'TextInputClient.showAutocorrectionPromptRect':
-        _currentConnection!._client
-            .showAutocorrectionPromptRect(args[1] as int, args[2] as int);
-        break;
-      default:
-        throw MissingPluginException();
-    }
-  }
+  Future<dynamic> _handleTextInputInvocation(MethodCall methodCall) async {}
 
   bool _hidePending = false;
 
-  void _scheduleHide() {
-    if (_hidePending) return;
-    _hidePending = true;
+  void _scheduleHide() {}
 
-    // Schedule a deferred task that hides the text input. If someone else
-    // shows the keyboard during this update cycle, then the task will do
-    // nothing.
-    scheduleMicrotask(() {
-      _hidePending = false;
-      if (_currentConnection == null)
-        _channel.invokeMethod<void>('TextInput.hide');
-    });
-  }
+  void _clearClient() {}
 
-  void _clearClient() {
-    _channel.invokeMethod<void>('TextInput.clearClient');
-    _currentConnection = null;
-    _scheduleHide();
-  }
+  void _setEditingState(TextEditingValue value) {}
 
-  void _setEditingState(TextEditingValue value) {
-    assert(value != null);
-    _channel.invokeMethod<void>(
-      'TextInput.setEditingState',
-      value.toJSON(),
-    );
-  }
+  void _show() {}
 
-  void _show() {
-    _channel.invokeMethod<void>('TextInput.show');
-  }
+  void _requestAutofill() {}
 
-  void _requestAutofill() {
-    _channel.invokeMethod<void>('TextInput.requestAutofill');
-  }
+  void _setEditableSizeAndTransform(Map<String, dynamic> args) {}
 
-  void _setEditableSizeAndTransform(Map<String, dynamic> args) {
-    _channel.invokeMethod<void>(
-      'TextInput.setEditableSizeAndTransform',
-      args,
-    );
-  }
-
-  void _setStyle(Map<String, dynamic> args) {
-    _channel.invokeMethod<void>(
-      'TextInput.setStyle',
-      args,
-    );
-  }
+  void _setStyle(Map<String, dynamic> args) {}
 
   /// Finishes the current autofill context, and potentially saves the user
   /// input for future use if `shouldSave` is true.
@@ -1326,11 +1189,5 @@ class TextInput {
   ///
   /// * [AutofillGroup.onDisposeAction], a configurable action that runs when a
   ///   topmost [AutofillGroup] is getting disposed.
-  static void finishAutofillContext({bool shouldSave = true}) {
-    assert(shouldSave != null);
-    TextInput._instance._channel.invokeMethod<void>(
-      'TextInput.finishAutofillContext',
-      shouldSave,
-    );
-  }
+  static void finishAutofillContext({bool shouldSave = true}) {}
 }
