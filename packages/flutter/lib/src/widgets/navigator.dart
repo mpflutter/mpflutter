@@ -655,50 +655,6 @@ class NavigatorObserver {
   void didStopUserGesture() {}
 }
 
-/// An inherited widget to host a hero controller.
-///
-/// The hosted hero controller will be picked up by the navigator in the
-/// [child] subtree. Once a navigator picks up this controller, the navigator
-/// will bar any navigator below its subtree from receiving this controller.
-///
-/// The hero controller inside the [HeroControllerScope] can only subscribe to
-/// one navigator at a time. An assertion will be thrown if the hero controller
-/// subscribes to more than one navigators. This can happen when there are
-/// multiple navigators under the same [HeroControllerScope] in parallel.
-class HeroControllerScope extends InheritedWidget {
-  /// Creates a widget to host the input [controller].
-  const HeroControllerScope({
-    Key? key,
-    required HeroController this.controller,
-    required Widget child,
-  })   : assert(controller != null),
-        super(key: key, child: child);
-
-  /// Creates a widget to prevent the subtree from receiving the hero controller
-  /// above.
-  const HeroControllerScope.none({
-    Key? key,
-    required Widget child,
-  })   : controller = null,
-        super(key: key, child: child);
-
-  /// The hero controller that is hosted inside this widget.
-  final HeroController? controller;
-
-  /// Retrieves the [HeroController] from the closest [HeroControllerScope]
-  /// ancestor.
-  static HeroController? of(BuildContext context) {
-    final HeroControllerScope? host =
-        context.dependOnInheritedWidgetOfExactType<HeroControllerScope>();
-    return host?.controller;
-  }
-
-  @override
-  bool updateShouldNotify(HeroControllerScope oldWidget) {
-    return oldWidget.controller != controller;
-  }
-}
-
 /// A [Route] wrapper interface that can be staged for [TransitionDelegate] to
 /// decide how its underlying [Route] should transition on or off screen.
 abstract class RouteTransitionRecord {
@@ -3420,8 +3376,6 @@ class NavigatorState extends State<Navigator>
   bool _debugLocked =
       false; // used to prevent re-entrant calls to push, pop, and friends
 
-  HeroController? _heroControllerFromScope;
-
   late List<NavigatorObserver> _effectiveObservers;
 
   @override
@@ -3459,13 +3413,6 @@ class NavigatorState extends State<Navigator>
       observer._navigator = this;
     }
     _effectiveObservers = widget.observers;
-
-    // We have to manually extract the inherited widget in initState because
-    // the current context is not fully initialized.
-    final HeroControllerScope? heroControllerScope = context
-        .getElementForInheritedWidgetOfExactType<HeroControllerScope>()
-        ?.widget as HeroControllerScope?;
-    _updateHeroController(heroControllerScope?.controller);
   }
 
   // Use [_nextPagelessRestorationScopeId] to get the next id.
@@ -3567,70 +3514,12 @@ class NavigatorState extends State<Navigator>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _updateHeroController(HeroControllerScope.of(context));
     for (final _RouteEntry entry in _history)
       entry.route.changedExternalState();
   }
 
-  void _updateHeroController(HeroController? newHeroController) {
-    if (_heroControllerFromScope != newHeroController) {
-      if (newHeroController != null) {
-        // Makes sure the same hero controller is not shared between two navigators.
-        assert(() {
-          // It is possible that the hero controller subscribes to an existing
-          // navigator. We are fine as long as that navigator gives up the hero
-          // controller at the end of the build.
-          if (newHeroController.navigator != null) {
-            final NavigatorState previousOwner = newHeroController.navigator!;
-            ServicesBinding.instance!
-                .addPostFrameCallback((Duration timestamp) {
-              // We only check if this navigator still owns the hero controller.
-              if (_heroControllerFromScope == newHeroController) {
-                final bool hasHeroControllerOwnerShip =
-                    _heroControllerFromScope!._navigator == this;
-                if (!hasHeroControllerOwnerShip ||
-                    previousOwner._heroControllerFromScope ==
-                        newHeroController) {
-                  final NavigatorState otherOwner = hasHeroControllerOwnerShip
-                      ? previousOwner
-                      : _heroControllerFromScope!._navigator!;
-                  FlutterError.reportError(
-                    FlutterErrorDetails(
-                      exception: FlutterError(
-                          'A HeroController can not be shared by multiple Navigators. '
-                          'The Navigators that share the same HeroController are:\n'
-                          '- $this\n'
-                          '- $otherOwner\n'
-                          'Please create a HeroControllerScope for each Navigator or '
-                          'use a HeroControllerScope.none to prevent subtree from '
-                          'receiving a HeroController.'),
-                      library: 'widget library',
-                      stack: StackTrace.current,
-                    ),
-                  );
-                }
-              }
-            });
-          }
-          return true;
-        }());
-        newHeroController._navigator = this;
-      }
-      // Only unsubscribe the hero controller when it is currently subscribe to
-      // this navigator.
-      if (_heroControllerFromScope?._navigator == this)
-        _heroControllerFromScope?._navigator = null;
-      _heroControllerFromScope = newHeroController;
-      _updateEffectiveObservers();
-    }
-  }
-
   void _updateEffectiveObservers() {
-    if (_heroControllerFromScope != null)
-      _effectiveObservers =
-          widget.observers + <NavigatorObserver>[_heroControllerFromScope!];
-    else
-      _effectiveObservers = widget.observers;
+    _effectiveObservers = widget.observers;
   }
 
   @override
@@ -3715,7 +3604,6 @@ class NavigatorState extends State<Navigator>
       _debugLocked = true;
       return true;
     }());
-    _updateHeroController(null);
     for (final NavigatorObserver observer in _effectiveObservers)
       observer._navigator = null;
     focusScopeNode.dispose();
@@ -5454,23 +5342,21 @@ class NavigatorState extends State<Navigator>
     // Hides the HeroControllerScope for the widget subtree so that the other
     // nested navigator underneath will not pick up the hero controller above
     // this level.
-    return HeroControllerScope.none(
-      child: Listener(
-        onPointerDown: _handlePointerDown,
-        onPointerUp: _handlePointerUpOrCancel,
-        onPointerCancel: _handlePointerUpOrCancel,
-        child: AbsorbPointer(
-          absorbing:
-              false, // it's mutated directly by _cancelActivePointers above
-          child: FocusScope(
-            node: focusScopeNode,
-            autofocus: true,
-            child: Overlay(
-              key: _overlayKey,
-              initialEntries: overlay == null
-                  ? _allRouteOverlayEntries.toList(growable: false)
-                  : const <OverlayEntry>[],
-            ),
+    return Listener(
+      onPointerDown: _handlePointerDown,
+      onPointerUp: _handlePointerUpOrCancel,
+      onPointerCancel: _handlePointerUpOrCancel,
+      child: AbsorbPointer(
+        absorbing:
+            false, // it's mutated directly by _cancelActivePointers above
+        child: FocusScope(
+          node: focusScopeNode,
+          autofocus: true,
+          child: Overlay(
+            key: _overlayKey,
+            initialEntries: overlay == null
+                ? _allRouteOverlayEntries.toList(growable: false)
+                : const <OverlayEntry>[],
           ),
         ),
       ),
@@ -5551,7 +5437,7 @@ class _NamedRestorationInformation extends _RestorationInformation {
     required this.name,
     required this.arguments,
     required this.restorationScopeId,
-  })   : assert(name != null),
+  })  : assert(name != null),
         super(_RouteRestorationType.named);
 
   factory _NamedRestorationInformation.fromSerializableData(
@@ -5593,7 +5479,7 @@ class _AnonymousRestorationInformation extends _RestorationInformation {
     required this.routeBuilder,
     required this.arguments,
     required this.restorationScopeId,
-  })   : assert(routeBuilder != null),
+  })  : assert(routeBuilder != null),
         super(_RouteRestorationType.anonymous);
 
   factory _AnonymousRestorationInformation.fromSerializableData(
