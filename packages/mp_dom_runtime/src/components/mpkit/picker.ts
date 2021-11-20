@@ -3,7 +3,7 @@ import { PlatformType } from "../../env";
 import { setDOMAttribute } from "../dom_utils";
 import { MPPlatformView } from "../mpkit/platform_view";
 export class PickerItem {
-  constructor(readonly label: string, readonly disabled: boolean, readonly subItems: PickerItem[]) {}
+  constructor(readonly label: string, readonly disabled: boolean, readonly subItems: PickerItem[]) { }
 }
 export class MPPicker extends MPPlatformView {
   weuiShadowRoot: any;
@@ -39,6 +39,9 @@ export class MPPicker extends MPPlatformView {
     this.htmlElement.addEventListener("change", (e: any) => {
       this.invokeMethod("onChangeCallback", { type: e.type, detail: e.detail });
     });
+    this.htmlElement.addEventListener("columnchange", (e: any) => {
+      setDOMAttribute(this.htmlElement, "range", this.getPickerItem())
+    });
   }
 
   elementType() {
@@ -57,14 +60,34 @@ export class MPPicker extends MPPlatformView {
     setDOMAttribute(this.htmlElement, "mode", attributes.mode ? attributes.mode.replace("MPPickerMode.", "") : null);
     setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
     setDOMAttribute(this.htmlElement, "range", this.getPickerItem());
+    setDOMAttribute(this.htmlElement, "start", attributes.start);
+    setDOMAttribute(this.htmlElement, "end", attributes.end);
   }
 
   getPickerItem(): any {
     const mode = this.attributes.mode?.replace("MPPickerMode.", "") ?? "selector";
     if (MPEnv.platformType === PlatformType.wxMiniProgram) {
-      return (this.attributes.items as PickerItem[])?.map((it, idx) => {
+      const originItems = this.attributes.items as PickerItem[];
+      const items = [];
+      const firstItems = originItems?.map((it, idx) => {
         return it.label;
       });
+      items.push(firstItems);
+      if (mode !== "selector") {
+        const secondItems = originItems[0].subItems?.map((it, idx) => {
+          return it.label;
+        });
+        if (secondItems) {
+          items.push(secondItems);
+          const thirddItems = originItems[0].subItems?.[0]?.subItems?.map((it, idx) => {
+            return it.label;
+          });
+          if (thirddItems) {
+            items.push(thirddItems);
+          }
+        }
+      }
+      return items;
     } else {
       return (this.attributes.items as PickerItem[])?.map((it, idx) => {
         return {
@@ -75,8 +98,8 @@ export class MPPicker extends MPPlatformView {
             mode === "selector"
               ? null
               : it.subItems?.map((it, idx) => {
-                  return { label: it.label, value: idx, disabled: it.disabled };
-                }),
+                return { label: it.label, value: idx, disabled: it.disabled };
+              }),
         };
       });
     }
