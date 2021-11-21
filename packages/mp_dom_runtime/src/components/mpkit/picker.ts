@@ -3,14 +3,16 @@ import { PlatformType } from "../../env";
 import { setDOMAttribute } from "../dom_utils";
 import { MPPlatformView } from "../mpkit/platform_view";
 export class PickerItem {
-  constructor(readonly label: string, readonly disabled: boolean, readonly subItems: PickerItem[]) { }
+  constructor(readonly label: string, readonly disabled: boolean, readonly subItems: PickerItem[]) {}
 }
 export class MPPicker extends MPPlatformView {
   weuiShadowRoot: any;
-  items: any;
+  lastItems: any;
+  multiIndex: number[];
 
   constructor(document: Document) {
     super(document);
+    this.multiIndex = [0, 0, 0];
     if (MPEnv.platformType === PlatformType.browser) {
       this.htmlElement.addEventListener("click", () => {
         let shadowDiv = document.createElement("div");
@@ -29,7 +31,8 @@ export class MPPicker extends MPPlatformView {
         div.style.width = "100%";
         div.style.height = "100%";
         this.weuiShadowRoot.appendChild(div);
-        if (this.attributes.mode === "date") {
+        const mode = this.attributes.mode?.replace("MPPickerMode.", "") ?? "selector";
+        if (mode === "date") {
           this.showDatePicker(div);
         } else {
           this.showPicker(div);
@@ -40,7 +43,8 @@ export class MPPicker extends MPPlatformView {
       this.invokeMethod("onChangeCallback", { type: e.type, detail: e.detail });
     });
     this.htmlElement.addEventListener("columnchange", (e: any) => {
-      setDOMAttribute(this.htmlElement, "range", this.getPickerItem())
+      this.updatePickerItem(e.detail.column, e.detail.value);
+      setDOMAttribute(this.htmlElement, "range", this.lastItems);
     });
   }
 
@@ -56,35 +60,39 @@ export class MPPicker extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
+    const mode = attributes.mode ? attributes.mode.replace("MPPickerMode.", "") : "selector";
     setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
-    setDOMAttribute(this.htmlElement, "mode", attributes.mode ? attributes.mode.replace("MPPickerMode.", "") : null);
+    setDOMAttribute(this.htmlElement, "mode", mode);
     setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
-    setDOMAttribute(this.htmlElement, "range", this.getPickerItem());
+    this.lastItems = mode === "selector" || mode === "multiSelector" ? this.getPickerItem() : null;
+    setDOMAttribute(this.htmlElement, "range", this.lastItems);
     setDOMAttribute(this.htmlElement, "start", attributes.start);
     setDOMAttribute(this.htmlElement, "end", attributes.end);
+    setDOMAttribute(this.htmlElement, "value", mode === "date" ? attributes.defaultValue?.join("-") : null);
   }
 
   getPickerItem(): any {
     const mode = this.attributes.mode?.replace("MPPickerMode.", "") ?? "selector";
     if (MPEnv.platformType === PlatformType.wxMiniProgram) {
       const originItems = this.attributes.items as PickerItem[];
-      const items = [];
       const firstItems = originItems?.map((it, idx) => {
         return it.label;
       });
+      if (mode === "selector") {
+        return firstItems;
+      }
+      const items = [];
       items.push(firstItems);
-      if (mode !== "selector") {
-        const secondItems = originItems[0].subItems?.map((it, idx) => {
+      const secondItems = originItems[0].subItems?.map((it, idx) => {
+        return it.label;
+      });
+      if (secondItems) {
+        items.push(secondItems);
+        const thirddItems = originItems[0].subItems?.[0]?.subItems?.map((it, idx) => {
           return it.label;
         });
-        if (secondItems) {
-          items.push(secondItems);
-          const thirddItems = originItems[0].subItems?.[0]?.subItems?.map((it, idx) => {
-            return it.label;
-          });
-          if (thirddItems) {
-            items.push(thirddItems);
-          }
+        if (thirddItems) {
+          items.push(thirddItems);
         }
       }
       return items;
@@ -98,10 +106,34 @@ export class MPPicker extends MPPlatformView {
             mode === "selector"
               ? null
               : it.subItems?.map((it, idx) => {
-                return { label: it.label, value: idx, disabled: it.disabled };
-              }),
+                  return { label: it.label, value: idx, disabled: it.disabled };
+                }),
         };
       });
+    }
+  }
+
+  updatePickerItem(column: number, value: number): any {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+      const originItems = this.attributes.items as PickerItem[];
+      this.multiIndex[column] = value;
+      switch (column) {
+        case 0: {
+          this.lastItems[1] = originItems[value].subItems?.map((it) => {
+            return it.label;
+          });
+          this.lastItems[2] = originItems[value].subItems?.[0]?.subItems?.map((it) => {
+            return it.label;
+          });
+          break;
+        }
+        case 1: {
+          this.lastItems[2] = originItems[this.multiIndex[0]].subItems?.[value]?.subItems?.map((it) => {
+            return it.label;
+          });
+          break;
+        }
+      }
     }
   }
 
@@ -141,7 +173,7 @@ export class MPPicker extends MPPlatformView {
       start: this.attributes.start,
       end: this.attributes.end,
       defaultValue: this.attributes.defaultValue,
-      onConfirm: function (result: any) {
+      onConfirm: (result: any) => {
         this.invokeMethod("onChangeCallback", { result: result });
       },
       onClose: function () {
