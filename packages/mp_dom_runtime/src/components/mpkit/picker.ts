@@ -69,6 +69,17 @@ export class MPPicker extends MPPlatformView {
     setDOMAttribute(this.htmlElement, "start", attributes.start);
     setDOMAttribute(this.htmlElement, "end", attributes.end);
     setDOMAttribute(this.htmlElement, "value", mode === "date" ? attributes.defaultValue?.join("-") : null);
+    setTimeout(() => {
+      const mode = attributes.mode ? attributes.mode.replace("MPPickerMode.", "") : "selector";
+      setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
+      setDOMAttribute(this.htmlElement, "mode", mode);
+      setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
+      this.lastItems = mode === "selector" || mode === "multiSelector" ? this.getPickerItem() : null;
+      setDOMAttribute(this.htmlElement, "range", this.lastItems);
+      setDOMAttribute(this.htmlElement, "start", attributes.start);
+      setDOMAttribute(this.htmlElement, "end", attributes.end);
+      setDOMAttribute(this.htmlElement, "value", mode === "date" ? attributes.defaultValue?.join("-") : null);
+    }, 100);
   }
 
   getPickerItem(): any {
@@ -119,18 +130,21 @@ export class MPPicker extends MPPlatformView {
       this.multiIndex[column] = value;
       switch (column) {
         case 0: {
-          this.lastItems[1] = originItems[value].subItems?.map((it) => {
-            return it.label;
-          });
-          this.lastItems[2] = originItems[value].subItems?.[0]?.subItems?.map((it) => {
-            return it.label;
-          });
+          this.lastItems[1] =
+            originItems[value].subItems?.map((it) => {
+              return it.label;
+            }) ?? [];
+          this.lastItems[2] =
+            originItems[value].subItems?.[0]?.subItems?.map((it) => {
+              return it.label;
+            }) ?? [];
           break;
         }
         case 1: {
-          this.lastItems[2] = originItems[this.multiIndex[0]].subItems?.[value]?.subItems?.map((it) => {
-            return it.label;
-          });
+          this.lastItems[2] =
+            originItems[this.multiIndex[0]].subItems?.[value]?.subItems?.map((it) => {
+              return it.label;
+            }) ?? [];
           break;
         }
       }
