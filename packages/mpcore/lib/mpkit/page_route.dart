@@ -20,7 +20,4 @@ class MPPageRoute<T> extends PageRoute<T> {
 
   @override
   bool get maintainState => true;
-
-  @override
-  Duration get transitionDuration => Duration(microseconds: 1);
 }
