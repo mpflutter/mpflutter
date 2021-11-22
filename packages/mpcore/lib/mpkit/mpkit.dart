@@ -26,3 +26,4 @@ part 'platform_view.dart';
 part 'env.dart';
 part 'editable_text.dart';
 part 'mini_program_view.dart';
+part 'sliver_persistent_header.dart';
