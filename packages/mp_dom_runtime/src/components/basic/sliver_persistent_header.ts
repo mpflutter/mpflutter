@@ -47,7 +47,7 @@ export class SliverPersistentHeader extends ComponentView {
         eventListener = (e: any) => {
           this.updateLazyState((this.document as any).window.scrollY);
         };
-        (this.document as any).window.on("scroll", eventListener);
+        (this.document as any).window.addEventListener("scroll", eventListener);
       }
     }
   }

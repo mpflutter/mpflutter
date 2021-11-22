@@ -432,7 +432,7 @@ class MPChannelBase {
           } else {
             MPNavigatorObserver.doBacking = true;
             navigator.popUntil((route) {
-              return false;
+              return route.isFirst;
             });
             MPNavigatorObserver.doBacking = false;
             await navigator.pushNamed(name, arguments: params);
