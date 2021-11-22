@@ -29,3 +29,4 @@ part 'switch.dart';
 part 'slider.dart';
 part 'picker.dart';
 part 'mini_program_view.dart';
+part 'sliver_persistent_header.dart';
