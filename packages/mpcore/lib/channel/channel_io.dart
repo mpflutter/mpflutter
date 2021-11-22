@@ -76,11 +76,6 @@ class MPChannel {
               },
             );
           MPCore.clearOldFrameObject();
-          if (MPNavigatorObserver.instance.navigator?.canPop() == true) {
-            MPNavigatorObserver.instance.navigator?.popUntil((route) {
-              return route.isFirst;
-            });
-          }
           await Future.delayed(Duration(seconds: 1));
           WidgetsBinding.instance?.scheduleFrame();
           _flushMessageQueue();
