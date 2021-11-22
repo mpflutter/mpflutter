@@ -43,6 +43,10 @@ main(List<String> args) async {
           pubspecContent.replaceAllMapped(RegExp(r'flutter:.*'), (match) {
         return 'flutter: "${versionCode}"';
       });
+      pubspecContent = pubspecContent
+          .replaceAllMapped(RegExp(r'flutter_web_plugins:.*'), (match) {
+        return 'flutter_web_plugins: "${versionCode}"';
+      });
       pubspecContent =
           pubspecContent.replaceAllMapped(RegExp(r'mpcore:.*'), (match) {
         return 'mpcore: "${versionCode}"';
