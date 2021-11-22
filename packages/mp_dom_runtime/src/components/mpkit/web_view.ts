@@ -4,6 +4,17 @@ import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 import { MPPlatformView } from "./platform_view";
 
 export class MPWebView extends MPPlatformView {
+  constructor(readonly document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
+    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+      this.htmlElement.addEventListener("message", (e: any) => {
+        if (e?.detail?.data instanceof Array) {
+          this.invokeMethod("mini_program_message", { data: e.detail.data });
+        }
+      });
+    }
+  }
+
   elementType() {
     if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
       return "wx-web-view";
