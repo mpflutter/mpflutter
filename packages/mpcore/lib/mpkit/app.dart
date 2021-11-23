@@ -1,6 +1,8 @@
 part of 'mpkit.dart';
 
 class MPApp extends StatelessWidget {
+  @override
+  final Key? key;
   final String? title;
   final Color? color;
   final Map<String, WidgetBuilder> routes;
@@ -11,6 +13,7 @@ class MPApp extends StatelessWidget {
   final PageRouteFactory? pageRouteBuilder;
 
   MPApp({
+    this.key,
     this.title,
     this.color,
     required this.routes,
@@ -24,6 +27,7 @@ class MPApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WidgetsApp(
+      key: key,
       title: title ?? '',
       color: color ?? Color(0),
       navigatorKey: navigatorKey,
