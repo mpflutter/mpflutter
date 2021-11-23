@@ -45,7 +45,7 @@ class DartPackageDeployer {
     execSync(`tar -czf ${currentVersion}.tar.gz *`, {
       cwd: `../packages/${this.name}`,
     });
-    execSync(`mv ${currentVersion}.tar.gz /tmp/${currentVersion}.tar.gz`, {
+    execSync(`mv ${currentVersion}.tar.gz /tmp/${this.name}${currentVersion}.tar.gz`, {
       cwd: `../packages/${this.name}`,
     });
   }
@@ -58,7 +58,7 @@ class DartPackageDeployer {
           Region: cosRegion,
           Key: `/${this.name}/versions/${currentVersion}.tar.gz`,
           StorageClass: "STANDARD",
-          Body: createReadStream(`/tmp/${currentVersion}.tar.gz`),
+          Body: createReadStream(`/tmp/${this.name}${currentVersion}.tar.gz`),
         },
         (err, data) => {
           if (!err) {
