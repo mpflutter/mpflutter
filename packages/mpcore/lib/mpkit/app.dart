@@ -7,6 +7,8 @@ class MPApp extends StatelessWidget {
   final RouteFactory? onGenerateRoute;
   final List<NavigatorObserver> navigatorObservers;
   final double? maxWidth;
+  final GlobalKey<NavigatorState>? navigatorKey;
+  final PageRouteFactory? pageRouteBuilder;
 
   MPApp({
     this.title,
@@ -15,6 +17,8 @@ class MPApp extends StatelessWidget {
     this.onGenerateRoute,
     required this.navigatorObservers,
     this.maxWidth,
+    this.navigatorKey,
+    this.pageRouteBuilder,
   });
 
   @override
@@ -22,12 +26,16 @@ class MPApp extends StatelessWidget {
     return WidgetsApp(
       title: title ?? '',
       color: color ?? Color(0),
+      navigatorKey: navigatorKey,
       builder: (context, widget) {
         return widget ?? Container();
       },
       routes: routes,
       navigatorObservers: navigatorObservers,
       pageRouteBuilder: <T>(RouteSettings settings, WidgetBuilder builder) {
+        if (pageRouteBuilder != null) {
+          return pageRouteBuilder!.call(settings, builder);
+        }
         return MPPageRoute<T>(settings: settings, builder: builder);
       },
       onGenerateRoute: (settings) {
