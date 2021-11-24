@@ -69,7 +69,11 @@ export class MPPicker extends MPPlatformView {
     setDOMAttribute(this.htmlElement, "range", this.lastItems);
     setDOMAttribute(this.htmlElement, "start", attributes.start);
     setDOMAttribute(this.htmlElement, "end", attributes.end);
-    setDOMAttribute(this.htmlElement, "value", mode === "date" ? attributes.defaultValue?.join("-") : null);
+    setDOMAttribute(
+      this.htmlElement,
+      "value",
+      mode === "date" ? attributes.defaultValue?.join("-") : attributes.defaultValue
+    );
     setTimeout(() => {
       const mode = attributes.mode ? attributes.mode.replace("MPPickerMode.", "") : "selector";
       setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
@@ -79,7 +83,11 @@ export class MPPicker extends MPPlatformView {
       setDOMAttribute(this.htmlElement, "range", this.lastItems);
       setDOMAttribute(this.htmlElement, "start", attributes.start);
       setDOMAttribute(this.htmlElement, "end", attributes.end);
-      setDOMAttribute(this.htmlElement, "value", mode === "date" ? attributes.defaultValue?.join("-") : null);
+      setDOMAttribute(
+        this.htmlElement,
+        "value",
+        mode === "date" ? attributes.defaultValue?.join("-") : attributes.defaultValue
+      );
     }, 100);
   }
 
@@ -154,29 +162,40 @@ export class MPPicker extends MPPlatformView {
 
   getPickerResult(e: any): any {
     const originItem = this.attributes.items as PickerItem[];
-    const result = [];
+    let result = [];
 
-    if (typeof e === "string") {
-      const firstItem = { label: originItem[parseInt(e)].label, value: parseInt(e) };
-      result.push(firstItem);
-      return result;
-    }
-    const firstIndex = e[0] ?? 0;
-    const secondIndex = e[1] ?? 0;
-    const thirdIndex = e[2] ?? 0;
-    const firstItem = { label: originItem[firstIndex].label, value: firstIndex };
-    result.push(firstItem);
-    const secondLabel = originItem[firstIndex]?.subItems?.[secondIndex]?.label;
-    if (secondLabel) {
-      result.push({ label: secondLabel, value: secondIndex });
-      const thirdLabel = originItem[firstIndex]?.subItems?.[secondIndex]?.subItems[thirdIndex]?.label;
-      if (thirdLabel) {
-        result.push({
-          label: thirdLabel,
-          value: thirdIndex,
-        });
+    if (originItem) {
+      if (typeof e === "string") {
+        const firstItem = { label: originItem[parseInt(e)].label, value: parseInt(e) };
+        result.push(firstItem);
+        return result;
       }
+      const firstIndex = e[0] ?? 0;
+      const secondIndex = e[1] ?? 0;
+      const thirdIndex = e[2] ?? 0;
+      const firstItem = { label: originItem[firstIndex].label, value: firstIndex };
+      result.push(firstItem);
+      const secondLabel = originItem[firstIndex]?.subItems?.[secondIndex]?.label;
+      if (secondLabel) {
+        result.push({ label: secondLabel, value: secondIndex });
+        const thirdLabel = originItem[firstIndex]?.subItems?.[secondIndex]?.subItems?.[thirdIndex]?.label;
+        if (thirdLabel) {
+          result.push({
+            label: thirdLabel,
+            value: thirdIndex,
+          });
+        }
+      }
+    } else {
+      result = (e as string).split("-").map((it, idx) => {
+        return {
+          label: it,
+          value: idx,
+        };
+      });
+      console.log(result);
     }
+
     return result;
   }
 
@@ -201,6 +220,7 @@ export class MPPicker extends MPPlatformView {
       }),
       {
         container: div,
+        defaultValue: this.attributes.defaultValue,
         onConfirm: (result: any) => {
           this.invokeMethod("onChangeCallback", { result: result });
         },

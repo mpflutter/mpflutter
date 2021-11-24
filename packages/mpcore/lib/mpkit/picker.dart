@@ -3,9 +3,7 @@ part of 'mpkit.dart';
 enum MPPickerMode {
   selector,
   multiSelector,
-  time,
   date,
-  region,
 }
 
 class MPPickerController extends MPPlatformViewController {
