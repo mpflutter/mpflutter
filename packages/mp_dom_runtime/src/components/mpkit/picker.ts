@@ -40,7 +40,8 @@ export class MPPicker extends MPPlatformView {
       });
     }
     this.htmlElement.addEventListener("change", (e: any) => {
-      this.invokeMethod("onChangeCallback", { type: e.type, detail: e.detail });
+      const result = this.getPickerResult(e.detail.value);
+      this.invokeMethod("onChangeCallback", { result: result });
     });
     this.htmlElement.addEventListener("columnchange", (e: any) => {
       this.updatePickerItem(e.detail.column, e.detail.value);
@@ -149,6 +150,34 @@ export class MPPicker extends MPPlatformView {
         }
       }
     }
+  }
+
+  getPickerResult(e: any): any {
+    const originItem = this.attributes.items as PickerItem[];
+    const result = [];
+
+    if (typeof e === "string") {
+      const firstItem = { label: originItem[parseInt(e)].label, value: parseInt(e) };
+      result.push(firstItem);
+      return result;
+    }
+    const firstIndex = e[0] ?? 0;
+    const secondIndex = e[1] ?? 0;
+    const thirdIndex = e[2] ?? 0;
+    const firstItem = { label: originItem[firstIndex].label, value: firstIndex };
+    result.push(firstItem);
+    const secondLabel = originItem[firstIndex]?.subItems?.[secondIndex]?.label;
+    if (secondLabel) {
+      result.push({ label: secondLabel, value: secondIndex });
+      const thirdLabel = originItem[firstIndex]?.subItems?.[secondIndex]?.subItems[thirdIndex]?.label;
+      if (thirdLabel) {
+        result.push({
+          label: thirdLabel,
+          value: thirdIndex,
+        });
+      }
+    }
+    return result;
   }
 
   showPicker(div: any) {
