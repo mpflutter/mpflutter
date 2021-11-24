@@ -122,39 +122,4 @@ class MPWebDialogs {
   static void hideLoading() {
     hideToast();
   }
-
-  static Future<List?> showPicker({
-    required String title,
-    required List<PickerItem> items,
-    String? confirmText,
-    List<num>? disabledIds,
-  }) async {
-    final result = await MPAction(
-      type: 'web_dialogs',
-      params: {
-        'dialogType': 'picker',
-        'title': title,
-        'items': items,
-        'confirmText': confirmText,
-      },
-    ).send();
-    return result;
-  }
-
-  static Future<List?> showDatePicker({
-    required int start,
-    required int end,
-    List? defaultValue,
-  }) async {
-    final result = await MPAction(
-      type: 'web_dialogs',
-      params: {
-        'dialogType': 'datePicker',
-        'start': start,
-        'end': end,
-        'defaultValue': defaultValue,
-      },
-    ).send();
-    return result;
-  }
 }

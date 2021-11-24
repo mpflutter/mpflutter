@@ -50,13 +50,10 @@ export class MPPicker extends MPPlatformView {
   }
 
   elementType() {
-    if (MPEnv.platformType === PlatformType.browser) {
-      return "div";
-    } else if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
       return "wx-picker";
-    } else {
-      return "";
     }
+    return "div";
   }
 
   setAttributes(attributes: any) {

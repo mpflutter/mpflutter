@@ -24,6 +24,11 @@ export class MPSlider extends MPPlatformView {
       cssStyle.rel = "stylesheet";
       cssStyle.href = "https://cdn.jsdelivr.net/npm/weui@2.4.4/dist/style/weui.min.css";
       weuiShadowRoot.appendChild(cssStyle);
+
+      console.log(this.attributes);
+      // const defaultValue = parseInt(this.attributes.value) ?? 0;
+      // console.log(defaultValue);
+
       const sliderElement = document.createElement("body");
       sliderElement.setAttribute("data-weui-theme", "light");
       sliderElement.innerHTML = `<div class="weui-slider">
@@ -60,36 +65,29 @@ export class MPSlider extends MPPlatformView {
   elementType() {
     if (MPEnv.platformType === PlatformType.wxMiniProgram) {
       return "wx-slider";
-    } else {
-      return "div";
     }
+    return "div";
   }
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (MPEnv.platformType == PlatformType.wxMiniProgram) {
-      setDOMAttribute(this.htmlElement, "min", attributes.min);
-      setDOMAttribute(this.htmlElement, "max", attributes.max);
-      setDOMAttribute(this.htmlElement, "step", attributes.step);
-      setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
-      setDOMAttribute(this.htmlElement, "value", attributes.value);
-      setDOMAttribute(
-        this.htmlElement,
-        "active-color",
-        attributes.activeColor ? cssColorHex(attributes.activeColor) : null
-      );
-      setDOMAttribute(
-        this.htmlElement,
-        "background-color",
-        attributes.backgroundColor ? cssColorHex(attributes.backgroundColor) : null
-      );
-      setDOMAttribute(this.htmlElement, "block-size", attributes.blockSize);
-      setDOMAttribute(
-        this.htmlElement,
-        "block-color",
-        attributes.blockColor ? cssColorHex(attributes.blockColor) : null
-      );
-      setDOMAttribute(this.htmlElement, "show-value", attributes.showValue);
-    }
+    setDOMAttribute(this.htmlElement, "min", attributes.min);
+    setDOMAttribute(this.htmlElement, "max", attributes.max);
+    setDOMAttribute(this.htmlElement, "step", attributes.step);
+    setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
+    setDOMAttribute(this.htmlElement, "value", attributes.value);
+    setDOMAttribute(
+      this.htmlElement,
+      "active-color",
+      attributes.activeColor ? cssColorHex(attributes.activeColor) : null
+    );
+    setDOMAttribute(
+      this.htmlElement,
+      "background-color",
+      attributes.backgroundColor ? cssColorHex(attributes.backgroundColor) : null
+    );
+    setDOMAttribute(this.htmlElement, "block-size", attributes.blockSize);
+    setDOMAttribute(this.htmlElement, "block-color", attributes.blockColor ? cssColorHex(attributes.blockColor) : null);
+    setDOMAttribute(this.htmlElement, "show-value", attributes.showValue);
   }
 }
