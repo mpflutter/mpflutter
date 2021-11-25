@@ -4,18 +4,20 @@ import { MPPlatformView } from "../mpkit/platform_view";
 import { cssColorHex } from "../utils";
 
 export class MPSlider extends MPPlatformView {
+  firstSetup = true;
+  sliderElement: any;
   constructor(document: Document) {
     super(document);
     if (MPEnv.platformType === PlatformType.wxMiniProgram) {
-      this.htmlElement.addEventListener("change", (e: any) => {
-        this.invokeMethod("onSliderChange", { value: e.detail.value });
-      });
+      // this.htmlElement.addEventListener("change", (e: any) => {
+      //   this.invokeMethod("onSliderChange", { value: e.detail.value });
+      // });
       this.htmlElement.addEventListener("changing", (e: any) => {
         this.invokeMethod("onSliderChanging", { value: e.detail.value });
       });
     } else if (MPEnv.platformType === PlatformType.browser) {
-      this.htmlElement.addEventListener("change", (value) => {
-        console.log(value);
+      this.htmlElement.addEventListener("change", (value: any) => {
+        this.invokeMethod("onSliderChanging", { value: value.detail.value });
       });
       const weuiShadowRoot = this.htmlElement.attachShadow
         ? this.htmlElement.attachShadow({ mode: "closed" })
@@ -25,25 +27,16 @@ export class MPSlider extends MPPlatformView {
       cssStyle.href = "https://cdn.jsdelivr.net/npm/weui@2.4.4/dist/style/weui.min.css";
       weuiShadowRoot.appendChild(cssStyle);
 
-      console.log(this.attributes);
-      // const defaultValue = parseInt(this.attributes.value) ?? 0;
-      // console.log(defaultValue);
+      this.sliderElement = document.createElement("body");
+      this.sliderElement.setAttribute("data-weui-theme", "light");
 
-      const sliderElement = document.createElement("body");
-      sliderElement.setAttribute("data-weui-theme", "light");
-      sliderElement.innerHTML = `<div class="weui-slider">
-        <div id="sliderInner" class="weui-slider__inner">
-          <div id="sliderTrack" style="width: 50%;" class="weui-slider__track"></div>
-          <div role="slider" aria-label="thumb" id="sliderHandler" style="left: 50%;" class="weui-slider__handler weui-wa-hotarea"></div>
-        </div>
-      </div>`;
-      weuiShadowRoot.appendChild(sliderElement);
+      weuiShadowRoot.appendChild(this.sliderElement);
       setTimeout(() => {
-        var totalLen = sliderElement.querySelector("#sliderInner")!.clientWidth,
+        var totalLen = this.sliderElement.querySelector("#sliderInner")!.clientWidth,
           startLeft = 0,
           startX = 0;
-        var sliderTrack = sliderElement.querySelector("#sliderTrack") as HTMLDivElement;
-        var sliderHandler = sliderElement.querySelector("#sliderHandler") as HTMLDivElement;
+        var sliderTrack = this.sliderElement.querySelector("#sliderTrack") as HTMLDivElement;
+        var sliderHandler = this.sliderElement.querySelector("#sliderHandler") as HTMLDivElement;
         sliderHandler.addEventListener("touchstart", (e: any) => {
           startLeft = (parseInt(sliderHandler.style.left) * totalLen) / 100;
           startX = e.changedTouches[0].clientX;
@@ -89,5 +82,18 @@ export class MPSlider extends MPPlatformView {
     setDOMAttribute(this.htmlElement, "block-size", attributes.blockSize);
     setDOMAttribute(this.htmlElement, "block-color", attributes.blockColor ? cssColorHex(attributes.blockColor) : null);
     setDOMAttribute(this.htmlElement, "show-value", attributes.showValue);
+    if (MPEnv.platformType === PlatformType.browser && this.firstSetup) {
+      this.firstSetup = false;
+      this.sliderElement.innerHTML = `<div class="weui-slider">
+        <div id="sliderInner" class="weui-slider__inner">
+          <div id="sliderTrack" style="width: ${
+            parseInt(this.attributes?.value) ?? 0
+          }%;" class="weui-slider__track"></div>
+          <div role="slider" aria-label="thumb" id="sliderHandler" style="left: ${
+            parseInt(this.attributes?.value) ?? 0
+          }%;" class="weui-slider__handler weui-wa-hotarea"></div>
+        </div>
+      </div>`;
+    }
   }
 }
