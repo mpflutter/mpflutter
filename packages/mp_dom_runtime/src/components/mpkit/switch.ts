@@ -4,11 +4,14 @@ import { setDOMAttribute } from "../dom_utils";
 import { MPPlatformView } from "../mpkit/platform_view";
 
 export class MPSwitch extends MPPlatformView {
-  constructor(document: Document) {
-    super(document);
+  firstSetted = false;
+  inputElement: any;
+
+  constructor(document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
     if (MPEnv.platformType === PlatformType.wxMiniProgram) {
       this.htmlElement.addEventListener("change", (e: any) => {
-        this.invokeMethod("onCallback", { value: e.detail.value });
+        this.invokeMethod("onValueChanged", { value: e.detail.value });
       });
     } else if (MPEnv.platformType === PlatformType.browser) {
       const weuiShadowRoot = this.htmlElement.attachShadow
@@ -25,6 +28,14 @@ export class MPSwitch extends MPPlatformView {
         <input aria-labelledby="cb_txt" id="cb" class="weui-switch" type="checkbox"/>
       </div>`;
       weuiShadowRoot.appendChild(switchElement);
+      const cb = switchElement.querySelector("#cb") as HTMLInputElement;
+      this.inputElement = cb;
+      if (initialAttributes.defaultValue === true) {
+        cb.checked = true;
+      }
+      cb.addEventListener("change", (e) => {
+        this.invokeMethod("onValueChanged", { value: cb.checked });
+      });
     }
   }
 
@@ -38,9 +49,22 @@ export class MPSwitch extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    setDOMAttribute(this.htmlElement, "checked", attributes.checked);
+    if (!this.firstSetted) {
+      this.firstSetted = true;
+      setDOMAttribute(this.htmlElement, "checked", attributes.checked);
+    }
     setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
     setDOMAttribute(this.htmlElement, "type", attributes.type);
     setDOMAttribute(this.htmlElement, "color", attributes.color);
+  }
+
+  onMethodCall(method: string, args: any) {
+    if (method === "setValue") {
+      if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+        setDOMAttribute(this.htmlElement, "checked", args.value);
+      } else if (MPEnv.platformType === PlatformType.browser) {
+        (this.inputElement as HTMLInputElement).checked = args.value;
+      }
+    }
   }
 }
