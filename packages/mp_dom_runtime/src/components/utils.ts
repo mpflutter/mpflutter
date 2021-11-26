@@ -164,7 +164,16 @@ export const cssBorder = (value: any) => {
 };
 
 export const cssTextAlign = (value: any) => {
-  return value?.replace("TextAlign.", "");
+  let v = value?.replace("TextAlign.", "");
+  if (v === 'start') {
+    return 'left';
+  }
+  else if (v === 'end') {
+    return 'right';
+  }
+  else {
+    return v;
+  }
 };
 
 function getFontWeightStyle(data: any) {
