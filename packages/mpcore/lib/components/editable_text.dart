@@ -11,6 +11,7 @@ MPElement _encodeEditableText(Element element) {
     attributes: {
       'style': _encodeTextStyle(widget.style),
       'value': widget.controller.text,
+      'maxLength': mpWidget?.maxLength,
       'placeholder': mpWidget?.placeholder,
       'placeholderStyle': mpWidget?.placeholderStyle != null
           ? _encodeTextStyle(mpWidget!.placeholderStyle!)
