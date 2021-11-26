@@ -1,11 +1,13 @@
 part of 'mpkit.dart';
 
 class MPEditableText extends EditableText {
+  final int? maxLength;
   final String? placeholder;
   final TextStyle? placeholderStyle;
 
   MPEditableText({
     Key? key,
+    this.maxLength,
     this.placeholder,
     this.placeholderStyle,
     required TextEditingController controller,
