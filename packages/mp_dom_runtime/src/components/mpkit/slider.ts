@@ -1,7 +1,6 @@
 import { MPEnv, PlatformType } from "../../env";
 import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 import { MPPlatformView } from "../mpkit/platform_view";
-import { cssColorHex } from "../utils";
 
 export class MPSlider extends MPPlatformView {
   firstSetup = true;
@@ -11,7 +10,12 @@ export class MPSlider extends MPPlatformView {
     this.htmlElement.addEventListener("change", (value: any) => {
       this.invokeMethod("onValueChanged", { value: value.detail.value });
     });
-    if (MPEnv.platformType === PlatformType.browser) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
+      this.htmlElement.addEventListener("changing", (value: any) => {
+        this.invokeMethod("onValueChanged", { value: value.detail.value });
+      });
+      setDOMStyle(this.htmlElement, { margin: "0", marginTop: "8px" });
+    } else if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
       const weuiShadowRoot = this.htmlElement.attachShadow
         ? this.htmlElement.attachShadow({ mode: "closed" })
         : this.htmlElement;
@@ -39,7 +43,7 @@ export class MPSlider extends MPPlatformView {
     setDOMAttribute(this.htmlElement, "step", attributes.step);
     setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
     setDOMAttribute(this.htmlElement, "value", attributes.value);
-    if (MPEnv.platformType === PlatformType.browser && this.firstSetup) {
+    if (__MP_TARGET_BROWSER__ && MPEnv.platformType === PlatformType.browser && this.firstSetup) {
       this.firstSetup = false;
       this.sliderElement.innerHTML = `<div class="weui-slider">
         <div id="sliderInner" class="weui-slider__inner">
@@ -55,6 +59,7 @@ export class MPSlider extends MPPlatformView {
         const min = this.attributes.min ?? 0;
         const max = this.attributes.max ?? 100;
         const step = (((this.attributes.step ?? 1) * 1.0) / (max - min)) * 100;
+        const isIntergerStep = (this.attributes.step ?? 1) % 1 === 0;
         setTimeout(() => {
           var totalLen = this.sliderElement.querySelector("#sliderInner")!.clientWidth,
             startLeft = 0,
@@ -73,7 +78,11 @@ export class MPSlider extends MPPlatformView {
             sliderTrack.style.width = percent + "%";
             sliderHandler.style.left = percent + "%";
             this.htmlElement.dispatchEvent(
-              new CustomEvent("change", { detail: { value: ((max - min) * percent) / 100 } } as any)
+              new CustomEvent("change", {
+                detail: {
+                  value: isIntergerStep ? Math.round(((max - min) * percent) / 100) : ((max - min) * percent) / 100,
+                },
+              } as any)
             );
             e.preventDefault();
           });
