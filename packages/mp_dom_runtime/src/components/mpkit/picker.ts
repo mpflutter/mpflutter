@@ -63,7 +63,6 @@ export class MPPicker extends MPPlatformView {
     setDOMAttribute(this.htmlElement, "mode", mode);
     setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
     this.lastItems = mode === "selector" || mode === "multiSelector" ? this.getPickerItem() : null;
-    setDOMAttribute(this.htmlElement, "range", this.lastItems);
     setDOMAttribute(this.htmlElement, "start", attributes.start);
     setDOMAttribute(this.htmlElement, "end", attributes.end);
     setDOMAttribute(
@@ -77,7 +76,6 @@ export class MPPicker extends MPPlatformView {
       setDOMAttribute(this.htmlElement, "mode", mode);
       setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
       this.lastItems = mode === "selector" || mode === "multiSelector" ? this.getPickerItem() : null;
-      setDOMAttribute(this.htmlElement, "range", this.lastItems);
       setDOMAttribute(this.htmlElement, "start", attributes.start);
       setDOMAttribute(this.htmlElement, "end", attributes.end);
       setDOMAttribute(
