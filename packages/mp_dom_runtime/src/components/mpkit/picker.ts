@@ -10,9 +10,9 @@ export class MPPicker extends MPPlatformView {
   lastItems: any;
   multiIndex: number[];
 
-  constructor(document: Document) {
-    super(document);
-    this.multiIndex = [0, 0, 0];
+  constructor(document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
+    this.multiIndex = initialAttributes?.defaultValue ?? [0, 0, 0];
     if (MPEnv.platformType === PlatformType.browser) {
       this.htmlElement.addEventListener("click", () => {
         let shadowDiv = document.createElement("div");
@@ -31,21 +31,17 @@ export class MPPicker extends MPPlatformView {
         div.style.width = "100%";
         div.style.height = "100%";
         this.weuiShadowRoot.appendChild(div);
-        const mode = this.attributes.mode?.replace("MPPickerMode.", "") ?? "selector";
-        if (mode === "date") {
-          this.showDatePicker(div);
-        } else {
-          this.showPicker(div);
-        }
+        this.showPicker(div);
       });
     }
     this.htmlElement.addEventListener("change", (e: any) => {
-      const result = this.getPickerResult(e.detail.value);
-      this.invokeMethod("onChangeCallback", { result: result });
+      this.invokeMethod("callbackResult", {
+        value: typeof e.detail.value === "string" ? [parseInt(e.detail.value)] : e.detail.value,
+      });
     });
     this.htmlElement.addEventListener("columnchange", (e: any) => {
       this.updatePickerItem(e.detail.column, e.detail.value);
-      setDOMAttribute(this.htmlElement, "range", this.lastItems);
+      setDOMAttribute(this.htmlElement, "range", this.getPickerItem());
     });
   }
 
@@ -58,140 +54,44 @@ export class MPPicker extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    const mode = attributes.mode ? attributes.mode.replace("MPPickerMode.", "") : "selector";
     setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
-    setDOMAttribute(this.htmlElement, "mode", mode);
+    setDOMAttribute(this.htmlElement, "mode", attributes.column > 1 ? "multiSelector" : "selector");
     setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
-    this.lastItems = mode === "selector" || mode === "multiSelector" ? this.getPickerItem() : null;
-    setDOMAttribute(this.htmlElement, "start", attributes.start);
-    setDOMAttribute(this.htmlElement, "end", attributes.end);
-    setDOMAttribute(
-      this.htmlElement,
-      "value",
-      mode === "date" ? attributes.defaultValue?.join("-") : attributes.defaultValue
-    );
-    setTimeout(() => {
-      const mode = attributes.mode ? attributes.mode.replace("MPPickerMode.", "") : "selector";
-      setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
-      setDOMAttribute(this.htmlElement, "mode", mode);
-      setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
-      this.lastItems = mode === "selector" || mode === "multiSelector" ? this.getPickerItem() : null;
-      setDOMAttribute(this.htmlElement, "start", attributes.start);
-      setDOMAttribute(this.htmlElement, "end", attributes.end);
-      setDOMAttribute(
-        this.htmlElement,
-        "value",
-        mode === "date" ? attributes.defaultValue?.join("-") : attributes.defaultValue
-      );
-    }, 100);
+    setDOMAttribute(this.htmlElement, "range", this.getPickerItem());
+    setDOMAttribute(this.htmlElement, "value", this.multiIndex);
   }
 
   getPickerItem(): any {
-    const mode = this.attributes.mode?.replace("MPPickerMode.", "") ?? "selector";
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
       const originItems = this.attributes.items as PickerItem[];
-      const firstItems = originItems?.map((it, idx) => {
-        return it.label;
-      });
-      if (mode === "selector") {
-        return firstItems;
-      }
-      const items = [];
-      items.push(firstItems);
-      const secondItems = originItems[0].subItems?.map((it, idx) => {
-        return it.label;
-      });
-      if (secondItems) {
-        items.push(secondItems);
-        const thirddItems = originItems[0].subItems?.[0]?.subItems?.map((it, idx) => {
-          return it.label;
-        });
-        if (thirddItems) {
-          items.push(thirddItems);
+      let items: any[] = [];
+      if (this.attributes.column === 1) {
+        items = originItems.map((it) => it.label);
+      } else {
+        items.push(originItems.map((it) => it.label));
+        if (this.attributes.column >= 2) {
+          try {
+            items.push(originItems[this.multiIndex[0]].subItems.map((it) => it.label));
+          } catch (error) {
+            items.push([]);
+          }
+        }
+        if (this.attributes.column >= 3) {
+          try {
+            items.push(originItems[this.multiIndex[0]].subItems[this.multiIndex[1]].subItems.map((it) => it.label));
+          } catch (error) {
+            items.push([]);
+          }
         }
       }
       return items;
-    } else {
-      return (this.attributes.items as PickerItem[])?.map((it, idx) => {
-        return {
-          label: it.label,
-          value: idx,
-          disabled: it.disabled,
-          children:
-            mode === "selector"
-              ? null
-              : it.subItems?.map((it, idx) => {
-                  return { label: it.label, value: idx, disabled: it.disabled };
-                }),
-        };
-      });
     }
   }
 
   updatePickerItem(column: number, value: number): any {
     if (MPEnv.platformType === PlatformType.wxMiniProgram) {
-      const originItems = this.attributes.items as PickerItem[];
       this.multiIndex[column] = value;
-      switch (column) {
-        case 0: {
-          this.lastItems[1] =
-            originItems[value].subItems?.map((it) => {
-              return it.label;
-            }) ?? [];
-          this.lastItems[2] =
-            originItems[value].subItems?.[0]?.subItems?.map((it) => {
-              return it.label;
-            }) ?? [];
-          break;
-        }
-        case 1: {
-          this.lastItems[2] =
-            originItems[this.multiIndex[0]].subItems?.[value]?.subItems?.map((it) => {
-              return it.label;
-            }) ?? [];
-          break;
-        }
-      }
     }
-  }
-
-  getPickerResult(e: any): any {
-    const originItem = this.attributes.items as PickerItem[];
-    let result = [];
-
-    if (originItem) {
-      if (typeof e === "string") {
-        const firstItem = { label: originItem[parseInt(e)].label, value: parseInt(e) };
-        result.push(firstItem);
-        return result;
-      }
-      const firstIndex = e[0] ?? 0;
-      const secondIndex = e[1] ?? 0;
-      const thirdIndex = e[2] ?? 0;
-      const firstItem = { label: originItem[firstIndex].label, value: firstIndex };
-      result.push(firstItem);
-      const secondLabel = originItem[firstIndex]?.subItems?.[secondIndex]?.label;
-      if (secondLabel) {
-        result.push({ label: secondLabel, value: secondIndex });
-        const thirdLabel = originItem[firstIndex]?.subItems?.[secondIndex]?.subItems?.[thirdIndex]?.label;
-        if (thirdLabel) {
-          result.push({
-            label: thirdLabel,
-            value: thirdIndex,
-          });
-        }
-      }
-    } else {
-      result = (e as string).split("-").map((it, idx) => {
-        return {
-          label: it,
-          value: idx,
-        };
-      });
-      console.log(result);
-    }
-
-    return result;
   }
 
   showPicker(div: any) {
@@ -217,27 +117,12 @@ export class MPPicker extends MPPlatformView {
         container: div,
         defaultValue: this.attributes.defaultValue,
         onConfirm: (result: any) => {
-          this.invokeMethod("onChangeCallback", { result: result });
+          this.invokeMethod("callbackResult", { value: result.map((it: any) => it.value) });
         },
         onClose: function () {
           div.remove();
         },
       }
     );
-  }
-
-  showDatePicker(div: any) {
-    (window as any).weui.datePicker({
-      start: this.attributes.start,
-      end: this.attributes.end,
-      defaultValue: this.attributes.defaultValue,
-      onConfirm: (result: any) => {
-        this.invokeMethod("onChangeCallback", { result: result });
-      },
-      onClose: function () {
-        div.remove();
-      },
-      container: div,
-    });
   }
 }

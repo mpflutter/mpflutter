@@ -32,6 +32,7 @@ import { MPEnv } from "../env";
 import { MPSwitch } from "./mpkit/switch";
 import { MPSlider } from "./mpkit/slider";
 import { MPPicker } from "./mpkit/picker";
+import { MPDatePicker } from "./mpkit/date_picker";
 
 export class ComponentFactory {
   static components: { [key: string]: typeof ComponentView } = {
@@ -67,6 +68,7 @@ export class ComponentFactory {
     mp_switch: MPSwitch,
     mp_slider: MPSlider,
     mp_picker: MPPicker,
+    mp_date_picker: MPDatePicker,
     mp_mini_program_view: MPMiniProgramView,
   };
 
