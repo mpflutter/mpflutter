@@ -23,13 +23,13 @@ main(List<String> args) async {
     [
       {
         'question': I18n.selectVersionCode(),
-        'options': [...versions, 'Cancel']
+        'options': [...versions, '0.0.1-master', 'Cancel']
       },
       'versionCode'
     ]
   ]);
   final versionCode = versionDialog.ask()['versionCode'];
-  if (versionCode == null || versionCode == '/') {
+  if (versionCode == null || versionCode == 'Cancel' || versionCode == '/') {
     return;
   } else {
     final pubspecFile = File(p.join('pubspec.yaml'));
