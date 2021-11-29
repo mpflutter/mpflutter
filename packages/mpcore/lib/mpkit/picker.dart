@@ -20,7 +20,7 @@ class MPPickerItem {
     return {
       'label': label,
       'disabled': disabled,
-      'subItems': subItems,
+      'subItems': subItems?.map((e) => e.toJson()).toList(),
     };
   }
 }
