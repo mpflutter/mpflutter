@@ -38,55 +38,82 @@ export class MPSlider extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    setDOMAttribute(this.htmlElement, "min", attributes.min);
-    setDOMAttribute(this.htmlElement, "max", attributes.max);
-    setDOMAttribute(this.htmlElement, "step", attributes.step);
-    setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
-    setDOMAttribute(this.htmlElement, "value", attributes.value);
-    if (__MP_TARGET_BROWSER__ && MPEnv.platformType === PlatformType.browser && this.firstSetup) {
+    if (__MP_TARGET_WEAPP__ && MPEnv.platformType === PlatformType.wxMiniProgram) {
+      setDOMAttribute(this.htmlElement, "min", attributes.min);
+      setDOMAttribute(this.htmlElement, "max", attributes.max);
+      setDOMAttribute(this.htmlElement, "step", attributes.step);
+      setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
+      if (this.firstSetup) {
+        setDOMAttribute(this.htmlElement, "value", attributes.defaultValue);
+      }
       this.firstSetup = false;
+    } else if (__MP_TARGET_BROWSER__ && MPEnv.platformType === PlatformType.browser && this.firstSetup) {
       this.sliderElement.innerHTML = `<div class="weui-slider">
         <div id="sliderInner" class="weui-slider__inner">
-          <div id="sliderTrack" style="width: ${
-            parseInt(this.attributes?.value) ?? 0
-          }%;" class="weui-slider__track"></div>
-          <div role="slider" aria-label="thumb" id="sliderHandler" style="left: ${
-            parseInt(this.attributes?.value) ?? 0
-          }%;" class="weui-slider__handler weui-wa-hotarea"></div>
+          <div id="sliderTrack" style="width: 0%;" class="weui-slider__track"></div>
+          <div role="slider" aria-label="thumb" id="sliderHandler" style="left: 0%;" class="weui-slider__handler weui-wa-hotarea"></div>
         </div>
       </div>`;
       if (attributes.disabled !== true) {
-        const min = this.attributes.min ?? 0;
-        const max = this.attributes.max ?? 100;
-        const step = (((this.attributes.step ?? 1) * 1.0) / (max - min)) * 100;
-        const isIntergerStep = (this.attributes.step ?? 1) % 1 === 0;
+        const min = attributes.min ?? 0;
+        const max = attributes.max ?? 100;
         setTimeout(() => {
-          var totalLen = this.sliderElement.querySelector("#sliderInner")!.clientWidth,
+          let totalLen = this.sliderElement.querySelector("#sliderInner")!.clientWidth,
             startLeft = 0,
             startX = 0;
-          var sliderTrack = this.sliderElement.querySelector("#sliderTrack") as HTMLDivElement;
-          var sliderHandler = this.sliderElement.querySelector("#sliderHandler") as HTMLDivElement;
+          const sliderHandler = this.sliderElement.querySelector("#sliderHandler") as HTMLDivElement;
           sliderHandler.addEventListener("touchstart", (e: any) => {
             startLeft = (parseInt(sliderHandler.style.left) * totalLen) / 100;
             startX = e.changedTouches[0].clientX;
           });
           sliderHandler.addEventListener("touchmove", (e: any) => {
-            var dist = startLeft + e.changedTouches[0].clientX - startX,
-              percent;
-            dist = dist < 0 ? 0 : dist > totalLen ? totalLen : dist;
-            percent = Math.round(((dist / totalLen) * 100) / step) * step;
-            sliderTrack.style.width = percent + "%";
-            sliderHandler.style.left = percent + "%";
+            let dist = startLeft + e.changedTouches[0].clientX - startX;
+            dist = Math.max(0, Math.min(totalLen, dist));
+            const percent = dist / totalLen;
+            const value = min + percent * (max - min);
+            const sValue = (value - min) % (this.attributes.step ?? 1);
+            const stepedValue = value - sValue;
+            this.resetSliderValue(value);
             this.htmlElement.dispatchEvent(
               new CustomEvent("change", {
                 detail: {
-                  value: isIntergerStep ? Math.round(((max - min) * percent) / 100) : ((max - min) * percent) / 100,
+                  value: stepedValue,
                 },
               } as any)
             );
             e.preventDefault();
           });
         }, 300);
+        if (this.firstSetup) {
+          this.resetSliderValue(attributes.defaultValue);
+        }
+        this.firstSetup = false;
+      }
+    }
+  }
+
+  resetSliderValue(value: number) {
+    if (!__MP_TARGET_BROWSER__) return;
+    const min = this.attributes.min ?? 0;
+    const max = this.attributes.max ?? 100;
+    const sValue = (value - min) % (this.attributes.step ?? 1);
+    const stepedValue = value - sValue;
+    let percent = (stepedValue - min) / (max - min);
+    let sliderTrack = this.sliderElement.querySelector("#sliderTrack") as HTMLDivElement;
+    let sliderHandler = this.sliderElement.querySelector("#sliderHandler") as HTMLDivElement;
+    sliderTrack.style.width = (percent * 100).toFixed(0) + "%";
+    sliderHandler.style.left = (percent * 100).toFixed(0) + "%";
+  }
+
+  onMethodCall(method: string, params: any) {
+    if (method === "setValue") {
+      const value = params?.value;
+      if (typeof value === "number") {
+        if (__MP_TARGET_WEAPP__ && MPEnv.platformType === PlatformType.wxMiniProgram) {
+          this.htmlElement.setAttribute("value", value as any);
+        } else if (__MP_TARGET_BROWSER__ && MPEnv.platformType === PlatformType.browser) {
+          this.resetSliderValue(params.value);
+        }
       }
     }
   }

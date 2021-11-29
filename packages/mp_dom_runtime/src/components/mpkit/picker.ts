@@ -13,7 +13,7 @@ export class MPPicker extends MPPlatformView {
   constructor(document: Document, readonly initialAttributes?: any) {
     super(document, initialAttributes);
     this.multiIndex = initialAttributes?.defaultValue ?? [0, 0, 0];
-    if (MPEnv.platformType === PlatformType.browser) {
+    if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
       this.htmlElement.addEventListener("click", () => {
         let shadowDiv = document.createElement("div");
         document.body.appendChild(shadowDiv);
@@ -54,11 +54,13 @@ export class MPPicker extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
-    setDOMAttribute(this.htmlElement, "mode", attributes.column > 1 ? "multiSelector" : "selector");
-    setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
-    setDOMAttribute(this.htmlElement, "range", this.getPickerItem());
-    setDOMAttribute(this.htmlElement, "value", this.multiIndex);
+    if (__MP_TARGET_WEAPP__) {
+      setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
+      setDOMAttribute(this.htmlElement, "mode", attributes.column > 1 ? "multiSelector" : "selector");
+      setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
+      setDOMAttribute(this.htmlElement, "range", this.getPickerItem());
+      setDOMAttribute(this.htmlElement, "value", this.multiIndex);
+    }
   }
 
   getPickerItem(): any {
@@ -89,12 +91,13 @@ export class MPPicker extends MPPlatformView {
   }
 
   updatePickerItem(column: number, value: number): any {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
       this.multiIndex[column] = value;
     }
   }
 
   showPicker(div: any) {
+    if (!__MP_TARGET_BROWSER__) return;
     (window as any).weui.picker(
       (this.attributes.items as PickerItem[])?.map((it, idx) => {
         return {

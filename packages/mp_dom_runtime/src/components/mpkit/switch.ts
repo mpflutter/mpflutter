@@ -9,11 +9,11 @@ export class MPSwitch extends MPPlatformView {
 
   constructor(document: Document, readonly initialAttributes?: any) {
     super(document, initialAttributes);
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
       this.htmlElement.addEventListener("change", (e: any) => {
         this.invokeMethod("onValueChanged", { value: e.detail.value });
       });
-    } else if (MPEnv.platformType === PlatformType.browser) {
+    } else if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
       const weuiShadowRoot = this.htmlElement.attachShadow
         ? this.htmlElement.attachShadow({ mode: "closed" })
         : this.htmlElement;
@@ -49,13 +49,15 @@ export class MPSwitch extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (!this.firstSetted) {
-      this.firstSetted = true;
-      setDOMAttribute(this.htmlElement, "checked", attributes.checked);
+    if (__MP_TARGET_WEAPP__) {
+      if (!this.firstSetted) {
+        this.firstSetted = true;
+        setDOMAttribute(this.htmlElement, "checked", attributes.defaultValue);
+      }
+      setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
+      setDOMAttribute(this.htmlElement, "type", attributes.type);
+      setDOMAttribute(this.htmlElement, "color", attributes.color);
     }
-    setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
-    setDOMAttribute(this.htmlElement, "type", attributes.type);
-    setDOMAttribute(this.htmlElement, "color", attributes.color);
   }
 
   onMethodCall(method: string, args: any) {

@@ -36,9 +36,7 @@ class MPSwitch extends StatelessWidget {
     this.defaultValue,
     this.onValueChanged,
     this.controller,
-  }) {
-    controller?._currentValue = defaultValue ?? false;
-  }
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +50,7 @@ class MPSwitch extends StatelessWidget {
           'disabled': disabled,
           'type': type,
           'color': color,
-          'defaultValue': defaultValue,
+          'defaultValue': defaultValue ?? controller?.currentValue,
         }..removeWhere((key, value) => value == null),
         onMethodCall: (method, args) {
           if (method == 'onValueChanged' &&
