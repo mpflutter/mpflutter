@@ -17,8 +17,8 @@ main(List<String> args) async {
           'https://api.github.com/repos/mpflutter/mpflutter/branches/master')))
       .body) as Map;
   final versions = <String>[];
-  versions.add((masterBranch['commit']['sha'] as String).substring(0, 7));
   versions.addAll(tags.sublist(0, min(10, tags.length)).map((e) => e['name']));
+  versions.add((masterBranch['commit']['sha'] as String).substring(0, 7));
   final versionDialog = CLI_Dialog(listQuestions: [
     [
       {
