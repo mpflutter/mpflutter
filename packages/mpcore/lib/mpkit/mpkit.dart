@@ -25,5 +25,8 @@ part 'video_view.dart';
 part 'platform_view.dart';
 part 'env.dart';
 part 'editable_text.dart';
+part 'switch.dart';
+part 'slider.dart';
+part 'picker.dart';
 part 'mini_program_view.dart';
 part 'sliver_persistent_header.dart';

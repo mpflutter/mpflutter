@@ -389,6 +389,9 @@ function checkComponentAttr(name, domNode, destData, oldData, extraClass = '') {
                 const isOldValuesChanged = oldValues ? !isEqual(newValue, oldValues[name], true) : false
                 if (!oldData || !isEqual(newValue, oldData[name]) || isOldValuesChanged) {
                     destData[name] = newValue
+                    if (isOldValuesChanged && domNode._oldValues) {
+                        domNode._oldValues[name] = newValue
+                    }
                     if (isOldValuesChanged) destData.forceUpdate = true // 避免被 diff 掉，需要强制更新
                 }
             } else if (!oldData || !isEqual(newValue, oldData[name])) {
