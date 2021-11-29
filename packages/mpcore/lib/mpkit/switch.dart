@@ -20,19 +20,13 @@ class MPSwitchController extends MPPlatformViewController with ChangeNotifier {
 }
 
 class MPSwitch extends StatelessWidget {
-  final bool? checked;
   final bool? disabled;
-  final String? type;
-  final String? color;
   final bool? defaultValue;
   final Function(bool)? onValueChanged;
   final MPSwitchController? controller;
 
   MPSwitch({
-    this.checked,
     this.disabled,
-    this.type,
-    this.color,
     this.defaultValue,
     this.onValueChanged,
     this.controller,
@@ -46,10 +40,7 @@ class MPSwitch extends StatelessWidget {
       child: MPPlatformView(
         viewType: 'mp_switch',
         viewAttributes: {
-          'checked': checked,
           'disabled': disabled,
-          'type': type,
-          'color': color,
           'defaultValue': defaultValue ?? controller?.currentValue,
         }..removeWhere((key, value) => value == null),
         onMethodCall: (method, args) {

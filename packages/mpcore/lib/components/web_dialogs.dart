@@ -7,31 +7,6 @@ enum ToastIcon {
   none,
 }
 
-class PickerItem {
-  final String label;
-  final bool disabled;
-  final List<PickerItem>? subItems;
-
-  PickerItem({
-    required this.label,
-    this.disabled = false,
-    this.subItems,
-  });
-
-  PickerItem.fromJson(Map<String, dynamic> json)
-      : label = json['label'],
-        disabled = json['disabled'],
-        subItems = json['subItems'];
-
-  Map toJson() {
-    return {
-      'label': label,
-      'disabled': disabled,
-      'subItems': subItems,
-    };
-  }
-}
-
 class MPWebDialogs {
   static Future alert({required String message}) {
     return MPAction(

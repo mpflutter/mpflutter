@@ -1,5 +1,30 @@
 part of 'mpkit.dart';
 
+class MPPickerItem {
+  final String label;
+  final bool disabled;
+  final List<MPPickerItem>? subItems;
+
+  MPPickerItem({
+    required this.label,
+    this.disabled = false,
+    this.subItems,
+  });
+
+  MPPickerItem.fromJson(Map<String, dynamic> json)
+      : label = json['label'],
+        disabled = json['disabled'],
+        subItems = json['subItems'];
+
+  Map toJson() {
+    return {
+      'label': label,
+      'disabled': disabled,
+      'subItems': subItems,
+    };
+  }
+}
+
 class MPDatePicker extends MPPlatformView {
   final Function(DateTime)? onResult;
 
@@ -34,12 +59,12 @@ class MPDatePicker extends MPPlatformView {
 }
 
 class MPPicker extends MPPlatformView {
-  final Function(List<PickerItem>)? onResult;
+  final Function(List<MPPickerItem>)? onResult;
 
   MPPicker({
     required Widget child,
     required int column,
-    List<PickerItem>? items,
+    List<MPPickerItem>? items,
     String? headerText,
     bool? disabled,
     List<int>? defaultValue,
@@ -47,7 +72,7 @@ class MPPicker extends MPPlatformView {
   }) : super(
             viewType: 'mp_picker',
             viewAttributes: {
-              'items': items,
+              'items': items?.map((e) => e.toJson()).toList(),
               'column': column,
               'headerText': headerText,
               'disabled': disabled,
@@ -58,8 +83,8 @@ class MPPicker extends MPPlatformView {
               if (method == 'callbackResult' && params?['value'] is List) {
                 if (items == null) return;
                 final value = params?['value'] as List;
-                final resultItems = <PickerItem>[];
-                PickerItem? currentItem = items[value[0]];
+                final resultItems = <MPPickerItem>[];
+                MPPickerItem? currentItem = items[value[0]];
                 resultItems.add(currentItem);
                 for (var i = 1; i < value.length; i++) {
                   currentItem = currentItem?.subItems?[value[i]];

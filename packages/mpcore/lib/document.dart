@@ -188,11 +188,27 @@ class MPElement {
       'ancestors': ancestors.map((e) => e.toJson()).toList(),
       'attributes': attributes?.map((key, value) {
         if (value is MPElement) {
-          return MapEntry(key, value.toJson());
+          return MapEntry(key, mapJson(value));
         }
         return MapEntry(key, value);
       }),
     };
+  }
+
+  dynamic mapJson(dynamic value) {
+    if (value is List) {
+      return value.map((e) => mapJson(e)).toList();
+    } else if (value is Map) {
+      return value.map((k, v) => MapEntry(k, mapJson(v)));
+    } else if (value != null) {
+      try {
+        return (value as dynamic).toJson();
+      } catch (e) {
+        return null;
+      }
+    } else {
+      return null;
+    }
   }
 
   static Rect? _getConstraints(Element? flutterElement) {
