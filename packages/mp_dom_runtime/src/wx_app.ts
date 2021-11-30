@@ -2,7 +2,7 @@ declare var getCurrentPages: any;
 declare var require: any;
 
 import { Engine } from "./engine";
-import { MPEnv } from "./env";
+import { MPEnv, PlatformType } from "./env";
 import { Page } from "./page";
 import { Router } from "./router";
 import { TextMeasurer } from "./text_measurer";
@@ -207,12 +207,25 @@ class WXRouter extends Router {
     }, 1000);
   }
 
-  didPop() {
+  async didPop() {
+    if (Router.beingPush) {
+      await this.delay();
+    }
     Router.clearBeingPushTimeout();
     Router.beingPush = true;
     MPEnv.platformScope.navigateBack();
     Router.beingPushTimeout = setTimeout(() => {
       Router.beingPush = false;
     }, 1000);
+  }
+
+  delay() {
+    if (MPEnv.platformType === PlatformType.wxMiniProgram && MPEnv.platformScope.getSystemInfoSync().platform === "ios") {
+      return new Promise((res) => {
+        setTimeout(() => {
+          res(null);
+        }, 500);
+      });
+    }
   }
 }
