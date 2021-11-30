@@ -1,18 +1,11 @@
 import { ComponentView } from "../component_view";
 import { setDOMStyle } from "../dom_utils";
-import {
-  cssBorder,
-  cssBorderRadius,
-  cssColor,
-  cssGradient,
-  cssOffset,
-} from "../utils";
+import { cssBorder, cssBorderRadius, cssColor, cssGradient, cssOffset } from "../utils";
 
 export class DecoratedBox extends ComponentView {
-
-  setAttributes(attributes: any) {
+  setAttributes(attributes: any, childStyle = {}, target = this.htmlElement) {
     super.setAttributes(attributes);
-    let style: any = {};
+    let style: any = childStyle ?? {};
     if (attributes.color) {
       style.backgroundColor = cssColor(attributes.color);
     } else {
@@ -53,21 +46,16 @@ export class DecoratedBox extends ComponentView {
     }
     if (attributes.decoration?.gradient) {
       if (style.backgroundImage) {
-        style.backgroundImage =
-          cssGradient(attributes.decoration.gradient) +
-          "," +
-          style.backgroundImage;
+        style.backgroundImage = cssGradient(attributes.decoration.gradient) + "," + style.backgroundImage;
       } else {
         style.background = cssGradient(attributes.decoration.gradient);
       }
     }
     if (attributes.decoration?.boxShadow?.[0]) {
       const shadow = attributes.decoration?.boxShadow?.[0];
-      style.boxShadow = `${cssOffset(shadow.offset)?.dx}px ${
-        cssOffset(shadow.offset)?.dy
-      }px ${shadow.blurRadius}px ${shadow.spreadRadius}px ${cssColor(
-        shadow.color
-      )}`;
+      style.boxShadow = `${cssOffset(shadow.offset)?.dx}px ${cssOffset(shadow.offset)?.dy}px ${shadow.blurRadius}px ${
+        shadow.spreadRadius
+      }px ${cssColor(shadow.color)}`;
     }
     if (attributes.decoration?.borderRadius) {
       let s = cssBorderRadius(attributes.decoration.borderRadius) as any;
@@ -82,6 +70,6 @@ export class DecoratedBox extends ComponentView {
         (style as any)[key] = s[key];
       }
     }
-    setDOMStyle(this.htmlElement, style);
+    setDOMStyle(target, style);
   }
 }
