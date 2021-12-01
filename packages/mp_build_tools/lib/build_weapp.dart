@@ -8,9 +8,13 @@ final Map<int, List<String>> subpackages = {};
 final subpackageSizeLimited = 1024 * 1024 * 1.9;
 Map? miniProgramConfig;
 List<String> miniProgramPages = [];
+Map? appJson;
 
 main(List<String> args) {
   print(I18n.building());
+  appJson = json.decode(
+    File(p.join('weapp', 'app.json')).readAsStringSync(),
+  ) as Map;
   _checkPubspec();
   _createBuildDir();
   miniProgramConfig = _fetchMiniProgramConfig();
@@ -18,6 +22,7 @@ main(List<String> args) {
   _copyWeappSource();
   _createPages();
   _buildDartJS(args);
+  File(p.join('build', 'app.json')).writeAsStringSync(json.encode(appJson));
   print(I18n.buildSuccess('build'));
 }
 
@@ -113,6 +118,7 @@ String _buildDartJS(List<String> args) {
 
 _copyWeappSource() {
   _copyPathSync('./weapp', './build/');
+  File(p.join('build', 'app.json')).deleteSync();
 }
 
 _createPages() {
@@ -235,20 +241,17 @@ _modulizeDeferedJSCode(File file) {
 }
 
 _writeSubpackagesToAppJson() {
+  if (appJson == null) return;
   if (subpackages.isNotEmpty) {
-    var appJson = json.decode(
-      File(p.join('build', 'app.json')).readAsStringSync(),
-    ) as Map;
-    appJson['subpackages'] ??= [];
-    (appJson['pages'] as List)..addAll(miniProgramPages);
-    (appJson['subpackages'] as List)
+    appJson!['subpackages'] ??= [];
+    (appJson!['pages'] as List)..addAll(miniProgramPages);
+    (appJson!['subpackages'] as List)
       ..addAll(subpackages.keys.map((e) {
         return {
           "root": "dart_package_$e",
           "pages": ["loader"]
         };
       }).toList());
-    File(p.join('build', 'app.json')).writeAsStringSync(json.encode(appJson));
   }
 }
 
