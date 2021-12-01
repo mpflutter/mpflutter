@@ -78,7 +78,13 @@ export class EditableText extends ComponentView {
       "type",
       attributes.obscureText ? "password" : this._keyboardType(attributes.keyboardType)
     );
-    setDOMAttribute(this.contentElement, "pattern", this._keyboardPattern(attributes.keyboardType));
+    const keybordPattern = this._keyboardPattern(attributes.keyboardType);
+    if (__MP_TARGET_BROWSER__) {
+      setDOMAttribute(this.contentElement, "pattern", keybordPattern);
+      if (keybordPattern === "[0-9+.]*") {
+        setDOMAttribute(this.contentElement, "inputmode", "decimal");
+      }
+    }
     if (typeof attributes.value === "string") {
       if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
         setDOMAttribute(this.contentElement, "value", attributes.value);
@@ -108,16 +114,25 @@ export class EditableText extends ComponentView {
   setChildren() {}
 
   _keyboardType(value: string) {
-    if (value?.indexOf("TextInputType.number") > 0) {
+    if (value?.indexOf("TextInputType.number") >= 0) {
+      if (__MP_TARGET_WEAPP__) {
+        const decimal = value.indexOf("decimal: true") >= 0;
+        if (decimal) {
+          return "digit";
+        }
+      }
       return "number";
+    }
+    if (__MP_TARGET_WEAPP__ && value?.indexOf("TextInputType.idcard") >= 0) {
+      return "idcard";
     }
     return "text";
   }
 
   _keyboardPattern(value: string) {
-    if (value?.indexOf("TextInputType.number") > 0) {
-      const signed = value.indexOf("signed: true") > 0;
-      const decimal = value.indexOf("decimal: true") > 0;
+    if (value?.indexOf("TextInputType.number") >= 0) {
+      const signed = value.indexOf("signed: true") >= 0;
+      const decimal = value.indexOf("decimal: true") >= 0;
       if (signed && decimal) {
         return "[0-9+-.]*";
       }
@@ -126,6 +141,9 @@ export class EditableText extends ComponentView {
       }
       if (!signed && !decimal) {
         return "[0-9]*";
+      }
+      if (!signed && decimal) {
+        return "[0-9+.]*";
       }
     }
     return "";

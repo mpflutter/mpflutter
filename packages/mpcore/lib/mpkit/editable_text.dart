@@ -1,5 +1,14 @@
 part of 'mpkit.dart';
 
+class MPIdCardTextInputType extends TextInputType {
+  MPIdCardTextInputType() : super.numberWithOptions();
+
+  @override
+  String toString() {
+    return 'TextInputType.idcard';
+  }
+}
+
 class MPEditableText extends EditableText {
   final int? maxLength;
   final String? placeholder;
