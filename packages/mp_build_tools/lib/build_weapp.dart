@@ -119,7 +119,14 @@ _createPages() {
   if (miniProgramConfig == null) return;
   if (miniProgramConfig!['pages'] is Map) {
     (miniProgramConfig!['pages'] as Map).forEach((path, pageConfig) {
-      if (path is String && path.startsWith('/') && pageConfig is Map) {
+      if (path is String && path == '/' && pageConfig is Map) {
+        final jsonPath = p.joinAll(['build', 'pages', 'index', 'index.json']);
+        File(jsonPath).writeAsStringSync(json.encode(
+          {}..addAll({
+              'usingComponents': {'element': '../../kbone/miniprogram-element'}
+            }..addAll(pageConfig)),
+        ));
+      } else if (path is String && path.startsWith('/') && pageConfig is Map) {
         miniProgramPages.add(path.substring(1));
         final jsPath =
             p.joinAll(['build', ...path.split("/")..removeAt(0)]) + '.js';
