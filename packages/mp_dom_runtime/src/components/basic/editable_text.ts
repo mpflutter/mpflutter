@@ -44,7 +44,7 @@ export class EditableText extends ComponentView {
       if (attributes.placeholderStyle.color) {
         placeholderStyle += `color: ${cssColor(attributes.placeholderStyle.color)};`;
       }
-      setDOMAttribute(this.contentElement, "placeholderStyle", placeholderStyle);
+      setDOMAttribute(this.contentElement, "placeholder-style", placeholderStyle);
     }
     this.contentElement.onkeyup = (event) => {
       if (event.key === "Enter" || event.keyCode === 13) {
@@ -93,10 +93,10 @@ export class EditableText extends ComponentView {
       }
     }
     if (attributes.autofocus) {
-      setDOMAttribute(this.contentElement, "autoFocus", attributes.autofocus);
+      setDOMAttribute(this.contentElement, "auto-focus", attributes.autofocus);
     }
     if (attributes.autoCorrect) {
-      setDOMAttribute(this.contentElement, "autoCorrect", attributes.autoCorrect);
+      setDOMAttribute(this.contentElement, "auto-correct", attributes.autoCorrect);
     }
     if (attributes.placeholder) {
       setDOMAttribute(this.contentElement, "placeholder", attributes.placeholder);
@@ -107,7 +107,7 @@ export class EditableText extends ComponentView {
     if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
       setDOMAttribute(this.contentElement, "disabled", attributes.readOnly ? "true" : undefined);
     } else {
-      setDOMAttribute(this.contentElement, "readOnly", attributes.readOnly ? "true" : undefined);
+      setDOMAttribute(this.contentElement, "read-only", attributes.readOnly ? "true" : undefined);
     }
   }
 

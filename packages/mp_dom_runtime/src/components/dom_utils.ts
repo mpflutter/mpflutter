@@ -471,13 +471,6 @@ export const setDOMStyle = (element: HTMLElement, style: CSSStyleDeclaration) =>
 };
 
 export const setDOMAttribute = (element: HTMLElement, name: string, value: any) => {
-  if (element.attributes === undefined) {
-    (element as any).attributes = {};
-  }
-  if ((element.attributes as any)[name] === value) {
-    return;
-  }
-  (element.attributes as any)[name] = value;
   if (value === undefined) {
     element.removeAttribute(name);
   } else {
