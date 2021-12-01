@@ -357,7 +357,14 @@ More information can be found at: https://www.dartlang.org/dart-vm/tools/dart-vm
     final rep = await _client!.reloadSources(ref.id!);
 
     if (rep.success != true) {
-      print('Reloading failed! Reason: $rep');
+      print('Reload failed!');
+      if (rep.json?['notices'] is List) {
+        (rep.json?['notices'] as List).forEach((element) {
+          if (element is Map && element['message'] != null) {
+            print(element['message']);
+          }
+        });
+      }
       return;
     }
 
