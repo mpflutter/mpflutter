@@ -1,0 +1,43 @@
+name: mpflutter_template
+description: A new MPFlutter project.
+publish_to: "none"
+version: 1.0.0+1
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+dependencies:
+  flutter:
+    path: ../flutter
+  mpcore:
+    path: ../mpcore
+  flutter_web_plugins:
+    path: ../flutter_web_plugins
+  mp_build_tools:
+    path: ../mp_build_tools
+  http:
+    git: https://github.com/mpflutter-plugins/http
+  dio:
+    git: 
+      url: https://github.com/mpflutter-plugins/dio
+      path: dio
+  shared_preferences:
+    git: https://github.com/mpflutter-plugins/shared_preferences
+  mpflutter_plugin_template:
+    git: https://github.com/mpflutter/mpflutter_plugin_template
+  universal_miniprogram_api:
+    git: https://github.com/mpflutter-plugins/universal_miniprogram_api
+dependency_overrides:
+  flutter:
+    path: ../flutter
+  mpcore:
+    path: ../mpcore
+  flutter_web_plugins:
+    path: ../flutter_web_plugins
+  mp_build_tools:
+    path: ../mp_build_tools
+  http:
+    git: https://github.com/mpflutter-plugins/http
+  # universal_miniprogram_api:
+  #   path: /Users/ydt/Documents/mpflutter-plugins/universal_miniprogram_api
+flutter:
+  assets:
+    - assets/images/

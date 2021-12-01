@@ -1,0 +1,12 @@
+build/
+.dart_tool/
+.packages
+.DS_Store
+.idea/**
+weapp/kbone
+weapp/mpdom.min.js
+swanapp/kbone
+swanapp/mpdom.min.js
+web/mpdom.min.js
+web/mp_web_features.css
+web/mp_web_features.min.js

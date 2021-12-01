@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+
+    {
+      "name": "MPFlutter",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "preLaunchTask": "Pre-compile MPFlutter Plugins"
+    },
+    {
+      "name": "MPFlutter Native Flutter",
+      "request": "launch",
+      "type": "dart",
+      "program": "flutterapp/lib/main.dart"
+    },
+  ]
+}

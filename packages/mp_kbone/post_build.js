@@ -40,8 +40,8 @@ class Utils {
 // Copy to dist_weapp and sample_weapp
 execSync('rm -rf ../mp_dom_runtime/dist_weapp/kbone')
 execSync('cp -rf ./dist ../mp_dom_runtime/dist_weapp/kbone')
-execSync('rm -rf ../mp_dom_runtime/sample_weapp/kbone')
-execSync('cp -rf ./dist ../mp_dom_runtime/sample_weapp/kbone')
+execSync('rm -rf ../mpflutter_sample/weapp/kbone')
+execSync('cp -rf ./dist ../mpflutter_sample/weapp/kbone')
 
 // Copy to dist_swan and dist_swanapp
 execSync('rm -rf ../mp_dom_runtime/dist_swan/kbone')
@@ -60,5 +60,5 @@ Utils.replaceKeywords('../mp_dom_runtime/dist_swan/kbone', '<template s-elif="(.
 Utils.replaceKeywords('../mp_dom_runtime/dist_swan/kbone', '<template s-if="(.*?)" (.*?)/>', '<block s-if="$1"><template $2/></block>')
 Utils.renameSubfix('../mp_dom_runtime/dist_swan/kbone', '.wxml', '.swan')
 Utils.renameSubfix('../mp_dom_runtime/dist_swan/kbone', '.wxss', '.css')
-execSync('rm -rf ../mp_dom_runtime/sample_swanapp/kbone')
-execSync('cp -rf ../mp_dom_runtime/dist_swan/kbone ../mp_dom_runtime/sample_swanapp/kbone')
+execSync('rm -rf ../mpflutter_sample/swanapp/kbone')
+execSync('cp -rf ../mp_dom_runtime/dist_swan/kbone ../mpflutter_sample/swanapp/kbone')

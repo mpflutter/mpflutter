@@ -1,7 +1,0 @@
-{
-  "usingComponents": {
-    "element": "../../kbone/miniprogram-element"
-  },
-  "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark"
-}

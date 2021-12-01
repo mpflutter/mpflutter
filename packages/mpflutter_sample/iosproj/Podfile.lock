@@ -1,0 +1,55 @@
+PODS:
+  - CocoaLumberjack (3.7.2):
+    - CocoaLumberjack/Core (= 3.7.2)
+  - CocoaLumberjack/Core (3.7.2)
+  - jetfire (0.1.5)
+  - MBProgressHUD (1.2.0)
+  - MPIOSRuntime (0.0.1):
+    - jetfire (~> 0.1)
+    - MBProgressHUD (~> 1.2.0)
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - SDWebImageSVGKitPlugin (1.3.0):
+    - SDWebImage/Core (~> 5.10)
+    - SVGKit (>= 2.1)
+  - SVGKit (2.1.1):
+    - CocoaLumberjack (~> 3.0)
+
+DEPENDENCIES:
+  - MPIOSRuntime (from `https://github.com/mpflutter/mp_ios_runtime.git`, branch `master`)
+  - SDWebImage (~> 5.11)
+  - SDWebImageSVGKitPlugin
+  - SVGKit (< 3.0.0)
+
+SPEC REPOS:
+  trunk:
+    - CocoaLumberjack
+    - jetfire
+    - MBProgressHUD
+    - SDWebImage
+    - SDWebImageSVGKitPlugin
+    - SVGKit
+
+EXTERNAL SOURCES:
+  MPIOSRuntime:
+    :branch: master
+    :git: https://github.com/mpflutter/mp_ios_runtime.git
+
+CHECKOUT OPTIONS:
+  MPIOSRuntime:
+    :commit: e1031a0db1e07c75a48945bcb06ec2eaadfa6682
+    :git: https://github.com/mpflutter/mp_ios_runtime.git
+
+SPEC CHECKSUMS:
+  CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
+  jetfire: 60c16cd6ae0282928e24203eb93f03b89c1929ce
+  MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
+  MPIOSRuntime: 12a01fd2901ee0294c2a98abbf5782bcd13d1dc0
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  SDWebImageSVGKitPlugin: 8797e1c9b9baf80bd50d28e673e16a12359af1c9
+  SVGKit: 652cdf7bef8bec8564d04a8511d3ab50c7595fac
+
+PODFILE CHECKSUM: b2e53fcc2ffa662c43d28622b1ca4929b612a32b
+
+COCOAPODS: 1.9.1

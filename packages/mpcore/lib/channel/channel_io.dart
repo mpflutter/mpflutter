@@ -83,17 +83,8 @@ class MPChannel {
           handlePackageAssetsRequest(req);
         } else if (req.uri.path.startsWith('/assets/')) {
           handleAssetsRequest(req);
-        } else if (req.uri.path.startsWith('/bundle.') ||
-            req.uri.path.startsWith('/index.html') ||
-            req.uri.path.startsWith('/index.css') ||
-            req.uri.path.startsWith('/main.dart.js') ||
-            req.uri.path.startsWith('/plugins.min.js') ||
-            req.uri.path.startsWith('/static/')) {
-          handleScaffoldRequest(req);
-        } else if (req.uri.path == '/') {
-          handleScaffoldRequest(req);
         } else {
-          final _ = req.response.close();
+          handleScaffoldRequest(req);
         }
       }
     } catch (e) {

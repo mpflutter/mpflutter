@@ -1,0 +1,8 @@
+platform :ios, '10.0'
+
+target 'template' do
+  pod 'MPIOSRuntime', :git => 'https://github.com/mpflutter/mp_ios_runtime.git', :branch => 'master'
+  pod 'SDWebImage', '~> 5.11'
+  pod 'SDWebImageSVGKitPlugin'
+  pod 'SVGKit', '< 3.0.0'
+end
