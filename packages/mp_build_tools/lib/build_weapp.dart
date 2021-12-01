@@ -6,13 +6,17 @@ import 'i18n.dart';
 
 final Map<int, List<String>> subpackages = {};
 final subpackageSizeLimited = 1024 * 1024 * 1.9;
+Map? miniProgramConfig;
+List<String> miniProgramPages = [];
 
 main(List<String> args) {
   print(I18n.building());
   _checkPubspec();
   _createBuildDir();
+  miniProgramConfig = _fetchMiniProgramConfig();
   plugin_builder.main(args);
   _copyWeappSource();
+  _createPages();
   _buildDartJS(args);
   print(I18n.buildSuccess('build'));
 }
@@ -29,6 +33,15 @@ _createBuildDir() {
   } else {
     Directory('build').deleteSync(recursive: true);
     Directory('build').createSync();
+  }
+}
+
+Map? _fetchMiniProgramConfig() {
+  if (File('lib/weapp.config.dart').existsSync()) {
+    try {
+      final result = Process.runSync('dart', ['lib/weapp.config.dart']);
+      return json.decode(result.stdout);
+    } catch (e) {}
   }
 }
 
@@ -100,6 +113,51 @@ String _buildDartJS(List<String> args) {
 
 _copyWeappSource() {
   _copyPathSync('./weapp', './build/');
+}
+
+_createPages() {
+  if (miniProgramConfig == null) return;
+  if (miniProgramConfig!['pages'] is Map) {
+    (miniProgramConfig!['pages'] as Map).forEach((path, pageConfig) {
+      if (path is String && path.startsWith('/') && pageConfig is Map) {
+        miniProgramPages.add(path.substring(1));
+        final jsPath =
+            p.joinAll(['build', ...path.split("/")..removeAt(0)]) + '.js';
+        final wxmlPath =
+            p.joinAll(['build', ...path.split("/")..removeAt(0)]) + '.wxml';
+        final jsonPath =
+            p.joinAll(['build', ...path.split("/")..removeAt(0)]) + '.json';
+        String coreLibRequireBase = '';
+        (path.split("/")
+              ..removeAt(0)
+              ..removeLast())
+            .forEach((element) {
+          coreLibRequireBase += '../';
+        });
+        if (coreLibRequireBase.isEmpty) {
+          coreLibRequireBase = './';
+        }
+        File(jsPath).writeAsStringSync('''
+const WXPage = require('${coreLibRequireBase}mpdom.min').WXPage;
+
+const thePage = new WXPage({route: '${path}'});
+thePage.kboneRender = require('${coreLibRequireBase}kbone/miniprogram-render/index')
+Page(thePage);
+        ''');
+        File(jsonPath).writeAsStringSync(json.encode(
+          {}..addAll({
+              'usingComponents': {
+                'element': '${coreLibRequireBase}kbone/miniprogram-element'
+              }
+            }..addAll(pageConfig)),
+        ));
+        File(wxmlPath).writeAsStringSync('''
+<page-meta><navigation-bar title="{{pageMeta.naviBar.title}}" loading="{{pageMeta.naviBar.loading}}" front-color="{{pageMeta.naviBar.frontColor || '#000000'}}" background-color="{{pageMeta.naviBar.backgroundColor || '#ffffff'}}"></navigation-bar></page-meta>
+<element wx:if="{{pageId}}" class="miniprogram-root" data-private-node-id="e-body" data-private-page-id="{{pageId}}" ></element>
+        ''');
+      }
+    });
+  }
 }
 
 _moveDeferedScriptToSubpackages() {
@@ -175,6 +233,7 @@ _writeSubpackagesToAppJson() {
       File(p.join('build', 'app.json')).readAsStringSync(),
     ) as Map;
     appJson['subpackages'] ??= [];
+    (appJson['pages'] as List)..addAll(miniProgramPages);
     (appJson['subpackages'] as List)
       ..addAll(subpackages.keys.map((e) {
         return {

@@ -96,6 +96,7 @@ export const WXPage = function (
       }
       if (finalOptions?.route) {
         finalOptions.route = decodeURIComponent(finalOptions.route);
+        finalOptions.params = { ...pageOptions };
       }
 
       (this as any).mpPage = new Page(document.body, app.engine, finalOptions, document);
@@ -145,9 +146,9 @@ class WXRouter extends Router {
       }
     }
     if (searchParams.length > 0) {
-      return `${name.indexOf("/") === 0 ? name.substr(1) : name}?${searchParams.join("&")}`;
+      return `${name}?${searchParams.join("&")}`;
     } else {
-      return `${name.indexOf("/") === 0 ? name.substr(1) : name}`;
+      return `${name}`;
     }
   }
 
@@ -220,7 +221,10 @@ class WXRouter extends Router {
   }
 
   delay() {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram && MPEnv.platformScope.getSystemInfoSync().platform === "ios") {
+    if (
+      MPEnv.platformType === PlatformType.wxMiniProgram &&
+      MPEnv.platformScope.getSystemInfoSync().platform === "ios"
+    ) {
       return new Promise((res) => {
         setTimeout(() => {
           res(null);
