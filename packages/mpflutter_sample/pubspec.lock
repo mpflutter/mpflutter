@@ -214,6 +214,13 @@ packages:
       url: "https://github.com/mpflutter-plugins/universal_miniprogram_api"
     source: git
     version: "0.0.1"
+  usage:
+    dependency: transitive
+    description:
+      name: usage
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.0.2"
   vector_math:
     dependency: transitive
     description:

@@ -4,6 +4,7 @@ import 'dart:developer' as dev;
 
 import 'package:flutter/widgets.dart';
 import 'package:mime_type/mime_type.dart';
+import 'package:mpcore/ga.dart';
 
 import '../mpcore.dart';
 
@@ -38,6 +39,8 @@ class MPChannel {
       await reloader.go();
     }
     setupWebServer();
+    // ignore: unawaited_futures
+    ga.sendEvent('devtools', 'debug');
   }
 
   static void setupWebServer() async {

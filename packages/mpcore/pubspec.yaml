@@ -15,6 +15,7 @@ dependencies:
   glob: ^2.0.1
   mime_type: ^1.0.0
   path: ^1.8.0
+  usage: ^4.0.2
 
 dependency_overrides:
   flutter: 
