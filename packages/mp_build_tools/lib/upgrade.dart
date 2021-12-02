@@ -40,19 +40,19 @@ main(List<String> args) async {
         return '${match.group(1)}${versionCode}';
       });
       pubspecContent =
-          pubspecContent.replaceAllMapped(RegExp(r'flutter:.*'), (match) {
+          pubspecContent.replaceAllMapped(RegExp(r'flutter:.+'), (match) {
         return 'flutter: "${versionCode}"';
       });
       pubspecContent = pubspecContent
-          .replaceAllMapped(RegExp(r'flutter_web_plugins:.*'), (match) {
+          .replaceAllMapped(RegExp(r'flutter_web_plugins:.+'), (match) {
         return 'flutter_web_plugins: "${versionCode}"';
       });
       pubspecContent =
-          pubspecContent.replaceAllMapped(RegExp(r'mpcore:.*'), (match) {
+          pubspecContent.replaceAllMapped(RegExp(r'mpcore:.+'), (match) {
         return 'mpcore: "${versionCode}"';
       });
       pubspecContent = pubspecContent
-          .replaceAllMapped(RegExp(r'mp_build_tools:.*'), (match) {
+          .replaceAllMapped(RegExp(r'mp_build_tools:.+'), (match) {
         return 'mp_build_tools: "${versionCode}"';
       });
       File(p.join('pubspec.yaml')).writeAsStringSync(pubspecContent);
