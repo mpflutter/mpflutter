@@ -7,7 +7,6 @@ export class PickerItem {
 }
 export class MPPicker extends MPPlatformView {
   weuiShadowRoot: any;
-  lastItems: any;
   multiIndex: number[];
 
   constructor(document: Document, readonly initialAttributes?: any) {
@@ -104,22 +103,31 @@ export class MPPicker extends MPPlatformView {
           label: it.label,
           value: idx,
           disabled: it.disabled,
-          children: it.subItems?.map((it, idx) => {
-            return {
-              label: it.label,
-              value: idx,
-              disabled: it.disabled,
-              children: it.subItems?.map((it, idx) => {
-                return { label: it.label, value: idx, disabled: it.disabled };
-              }),
-            };
-          }),
+          children: it.subItems
+            ? it.subItems?.map((it, idx) => {
+                return {
+                  label: it.label,
+                  value: idx,
+                  disabled: it.disabled,
+                  children: it.subItems
+                    ? it.subItems?.map((it, idx) => {
+                        return { label: it.label, value: idx, disabled: it.disabled };
+                      })
+                    : this.attributes.column >= 3
+                    ? [{ label: "" }]
+                    : undefined,
+                };
+              })
+            : this.attributes.column >= 2
+            ? [{ label: "" }]
+            : undefined,
         };
       }),
       {
         container: div,
-        defaultValue: this.attributes.defaultValue,
+        defaultValue: this.multiIndex,
         onConfirm: (result: any) => {
+          this.multiIndex = result.map((it: any) => it.value);
           this.invokeMethod("callbackResult", { value: result.map((it: any) => it.value) });
         },
         onClose: function () {
