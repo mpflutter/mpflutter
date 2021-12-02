@@ -210,7 +210,7 @@ class WXRouter extends Router {
 
   async didPop() {
     if (Router.beingPush) {
-      await this.delay();
+      await this.delayPop();
     }
     Router.clearBeingPushTimeout();
     Router.beingPush = true;
@@ -220,10 +220,12 @@ class WXRouter extends Router {
     }, 1000);
   }
 
-  delay() {
+  delayPop() {
     if (
       MPEnv.platformType === PlatformType.wxMiniProgram &&
-      MPEnv.platformScope.getSystemInfoSync().platform === "ios"
+      (MPEnv.platformScope.getSystemInfoSync().platform === "ios" ||
+        MPEnv.platformScope.getSystemInfoSync().platform === "windows" ||
+        MPEnv.platformScope.getSystemInfoSync().platform === "mac")
     ) {
       return new Promise((res) => {
         setTimeout(() => {
