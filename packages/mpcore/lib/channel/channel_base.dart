@@ -230,10 +230,18 @@ class MPChannelBase {
 
   static void onOverlayTrigger(Map message) {
     try {
-      final widget = MPCore.findTargetHashCode(message['target'])?.widget;
+      final element = MPCore.findTargetHashCode(message['target']);
+      final widget = element?.widget;
       if (!(widget is MPOverlayScaffold)) return;
       if (message['event'] == 'onBackgroundTap') {
         widget.onBackgroundTap?.call();
+      } else if (message['event'] == 'forceClose') {
+        final route = ModalRoute.of(element!);
+        if (route != null && route.isCurrent == true) {
+          route.navigator?.pop();
+        } else if (route != null && route.isActive == true) {
+          route.navigator?.removeRoute(route);
+        }
       }
     } catch (e) {
       print(e);
