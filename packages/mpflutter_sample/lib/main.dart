@@ -40,6 +40,7 @@ import 'package:mpflutter_template/touches/absorb_pointer_page.dart';
 import 'package:mpflutter_template/touches/editable_text_page.dart';
 import 'package:mpflutter_template/touches/gesture_detector_page.dart';
 import 'package:mpflutter_template/touches/ignore_pointer_page.dart';
+import 'package:mpflutter_template/touches/signature_page.dart';
 
 import 'animations/animation_performance_test_page.dart';
 import 'home.dart';
@@ -104,6 +105,7 @@ class MyApp extends StatelessWidget {
         '/miniprogramApi': (context) => MiniProgramApiPage(),
         '/customPaint': (context) => CustomPaintPage(),
         '/forms': (context) => FormsPage(),
+        '/signature': (context) => SignaturePage(),
       },
       navigatorObservers: [MPCore.getNavigationObserver()],
     );

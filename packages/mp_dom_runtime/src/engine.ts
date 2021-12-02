@@ -4,7 +4,7 @@ declare var swan: any;
 
 import { BrowserApp } from "./browser_app";
 import { WXApp } from "./wx_app";
-import { MPDrawable } from "./components/basic/custom_paint";
+import { CustomPaint, MPDrawable } from "./components/basic/custom_paint";
 import { WebDialogs } from "./components/basic/web_dialogs";
 import { ComponentFactory } from "./components/component_factory";
 import { MPPlatformView } from "./components/mpkit/platform_view";
@@ -164,6 +164,8 @@ export class Engine {
       }
     } else if (decodedMessage.type === "decode_drawable") {
       this.drawable.decodeDrawable(decodedMessage.message);
+    } else if (decodedMessage.type === "custom_paint") {
+      CustomPaint.didReceivedCustomPaintMessage(decodedMessage.message, this);
     } else if (decodedMessage.type === "route") {
       (this.app?.router ?? this.router)?.didReceivedRouteData(decodedMessage.message);
     } else if (decodedMessage.type === "mpjs") {

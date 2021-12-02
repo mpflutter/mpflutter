@@ -89,6 +89,8 @@ export class Image extends ComponentView {
       } else {
         setDOMAttribute(this.htmlElement, "src", attributes.src);
       }
+    } else if (attributes.base64) {
+      setDOMAttribute(this.htmlElement, "src", "data:image/png;base64," + attributes.base64);
     } else if (attributes.assetName) {
       if (this.engine.debugger) {
         const assetUrl = (() => {

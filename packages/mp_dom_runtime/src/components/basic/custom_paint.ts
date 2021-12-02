@@ -100,6 +100,50 @@ export class MPDrawable {
 }
 
 export class CustomPaint extends ComponentView {
+  static async didReceivedCustomPaintMessage(params: any, engine: any) {
+    if (params.event === "fetchImage") {
+      const view = engine.componentFactory.cachedView[params.target] as CustomPaint;
+      if (__MP_TARGET_BROWSER__ && view instanceof CustomPaint) {
+        const data = (view.htmlElement as HTMLCanvasElement).toDataURL();
+        const base64EncodedData = data.split("base64,")[1];
+        engine.sendMessage(
+          JSON.stringify({
+            type: "custom_paint",
+            message: {
+              event: "onFetchImageResult",
+              seqId: params.seqId,
+              data: base64EncodedData,
+            },
+          })
+        );
+      } else if (__MP_TARGET_WEAPP__ && view instanceof CustomPaint) {
+        const node = await (view.htmlElement as any).$$getNodesRef();
+        node
+          .fields(
+            {
+              node: true,
+            },
+            (fields: any) => {
+              const canvas = fields.node;
+              const data = canvas.toDataURL();
+              const base64EncodedData = data.split("base64,")[1];
+              engine.sendMessage(
+                JSON.stringify({
+                  type: "custom_paint",
+                  message: {
+                    event: "onFetchImageResult",
+                    seqId: params.seqId,
+                    data: base64EncodedData,
+                  },
+                })
+              );
+            }
+          )
+          .exec();
+      }
+    }
+  }
+
   canvasWidth: number = 0;
   canvasHeight: number = 0;
   ctx?: CanvasRenderingContext2D;

@@ -181,6 +181,7 @@ class MyHomePage extends StatelessWidget {
                     context: context, route: '/absorbPointer'),
                 _renderItem('EditableText',
                     context: context, route: '/editableText'),
+                _renderItem('Signature', context: context, route: '/signature'),
               ],
             ),
           ),
