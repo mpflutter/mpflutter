@@ -44,12 +44,12 @@ export const MPEnv = {
     }
   },
   platformPC: (): boolean => {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (__MP_TARGET_WEAPP__) {
       const platform = MPEnv.platformScope.getSystemInfoSync().platform;
       if (platform === "mac" || platform === "windows") {
         return true;
       }
-    } else if (MPEnv.platformType === PlatformType.browser) {
+    } else if (__MP_TARGET_BROWSER__) {
       return navigator?.maxTouchPoints === 1;
     }
     return false;

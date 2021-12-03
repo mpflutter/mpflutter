@@ -17,7 +17,7 @@ export class MPPlatformView extends ComponentView {
 
   constructor(readonly document: Document, readonly initialAttributes?: any) {
     super(document, initialAttributes);
-    if (this.elementType().indexOf(".") > 0 && MPEnv.platformType === PlatformType.browser) {
+    if (this.elementType().indexOf(".") > 0 && __MP_TARGET_BROWSER__) {
       this.htmlElement = this.createFromWebTemplate();
     }
   }

@@ -222,7 +222,7 @@ class WXRouter extends Router {
 
   delayPop() {
     if (
-      MPEnv.platformType === PlatformType.wxMiniProgram &&
+      __MP_TARGET_WEAPP__ &&
       (MPEnv.platformScope.getSystemInfoSync().platform === "ios" ||
         MPEnv.platformScope.getSystemInfoSync().platform === "windows" ||
         MPEnv.platformScope.getSystemInfoSync().platform === "mac")

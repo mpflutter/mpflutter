@@ -2,7 +2,7 @@ import { Engine } from "../engine";
 import { MPEnv, PlatformType } from "../env";
 
 export function createDebugger(serverAddr: string, engine: Engine): Debugger {
-  if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+  if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
     if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)) return null!;
     return new WXDebugger(serverAddr, engine);
   } else {

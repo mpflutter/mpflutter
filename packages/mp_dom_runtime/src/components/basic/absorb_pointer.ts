@@ -13,7 +13,7 @@ export class AbsorbPointer extends ComponentView {
     super.setAttributes(attributes);
     if (!this.didSetListener) {
       this.didSetListener = true;
-      if (MPEnv.platformType === PlatformType.browser) {
+      if (__MP_TARGET_BROWSER__) {
         this.htmlElement.addEventListener("click", (e) => {
           e.stopPropagation();
         });

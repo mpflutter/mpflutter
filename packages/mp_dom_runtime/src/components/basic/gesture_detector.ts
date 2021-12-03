@@ -25,7 +25,7 @@ export class GestureDetector extends ComponentView {
   }
 
   elementType() {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (__MP_TARGET_WEAPP__) {
       return "wx-catch";
     }
     return "div";
@@ -73,7 +73,7 @@ export class GestureDetector extends ComponentView {
       if (!this.didSetOnLongPressOrPan) {
         this.didSetOnLongPressOrPan = true;
         this.setupLongPressOrPanCatcher();
-        // if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+        // if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
         //   (this.htmlElement as any).setTag("touchmove");
         // }
       }

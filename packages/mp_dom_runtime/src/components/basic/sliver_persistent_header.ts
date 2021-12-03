@@ -25,7 +25,7 @@ export class SliverPersistentHeader extends ComponentView {
   observeScroller() {
     if (this.lazying && !this.observingScroller) {
       this.observingScroller = true;
-      if (MPEnv.platformType === PlatformType.browser) {
+      if (__MP_TARGET_BROWSER__) {
         setTimeout(() => {
           if (this.superview) {
             var eventListener: any;
@@ -40,8 +40,8 @@ export class SliverPersistentHeader extends ComponentView {
           }
         }, 32);
       } else if (
-        MPEnv.platformType === PlatformType.wxMiniProgram ||
-        MPEnv.platformType === PlatformType.swanMiniProgram
+        __MP_TARGET_WEAPP__ ||
+        __MP_TARGET_SWANAPP__
       ) {
         var eventListener: any;
         eventListener = (e: any) => {

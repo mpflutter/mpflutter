@@ -10,12 +10,12 @@ export class MPSlider extends MPPlatformView {
     this.htmlElement.addEventListener("change", (value: any) => {
       this.invokeMethod("onValueChanged", { value: value.detail.value });
     });
-    if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
+    if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
       this.htmlElement.addEventListener("changing", (value: any) => {
         this.invokeMethod("onValueChanged", { value: value.detail.value });
       });
       setDOMStyle(this.htmlElement, { margin: "0", marginTop: "8px" });
-    } else if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
+    } else if (__MP_TARGET_BROWSER__ && __MP_TARGET_BROWSER__) {
       const weuiShadowRoot = this.htmlElement.attachShadow
         ? this.htmlElement.attachShadow({ mode: "closed" })
         : this.htmlElement;
@@ -30,7 +30,7 @@ export class MPSlider extends MPPlatformView {
   }
 
   elementType() {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (__MP_TARGET_WEAPP__) {
       return "wx-slider";
     }
     return "div";
@@ -38,7 +38,7 @@ export class MPSlider extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (__MP_TARGET_WEAPP__ && MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
       setDOMAttribute(this.htmlElement, "min", attributes.min);
       setDOMAttribute(this.htmlElement, "max", attributes.max);
       setDOMAttribute(this.htmlElement, "step", attributes.step);
@@ -47,7 +47,7 @@ export class MPSlider extends MPPlatformView {
         setDOMAttribute(this.htmlElement, "value", attributes.defaultValue);
       }
       this.firstSetup = false;
-    } else if (__MP_TARGET_BROWSER__ && MPEnv.platformType === PlatformType.browser && this.firstSetup) {
+    } else if (__MP_TARGET_BROWSER__ && __MP_TARGET_BROWSER__ && this.firstSetup) {
       this.sliderElement.innerHTML = `<div class="weui-slider">
         <div id="sliderInner" class="weui-slider__inner">
           <div id="sliderTrack" style="width: 0%;" class="weui-slider__track"></div>
@@ -109,9 +109,9 @@ export class MPSlider extends MPPlatformView {
     if (method === "setValue") {
       const value = params?.value;
       if (typeof value === "number") {
-        if (__MP_TARGET_WEAPP__ && MPEnv.platformType === PlatformType.wxMiniProgram) {
+        if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
           this.htmlElement.setAttribute("value", value as any);
-        } else if (__MP_TARGET_BROWSER__ && MPEnv.platformType === PlatformType.browser) {
+        } else if (__MP_TARGET_BROWSER__ && __MP_TARGET_BROWSER__) {
           this.resetSliderValue(params.value);
         }
       }

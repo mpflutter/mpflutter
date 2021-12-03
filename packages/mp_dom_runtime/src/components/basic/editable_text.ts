@@ -86,7 +86,7 @@ export class EditableText extends ComponentView {
       }
     }
     if (typeof attributes.value === "string") {
-      if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+      if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
         setDOMAttribute(this.contentElement, "value", attributes.value);
       } else {
         this.contentElement.value = attributes.value;
@@ -104,7 +104,7 @@ export class EditableText extends ComponentView {
     if (attributes.maxLength) {
       setDOMAttribute(this.contentElement, "maxlength", attributes.maxLength);
     }
-    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
       setDOMAttribute(this.contentElement, "disabled", attributes.readOnly ? "true" : undefined);
     } else {
       setDOMAttribute(this.contentElement, "read-only", attributes.readOnly ? "true" : undefined);

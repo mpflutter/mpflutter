@@ -10,9 +10,9 @@ export class MPVideoView extends MPPlatformView {
   }
 
   async onMethodCall(method: string, params: any) {
-    if (MPEnv.platformType === PlatformType.browser) {
+    if (__MP_TARGET_BROWSER__) {
       this.onBrowserMethodCall(method, params);
-    } else if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    } else if (__MP_TARGET_WEAPP__) {
       if (!this.videoContext) {
         this.videoContext = await (this.htmlElement as any).$$getContext();
       }

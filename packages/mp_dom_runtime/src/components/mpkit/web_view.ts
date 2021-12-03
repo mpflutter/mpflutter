@@ -6,7 +6,7 @@ import { MPPlatformView } from "./platform_view";
 export class MPWebView extends MPPlatformView {
   constructor(readonly document: Document, readonly initialAttributes?: any) {
     super(document, initialAttributes);
-    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
       this.htmlElement.addEventListener("message", (e: any) => {
         if (e?.detail?.data instanceof Array) {
           this.invokeMethod("mini_program_message", { data: e.detail.data });
@@ -16,7 +16,7 @@ export class MPWebView extends MPPlatformView {
   }
 
   elementType() {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
       return "wx-web-view";
     }
     return "iframe";

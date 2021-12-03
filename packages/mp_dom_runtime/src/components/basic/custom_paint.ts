@@ -11,7 +11,7 @@ export class MPDrawable {
   decodedDrawables: { [key: string]: HTMLImageElement } = {};
 
   async decodeDrawable(params: any) {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
       if (!MPDrawable.offscreenCanvas) {
         MPDrawable.offscreenCanvas = MPEnv.platformScope.createOffscreenCanvas();
       }
@@ -63,7 +63,7 @@ export class MPDrawable {
   async decodeNetworkImage(url: string, hashCode: number): Promise<{ width: number; height: number }> {
     return new Promise((res, rej) => {
       const img = (() => {
-        if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+        if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
           return MPDrawable.offscreenCanvas.createImage();
         }
         return document.createElement("img");
@@ -82,7 +82,7 @@ export class MPDrawable {
   async decodeMemoryImage(data: string, hashCode: number): Promise<{ width: number; height: number }> {
     return new Promise((res, rej) => {
       const img = (() => {
-        if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+        if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
           return MPDrawable.offscreenCanvas.createImage();
         }
         return document.createElement("img");
@@ -150,7 +150,7 @@ export class CustomPaint extends ComponentView {
 
   constructor(readonly document: any) {
     super(document);
-    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
       this.htmlElement.setAttribute("type", "2d");
     }
   }
@@ -182,7 +182,7 @@ export class CustomPaint extends ComponentView {
   }
 
   async createContext(): Promise<CanvasRenderingContext2D | null> {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
       return new Promise((res) => {
         setTimeout(async () => {
           (await (this.htmlElement as any).$$getNodesRef())

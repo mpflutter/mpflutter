@@ -8,7 +8,7 @@ export class MPDatePicker extends MPPlatformView {
 
   constructor(document: Document) {
     super(document);
-    if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
+    if (__MP_TARGET_BROWSER__ && __MP_TARGET_BROWSER__) {
       this.htmlElement.addEventListener("click", () => {
         let shadowDiv = document.createElement("div");
         document.body.appendChild(shadowDiv);
@@ -28,7 +28,7 @@ export class MPDatePicker extends MPPlatformView {
         this.weuiShadowRoot.appendChild(div);
         this.showDatePicker(div);
       });
-    } else if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
+    } else if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
       this.htmlElement.addEventListener("change", (e: any) => {
         this.invokeMethod("callbackResult", { value: e.detail.value.split("-").map((it: string) => parseInt(it)) });
       });
@@ -36,7 +36,7 @@ export class MPDatePicker extends MPPlatformView {
   }
 
   elementType() {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (__MP_TARGET_WEAPP__) {
       return "wx-picker";
     }
     return "div";

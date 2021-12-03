@@ -41,8 +41,8 @@ export class TextMeasurer {
       const rects = await Promise.all(
         views.map(async (it) => {
           // if (
-          //   MPEnv.platformType === PlatformType.wxMiniProgram ||
-          //   MPEnv.platformType === PlatformType.swanMiniProgram
+          //   __MP_TARGET_WEAPP__ ||
+          //   __MP_TARGET_SWANAPP__
           // ) {
           //   it.htmlElement.classList.add("mp_text");
           // }
@@ -65,8 +65,8 @@ export class TextMeasurer {
           });
           this.activeTextMeasureDocument.body.appendChild(it.htmlElement);
           if (
-            MPEnv.platformType === PlatformType.wxMiniProgram ||
-            MPEnv.platformType === PlatformType.swanMiniProgram
+            __MP_TARGET_WEAPP__ ||
+            __MP_TARGET_SWANAPP__
           ) {
             // await (this.activeTextMeasureDocument as any).awaitSetState();
             await this.delay();

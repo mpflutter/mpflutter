@@ -22,8 +22,8 @@ export class Page {
     readonly options?: { route: string; params: any },
     readonly document: Document = self?.document
   ) {
-    this.bodyElement = MPEnv.platformType === PlatformType.browser ? element : document.createElement("wx-view");
-    this.overlayElement = MPEnv.platformType === PlatformType.browser ? element : document.createElement("wx-view");
+    this.bodyElement = __MP_TARGET_BROWSER__ ? element : document.createElement("wx-view");
+    this.overlayElement = __MP_TARGET_BROWSER__ ? element : document.createElement("wx-view");
     if (this.bodyElement !== element || this.overlayElement !== element) {
       this.element.appendChild(this.bodyElement);
       this.element.appendChild(this.overlayElement);
@@ -65,14 +65,14 @@ export class Page {
   async fetchViewport() {
     let viewport = { ...(await (this.element as any).getBoundingClientRect()) };
     if (!viewport.width || viewport.width <= 0.1) {
-      if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+      if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
         viewport.width = MPEnv.platformScope.getSystemInfoSync().windowWidth;
       } else {
         viewport.width = window.innerWidth;
       }
     }
     if (!viewport.height || viewport.height <= 0.1) {
-      if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+      if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
         viewport.height = MPEnv.platformScope.getSystemInfoSync().windowHeight;
       } else {
         viewport.height = window.innerHeight;
@@ -116,8 +116,8 @@ export class Page {
         this.scaffoldView = scaffoldView;
         if (scaffoldView instanceof MPScaffold && !scaffoldView.delegate) {
           if (
-            MPEnv.platformType === PlatformType.wxMiniProgram ||
-            MPEnv.platformType === PlatformType.swanMiniProgram
+            __MP_TARGET_WEAPP__ ||
+            __MP_TARGET_SWANAPP__
           ) {
             if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
               scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document, this.miniProgramPage));
@@ -260,7 +260,7 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   backgroundElementAttached = false;
 
   setPageTitle(title: string): void {
-    if (MPEnv.platformType === PlatformType.swanMiniProgram) {
+    if (__MP_TARGET_SWANAPP__) {
       MPEnv.platformScope.setNavigationBarTitle({ title });
       return;
     }
@@ -291,7 +291,7 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   }
 
   setAppBarColor(color: string, tintColor?: string): void {
-    if (MPEnv.platformType == PlatformType.swanMiniProgram) {
+    if (__MP_TARGET_SWANAPP__) {
       MPEnv.platformScope.setNavigationBarColor({
         frontColor: tintColor,
         backgroundColor: color,

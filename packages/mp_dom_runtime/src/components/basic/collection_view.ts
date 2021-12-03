@@ -27,7 +27,7 @@ export class CollectionView extends ComponentView {
   elementType() {
     if (
       (this.initialAttributes?.restorationId || this.initialAttributes?.onScroll) &&
-      (MPEnv.platformType == PlatformType.wxMiniProgram || MPEnv.platformType == PlatformType.swanMiniProgram)
+      (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)
     ) {
       if (this.initialAttributes?.isRoot) {
         return "div";
@@ -100,7 +100,7 @@ export class CollectionView extends ComponentView {
 
   didMoveToWindow() {
     super.didMoveToWindow();
-    if (this.enabledRestoration && MPEnv.platformType === PlatformType.browser) {
+    if (this.enabledRestoration && __MP_TARGET_BROWSER__) {
       this.htmlElement.scrollTo({
         left: this.lastScrollX,
         top: this.lastScrollY,
@@ -111,7 +111,7 @@ export class CollectionView extends ComponentView {
           top: this.lastScrollY,
         });
       }, 0);
-    } else if (this.enabledRestoration && MPEnv.platformType === PlatformType.wxMiniProgram) {
+    } else if (this.enabledRestoration && __MP_TARGET_WEAPP__) {
       this.htmlElement.setAttribute("scroll-top", this.lastScrollY.toFixed(0));
       this.htmlElement.setAttribute("scroll-left", this.lastScrollX.toFixed(0));
       setTimeout(() => {
@@ -182,9 +182,9 @@ export class CollectionView extends ComponentView {
     });
     this.bottomBarHeight = attributes.bottomBarHeight ?? 0.0;
     this.bottomBarWithSafeArea = attributes.bottomBarWithSafeArea ?? false;
-    if (attributes.restorationId && MPEnv.platformType == PlatformType.wxMiniProgram) {
+    if (attributes.restorationId && __MP_TARGET_WEAPP__) {
       this.enabledRestoration = true;
-    } else if (attributes.restorationId && MPEnv.platformType == PlatformType.browser) {
+    } else if (attributes.restorationId && __MP_TARGET_BROWSER__) {
       this.enabledRestoration = true;
     }
     this.htmlElement.setAttribute("scroll-x", "true");

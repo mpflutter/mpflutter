@@ -12,7 +12,7 @@ export class MPPicker extends MPPlatformView {
   constructor(document: Document, readonly initialAttributes?: any) {
     super(document, initialAttributes);
     this.multiIndex = initialAttributes?.defaultValue ?? [0, 0, 0];
-    if (MPEnv.platformType === PlatformType.browser && __MP_TARGET_BROWSER__) {
+    if (__MP_TARGET_BROWSER__ && __MP_TARGET_BROWSER__) {
       this.htmlElement.addEventListener("click", () => {
         let shadowDiv = document.createElement("div");
         document.body.appendChild(shadowDiv);
@@ -45,7 +45,7 @@ export class MPPicker extends MPPlatformView {
   }
 
   elementType() {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram) {
+    if (__MP_TARGET_WEAPP__) {
       return "wx-picker";
     }
     return "div";
@@ -63,7 +63,7 @@ export class MPPicker extends MPPlatformView {
   }
 
   getPickerItem(): any {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
+    if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
       const originItems = this.attributes.items as PickerItem[];
       let items: any[] = [];
       if (this.attributes.column === 1) {
@@ -90,7 +90,7 @@ export class MPPicker extends MPPlatformView {
   }
 
   updatePickerItem(column: number, value: number): any {
-    if (MPEnv.platformType === PlatformType.wxMiniProgram && __MP_TARGET_WEAPP__) {
+    if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
       this.multiIndex[column] = value;
     }
   }

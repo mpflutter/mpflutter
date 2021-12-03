@@ -80,7 +80,7 @@ export class Engine {
     this.windowInfo.updateWindowInfo();
     this.listenViewport();
     MPEnv.platformGlobal();
-    if (MPEnv.platformType === PlatformType.browser) {
+    if (__MP_TARGET_BROWSER__) {
       MPEnv.platformGlobal().engineScope = this.mpJS.engineScope;
     } else {
       MPEnv.platformGlobal().JSON = JSON;
@@ -283,7 +283,7 @@ export class Engine {
   }
 
   private listenViewport() {
-    if (MPEnv.platformType === PlatformType.browser) {
+    if (__MP_TARGET_BROWSER__) {
       window.addEventListener("resize", () => {
         this.sendViewportChangeEvent();
       });

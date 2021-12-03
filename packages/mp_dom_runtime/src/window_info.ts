@@ -6,8 +6,8 @@ export class WindowInfo {
 
   updateWindowInfo() {
     if (
-      MPEnv.platformType === PlatformType.wxMiniProgram ||
-      MPEnv.platformType === PlatformType.swanMiniProgram
+      __MP_TARGET_WEAPP__ ||
+      __MP_TARGET_SWANAPP__
     ) {
       this.engine.sendMessage(
         JSON.stringify({

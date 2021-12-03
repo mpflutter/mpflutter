@@ -87,11 +87,11 @@ class PageViewWeapp extends ComponentView {
 }
 
 export const MPPageView = (() => {
-  if (MPEnv.platformType === PlatformType.wxMiniProgram || MPEnv.platformType === PlatformType.swanMiniProgram) {
+  if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
     if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
       return PageViewWeapp;
     }
-  } else if (MPEnv.platformType === PlatformType.browser) {
+  } else if (__MP_TARGET_BROWSER__) {
     if (__MP_TARGET_BROWSER__) {
       return PageViewWeb;
     }

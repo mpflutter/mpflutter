@@ -27,8 +27,8 @@ export class RichText extends ComponentView {
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
     if (
-      MPEnv.platformType === PlatformType.wxMiniProgram ||
-      MPEnv.platformType === PlatformType.swanMiniProgram
+      __MP_TARGET_WEAPP__ ||
+      __MP_TARGET_SWANAPP__
     ) {
       this.htmlElement.classList.add("mp_text");
     }
@@ -77,8 +77,8 @@ export class RichText extends ComponentView {
       (this.htmlElement as HTMLDivElement).innerText =
         children[0].attributes.text;
       if (
-        MPEnv.platformType === PlatformType.wxMiniProgram ||
-        MPEnv.platformType === PlatformType.swanMiniProgram
+        __MP_TARGET_WEAPP__ ||
+        __MP_TARGET_SWANAPP__
       ) {
         setDOMAttribute(
           this.htmlElement,
@@ -156,8 +156,8 @@ export class TextSpan extends ComponentView {
     if (attributes.text) {
       (this.htmlElement as HTMLSpanElement).innerText = attributes.text;
       if (
-        MPEnv.platformType === PlatformType.wxMiniProgram ||
-        MPEnv.platformType === PlatformType.swanMiniProgram
+        __MP_TARGET_WEAPP__ ||
+        __MP_TARGET_SWANAPP__
       ) {
         setDOMAttribute(this.htmlElement, "innerText", attributes.text);
       }
