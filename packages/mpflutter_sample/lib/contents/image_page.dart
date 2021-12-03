@@ -63,7 +63,7 @@ class ImagePage extends StatelessWidget {
                 height: 100,
                 child: Image.asset(
                   'assets/images/pony_avatar.jpeg',
-                  package: 'mpflutter_template',
+                  // package: 'mpflutter_template',
                 ),
               ),
               SizedBox(height: 16),

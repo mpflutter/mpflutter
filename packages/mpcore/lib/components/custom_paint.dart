@@ -163,10 +163,13 @@ class _RecordingCanvas implements Canvas {
 
   @override
   void drawDRRect(ui.RRect outer, ui.RRect inner, ui.Paint paint) {
+    final outerPath = ui.MockPath()..addRRect(outer);
+    final innerPath = ui.MockPath()..addRRect(inner);
+
     _commands.add({
       'action': 'drawDRRect',
-      'outer': ui.Path()..addRRect(outer),
-      'inner': ui.Path()..addRRect(inner),
+      'outer': outerPath.toJson(),
+      'inner': innerPath.toJson(),
       'paint': encodePaint(paint),
     });
   }
@@ -236,7 +239,7 @@ class _RecordingCanvas implements Canvas {
   void drawPath(ui.Path path, ui.Paint paint) {
     _commands.add({
       'action': 'drawPath',
-      'path': path,
+      'path': (path as ui.MockPath).toJson(),
       'paint': encodePaint(paint),
     });
   }

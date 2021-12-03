@@ -128,7 +128,7 @@ export class GestureDetector extends ComponentView {
   }
 
   async _onTouchStart(e: TouchEvent) {
-    if (__MP_TARGET_WEAPP__ && e.target !== this.htmlElement) return;
+    if (__MP_TARGET_WEAPP__ && (e.target as any)?.tagName === 'CANVAS') return;
     const getBoundingClientRect = __MP_TARGET_WEAPP__ ? await this.htmlElement.getBoundingClientRect() : this.htmlElement.getBoundingClientRect();
     this.targetOriginInPage = { x: getBoundingClientRect.left, y: getBoundingClientRect.top };
     let isPan = this.attributes.onPanStart || this.attributes.onPanUpdate || this.attributes.onPanEnd;
@@ -182,7 +182,7 @@ export class GestureDetector extends ComponentView {
   }
 
   _onTouchMove(e: TouchEvent) {
-    if (__MP_TARGET_WEAPP__ && e.target !== this.htmlElement) return;
+    if (__MP_TARGET_WEAPP__ && (e.target as any)?.tagName === 'CANVAS') return;
     if (this.longPressing && (this.attributes.onLongPressMoveUpdate || this.attributes.onPanUpdate)) {
       this.engine.sendMessage(
         JSON.stringify({
@@ -210,7 +210,7 @@ export class GestureDetector extends ComponentView {
   }
 
   _onTouchEnd(e: TouchEvent) {
-    if (__MP_TARGET_WEAPP__ && e.target !== this.htmlElement) return;
+    if (__MP_TARGET_WEAPP__ && (e.target as any)?.tagName === 'CANVAS') return;
     if (this.longPressing && (this.attributes.onLongPressEnd || this.attributes.onPanEnd)) {
       this.engine.sendMessage(
         JSON.stringify({
