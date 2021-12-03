@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'i18n.dart';
 import 'init_android_studio.dart' as init_android_studio;
 import 'init_template_project.dart' as init_template_project;
@@ -53,32 +55,60 @@ final features = <Map>[
 ];
 
 void main(List<String> args) {
-  print(I18n.help());
-  final versionDialog = CLI_Dialog(listQuestions: [
-    [
-      {
-        'question': '',
-        'options': [
-          ...features.map<String>((e) {
-            if (I18n.currentLang == Lang.zh) {
-              return e['title.zh'];
-            } else {
-              return e['title.en'];
-            }
-          }),
-          (() {
-            if (I18n.currentLang == Lang.zh) {
-              return '退出';
-            } else {
-              return 'Exit';
-            }
-          })()
-        ]
-      },
-      'userInput'
-    ]
-  ]);
-  final userInput = versionDialog.ask()['userInput'];
+  String? userInput;
+  if (Platform.isWindows) {
+    final qDialog = CLI_Dialog(questions: [
+      [
+        '\n' +
+            [
+              ...features.asMap().map((i, e) {
+                var v = '$i. ';
+                if (I18n.currentLang == Lang.zh) {
+                  v += e['title.zh'];
+                } else {
+                  v += e['title.en'];
+                }
+                return MapEntry(i, v);
+              }).values
+            ].join('\n') +
+            '\n${I18n.pleaseInputIndex()}',
+        'userInputIndex'
+      ]
+    ]);
+    final userInputIndex = qDialog.ask()['userInputIndex'];
+    if (userInputIndex != null) {
+      final intIndex = int.tryParse(userInputIndex);
+      if (intIndex != null) {
+        userInput = features[intIndex]['title.en'];
+      }
+    }
+  } else {
+    final qDialog = CLI_Dialog(listQuestions: [
+      [
+        {
+          'question': '',
+          'options': [
+            ...features.map<String>((e) {
+              if (I18n.currentLang == Lang.zh) {
+                return e['title.zh'];
+              } else {
+                return e['title.en'];
+              }
+            }),
+            (() {
+              if (I18n.currentLang == Lang.zh) {
+                return '退出';
+              } else {
+                return 'Exit';
+              }
+            })()
+          ]
+        },
+        'userInput'
+      ]
+    ]);
+    userInput = qDialog.ask()['userInput'];
+  }
   if (userInput != null) {
     if (userInput == '退出' || userInput == 'Exit') return;
     try {

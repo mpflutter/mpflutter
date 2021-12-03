@@ -161,4 +161,13 @@ class I18n {
         return 'Fetching version info from remote...';
     }
   }
+
+  static pleaseInputIndex() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '请输入序号:';
+      default:
+        return 'Please input the index:';
+    }
+  }
 }
