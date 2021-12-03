@@ -57,6 +57,8 @@ class Registrar {
   ///       ...
   ///     }
   final BinaryMessenger messenger;
+
+  void registerMessageHandler();
 }
 
 /// The default plugin registry for the web.
