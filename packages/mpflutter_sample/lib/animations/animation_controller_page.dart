@@ -88,7 +88,7 @@ class _AnimatingNumberState extends State<AnimatingNumber>
   }
 
   void startAnimation() {
-    animationController.repeat(min: 0, max: 100, period: Duration(seconds: 50));
+    animationController.repeat(min: 0, max: 100, period: Duration(seconds: 10));
   }
 
   @override
@@ -100,7 +100,8 @@ class _AnimatingNumberState extends State<AnimatingNumber>
       child: Center(
         child: Container(
           width: 44,
-          child: Text(
+          height: 18 * 1.4375,
+          child: MPText(
             textValue,
             style: TextStyle(
               fontSize: 18,
@@ -108,6 +109,8 @@ class _AnimatingNumberState extends State<AnimatingNumber>
               fontWeight: FontWeight.bold,
             ),
             textAlign: TextAlign.center,
+            maxLines: 1,
+            noMeasure: true,
           ),
         ),
       ),

@@ -35,6 +35,7 @@ void _onMeasuredText(List values) {
 MPElement _encodeRichText(Element element) {
   final widget = element.widget as RichText;
   final renderObject = element.findRenderObject();
+  var shouldMeasure = false;
   // ignore: invalid_use_of_protected_member
   var constraints = element.findRenderObject()?.constraints as BoxConstraints?;
   if (renderObject is RenderParagraph &&
@@ -53,7 +54,32 @@ MPElement _encodeRichText(Element element) {
     }
   }
   if (renderObject is RenderParagraph && renderObject.measuredSize == null) {
-    _measuringText[element.hashCode] = element;
+    final maybeMPText = element.findAncestorWidgetOfExactType<MPText>();
+    if (constraints != null &&
+        constraints.hasBoundedWidth &&
+        constraints.hasBoundedHeight &&
+        widget is MPRichText &&
+        widget.noMeasure == true) {
+      renderObject.measuredSize = Size(
+        constraints.maxWidth,
+        constraints.maxHeight,
+      );
+    } else if (constraints != null &&
+        constraints.hasBoundedWidth &&
+        constraints.hasBoundedHeight &&
+        maybeMPText is MPText &&
+        maybeMPText.noMeasure == true) {
+      renderObject.measuredSize = Size(
+        constraints.maxWidth,
+        constraints.maxHeight,
+      );
+    } else {
+      shouldMeasure = true;
+      _measuringText[element.hashCode] = element;
+    }
+  }
+  if (!shouldMeasure) {
+    BuildOwner.beingMeasureElements.remove(element);
   }
   constraints ??= BoxConstraints(
     minWidth: 0,
@@ -67,10 +93,7 @@ MPElement _encodeRichText(Element element) {
     name: 'rich_text',
     children: [_encodeSpan(widget.text, element, 0, 0)],
     attributes: {
-      'measureId':
-          renderObject is RenderParagraph && renderObject.measuredSize == null
-              ? element.hashCode
-              : null,
+      'measureId': shouldMeasure ? element.hashCode : null,
       'maxWidth': constraints.maxWidth.toString(),
       'maxHeight': constraints.maxHeight.toString(),
       'maxLines': widget.maxLines,
