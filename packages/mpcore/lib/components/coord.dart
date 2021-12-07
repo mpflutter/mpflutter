@@ -9,7 +9,8 @@ bool _isCoordElement(Element element) {
   if (_coordIgnoringWidget[element.widget.runtimeType] == true) {
     return false;
   } else if (element.widget is SingleChildRenderObjectWidget ||
-      element.widget is MultiChildRenderObjectWidget) {
+      element.widget is MultiChildRenderObjectWidget ||
+      element.widget is LayoutBuilder) {
     return true;
   } else {
     return false;
