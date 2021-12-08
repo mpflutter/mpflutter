@@ -20,7 +20,15 @@ export class Overlay extends ComponentView {
   }
 
   supportPageContainer() {
-    return __MP_TARGET_WEAPP__ && MPEnv.platformScope.canIUse("page-container") === true;
+    const isWeapp = __MP_TARGET_WEAPP__ && MPEnv.platformScope.canIUse("page-container") === true;
+    if (isWeapp) {
+      const sdkVersion = MPEnv.platformScope.getSystemInfoSync().SDKVersion;
+      const versionComponents = sdkVersion.split(".");
+      if (parseInt(versionComponents[0]) >= 2 && parseInt(versionComponents[1]) >= 19) {
+        return true;
+      }
+    }
+    return false;
   }
 
   elementType() {
@@ -28,6 +36,24 @@ export class Overlay extends ComponentView {
       return "wx-page-container";
     }
     return "div";
+  }
+
+  removeFromSuperview() {
+    if (this.supportPageContainer()) {
+      setDOMAttribute(this.htmlElement, "show", false);
+      if (!this.superview) return;
+      const index = this.superview.subviews.indexOf(this);
+      if (index >= 0) {
+        this.superview.subviews[index].htmlElement.remove();
+        this.superview?.subviews.splice(index, 1);
+      }
+      setTimeout(() => {
+        this.htmlElement.remove();
+      }, 300);
+      return;
+    }
+    super.removeFromSuperview();
+    this.htmlElement.remove();
   }
 
   setAttributes(attributes: any) {

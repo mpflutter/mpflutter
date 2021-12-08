@@ -169,8 +169,10 @@ export class Page {
   async removeOverlays() {
     return new Promise((res) => {
       this.overlaysView.forEach((it) => {
-        it.htmlElement.remove();
         it.removeFromSuperview();
+        setTimeout(() => {
+          it.htmlElement.remove();
+        }, 300);
       });
       this.overlaysView = [];
       setTimeout(() => {
@@ -190,8 +192,10 @@ export class Page {
       return;
     }
     this.overlaysView.forEach((it) => {
-      it.htmlElement.remove();
       it.removeFromSuperview();
+      setTimeout(() => {
+        it.htmlElement.remove();
+      }, 300);
     });
     overlaysView.forEach((it) => {
       this.overlayElement.appendChild(it.htmlElement);
