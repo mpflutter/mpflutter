@@ -32,6 +32,15 @@ class I18n {
     }
   }
 
+  static needNodeEnv() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '构建脚本需要 NodeJS 环境，请到 https://nodejs.org/ 安装。';
+      default:
+        return 'The build script needs NodeJS, please install via https://nodejs.org/';
+    }
+  }
+
   static building() {
     switch (currentLang) {
       case Lang.zh:

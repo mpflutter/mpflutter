@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
 import 'package:mpcore/mpkit/mpkit.dart';
-import 'package:mpflutter_plugin_template/plugin.dart';
+import 'package:mpflutter_plugin_template/mpflutter_plugin_template.dart';
 
 class PluginPage extends StatelessWidget {
   Widget _renderBlock(Widget child) {

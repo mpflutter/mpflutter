@@ -1,38 +1,80 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'i18n.dart';
+
 main(List<String> args) {
   if (!File('.packages').existsSync()) return;
-  final stringBuffer = StringBuffer();
+  final stringBuffers = <String, StringBuffer>{
+    'weapp': StringBuffer(),
+    'swanapp': StringBuffer(),
+    'web': StringBuffer(),
+  };
   final lines = File('./.packages').readAsLinesSync();
   for (final line in lines) {
     final pkgPath = line
         .replaceFirst(RegExp('.*?:'), '')
         .replaceFirst('file://', '')
         .replaceFirst('/lib/', '');
-    if (File('$pkgPath/dist/index.min.js').existsSync()) {
-      stringBuffer
-          .writeln(File('$pkgPath/dist/index.min.js').readAsStringSync());
+    if (File('$pkgPath/package.json').existsSync()) {
+      runNpmBuild(pkgPath);
+      if (File('$pkgPath/dist/weapp/bundle.min.js').existsSync()) {
+        stringBuffers['weapp']!.writeln(
+            File('$pkgPath/dist/weapp/bundle.min.js').readAsStringSync());
+      }
+      if (File('$pkgPath/dist/web/bundle.min.js').existsSync()) {
+        stringBuffers['web']!.writeln(
+            File('$pkgPath/dist/web/bundle.min.js').readAsStringSync());
+      }
+      if (File('$pkgPath/dist/swanapp/bundle.min.js').existsSync()) {
+        stringBuffers['swanapp']!.writeln(
+            File('$pkgPath/dist/swanapp/bundle.min.js').readAsStringSync());
+      }
     }
   }
   try {
     File('web/plugins.min.js').writeAsStringSync(
         '''var MPEnv = window.MPDOM.MPEnv;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = {env: MPEnv,registerPlugin: function(name, target) {MPEnv.platformGlobal()[name] = target;},registerPlatformView: function(name, target){MPComponentFactory.components[name] = target;}};''' +
-            stringBuffer.toString() +
+            stringBuffers['web']!.toString() +
             htmlTemplateCode());
   } catch (e) {}
   try {
     File('weapp/plugins.min.js').writeAsStringSync(
         '''var MPEnv = require("./mpdom.min").MPEnv;var MPPlatformView = require("./mpdom.min").MPPlatformView;var MPComponentFactory = require("./mpdom.min").ComponentFactory;var pluginRegisterer = {env: MPEnv,registerPlugin: function(name, target) {MPEnv.platformGlobal()[name] = target;},registerPlatformView: function(name, target){MPComponentFactory.components[name] = target;}};''' +
-            stringBuffer.toString());
+            stringBuffers['weapp']!.toString());
     File('weapp/plugins.wxml').writeAsStringSync(weappTemplateCode());
   } catch (e) {}
   try {
     File('swanapp/plugins.min.js').writeAsStringSync(
         '''var MPEnv = require("./mpdom.min").MPEnv;var MPPlatformView = require("./mpdom.min").MPPlatformView;var MPComponentFactory = require("./mpdom.min").ComponentFactory;var pluginRegisterer = {env: MPEnv,registerPlugin: function(name, target) {MPEnv.platformGlobal()[name] = target;},registerPlatformView: function(name, target){MPComponentFactory.components[name] = target;}};''' +
-            stringBuffer.toString());
+            stringBuffers['swanapp']!.toString());
     File('swanapp/plugins.swan').writeAsStringSync(swanappTemplateCode());
   } catch (e) {}
+}
+
+void runNpmBuild(String pkgPath) {
+  if (!Directory('$pkgPath/node_modules').existsSync()) {
+    final npmInstallResult = Process.runSync(
+      'npm',
+      ['install'],
+      workingDirectory: pkgPath,
+      runInShell: true,
+    );
+    if (npmInstallResult.exitCode != 0) {
+      print(npmInstallResult.stdout);
+      print(npmInstallResult.stderr);
+      print(I18n.needNodeEnv());
+      throw I18n.executeFail('npm install');
+    }
+  }
+  final npmBuildResult = Process.runSync('npm', ['run', 'build'],
+      workingDirectory: pkgPath, runInShell: true);
+  if (npmBuildResult.exitCode != 0) {
+    print(npmBuildResult.stdout);
+    print(npmBuildResult.stderr);
+    print(I18n.needNodeEnv());
+    throw I18n.executeFail('npm run build');
+  }
 }
 
 String htmlTemplateCode() {
