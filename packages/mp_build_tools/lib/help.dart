@@ -4,6 +4,7 @@ import 'i18n.dart';
 import 'init_android_studio.dart' as init_android_studio;
 import 'init_template_project.dart' as init_template_project;
 import 'upgrade.dart' as upgrade;
+import 'init_local_plugin.dart' as init_local_plugin;
 import 'build_web.dart' as build_web;
 import 'build_weapp.dart' as build_weapp;
 import 'build_swanapp.dart' as build_swanapp;
@@ -29,6 +30,13 @@ final features = <Map>[
     'title.zh': '升级 MPFlutter 核心库',
     'action': () {
       upgrade.main([]);
+    },
+  },
+  {
+    'title.en': 'Create a local plugin use template',
+    'title.zh': '使用模板创建一个本地扩展',
+    'action': () {
+      init_local_plugin.main([]);
     },
   },
   {
