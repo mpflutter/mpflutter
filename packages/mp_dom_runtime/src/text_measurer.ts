@@ -23,8 +23,8 @@ export class TextMeasurer {
     const calcSize = this.zhMeasureCache[textSize]
       ? {
           measureId: view.attributes.measureId,
-          width: this.zhMeasureCache[textSize].width * text.length,
-          height: this.zhMeasureCache[textSize].height,
+          width: Math.ceil(this.zhMeasureCache[textSize].width * text.length) + 1.0,
+          height: Math.ceil(this.zhMeasureCache[textSize].height) + 1.0,
         }
       : undefined;
     if (view.constraints) {
