@@ -8,6 +8,9 @@ import { cssTextAlign, cssTextStyle } from "../utils";
 export class RichText extends ComponentView {
   private measuring = false;
   didSetOnClicked = false;
+  canMeasureResultCache = false;
+  textCache = "";
+  textCacheSize = 0;
   measureId: number | undefined;
   maxWidth: number | string | undefined;
   maxHeight: number | string | undefined;
@@ -26,10 +29,7 @@ export class RichText extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (
-      __MP_TARGET_WEAPP__ ||
-      __MP_TARGET_SWANAPP__
-    ) {
+    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
       this.htmlElement.classList.add("mp_text");
     }
     const maxWidth = attributes.maxWidth;
@@ -57,9 +57,7 @@ export class RichText extends ComponentView {
       wordWrap: "break-word",
       whiteSpace: "pre-line",
       webkitBoxOrient: "vertical",
-      webkitLineClamp: attributes.maxLines
-        ? attributes.maxLines.toString()
-        : "99999",
+      webkitLineClamp: attributes.maxLines ? attributes.maxLines.toString() : "99999",
     });
 
     this.measureId = attributes.measureId;
@@ -74,39 +72,26 @@ export class RichText extends ComponentView {
       }
     }
     if (children[0].attributes.text) {
-      (this.htmlElement as HTMLDivElement).innerText =
-        children[0].attributes.text;
-      if (
-        __MP_TARGET_WEAPP__ ||
-        __MP_TARGET_SWANAPP__
-      ) {
-        setDOMAttribute(
-          this.htmlElement,
-          "innerText",
-          children[0].attributes.text
-        );
+      const text = children[0].attributes.text;
+      (this.htmlElement as HTMLDivElement).innerText = text;
+      if (!style.letterSpacing && !style.wordSpacing && !style.height && /[^㐀-𫠚]/g.test(text) === false) {
+        this.canMeasureResultCache = true;
+        this.textCache = text;
+        this.textCacheSize = parseInt(style["fontSize"]);
       }
     }
     if (children[0].attributes.onTap_el && children[0].attributes.onTap_span && !this.didSetOnClicked) {
       this.didSetOnClicked = true;
       this.htmlElement.addEventListener("click", (e) => {
-        this.onClick(
-          children[0].attributes.onTap_el,
-          children[0].attributes.onTap_span
-        );
+        this.onClick(children[0].attributes.onTap_el, children[0].attributes.onTap_span);
         if (e) e.stopPropagation();
-      })
+      });
     }
     setDOMStyle(this.htmlElement, style);
   }
 
   async setChildren(children: any) {
-    if (
-      children &&
-      children.length === 1 &&
-      children[0].name === "text_span" &&
-      children[0].attributes?.text
-    ) {
+    if (children && children.length === 1 && children[0].name === "text_span" && children[0].attributes?.text) {
       this.setSingleTextSpan(children);
     } else {
       super.setChildren(children);
@@ -128,7 +113,6 @@ export class RichText extends ComponentView {
 }
 
 export class TextSpan extends ComponentView {
-
   didSetOnClicked = false;
 
   elementType() {
@@ -155,10 +139,7 @@ export class TextSpan extends ComponentView {
     }
     if (attributes.text) {
       (this.htmlElement as HTMLSpanElement).innerText = attributes.text;
-      if (
-        __MP_TARGET_WEAPP__ ||
-        __MP_TARGET_SWANAPP__
-      ) {
+      if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
         setDOMAttribute(this.htmlElement, "innerText", attributes.text);
       }
     }
@@ -167,7 +148,7 @@ export class TextSpan extends ComponentView {
       this.htmlElement.addEventListener("click", (e) => {
         this.onClick();
         if (e) e.stopPropagation();
-      })
+      });
     }
     setDOMStyle(this.htmlElement, style);
   }

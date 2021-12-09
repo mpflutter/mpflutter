@@ -55,7 +55,7 @@ packages:
     description:
       path: dio
       ref: HEAD
-      resolved-ref: "0dff8cbf79efefbfcc996865572ba01e3806aa91"
+      resolved-ref: "2d4d154e182b859f9c2ccad3357d1755f493516d"
       url: "https://github.com/mpflutter-plugins/dio"
     source: git
     version: "4.0.0"
@@ -99,7 +99,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "10e9fad034575e21f48cb7b74d06eb66085d082f"
+      resolved-ref: d67b40dc179a2e36d3e7880b8478652917e3b751
       url: "https://github.com/mpflutter-plugins/http"
     source: git
     version: "0.13.1"
@@ -150,7 +150,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: d51aa94e56013376a2cb89a47047111b3152f4c2
+      resolved-ref: "14b4d5cbc6a590d0f6ca6b0270e181f99dcb39dc"
       url: "https://github.com/mpflutter/mpflutter_plugin_template"
     source: git
     version: "0.0.1"
@@ -173,7 +173,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "24a94e3ff38fd8428427a0c72c4a9c15108d9585"
+      resolved-ref: "2565064f85fc0a0b7242cacb3dfaa125d8f0a35e"
       url: "https://github.com/mpflutter-plugins/shared_preferences"
     source: git
     version: "1.0.0"
@@ -210,10 +210,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: f3100558ce7df93e9552cb2b63fbaaf5e15ade68
+      resolved-ref: "22737b7c73a6784cc22def957987635cc061725d"
       url: "https://github.com/mpflutter-plugins/universal_miniprogram_api"
     source: git
-    version: "0.0.1"
+    version: "0.0.2"
   usage:
     dependency: transitive
     description:
@@ -248,6 +248,6 @@ packages:
       name: win32
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.2.10"
+    version: "2.3.1"
 sdks:
   dart: ">=2.14.0 <3.0.0"
