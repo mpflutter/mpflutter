@@ -39,10 +39,10 @@ class VideoViewPage extends StatelessWidget {
 
   Widget _renderVideoStatusButton() {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       children: [
         Container(
-          width: 80,
+          width: 44,
           height: 30,
           alignment: Alignment.center,
           child: Text(
@@ -56,7 +56,7 @@ class VideoViewPage extends StatelessWidget {
             _videoController.play();
           },
           child: Container(
-            width: 80,
+            width: 44,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.amber,
@@ -75,7 +75,7 @@ class VideoViewPage extends StatelessWidget {
             _videoController.pause();
           },
           child: Container(
-            width: 80,
+            width: 44,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.amber,
@@ -94,7 +94,7 @@ class VideoViewPage extends StatelessWidget {
             _videoController.fullscreen();
           },
           child: Container(
-            width: 80,
+            width: 44,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.amber,
@@ -113,10 +113,10 @@ class VideoViewPage extends StatelessWidget {
 
   Widget _renderVideoVolumnButtons() {
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       children: [
         Container(
-          width: 80,
+          width: 44,
           height: 30,
           alignment: Alignment.center,
           child: Text(
@@ -127,10 +127,10 @@ class VideoViewPage extends StatelessWidget {
         SizedBox(width: 20),
         GestureDetector(
           onTap: () {
-            _videoController.volumnUp();
+            _videoController.volumeUp();
           },
           child: Container(
-            width: 80,
+            width: 44,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.amberAccent,
@@ -146,10 +146,10 @@ class VideoViewPage extends StatelessWidget {
         SizedBox(width: 20),
         GestureDetector(
           onTap: () {
-            _videoController.volumnDown();
+            _videoController.volumeDown();
           },
           child: Container(
-            width: 80,
+            width: 44,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.amberAccent,
@@ -168,7 +168,7 @@ class VideoViewPage extends StatelessWidget {
             _videoController.setMuted(true);
           },
           child: Container(
-            width: 80,
+            width: 44,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.amberAccent,
@@ -187,7 +187,7 @@ class VideoViewPage extends StatelessWidget {
             _videoController.setMuted(false);
           },
           child: Container(
-            width: 80,
+            width: 66,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.amberAccent,
@@ -205,11 +205,12 @@ class VideoViewPage extends StatelessWidget {
   }
 
   Widget _renderOtherButton() {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
+    return Wrap(
+      runSpacing: 10,
+      spacing: 10,
       children: [
         Container(
-          width: 80,
+          width: 44,
           height: 30,
           alignment: Alignment.center,
           child: Text(
@@ -217,13 +218,12 @@ class VideoViewPage extends StatelessWidget {
             style: TextStyle(fontSize: 15, color: Colors.black),
           ),
         ),
-        SizedBox(width: 20),
         GestureDetector(
           onTap: () {
             _videoController.setPlaybackRate(0.5);
           },
           child: Container(
-            width: 80,
+            width: 44,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.blueAccent,
@@ -236,13 +236,12 @@ class VideoViewPage extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 20),
         GestureDetector(
           onTap: () {
             _videoController.setPlaybackRate(2);
           },
           child: Container(
-            width: 80,
+            width: 44,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.blueAccent,
@@ -255,13 +254,12 @@ class VideoViewPage extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 20),
         GestureDetector(
           onTap: () {
             _videoController.seekTo(20);
           },
           child: Container(
-            width: 80,
+            width: 100,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.blueAccent,
@@ -274,14 +272,13 @@ class VideoViewPage extends StatelessWidget {
             ),
           ),
         ),
-        SizedBox(width: 20),
         GestureDetector(
           onTap: () async {
             final s = await _videoController.getCurrentTime();
             print(s);
           },
           child: Container(
-            width: 80,
+            width: 100,
             height: 30,
             decoration: BoxDecoration(
               color: Colors.deepPurpleAccent,

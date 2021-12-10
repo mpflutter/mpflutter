@@ -173,10 +173,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "2565064f85fc0a0b7242cacb3dfaa125d8f0a35e"
+      resolved-ref: b6208bf3a50a3f0a3244080595fe01c63581b869
       url: "https://github.com/mpflutter-plugins/shared_preferences"
     source: git
-    version: "1.0.0"
+    version: "2.0.8"
   source_span:
     dependency: transitive
     description:

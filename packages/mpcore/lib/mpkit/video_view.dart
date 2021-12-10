@@ -41,16 +41,16 @@ class MPVideoController extends MPPlatformViewController {
     invokeMethod('pause');
   }
 
-  void setVolumn(double volumn) {
-    invokeMethod('setVolumn', params: {'volumn': volumn});
+  void setVolume(double volume) {
+    invokeMethod('setVolume', params: {'volume': volume});
   }
 
-  void volumnUp() {
-    invokeMethod('volumnUp');
+  void volumeUp() {
+    invokeMethod('volumeUp');
   }
 
-  void volumnDown() {
-    invokeMethod('volumnDown');
+  void volumeDown() {
+    invokeMethod('volumeDown');
   }
 
   void setMuted(bool muted) {
@@ -70,6 +70,7 @@ class MPVideoController extends MPPlatformViewController {
   }
 
   Future<double> getCurrentTime() async {
-    return await invokeMethod('getCurrentTime', requireResult: true);
+    final v = await invokeMethod('getCurrentTime', requireResult: true) as num;
+    return v.toDouble();
   }
 }
