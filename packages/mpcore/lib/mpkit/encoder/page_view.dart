@@ -1,7 +1,9 @@
 part of 'mpkit_encoder.dart';
 
 MPElement _encodeMPPageView(Element element) {
+  MPCore.addElementToHashCodeCache(element);
   final widget = element.widget as MPPageView;
+  widget.controller?.targetHashCode = element.hashCode;
   final children = <Element>[];
   MPCore.findTargets<MPPageItem>(
     element,
@@ -16,6 +18,7 @@ MPElement _encodeMPPageView(Element element) {
     attributes: {
       'scrollDirection': widget.scrollDirection.toString(),
       'loop': widget.loop,
+      'initialPage': widget.controller?.initialPage ?? 0,
     },
   );
 }

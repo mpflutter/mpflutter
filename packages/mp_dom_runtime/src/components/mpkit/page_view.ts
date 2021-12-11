@@ -1,8 +1,8 @@
-import { MPEnv, PlatformType } from "../../env";
+import { MPPlatformView } from "../mpkit/platform_view";
 import { ComponentView } from "../component_view";
 import { setDOMAttribute } from "../dom_utils";
 
-class PageViewWeb extends ComponentView {
+class PageViewWeb extends MPPlatformView {
   swiperInstance: any;
   wrapperHtmlElement = this.document.createElement("div");
   direction = "horizontal";
@@ -39,12 +39,28 @@ class PageViewWeb extends ComponentView {
         this.swiperInstance = new (window as any).Swiper("#d_" + this.hashCode, {
           direction: this.direction,
           loop: this.loop,
+          initialSlide: this.attributes.initialPage,
+        });
+        this.swiperInstance.on("activeIndexChange", () => {
+          this.invokeMethod("onPageChanged", { index: this.swiperInstance.realIndex });
         });
       } else {
         this.swiperInstance.changeDirection(this.direction);
         this.swiperInstance.update();
       }
     }, 16);
+  }
+
+  onMethodCall(method: string, params: any) {
+    if (method === "animateToPage") {
+      this.swiperInstance.slideToLoop(params.page, typeof params.duration === "number" ? params.duration : 500);
+    } else if (method === "jumpToPage") {
+      this.swiperInstance.slideToLoop(params.page, 0);
+    } else if (method === "nextPage") {
+      this.swiperInstance.slideNext(typeof params.duration === "number" ? params.duration : 500);
+    } else if (method === "previousPage") {
+      this.swiperInstance.slidePrev(typeof params.duration === "number" ? params.duration : 500);
+    }
   }
 
   addSubview(view: ComponentView) {
@@ -58,9 +74,29 @@ class PageViewWeb extends ComponentView {
   }
 }
 
-class PageViewWeapp extends ComponentView {
+class PageViewWeapp extends MPPlatformView {
+  maxPage = 0;
+  currentPage = 0;
+
+  constructor(readonly document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
+    this.currentPage = initialAttributes.initialPage ?? 0;
+    this.htmlElement.addEventListener("change", (event: any) => {
+      this.currentPage = event.detail.current;
+      this.invokeMethod("onPageChanged", { index: event.detail.current });
+    });
+    if (initialAttributes.initialPage) {
+      this.htmlElement.setAttribute("current", initialAttributes.initialPage);
+    }
+  }
+
   elementType() {
     return "wx-swiper";
+  }
+
+  setChildren(children: any) {
+    super.setChildren(children);
+    this.maxPage = children.length - 1;
   }
 
   setAttributes(attributes: any) {
@@ -83,6 +119,30 @@ class PageViewWeapp extends ComponentView {
     swiperItemElement.appendChild(view.htmlElement);
     this.htmlElement.appendChild(swiperItemElement);
     view.didMoveToWindow();
+  }
+
+  onMethodCall(method: string, params: any) {
+    let changePage = () => {
+      this.htmlElement.setAttribute("duration", typeof params.duration === "number" ? params.duration : 500);
+      setTimeout(() => {
+        this.htmlElement.setAttribute("current", this.currentPage as any);
+        this.htmlElement.setAttribute("duration", "500");
+      }, 16);
+    };
+    if (method === "animateToPage") {
+      this.currentPage = params.page;
+      changePage();
+    } else if (method === "jumpToPage") {
+      this.currentPage = params.page;
+      params.duration = 1;
+      changePage();
+    } else if (method === "nextPage") {
+      this.currentPage = (this.currentPage + 1 > this.maxPage ? 0 : this.currentPage + 1) as any;
+      changePage();
+    } else if (method === "previousPage") {
+      this.currentPage = (this.currentPage - 1 < 0 ? this.maxPage : this.currentPage - 1) as any;
+      changePage();
+    }
   }
 }
 
