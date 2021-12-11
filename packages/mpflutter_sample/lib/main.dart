@@ -44,6 +44,7 @@ import 'package:mpflutter_template/touches/signature_page.dart';
 
 import 'animations/animation_performance_test_page.dart';
 import 'home.dart';
+import 'pages/main_tab_view_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -89,6 +90,7 @@ class MyApp extends StatelessWidget {
         '/animatedContainer': (context) => AnimatedContainerPage(),
         '/animatedPerformanceTest': (context) => AnimatedPerformanceTestPage(),
         '/scaffold': (context) => ScaffoldPage(),
+        '/mainTabView': (context) => MainTabViewPage(),
         '/dialogs': (context) => DialogsPage(),
         '/tabPage': (context) => TabPage(),
         '/deferedPage': (context) => FutureBuilder(

@@ -78,6 +78,9 @@ class MPScaffoldState extends State<MPScaffold> {
         MediaQuery.of(context).size.height < 10) {
       return Container();
     }
+    final mainTabBar = context
+        .findAncestorStateOfType<MPMainTabViewState>()
+        ?.renderTabBar(context);
     Widget child = Stack(
       children: [
         Positioned.fill(
@@ -100,9 +103,9 @@ class MPScaffoldState extends State<MPScaffold> {
                       ),
                     )
                   : Expanded(child: Container()),
-              widget.bottomBar != null
+              mainTabBar != null || widget.bottomBar != null
                   ? MPScaffoldBottomBar(
-                      key: bottomBarKey, child: widget.bottomBar)
+                      key: bottomBarKey, child: mainTabBar ?? widget.bottomBar)
                   : Container(),
             ],
           ),

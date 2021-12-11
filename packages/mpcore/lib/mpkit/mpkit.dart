@@ -34,3 +34,4 @@ part 'mini_program_view.dart';
 part 'sliver_persistent_header.dart';
 part 'custom_paint_to_image.dart';
 part 'rich_text.dart';
+part 'main_tab_view.dart';

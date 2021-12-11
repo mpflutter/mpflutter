@@ -211,6 +211,8 @@ class MyHomePage extends StatelessWidget {
                   route: '/deferedPage',
                 ),
                 _renderItem('Forms', context: context, route: '/forms'),
+                _renderItem('MainTabView',
+                    context: context, route: '/mainTabView'),
               ],
             ),
           ),
