@@ -1,0 +1,3 @@
+include ':mp_android_runtime'
+include ':app'
+rootProject.name = "mpflutter_sample"
