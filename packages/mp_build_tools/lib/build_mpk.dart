@@ -61,12 +61,11 @@ String _buildDartJS() {
 
 _buildMpk() {
   final allFiles = <String, File>{};
-  allFiles['main.dart.js'] = (() {
-    return File(Directory('build')
-        .listSync()
-        .firstWhere((element) => element.path.endsWith('.js'))
-        .path);
-  })();
+  Directory('build').listSync().forEach((element) {
+    if (element.path.endsWith('.js')) {
+      allFiles[element.path.replaceFirst('build/', '')] = File(element.path);
+    }
+  });
   void pushAsset(String prefix) {
     if (Directory('build/assets/$prefix').existsSync()) {
       Directory('build/assets/$prefix').listSync().forEach((element) {
@@ -81,6 +80,7 @@ _buildMpk() {
   }
 
   pushAsset('assets');
+  print(allFiles);
   final mpkFile = MPKFile(allFiles);
   final data = mpkFile.encode();
   File('build/app.mpk').writeAsBytesSync(data);
