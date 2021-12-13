@@ -1,0 +1,9 @@
+platform :ios, '10.0'
+
+target 'mp_ios_runtime' do
+  pod 'jetfire', '~> 0.1'
+  pod 'MBProgressHUD', "~> 1.2.0"
+  pod 'SDWebImage', '~> 5.11'
+  pod 'SDWebImageSVGKitPlugin'
+  pod 'SVGKit', :git => 'https://github.com/SVGKit/SVGKit.git', :tag => '2.1.0'
+end

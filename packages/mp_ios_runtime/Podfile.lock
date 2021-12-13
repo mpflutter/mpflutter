@@ -1,0 +1,51 @@
+PODS:
+  - CocoaLumberjack (3.7.2):
+    - CocoaLumberjack/Core (= 3.7.2)
+  - CocoaLumberjack/Core (3.7.2)
+  - jetfire (0.1.5)
+  - MBProgressHUD (1.2.0)
+  - SDWebImage (5.12.0):
+    - SDWebImage/Core (= 5.12.0)
+  - SDWebImage/Core (5.12.0)
+  - SDWebImageSVGKitPlugin (1.3.0):
+    - SDWebImage/Core (~> 5.10)
+    - SVGKit (>= 2.1)
+  - SVGKit (2.1.0):
+    - CocoaLumberjack (~> 3.0)
+
+DEPENDENCIES:
+  - jetfire (~> 0.1)
+  - MBProgressHUD (~> 1.2.0)
+  - SDWebImage (~> 5.11)
+  - SDWebImageSVGKitPlugin
+  - SVGKit (from `https://github.com/SVGKit/SVGKit.git`, tag `2.1.0`)
+
+SPEC REPOS:
+  trunk:
+    - CocoaLumberjack
+    - jetfire
+    - MBProgressHUD
+    - SDWebImage
+    - SDWebImageSVGKitPlugin
+
+EXTERNAL SOURCES:
+  SVGKit:
+    :git: https://github.com/SVGKit/SVGKit.git
+    :tag: 2.1.0
+
+CHECKOUT OPTIONS:
+  SVGKit:
+    :git: https://github.com/SVGKit/SVGKit.git
+    :tag: 2.1.0
+
+SPEC CHECKSUMS:
+  CocoaLumberjack: b7e05132ff94f6ae4dfa9d5bce9141893a21d9da
+  jetfire: 60c16cd6ae0282928e24203eb93f03b89c1929ce
+  MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
+  SDWebImage: 4ea20cca2986adc5aacde07aa686742fd4c67a37
+  SDWebImageSVGKitPlugin: 8797e1c9b9baf80bd50d28e673e16a12359af1c9
+  SVGKit: 8a2fc74258bdb2abb54d3b65f3dd68b0277a9c4d
+
+PODFILE CHECKSUM: 63b3cc51ccf55f56fc9e4c7e040691763b591f28
+
+COCOAPODS: 1.9.1

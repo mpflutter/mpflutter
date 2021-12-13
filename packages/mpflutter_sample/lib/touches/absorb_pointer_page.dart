@@ -26,20 +26,11 @@ class _AbsorbPointerPageState extends State<AbsorbPointerPage> {
 
   Widget _renderHeader(String title) {
     return Container(
-      height: 88,
+      height: 66,
       padding: EdgeInsets.only(left: 12),
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(fontSize: 14, color: Colors.black54),
-              ),
-            ),
-          ],
-        ),
+      child: Text(
+        title,
+        style: TextStyle(fontSize: 14, color: Colors.black54),
       ),
     );
   }
