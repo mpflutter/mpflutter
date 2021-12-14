@@ -51,6 +51,39 @@ void main() {
   MPCore().connectToHostChannel();
 }
 
+class MMM extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MPScaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Container(
+          width: 100,
+          height: 100,
+          color: Colors.red,
+          child: Column(
+            children: [
+              Container(
+                height: 22,
+                color: Colors.yellow,
+              ),
+              Container(
+                height: 22,
+                color: Colors.blue,
+              ),
+              Expanded(
+                child: Container(
+                  color: Colors.green,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -58,56 +91,58 @@ class MyApp extends StatelessWidget {
       title: 'MPFlutter Demo',
       color: Colors.blue,
       routes: {
-        '/': (context) => MyHomePage(),
-        '/container': (context) => ContainerPage(),
-        '/padding': (context) => PaddingPage(),
-        '/aspectRatio': (context) => AspectRatioPage(),
-        '/center': (context) => CenterPage(),
-        '/columnRow': (context) => ColumnRowPage(),
-        '/stack': (context) => StackPage(),
-        '/transform': (context) => TransformPage(),
-        '/wrap': (context) => WrapPage(),
-        '/customScrollView': (context) => CustomScrollViewPage(),
-        '/gridView': (context) => GridViewPage(),
-        '/gridViewWaterfall': (context) => GridViewWaterfallPage(),
-        '/listView': (context) => ListViewPage(),
-        '/listViewLoadMore': (context) => ListViewLoadmorePage(),
-        '/pageView': (context) => PageViewPage(),
-        '/icon': (context) => IconPage(),
-        '/image': (context) => ImagePage(),
-        '/text': (context) => TextPage(),
-        '/videoView': (context) => VideoViewPage(),
-        '/webView': (context) => WebViewPage(),
-        '/clipOval': (context) => ClipOvalPage(),
-        '/clipRRect': (context) => ClipRRectPage(),
-        '/offstage': (context) => OffstagePage(),
-        '/opacity': (context) => OpacityPage(),
-        '/absorbPointer': (context) => AbsorbPointerPage(),
-        '/gestureDetector': (context) => GestureDetectorPage(),
-        '/ignorePointer': (context) => IgnorePointerPage(),
-        '/editableText': (context) => EditableTextPage(),
-        '/animationController': (context) => AnimationControllerPage(),
-        '/animatedContainer': (context) => AnimatedContainerPage(),
-        '/animatedPerformanceTest': (context) => AnimatedPerformanceTestPage(),
-        '/scaffold': (context) => ScaffoldPage(),
-        '/mainTabView': (context) => MainTabViewPage(),
-        '/dialogs': (context) => DialogsPage(),
-        '/tabPage': (context) => TabPage(),
-        '/deferedPage': (context) => FutureBuilder(
-              future: deferedPage.loadLibrary(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState != ConnectionState.done)
-                  return Container();
-                return deferedPage.DeferedPage();
-              },
-            ),
-        '/sharedPreference': (context) => SharedPreferencePage(),
-        '/httpNetwork': (context) => HTTPNetworkPage(),
-        '/plugin': (context) => PluginPage(),
-        '/miniprogramApi': (context) => MiniProgramApiPage(),
-        '/customPaint': (context) => CustomPaintPage(),
-        '/forms': (context) => FormsPage(),
-        '/signature': (context) => SignaturePage(),
+        '/': (context) => MMM(),
+        // '/': (context) => MyHomePage(),
+
+        // '/container': (context) => ContainerPage(),
+        // '/padding': (context) => PaddingPage(),
+        // '/aspectRatio': (context) => AspectRatioPage(),
+        // '/center': (context) => CenterPage(),
+        // '/columnRow': (context) => ColumnRowPage(),
+        // '/stack': (context) => StackPage(),
+        // '/transform': (context) => TransformPage(),
+        // '/wrap': (context) => WrapPage(),
+        // '/customScrollView': (context) => CustomScrollViewPage(),
+        // '/gridView': (context) => GridViewPage(),
+        // '/gridViewWaterfall': (context) => GridViewWaterfallPage(),
+        // '/listView': (context) => ListViewPage(),
+        // '/listViewLoadMore': (context) => ListViewLoadmorePage(),
+        // '/pageView': (context) => PageViewPage(),
+        // '/icon': (context) => IconPage(),
+        // '/image': (context) => ImagePage(),
+        // '/text': (context) => TextPage(),
+        // '/videoView': (context) => VideoViewPage(),
+        // '/webView': (context) => WebViewPage(),
+        // '/clipOval': (context) => ClipOvalPage(),
+        // '/clipRRect': (context) => ClipRRectPage(),
+        // '/offstage': (context) => OffstagePage(),
+        // '/opacity': (context) => OpacityPage(),
+        // '/absorbPointer': (context) => AbsorbPointerPage(),
+        // '/gestureDetector': (context) => GestureDetectorPage(),
+        // '/ignorePointer': (context) => IgnorePointerPage(),
+        // '/editableText': (context) => EditableTextPage(),
+        // '/animationController': (context) => AnimationControllerPage(),
+        // '/animatedContainer': (context) => AnimatedContainerPage(),
+        // '/animatedPerformanceTest': (context) => AnimatedPerformanceTestPage(),
+        // '/scaffold': (context) => ScaffoldPage(),
+        // '/mainTabView': (context) => MainTabViewPage(),
+        // '/dialogs': (context) => DialogsPage(),
+        // '/tabPage': (context) => TabPage(),
+        // '/deferedPage': (context) => FutureBuilder(
+        //       future: deferedPage.loadLibrary(),
+        //       builder: (context, snapshot) {
+        //         if (snapshot.connectionState != ConnectionState.done)
+        //           return Container();
+        //         return deferedPage.DeferedPage();
+        //       },
+        //     ),
+        // '/sharedPreference': (context) => SharedPreferencePage(),
+        // '/httpNetwork': (context) => HTTPNetworkPage(),
+        // '/plugin': (context) => PluginPage(),
+        // '/miniprogramApi': (context) => MiniProgramApiPage(),
+        // '/customPaint': (context) => CustomPaintPage(),
+        // '/forms': (context) => FormsPage(),
+        // '/signature': (context) => SignaturePage(),
       },
       navigatorObservers: [MPCore.getNavigationObserver()],
     );

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "com.mpflutter.sample"
-        minSdkVersion 19
+        minSdkVersion 21
         targetSdkVersion 32
         versionCode 1
         versionName "1.0"
