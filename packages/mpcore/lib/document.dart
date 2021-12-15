@@ -54,7 +54,6 @@ class MPElement {
   final Rect? constraints;
   final String name;
   final List<MPElement>? children;
-  final List<MPElement> ancestors = [];
   final Map<String, dynamic>? attributes;
 
   MPElement({
@@ -99,7 +98,6 @@ class MPElement {
     final result = hashCode == other.hashCode &&
         name == other.name &&
         isChildrenEqual(other) &&
-        isAncestorsEqual(other) &&
         isAttributesEqual(other) &&
         isConstraintsEuqal(other);
     _isEqual = result;
@@ -148,19 +146,6 @@ class MPElement {
     return true;
   }
 
-  bool isAncestorsEqual(MPElement other) {
-    if (ancestors.length != other.ancestors.length) return false;
-    for (var i = 0; i < ancestors.length; i++) {
-      if (i >= other.ancestors.length) {
-        return false;
-      }
-      if (ancestors[i] != other.ancestors[i]) {
-        return false;
-      }
-    }
-    return true;
-  }
-
   bool isConstraintsEuqal(MPElement other) {
     return constraints == other.constraints;
   }
@@ -185,7 +170,6 @@ class MPElement {
               'h': constraints!.height
             }
           : null,
-      'ancestors': ancestors.map((e) => e.toJson()).toList(),
       'attributes': attributes?.map((key, value) {
         if (value is MPElement) {
           return MapEntry(key, mapJson(value));
@@ -432,11 +416,6 @@ class MPElement {
     return els;
   }
 
-  static const mergableSingleChildElements = {
-    'opacity': true,
-    'clip_r_rect': true,
-  };
-
   static MPElement mergeSingleChildElements(MPElement element) {
     if (element.flutterElement?.findRenderObject()?.parent
         is RenderRepaintBoundary) {
@@ -445,21 +424,6 @@ class MPElement {
         is RenderSliver) {
       return element;
     }
-    var finalTarget = element;
-    var stackElements = <MPElement>[];
-    while (mergableSingleChildElements[finalTarget.name] == true) {
-      if (finalTarget.children == null ||
-          finalTarget.children!.isEmpty == true) {
-        break;
-      }
-      final child = finalTarget.children!.first;
-      finalTarget.children!.clear();
-      stackElements.add(finalTarget);
-      finalTarget = child;
-    }
-    if (finalTarget != element) {
-      finalTarget.ancestors.addAll(stackElements);
-    }
-    return finalTarget;
+    return element;
   }
 }

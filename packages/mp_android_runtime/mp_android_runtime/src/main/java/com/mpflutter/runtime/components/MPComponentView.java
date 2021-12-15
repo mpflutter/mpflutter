@@ -1,13 +1,15 @@
 package com.mpflutter.runtime.components;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.MPEngine;
+import com.mpflutter.runtime.components.basic.GestureDetector;
+import com.mpflutter.runtime.components.basic.Offstage;
+import com.mpflutter.runtime.components.basic.Visibility;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,13 +24,20 @@ public class MPComponentView extends FrameLayout {
     public int hashCode;
     public JSONObject constraints;
     public JSONObject attributes;
+    protected JSONObject adjustConstraints;
 
     public MPComponentView(@NonNull Context context) {
         super(context);
+        setClipChildren(false);
     }
 
     public void setConstraints(JSONObject constraints) {
         this.constraints = constraints;
+        updateLayout();
+    }
+
+    public void setAdjustConstraints(JSONObject adjustConstraints) {
+        this.adjustConstraints = adjustConstraints;
         updateLayout();
     }
 
@@ -38,6 +47,10 @@ public class MPComponentView extends FrameLayout {
         double y = constraints.optDouble("y");
         double w = constraints.optDouble("w");
         double h = constraints.optDouble("h");
+        if (this.adjustConstraints != null && (this.getParent() instanceof GestureDetector || this.getParent() instanceof Visibility)) {
+            x -= this.adjustConstraints.optDouble("x", 0.0);
+            y -= this.adjustConstraints.optDouble("y", 0.0);
+        }
         setX(MPUtils.dp2px(x, getContext()));
         setY((MPUtils.dp2px(y, getContext())));
         setMinimumWidth(MPUtils.dp2px(w, getContext()));

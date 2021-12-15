@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
 import 'package:mpflutter_template/animations/animated_container_page.dart';
@@ -60,23 +62,39 @@ class MMM extends StatelessWidget {
         child: Container(
           width: 100,
           height: 100,
-          color: Colors.red,
-          child: Column(
-            children: [
-              Container(
-                height: 22,
-                color: Colors.yellow,
+          color: Colors.blue,
+          child: Center(
+            child: RichText(
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                    text: 'He',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.yellow,
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                  TextSpan(
+                    text: 'llo',
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Colors.red,
+                    ),
+                  ),
+                ],
               ),
-              Container(
-                height: 22,
-                color: Colors.blue,
-              ),
-              Expanded(
-                child: Container(
-                  color: Colors.green,
-                ),
-              ),
-            ],
+            ),
+            // child: Text(
+            //   'He',
+            //   style: TextStyle(
+            //     fontSize: 24,
+            //     color: Colors.yellow,
+            //     fontWeight: FontWeight.bold,
+            //     fontStyle: FontStyle.italic,
+            //   ),
+            // ),
           ),
         ),
       ),

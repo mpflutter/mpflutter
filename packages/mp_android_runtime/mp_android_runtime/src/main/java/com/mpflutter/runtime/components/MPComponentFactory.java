@@ -1,22 +1,45 @@
 package com.mpflutter.runtime.components;
 
 import android.content.Context;
+import android.util.Log;
+import android.util.Size;
 
 import com.mpflutter.runtime.MPEngine;
+import com.mpflutter.runtime.components.basic.AbsorbPointer;
+import com.mpflutter.runtime.components.basic.ClipOval;
+import com.mpflutter.runtime.components.basic.ClipRRect;
 import com.mpflutter.runtime.components.basic.ColoredBox;
+import com.mpflutter.runtime.components.basic.GestureDetector;
+import com.mpflutter.runtime.components.basic.IgnorePointer;
+import com.mpflutter.runtime.components.basic.Offstage;
+import com.mpflutter.runtime.components.basic.Opacity;
+import com.mpflutter.runtime.components.basic.RichText;
+import com.mpflutter.runtime.components.basic.Transform;
+import com.mpflutter.runtime.components.basic.Visibility;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MPComponentFactory {
 
     static Map<String, Class<MPComponentView>> components = new HashMap() {{
+        put("absorb_pointer", AbsorbPointer.class);
         put("colored_box", ColoredBox.class);
+        put("clip_oval", ClipOval.class);
+        put("clip_r_rect", ClipRRect.class);
+        put("gesture_detector", GestureDetector.class);
+        put("ignore_pointer", IgnorePointer.class);
+        put("offstage", Offstage.class);
+        put("opacity", Opacity.class);
+        put("rich_text", RichText.class);
+        put("transform", Transform.class);
+        put("visibility", Visibility.class);
         put("mp_scaffold", MPScaffold.class);
     }};
 
@@ -24,6 +47,7 @@ public class MPComponentFactory {
     MPEngine engine;
     Map<Integer, MPComponentView> cachedView = new HashMap();
     Map<Integer, JSONObject> cachedElement = new HashMap();
+    List<Map> textMeasureResults = new ArrayList();
     public boolean disableCache = false;
 
     public MPComponentFactory(Context context, MPEngine engine) {
@@ -88,6 +112,29 @@ public class MPComponentFactory {
         } catch (Throwable e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public void callbackTextMeasureResult(int measureId, Size size) {
+        textMeasureResults.add(new HashMap(){{
+            put("measureId", measureId);
+            put("size", new HashMap(){{
+                put("width", size.getWidth());
+                put("height", size.getHeight());
+            }});
+        }});
+    }
+
+    public void flushTextMeasureResult() {
+        if (!textMeasureResults.isEmpty()) {
+            engine.sendMessage(new HashMap(){{
+                put("type", "rich_text");
+                put("message", new HashMap(){{
+                    put("event", "onMeasured");
+                    put("data", textMeasureResults);
+                }});
+            }});
+            textMeasureResults = new ArrayList();
         }
     }
 
