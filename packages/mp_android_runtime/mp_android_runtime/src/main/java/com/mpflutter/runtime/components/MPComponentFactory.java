@@ -13,6 +13,7 @@ import com.mpflutter.runtime.components.basic.DecoratedBox;
 import com.mpflutter.runtime.components.basic.ForegroundDecoratedBox;
 import com.mpflutter.runtime.components.basic.GestureDetector;
 import com.mpflutter.runtime.components.basic.IgnorePointer;
+import com.mpflutter.runtime.components.basic.Image;
 import com.mpflutter.runtime.components.basic.Offstage;
 import com.mpflutter.runtime.components.basic.Opacity;
 import com.mpflutter.runtime.components.basic.RichText;
@@ -39,6 +40,7 @@ public class MPComponentFactory {
         put("foreground_decorated_box", ForegroundDecoratedBox.class);
         put("gesture_detector", GestureDetector.class);
         put("ignore_pointer", IgnorePointer.class);
+        put("image", Image.class);
         put("offstage", Offstage.class);
         put("opacity", Opacity.class);
         put("rich_text", RichText.class);

@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.mpflutter.runtime.api.MPConsole;
 import com.mpflutter.runtime.api.MPDeviceInfo;
 import com.mpflutter.runtime.api.MPTimer;
@@ -25,7 +26,7 @@ public class MPEngine {
     private String jsCode;
     private QuickJS quickJS;
     private JSContext jsContext;
-    private MPDebugger debugger;
+    public MPDebugger debugger;
     Handler mainThreadHandler;
     MPTextMeasurer textMeasurer;
     MPRouter router;
@@ -33,6 +34,7 @@ public class MPEngine {
     Map<Integer, MPDataReceiver> managedViews = new HashMap();
 
     public MPEngine(Context context) {
+        Fresco.initialize(context);
         mainThreadHandler = new Handler(Looper.getMainLooper());
         textMeasurer = new MPTextMeasurer(this);
         router = new MPRouter(this);
