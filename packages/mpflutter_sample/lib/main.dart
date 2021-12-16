@@ -62,7 +62,24 @@ class MMM extends StatelessWidget {
         child: Container(
           width: 100,
           height: 100,
-          color: Colors.blue,
+          decoration: BoxDecoration(
+            color: Colors.green,
+            // borderRadius: BorderRadius.only(topLeft: Radius.circular(12)),
+            // border: Border.all(color: Colors.orange, width: 5),
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Colors.black.withOpacity(1.0),
+            //     offset: Offset(4, 4),
+            //     blurRadius: 30,
+            //   )
+            // ],
+          ),
+          foregroundDecoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              colors: [Colors.red, Colors.transparent],
+            ),
+          ),
           child: Center(
             child: RichText(
               text: TextSpan(

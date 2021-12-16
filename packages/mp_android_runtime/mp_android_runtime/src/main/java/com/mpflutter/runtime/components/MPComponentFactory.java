@@ -9,6 +9,8 @@ import com.mpflutter.runtime.components.basic.AbsorbPointer;
 import com.mpflutter.runtime.components.basic.ClipOval;
 import com.mpflutter.runtime.components.basic.ClipRRect;
 import com.mpflutter.runtime.components.basic.ColoredBox;
+import com.mpflutter.runtime.components.basic.DecoratedBox;
+import com.mpflutter.runtime.components.basic.ForegroundDecoratedBox;
 import com.mpflutter.runtime.components.basic.GestureDetector;
 import com.mpflutter.runtime.components.basic.IgnorePointer;
 import com.mpflutter.runtime.components.basic.Offstage;
@@ -33,6 +35,8 @@ public class MPComponentFactory {
         put("colored_box", ColoredBox.class);
         put("clip_oval", ClipOval.class);
         put("clip_r_rect", ClipRRect.class);
+        put("decorated_box", DecoratedBox.class);
+        put("foreground_decorated_box", ForegroundDecoratedBox.class);
         put("gesture_detector", GestureDetector.class);
         put("ignore_pointer", IgnorePointer.class);
         put("offstage", Offstage.class);

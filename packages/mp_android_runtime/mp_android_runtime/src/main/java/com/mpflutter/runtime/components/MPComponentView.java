@@ -7,6 +7,7 @@ import android.widget.FrameLayout;
 import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.MPEngine;
+import com.mpflutter.runtime.components.basic.DecoratedBox;
 import com.mpflutter.runtime.components.basic.GestureDetector;
 import com.mpflutter.runtime.components.basic.Offstage;
 import com.mpflutter.runtime.components.basic.Visibility;
@@ -47,7 +48,7 @@ public class MPComponentView extends FrameLayout {
         double y = constraints.optDouble("y");
         double w = constraints.optDouble("w");
         double h = constraints.optDouble("h");
-        if (this.adjustConstraints != null && (this.getParent() instanceof GestureDetector || this.getParent() instanceof Visibility)) {
+        if (this.adjustConstraints != null && (this.getParent() instanceof GestureDetector || this.getParent() instanceof Visibility || this.getParent() instanceof DecoratedBox)) {
             x -= this.adjustConstraints.optDouble("x", 0.0);
             y -= this.adjustConstraints.optDouble("y", 0.0);
         }
