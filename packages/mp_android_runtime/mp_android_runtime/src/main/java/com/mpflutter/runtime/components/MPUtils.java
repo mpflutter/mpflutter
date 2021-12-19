@@ -30,6 +30,28 @@ public class MPUtils {
         return (int)longValue;
     }
 
+    public static double[] edgeInsetsFromString(String value) {
+        double[] values = new double[4];
+        if (value.startsWith("EdgeInsets.all(")) {
+            String trimmedValue = value.replace("EdgeInsets.all(", "").replace(")", "");
+            try {
+                double v = Double.parseDouble(trimmedValue);
+                values[0] = values[1] = values[2] = values[3] = v;
+            } catch (Throwable e) {}
+        }
+        else if (value.startsWith("EdgeInsets(")) {
+            String trimmedValue = value.replace("EdgeInsets(", "").replace(")", "");
+            String[] parts = trimmedValue.split(",");
+            if (parts.length == 4) {
+                values[0] = Double.parseDouble(parts[0]);
+                values[1] = Double.parseDouble(parts[1]);
+                values[2] = Double.parseDouble(parts[2]);
+                values[3] = Double.parseDouble(parts[3]);
+            }
+        }
+        return values;
+    }
+
     // tl,bl,br,tr
     public static double[] cornerRadiusFromString(String value) {
         double[] values = new double[4];

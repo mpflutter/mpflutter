@@ -27,11 +27,11 @@ public class MPEngine {
     private QuickJS quickJS;
     private JSContext jsContext;
     public MPDebugger debugger;
-    Handler mainThreadHandler;
-    MPTextMeasurer textMeasurer;
-    MPRouter router;
-    MPComponentFactory componentFactory;
-    Map<Integer, MPDataReceiver> managedViews = new HashMap();
+    public Handler mainThreadHandler;
+    public MPTextMeasurer textMeasurer;
+    public MPRouter router;
+    public MPComponentFactory componentFactory;
+    public Map<Integer, MPDataReceiver> managedViews = new HashMap();
 
     public MPEngine(Context context) {
         Fresco.initialize(context);

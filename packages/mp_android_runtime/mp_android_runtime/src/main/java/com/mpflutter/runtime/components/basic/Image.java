@@ -7,7 +7,9 @@ import androidx.annotation.NonNull;
 import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.mpflutter.runtime.components.MPComponentView;
+import com.mpflutter.runtime.components.MPUtils;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class Image extends MPComponentView {
@@ -22,9 +24,15 @@ public class Image extends MPComponentView {
     @Override
     public void updateLayout() {
         super.updateLayout();
+        if (constraints == null) return;
+        double w = constraints.optDouble("w");
+        double h = constraints.optDouble("h");
         removeView(contentView);
-        addView(contentView, getWidth(), getHeight());
+        addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
     }
+
+    @Override
+    public void setChildren(JSONArray children) { }
 
     @Override
     public void setAttributes(JSONObject attributes) {
