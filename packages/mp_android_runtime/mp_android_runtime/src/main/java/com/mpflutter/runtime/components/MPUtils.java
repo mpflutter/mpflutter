@@ -43,10 +43,10 @@ public class MPUtils {
             String trimmedValue = value.replace("EdgeInsets(", "").replace(")", "");
             String[] parts = trimmedValue.split(",");
             if (parts.length == 4) {
-                values[0] = Double.parseDouble(parts[0]);
-                values[1] = Double.parseDouble(parts[1]);
-                values[2] = Double.parseDouble(parts[2]);
-                values[3] = Double.parseDouble(parts[3]);
+                values[0] = Double.parseDouble(parts[1]);
+                values[1] = Double.parseDouble(parts[0]);
+                values[2] = Double.parseDouble(parts[3]);
+                values[3] = Double.parseDouble(parts[2]);
             }
         }
         return values;

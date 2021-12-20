@@ -35,13 +35,24 @@ public class ListView extends MPComponentView {
             @Override
             public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
                 int position = parent.getChildLayoutPosition(view);
-                if (position == 0) {
+                if (contentLayoutManager.getOrientation() == RecyclerView.HORIZONTAL) {
+                    if (position == 0) {
+                        outRect.left = MPUtils.dp2px(edgeInsets[1], getContext());
+                    }
+                    else if (position + 1 == contentAdapter.getItemCount()) {
+                        outRect.right = MPUtils.dp2px(edgeInsets[3], getContext());
+                    }
                     outRect.top = MPUtils.dp2px(edgeInsets[0], getContext());
                 }
-                else if (position + 1 == contentAdapter.getItemCount()) {
-                    outRect.bottom = MPUtils.dp2px(edgeInsets[2], getContext());
+                else {
+                    if (position == 0) {
+                        outRect.top = MPUtils.dp2px(edgeInsets[0], getContext());
+                    }
+                    else if (position + 1 == contentAdapter.getItemCount()) {
+                        outRect.bottom = MPUtils.dp2px(edgeInsets[2], getContext());
+                    }
+                    outRect.left = MPUtils.dp2px(edgeInsets[1], getContext());
                 }
-                outRect.left = MPUtils.dp2px(edgeInsets[1], getContext());
             }
         });
     }
@@ -71,6 +82,10 @@ public class ListView extends MPComponentView {
     @Override
     public void setAttributes(JSONObject attributes) {
         super.setAttributes(attributes);
+        String scrollDirection = attributes.optString("scrollDirection", null);
+        if (!attributes.isNull("scrollDirection") && scrollDirection != null) {
+            contentLayoutManager.setOrientation(scrollDirection.contentEquals("Axis.horizontal") ? RecyclerView.HORIZONTAL : RecyclerView.VERTICAL);
+        }
         String padding = attributes.optString("padding", null);
         if (!attributes.isNull("padding") && padding != null) {
             double[] edgeInsets = MPUtils.edgeInsetsFromString(padding);

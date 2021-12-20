@@ -57,63 +57,31 @@ class MMM extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MPScaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Container(
-          width: 100,
-          height: 100,
-          decoration: BoxDecoration(
-            color: Colors.green,
-            // borderRadius: BorderRadius.only(topLeft: Radius.circular(12)),
-            // border: Border.all(color: Colors.orange, width: 5),
-            // boxShadow: [
-            //   BoxShadow(
-            //     color: Colors.black.withOpacity(1.0),
-            //     offset: Offset(4, 4),
-            //     blurRadius: 30,
-            //   )
-            // ],
-          ),
-          foregroundDecoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              colors: [Colors.red, Colors.transparent],
-            ),
-          ),
-          child: Center(
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'He',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.yellow,
-                      fontWeight: FontWeight.bold,
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'llo',
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Colors.red,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // child: Text(
-            //   'He',
-            //   style: TextStyle(
-            //     fontSize: 24,
-            //     color: Colors.yellow,
-            //     fontWeight: FontWeight.bold,
-            //     fontStyle: FontStyle.italic,
-            //   ),
-            // ),
-          ),
+      backgroundColor: Colors.yellow,
+      body: WaterfallView.builder(
+        // scrollDirection: Axis.horizontal,
+        // padding: EdgeInsets.only(left: 20),
+        gridDelegate: SliverWaterfallDelegate(
+          crossAxisCount: 3,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
         ),
+        itemBuilder: (context, index) {
+          return Container(
+            height: 44 + 50 * (index % 5),
+            // width: 44,
+            color: Color.fromARGB(
+              255,
+              Random().nextInt(255),
+              Random().nextInt(255),
+              Random().nextInt(255),
+            ),
+            child: Center(
+              child: Text('Index - $index'),
+            ),
+          );
+        },
+        itemCount: 100,
       ),
     );
   }
