@@ -5,6 +5,9 @@ import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.RectF;
 import android.util.Size;
+import android.util.SizeF;
+
+import org.json.JSONObject;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -28,6 +31,41 @@ public class MPUtils {
         if (value == null) return 0;
         long longValue = Long.parseLong(value);
         return (int)longValue;
+    }
+
+    public static SizeF sizeFromMPElement(JSONObject element) {
+        if (element == null) {
+            return new SizeF(0, 0);
+        }
+        double w = 0.0, h = 0.0;
+        if (element.optJSONObject("constraints") != null &&
+                !element.optJSONObject("constraints").isNull("w") &&
+                !element.optJSONObject("constraints").isNull("h")) {
+            w = element.optJSONObject("constraints").optDouble("w", 0.0);
+            h = element.optJSONObject("constraints").optDouble("h", 0.0);
+        }
+        else if (element.optJSONArray("children") != null &&
+                element.optJSONArray("children").length() == 1) {
+            return sizeFromMPElement(element.optJSONArray("children").optJSONObject(0));
+        }
+        return new SizeF((float) w, (float)h);
+    }
+
+    public static double[] sliverPaddingFromMPElement(JSONObject element) {
+        if (element == null) {
+            return new double[4];
+        }
+        if (element.optString("name", "").contentEquals("padding") &&
+                element.optJSONObject("attributes") != null &&
+                !element.optJSONObject("attributes").isNull("padding") &&
+                element.optJSONObject("attributes").optString("sliver", "0").contentEquals("1")) {
+            return edgeInsetsFromString(element.optJSONObject("attributes").optString("padding", null));
+        }
+        else if (element.optJSONArray("children") != null &&
+                element.optJSONArray("children").length() == 1) {
+            return sliverPaddingFromMPElement(element.optJSONArray("children").optJSONObject(0));
+        }
+        return new double[4];
     }
 
     public static double[] edgeInsetsFromString(String value) {

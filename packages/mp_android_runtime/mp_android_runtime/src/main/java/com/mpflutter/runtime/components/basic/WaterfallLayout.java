@@ -203,7 +203,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
         if (getItemCount() == 0) {
             return;
         }
-        for (int i = 0; i < getItemCount(); i++) {
+        for (int i = 0; i < getItemCount() && i < itemLayouts.size(); i++) {
             View child = recycler.getViewForPosition(i);
             addView(child);
             measureChildWithMargins(child, 0, 0);
