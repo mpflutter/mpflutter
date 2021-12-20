@@ -1,13 +1,11 @@
 package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
-import android.graphics.Rect;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mpflutter.runtime.MPEngine;
@@ -21,40 +19,17 @@ public class ListView extends MPComponentView {
 
     RecyclerView contentView;
     ListViewAdapter contentAdapter;
-    LinearLayoutManager contentLayoutManager;
     double[] edgeInsets = new double[4];
+    WaterfallLayout waterfallLayout;
 
     public ListView(@NonNull Context context) {
         super(context);
+        waterfallLayout = new WaterfallLayout(context);
+        waterfallLayout.isPlain = true;
         contentView = new RecyclerView(context);
         contentAdapter = new ListViewAdapter();
-        contentLayoutManager = new LinearLayoutManager(context);
         contentView.setAdapter(contentAdapter);
-        contentView.setLayoutManager(contentLayoutManager);
-        contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                int position = parent.getChildLayoutPosition(view);
-                if (contentLayoutManager.getOrientation() == RecyclerView.HORIZONTAL) {
-                    if (position == 0) {
-                        outRect.left = MPUtils.dp2px(edgeInsets[1], getContext());
-                    }
-                    else if (position + 1 == contentAdapter.getItemCount()) {
-                        outRect.right = MPUtils.dp2px(edgeInsets[3], getContext());
-                    }
-                    outRect.top = MPUtils.dp2px(edgeInsets[0], getContext());
-                }
-                else {
-                    if (position == 0) {
-                        outRect.top = MPUtils.dp2px(edgeInsets[0], getContext());
-                    }
-                    else if (position + 1 == contentAdapter.getItemCount()) {
-                        outRect.bottom = MPUtils.dp2px(edgeInsets[2], getContext());
-                    }
-                    outRect.left = MPUtils.dp2px(edgeInsets[1], getContext());
-                }
-            }
-        });
+        contentView.setLayoutManager(waterfallLayout);
     }
 
     @Override
@@ -65,6 +40,9 @@ public class ListView extends MPComponentView {
         double h = constraints.optDouble("h");
         removeView(contentView);
         addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
+        waterfallLayout.clientWidth = (int) w;
+        waterfallLayout.clientHeight = (int)h;
+        waterfallLayout.prepareLayout();
     }
 
     @Override
@@ -72,10 +50,13 @@ public class ListView extends MPComponentView {
         contentAdapter.engine = engine;
         if (children != null) {
             contentAdapter.items = children;
+            waterfallLayout.items = children;
         }
         else {
             contentAdapter.items = null;
+            waterfallLayout.items = null;
         }
+        waterfallLayout.prepareLayout();
         contentAdapter.notifyDataSetChanged();
     }
 
@@ -84,13 +65,15 @@ public class ListView extends MPComponentView {
         super.setAttributes(attributes);
         String scrollDirection = attributes.optString("scrollDirection", null);
         if (!attributes.isNull("scrollDirection") && scrollDirection != null) {
-            contentLayoutManager.setOrientation(scrollDirection.contentEquals("Axis.horizontal") ? RecyclerView.HORIZONTAL : RecyclerView.VERTICAL);
+            waterfallLayout.isHorizontalScroll = scrollDirection.contentEquals("Axis.horizontal");
         }
         String padding = attributes.optString("padding", null);
         if (!attributes.isNull("padding") && padding != null) {
             double[] edgeInsets = MPUtils.edgeInsetsFromString(padding);
             this.edgeInsets = edgeInsets;
+            waterfallLayout.padding = edgeInsets;
         }
+        waterfallLayout.prepareLayout();
     }
 }
 

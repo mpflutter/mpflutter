@@ -9,9 +9,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
@@ -24,51 +22,18 @@ public class GridView extends MPComponentView {
 
     RecyclerView contentView;
     GridViewAdapter contentAdapter;
-    StaggeredGridLayoutManager contentLayoutManager;
     double crossAxisSpacing;
     double mainAxisSpacing;
     double[] edgeInsets = new double[4];
-    WaterfallLayout waterfallLayout = new WaterfallLayout();
+    WaterfallLayout waterfallLayout;
 
     public GridView(@NonNull Context context) {
         super(context);
+        waterfallLayout = new WaterfallLayout(context);
         contentView = new RecyclerView(context);
         contentAdapter = new GridViewAdapter();
-        contentLayoutManager = new StaggeredGridLayoutManager(2, 1);
         contentView.setAdapter(contentAdapter);
-        contentView.setLayoutManager(contentLayoutManager);
-        contentView.addItemDecoration(new RecyclerView.ItemDecoration() {
-            @Override
-            public void getItemOffsets(@NonNull Rect outRect, @NonNull View view, @NonNull RecyclerView parent, @NonNull RecyclerView.State state) {
-                int position = parent.getChildLayoutPosition(view);
-                if (position >= waterfallLayout.itemLayouts.size()) return;
-                RectF layout = waterfallLayout.itemLayouts.get(position);
-
-                if (contentLayoutManager.getOrientation() == RecyclerView.HORIZONTAL) {
-
-                }
-                else {
-                    if (layout.left == waterfallLayout.padding[1]) {
-                        outRect.left = MPUtils.dp2px(waterfallLayout.padding[1], getContext());
-                    }
-                    else if (layout.left > 0) {
-                        outRect.left = MPUtils.dp2px(crossAxisSpacing, getContext());
-                    }
-                    outRect.right = 0;
-                    if (layout.top == waterfallLayout.padding[0]) {
-                        outRect.top = MPUtils.dp2px(waterfallLayout.padding[0], getContext());
-                    }
-                    else if (layout.top > 0) {
-                        outRect.top = MPUtils.dp2px(mainAxisSpacing, getContext());
-                    }
-                    outRect.bottom = 0;
-                    if (position + 1 == waterfallLayout.itemLayouts.size()) {
-                        outRect.bottom = MPUtils.dp2px(waterfallLayout.padding[2], getContext());
-                    }
-
-                }
-            }
-        });
+        contentView.setLayoutManager(waterfallLayout);
     }
 
     @Override
@@ -104,7 +69,6 @@ public class GridView extends MPComponentView {
         super.setAttributes(attributes);
         JSONObject gridDelegate = attributes.optJSONObject("gridDelegate");
         if (gridDelegate != null) {
-            contentLayoutManager.setSpanCount(gridDelegate.optInt("crossAxisCount", 1));
             waterfallLayout.crossAxisCount = gridDelegate.optInt("crossAxisCount", 1);
             crossAxisSpacing = gridDelegate.optDouble("crossAxisSpacing", 0.0);
             waterfallLayout.crossAxisSpacing = gridDelegate.optDouble("crossAxisSpacing", 0.0);
@@ -113,7 +77,6 @@ public class GridView extends MPComponentView {
         }
         String scrollDirection = attributes.optString("scrollDirection", null);
         if (!attributes.isNull("scrollDirection") && scrollDirection != null) {
-            contentLayoutManager.setOrientation(scrollDirection.contentEquals("Axis.horizontal") ? RecyclerView.HORIZONTAL : RecyclerView.VERTICAL);
             waterfallLayout.isHorizontalScroll = scrollDirection.contentEquals("Axis.horizontal");
         }
         String padding = attributes.optString("padding", null);
