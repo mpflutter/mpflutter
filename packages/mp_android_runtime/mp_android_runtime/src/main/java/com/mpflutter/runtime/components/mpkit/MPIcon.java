@@ -1,0 +1,75 @@
+package com.mpflutter.runtime.components.mpkit;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+
+import androidx.annotation.NonNull;
+
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.mpflutter.runtime.components.MPComponentView;
+import com.mpflutter.runtime.components.MPUtils;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class MPIcon extends MPComponentView {
+
+    SimpleDraweeView contentView;
+    int tintColor = 0;
+
+    public MPIcon(@NonNull Context context) {
+        super(context);
+        contentView = new SimpleDraweeView(context) {
+            @Override
+            public void draw(Canvas canvas) {
+                if (tintColor != 0) {
+                    Bitmap bitmap = Bitmap.createBitmap(canvas.getWidth(), canvas.getHeight(), Bitmap.Config.ARGB_8888);
+                    Canvas offscreenCanvas = new Canvas(bitmap);
+                    super.draw(offscreenCanvas);
+                    Paint paint = new Paint();
+                    paint.setColorFilter(new PorterDuffColorFilter(tintColor, PorterDuff.Mode.SRC_IN));
+                    canvas.drawBitmap(bitmap, 0,0, paint);
+                    bitmap.recycle();
+                }
+                else {
+                    super.draw(canvas);
+                }
+            }
+        };
+    }
+
+    @Override
+    public void updateLayout() {
+        super.updateLayout();
+        if (constraints == null) return;
+        double w = constraints.optDouble("w");
+        double h = constraints.optDouble("h");
+        removeView(contentView);
+        addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
+    }
+
+    @Override
+    public void setChildren(JSONArray children) { }
+
+    @Override
+    public void setAttributes(JSONObject attributes) {
+        super.setAttributes(attributes);
+        String iconUrl = attributes.optString("iconUrl");
+        if (iconUrl != null && iconUrl != "null") {
+            contentView.setImageURI(iconUrl);
+        }
+        String color = attributes.optString("color");
+        if (color != null && color != "null") {
+            tintColor = MPUtils.colorFromString(color);
+        }
+    }
+
+    @Override
+    public void draw(Canvas canvas) {
+        super.draw(canvas);
+    }
+}

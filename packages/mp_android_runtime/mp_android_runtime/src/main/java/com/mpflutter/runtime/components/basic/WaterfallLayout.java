@@ -68,7 +68,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
                     currentY = paddingTop;
                     currentX += itemWidth + mainAxisSpacing;
                 }
-                maxVLength = Math.max(currentX + itemWidth, maxVLength);
+                maxVLength = Math.max(rect.right, maxVLength);
                 layouts.add(rect);
             }
             else {
@@ -78,7 +78,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
                     currentX = paddingLeft;
                     currentY += itemHeight + mainAxisSpacing;
                 }
-                maxVLength = Math.max(currentY + itemHeight, maxVLength);
+                maxVLength = Math.max(rect.bottom, maxVLength);
                 layouts.add(rect);
             }
         }

@@ -5,7 +5,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.facebook.drawee.backends.pipeline.DraweeConfig;
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.imagepipeline.decoder.ImageDecoderConfig;
 import com.mpflutter.runtime.api.MPConsole;
 import com.mpflutter.runtime.api.MPDeviceInfo;
 import com.mpflutter.runtime.api.MPTimer;
@@ -34,11 +37,18 @@ public class MPEngine {
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
 
     public MPEngine(Context context) {
-        Fresco.initialize(context);
+        initializeFresco(context);
         mainThreadHandler = new Handler(Looper.getMainLooper());
         textMeasurer = new MPTextMeasurer(this);
         router = new MPRouter(this);
         componentFactory = new MPComponentFactory(context, this);
+    }
+
+    void initializeFresco(Context context) {
+        ImageDecoderConfig decoderConfig = ImageDecoderConfig.newBuilder().addDecodingCapability(MPSVGImageDecoder.SVG_FORMAT, new MPSVGImageDecoder.SvgFormatChecker(), new MPSVGImageDecoder.SvgDecoder()).build();
+        ImagePipelineConfig pipelineConfig = ImagePipelineConfig.newBuilder(context).setDownsampleEnabled(true).setImageDecoderConfig(decoderConfig).build();
+        DraweeConfig draweeConfig = DraweeConfig.newBuilder().addCustomDrawableFactory(new MPSVGImageDecoder.SvgDrawableFactory()).build();
+        Fresco.initialize(context, pipelineConfig, draweeConfig);
     }
 
     public void initWithJSCode(String code) {

@@ -53,100 +53,6 @@ void main() {
   MPCore().connectToHostChannel();
 }
 
-class MMM extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MPScaffold(
-        backgroundColor: Colors.yellow,
-        body: CustomScrollView(
-          slivers: [
-            SliverPadding(
-              padding: EdgeInsets.all(12),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return Container(
-                      height: 44,
-                      color: Color.fromARGB(
-                        255,
-                        Random().nextInt(255),
-                        Random().nextInt(255),
-                        Random().nextInt(255),
-                      ),
-                      child: Center(
-                        child: Text('Index - $index'),
-                      ),
-                    );
-                  },
-                  childCount: 10,
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Container(
-                width: 100,
-                height: 44,
-                color: Colors.pink,
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.all(8.0),
-              sliver: SliverWaterfall(
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return Container(
-                      height: 44 + 50 * (index % 5),
-                      color: Color.fromARGB(
-                        255,
-                        Random().nextInt(255),
-                        Random().nextInt(255),
-                        Random().nextInt(255),
-                      ),
-                      child: Center(
-                        child: Text('Index - $index'),
-                      ),
-                    );
-                  },
-                  childCount: 200,
-                ),
-                gridDelegate: SliverWaterfallDelegate(
-                  crossAxisCount: 3,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                ),
-              ),
-            ),
-          ],
-        )
-        // body: WaterfallView.builder(
-        //   // scrollDirection: Axis.horizontal,
-        //   // padding: EdgeInsets.only(left: 20),
-        //   gridDelegate: SliverWaterfallDelegate(
-        //     crossAxisCount: 3,
-        //     mainAxisSpacing: 10,
-        //     crossAxisSpacing: 10,
-        //   ),
-        //   itemBuilder: (context, index) {
-        //     return Container(
-        //       height: 44 + 50 * (index % 5),
-        //       // width: 44,
-        //       color: Color.fromARGB(
-        //         255,
-        //         Random().nextInt(255),
-        //         Random().nextInt(255),
-        //         Random().nextInt(255),
-        //       ),
-        //       child: Center(
-        //         child: Text('Index - $index'),
-        //       ),
-        //     );
-        //   },
-        //   itemCount: 100,
-        // ),
-        );
-  }
-}
-
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -154,58 +60,56 @@ class MyApp extends StatelessWidget {
       title: 'MPFlutter Demo',
       color: Colors.blue,
       routes: {
-        '/': (context) => MMM(),
-        // '/': (context) => MyHomePage(),
-
-        // '/container': (context) => ContainerPage(),
-        // '/padding': (context) => PaddingPage(),
-        // '/aspectRatio': (context) => AspectRatioPage(),
-        // '/center': (context) => CenterPage(),
-        // '/columnRow': (context) => ColumnRowPage(),
-        // '/stack': (context) => StackPage(),
-        // '/transform': (context) => TransformPage(),
-        // '/wrap': (context) => WrapPage(),
-        // '/customScrollView': (context) => CustomScrollViewPage(),
-        // '/gridView': (context) => GridViewPage(),
-        // '/gridViewWaterfall': (context) => GridViewWaterfallPage(),
-        // '/listView': (context) => ListViewPage(),
-        // '/listViewLoadMore': (context) => ListViewLoadmorePage(),
-        // '/pageView': (context) => PageViewPage(),
-        // '/icon': (context) => IconPage(),
-        // '/image': (context) => ImagePage(),
-        // '/text': (context) => TextPage(),
-        // '/videoView': (context) => VideoViewPage(),
-        // '/webView': (context) => WebViewPage(),
-        // '/clipOval': (context) => ClipOvalPage(),
-        // '/clipRRect': (context) => ClipRRectPage(),
-        // '/offstage': (context) => OffstagePage(),
-        // '/opacity': (context) => OpacityPage(),
-        // '/absorbPointer': (context) => AbsorbPointerPage(),
-        // '/gestureDetector': (context) => GestureDetectorPage(),
-        // '/ignorePointer': (context) => IgnorePointerPage(),
-        // '/editableText': (context) => EditableTextPage(),
-        // '/animationController': (context) => AnimationControllerPage(),
-        // '/animatedContainer': (context) => AnimatedContainerPage(),
-        // '/animatedPerformanceTest': (context) => AnimatedPerformanceTestPage(),
-        // '/scaffold': (context) => ScaffoldPage(),
-        // '/mainTabView': (context) => MainTabViewPage(),
-        // '/dialogs': (context) => DialogsPage(),
-        // '/tabPage': (context) => TabPage(),
-        // '/deferedPage': (context) => FutureBuilder(
-        //       future: deferedPage.loadLibrary(),
-        //       builder: (context, snapshot) {
-        //         if (snapshot.connectionState != ConnectionState.done)
-        //           return Container();
-        //         return deferedPage.DeferedPage();
-        //       },
-        //     ),
-        // '/sharedPreference': (context) => SharedPreferencePage(),
-        // '/httpNetwork': (context) => HTTPNetworkPage(),
-        // '/plugin': (context) => PluginPage(),
-        // '/miniprogramApi': (context) => MiniProgramApiPage(),
-        // '/customPaint': (context) => CustomPaintPage(),
-        // '/forms': (context) => FormsPage(),
-        // '/signature': (context) => SignaturePage(),
+        '/': (context) => MyHomePage(),
+        '/container': (context) => ContainerPage(),
+        '/padding': (context) => PaddingPage(),
+        '/aspectRatio': (context) => AspectRatioPage(),
+        '/center': (context) => CenterPage(),
+        '/columnRow': (context) => ColumnRowPage(),
+        '/stack': (context) => StackPage(),
+        '/transform': (context) => TransformPage(),
+        '/wrap': (context) => WrapPage(),
+        '/customScrollView': (context) => CustomScrollViewPage(),
+        '/gridView': (context) => GridViewPage(),
+        '/gridViewWaterfall': (context) => GridViewWaterfallPage(),
+        '/listView': (context) => ListViewPage(),
+        '/listViewLoadMore': (context) => ListViewLoadmorePage(),
+        '/pageView': (context) => PageViewPage(),
+        '/icon': (context) => IconPage(),
+        '/image': (context) => ImagePage(),
+        '/text': (context) => TextPage(),
+        '/videoView': (context) => VideoViewPage(),
+        '/webView': (context) => WebViewPage(),
+        '/clipOval': (context) => ClipOvalPage(),
+        '/clipRRect': (context) => ClipRRectPage(),
+        '/offstage': (context) => OffstagePage(),
+        '/opacity': (context) => OpacityPage(),
+        '/absorbPointer': (context) => AbsorbPointerPage(),
+        '/gestureDetector': (context) => GestureDetectorPage(),
+        '/ignorePointer': (context) => IgnorePointerPage(),
+        '/editableText': (context) => EditableTextPage(),
+        '/animationController': (context) => AnimationControllerPage(),
+        '/animatedContainer': (context) => AnimatedContainerPage(),
+        '/animatedPerformanceTest': (context) => AnimatedPerformanceTestPage(),
+        '/scaffold': (context) => ScaffoldPage(),
+        '/mainTabView': (context) => MainTabViewPage(),
+        '/dialogs': (context) => DialogsPage(),
+        '/tabPage': (context) => TabPage(),
+        '/deferedPage': (context) => FutureBuilder(
+              future: deferedPage.loadLibrary(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState != ConnectionState.done)
+                  return Container();
+                return deferedPage.DeferedPage();
+              },
+            ),
+        '/sharedPreference': (context) => SharedPreferencePage(),
+        '/httpNetwork': (context) => HTTPNetworkPage(),
+        '/plugin': (context) => PluginPage(),
+        '/miniprogramApi': (context) => MiniProgramApiPage(),
+        '/customPaint': (context) => CustomPaintPage(),
+        '/forms': (context) => FormsPage(),
+        '/signature': (context) => SignaturePage(),
       },
       navigatorObservers: [MPCore.getNavigationObserver()],
     );

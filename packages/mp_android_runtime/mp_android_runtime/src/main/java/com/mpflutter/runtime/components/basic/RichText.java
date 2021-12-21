@@ -96,13 +96,13 @@ public class RichText extends MPComponentView {
 
     void doMeasure() {
         if (contentView.getText() != null) {
-            if (maxWidth > 0) {
+            if (maxWidth > 0 && maxWidth < 999999) {
                 contentView.setMaxWidth(MPUtils.dp2px(maxWidth, getContext()));
             }
             else {
                 contentView.setMaxWidth(999999);
             }
-            if (maxHeight > 0) {
+            if (maxHeight > 0 && maxHeight < 999999) {
                 contentView.setMaxHeight(MPUtils.dp2px(maxHeight, getContext()));
             }
             else {

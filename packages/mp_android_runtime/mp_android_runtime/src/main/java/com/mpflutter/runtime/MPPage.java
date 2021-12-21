@@ -51,7 +51,7 @@ public class MPPage implements MPDataReceiver {
                     }
                 });
             }
-        }, 32);
+        }, 300);
     }
 
     void requestRoute(MPRouteResponse response) {
