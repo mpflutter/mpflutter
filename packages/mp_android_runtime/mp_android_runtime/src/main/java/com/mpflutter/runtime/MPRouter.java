@@ -1,5 +1,7 @@
 package com.mpflutter.runtime;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Size;
 
 import org.json.JSONException;
@@ -12,6 +14,7 @@ import java.util.UUID;
 public class MPRouter {
 
     public MPEngine engine;
+    public Activity activeActivity;
     private Map<String, MPRouteResponse> routeResponseHandler = new HashMap();
     private boolean doBacking = false;
     private Integer thePushingRouteId;
@@ -71,18 +74,79 @@ public class MPRouter {
     }
 
     void didReceivedRouteData(JSONObject message) throws JSONException {
-        String event = message.getString("event");
+        String event = message.optString("event", null);
+        if (event == null) return;
         if (event.contentEquals("responseRoute")) {
             responseRoute(message);
         }
+        else if (event.contentEquals("didPush")) {
+            didPush(message);
+        }
+        else if (event.contentEquals("didReplace")) {
+            didReplace(message);
+        }
+        else if (event.contentEquals("didPop")) {
+            didPop();
+        }
+    }
+
+    void didPush(JSONObject message) {
+        int routeId = message.optInt("routeId", -1);
+        if (routeId < 0) return;
+        thePushingRouteId = routeId;
+        Intent intent = new Intent(engine.context, MPActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("engineId", engine.hashCode());
+        intent.putExtra("routeId", routeId);
+        engine.context.startActivity(intent);
+    }
+
+    void didReplace(JSONObject message) {
+        int routeId = message.optInt("routeId", -1);
+        if (routeId < 0) return;
+        thePushingRouteId = routeId;
+        if (activeActivity != null) {
+            activeActivity.finish();
+        }
+        Intent intent = new Intent(engine.context, MPActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("engineId", engine.hashCode());
+        intent.putExtra("routeId", routeId);
+        engine.context.startActivity(intent);
+    }
+
+    void didPop() {
+        doBacking = true;
+        if (activeActivity != null) {
+            activeActivity.finish();
+        }
+        doBacking = false;
     }
 
     void dispose(int viewId) {
-
+        if (doBacking) {
+            return;
+        }
+        engine.sendMessage(new HashMap(){{
+            put("type", "router");
+            put("message", new HashMap(){{
+                put("event", "disposeRoute");
+                put("routeId", String.format("%d", viewId));
+            }});
+        }});
     }
 
     void triggerPop(int viewId) {
-
+        if (doBacking) {
+            return;
+        }
+        engine.sendMessage(new HashMap(){{
+            put("type", "router");
+            put("message", new HashMap(){{
+                put("event", "doPop");
+                put("toRouteId", String.format("%ld", viewId));
+            }});
+        }});
     }
 
     private void responseRoute(JSONObject message) {

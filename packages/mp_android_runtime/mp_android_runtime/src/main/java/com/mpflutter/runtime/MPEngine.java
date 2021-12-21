@@ -20,15 +20,19 @@ import com.quickjs.QuickJS;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.ref.WeakReference;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MPEngine {
 
+    static Map<Integer, WeakReference<MPEngine>> engineStore = new HashMap();
+
     private boolean started = false;
     private String jsCode;
     private QuickJS quickJS;
     private JSContext jsContext;
+    public Context context;
     public MPDebugger debugger;
     public Handler mainThreadHandler;
     public MPTextMeasurer textMeasurer;
@@ -37,11 +41,13 @@ public class MPEngine {
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
 
     public MPEngine(Context context) {
+        this.context = context;
         initializeFresco(context);
         mainThreadHandler = new Handler(Looper.getMainLooper());
         textMeasurer = new MPTextMeasurer(this);
         router = new MPRouter(this);
         componentFactory = new MPComponentFactory(context, this);
+        engineStore.put(this.hashCode(), new WeakReference(this));
     }
 
     void initializeFresco(Context context) {
