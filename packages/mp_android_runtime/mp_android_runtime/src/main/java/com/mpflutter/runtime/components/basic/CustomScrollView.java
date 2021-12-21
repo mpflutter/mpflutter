@@ -54,7 +54,7 @@ public class CustomScrollView extends MPComponentView {
                 JSONObject child = children.optJSONObject(i);
                 if (child == null) continue;
                 String name = child.optString("name", null);
-                if (name != null && name.contentEquals("sliver_list") && child.optJSONArray("children") != null) {
+                if (name != null && (name.contentEquals("sliver_list") || name.contentEquals("sliver_grid")) && child.optJSONArray("children") != null) {
                     JSONObject gridStart = new JSONObject();
                     try {
                         gridStart.put("name", "sliver_grid");

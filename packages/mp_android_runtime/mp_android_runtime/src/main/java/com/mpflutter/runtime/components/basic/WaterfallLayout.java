@@ -235,6 +235,9 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
             travel = (int)maxVLengthPx - getHorizontallySpace() - mSumDy;
             zero = true;
         }
+        if (zero == true && maxVLengthPx <= getWidth()) {
+            return 0;
+        }
         mSumDy += travel;
         offsetChildrenHorizontal(-travel);
         if (zero) {
@@ -258,7 +261,9 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
             travel = (int)maxVLengthPx - getVerticalSpace() - mSumDy;
             zero = true;
         }
-
+        if (zero == true && maxVLengthPx <= getHeight()) {
+            return 0;
+        }
         mSumDy += travel;
         // 平移容器内的item
         offsetChildrenVertical(-travel);

@@ -52,7 +52,12 @@ public class CustomScrollViewLayout extends WaterfallLayout {
                 }
                 currentWaterfallLayout.clientWidth = clientWidth;
                 currentWaterfallLayout.clientHeight = clientHeight;
-                currentWaterfallLayout.isPlain = true;
+                if (data.optJSONObject("attributes") != null && data.optJSONObject("attributes").optJSONObject("gridDelegate") != null) {
+                    JSONObject gridDelegate = data.optJSONObject("attributes").optJSONObject("gridDelegate");
+                    currentWaterfallLayout.crossAxisCount = gridDelegate.optInt("crossAxisCount", 1);
+                    currentWaterfallLayout.mainAxisSpacing = gridDelegate.optDouble("mainAxisSpacing", 0.0);
+                    currentWaterfallLayout.crossAxisSpacing = gridDelegate.optDouble("crossAxisSpacing", 0.0);
+                }
                 currentWaterfallLayout.items = waterfallItems;
                 currentWaterfallLayout.prepareLayout();
                 currentWaterfallItemPos = 0;
@@ -62,10 +67,10 @@ public class CustomScrollViewLayout extends WaterfallLayout {
             if (name.contentEquals("sliver_grid_end")) {
                 RectF lastFrame = currentWaterfallLayout.itemLayouts.get(currentWaterfallLayout.itemLayouts.size() - 1);
                 if (isHorizontalScroll) {
-                    currentVLength += lastFrame.right + currentWaterfallLayout.padding[3];
+                    currentVLength = lastFrame.right + currentWaterfallLayout.padding[3];
                 }
                 else {
-                    currentVLength += lastFrame.bottom + currentWaterfallLayout.padding[2];
+                    currentVLength = lastFrame.bottom + currentWaterfallLayout.padding[2];
                 }
                 maxVLength = currentVLength;
                 currentWaterfallLayout = null;
@@ -93,16 +98,18 @@ public class CustomScrollViewLayout extends WaterfallLayout {
             double[] elementPadding = MPUtils.sliverPaddingFromMPElement(data);
             RectF itemFrame;
             if (isHorizontalScroll) {
-                itemFrame = new RectF((float) (currentVLength + elementPadding[1]), (float)elementPadding[0], (float)(currentVLength + elementPadding[1] + elementSize.getWidth()), clientHeight);
+                itemFrame = new RectF((float) (currentVLength + elementPadding[1]), (float)elementPadding[0], (float)(currentVLength + elementPadding[1] + elementSize.getWidth()), (float)elementPadding[0] + clientHeight);
                 currentVLength += elementSize.getWidth() + elementPadding[1] + elementPadding[3];
             }
             else {
-                itemFrame = new RectF((float)elementPadding[1], (float)(currentVLength + elementPadding[0]), clientWidth, elementSize.getHeight());
+                itemFrame = new RectF((float)elementPadding[1], (float)(currentVLength + elementPadding[0]), (float)elementPadding[1] + clientWidth, (float)(currentVLength + elementPadding[0]) + elementSize.getHeight());
                 currentVLength += elementSize.getHeight() + elementPadding[0] + elementPadding[2];
             }
             maxVLength = currentVLength;
             layouts.add(itemFrame);
         }
+        maxVLength += padding[2];
         itemLayouts = layouts;
+        this.maxVLengthPx = MPUtils.dp2px(maxVLength, context);
     }
 }
