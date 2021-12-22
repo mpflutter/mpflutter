@@ -58,18 +58,14 @@ public class MPIcon extends MPComponentView {
     @Override
     public void setAttributes(JSONObject attributes) {
         super.setAttributes(attributes);
-        String iconUrl = attributes.optString("iconUrl");
+        String iconUrl = attributes.optString("iconUrl", null);
         if (iconUrl != null && iconUrl != "null") {
             contentView.setImageURI(iconUrl);
         }
-        String color = attributes.optString("color");
+        String color = attributes.optString("color", null);
         if (color != null && color != "null") {
             tintColor = MPUtils.colorFromString(color);
         }
     }
 
-    @Override
-    public void draw(Canvas canvas) {
-        super.draw(canvas);
-    }
 }

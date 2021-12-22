@@ -157,4 +157,10 @@ public class MPUtils {
         path.close();
     }
 
+    static public boolean isNull(String value) {
+        if (value == null) return true;
+        if (value.contentEquals("null")) return true;
+        return false;
+    }
+
 }

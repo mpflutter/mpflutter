@@ -13,6 +13,7 @@ import com.mpflutter.runtime.api.MPConsole;
 import com.mpflutter.runtime.api.MPDeviceInfo;
 import com.mpflutter.runtime.api.MPTimer;
 import com.mpflutter.runtime.components.MPComponentFactory;
+import com.mpflutter.runtime.components.basic.WebDialogs;
 import com.mpflutter.runtime.debugger.MPDebugger;
 import com.quickjs.JSContext;
 import com.quickjs.QuickJS;
@@ -113,6 +114,8 @@ public class MPEngine {
                         didReceivedDiffData(decodedMessage.getJSONObject("message"));
                     } else if (type.equalsIgnoreCase("element_gc")) {
                         didReceivedElementGC(decodedMessage.getJSONArray("message"));
+                    } else if (type.equalsIgnoreCase("action:web_dialogs")) {
+                        WebDialogs.didReceivedWebDialogsMessage(decodedMessage.getJSONObject("message"), MPEngine.this);
                     } else if (type.equalsIgnoreCase("route")) {
                         router.didReceivedRouteData(decodedMessage.getJSONObject("message"));
                     } else if (type.equalsIgnoreCase("rich_text")) {
