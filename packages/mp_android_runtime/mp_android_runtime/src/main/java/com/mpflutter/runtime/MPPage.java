@@ -8,6 +8,7 @@ import android.widget.FrameLayout;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.components.mpkit.MPScaffold;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -62,6 +63,10 @@ public class MPPage implements MPDataReceiver {
     public void didReceivedFrameData(JSONObject message) throws JSONException {
         JSONObject scaffold = message.optJSONObject("scaffold");
         MPComponentView scaffoldView = engine.componentFactory.create(scaffold);
+        if (scaffoldView instanceof MPScaffold) {
+            ((MPScaffold) scaffoldView).rootViewContext = rootView.getContext();
+            ((MPScaffold) scaffoldView).resetNavigationItems();
+        }
         if (scaffoldView != null && scaffoldView.getParent() != rootView) {
             if (scaffoldView.getParent() != null) {
                 ((ViewGroup)scaffoldView.getParent()).removeView(scaffoldView);

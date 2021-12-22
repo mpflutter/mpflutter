@@ -1,5 +1,7 @@
 package com.mpflutter.runtime.debugger;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.mpflutter.runtime.MPEngine;
@@ -51,14 +53,26 @@ public class MPDebugger {
             @Override
             public void onDisconnect(int code, String reason) {
                 connected = false;
+                reconnect();
             }
 
             @Override
             public void onError(Exception error) {
                 connected = false;
+                reconnect();
             }
         }, extraHeaders);
         socket.connect();
+    }
+
+    void reconnect() {
+        engine.clear();
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                start();
+            }
+        }, 1000);
     }
 
     public void sendMessage(String message) {

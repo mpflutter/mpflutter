@@ -18,6 +18,7 @@ public class MPActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().setTitle("");
         int engineId = getIntent().getIntExtra("engineId", -1);
         int routeId = getIntent().getIntExtra("routeId", -1);
         if (engineId < 0 || !MPEngine.engineStore.containsKey(engineId)) {

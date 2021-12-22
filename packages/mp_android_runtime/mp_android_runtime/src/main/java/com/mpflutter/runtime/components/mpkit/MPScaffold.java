@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
@@ -19,6 +20,7 @@ public class MPScaffold extends MPComponentView {
     MPComponentView body;
     MPComponentView bottomBar;
     MPComponentView floatingBody;
+    public Context rootViewContext;
 
     public MPScaffold(@NonNull Context context) {
         super(context);
@@ -39,6 +41,7 @@ public class MPScaffold extends MPComponentView {
         else {
             setBackgroundColor(Color.WHITE);
         }
+        resetNavigationItems();
     }
 
     @Override
@@ -82,5 +85,31 @@ public class MPScaffold extends MPComponentView {
         if (this.floatingBody != null) {
             addView(this.floatingBody, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
+    }
+
+    public void resetNavigationItems() {
+        if (attributes == null) return;
+        AppCompatActivity activity = activity();
+        if (activity == null) return;
+        String title = attributes.optString("name");
+        if (!MPUtils.isNull(title)) {
+            androidx.appcompat.app.ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle(title);
+            }
+        }
+        else {
+            androidx.appcompat.app.ActionBar actionBar = activity.getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setTitle("");
+            }
+        }
+    }
+
+    private AppCompatActivity activity() {
+        if (rootViewContext instanceof AppCompatActivity) {
+            return (AppCompatActivity)rootViewContext;
+        }
+        return null;
     }
 }

@@ -94,6 +94,10 @@ public class MPEngine {
 
     public void stop() {}
 
+    public void clear() {
+        componentFactory.clear();
+    }
+
     public void sendMessage(Map message) {
          String data = new JSONObject(message).toString();
          if (debugger != null) {

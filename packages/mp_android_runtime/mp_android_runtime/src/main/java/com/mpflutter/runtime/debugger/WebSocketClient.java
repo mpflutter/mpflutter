@@ -139,12 +139,10 @@ public class WebSocketClient {
                     mParser.start(stream);
 
                 } catch (EOFException ex) {
-                    Log.d(TAG, "WebSocket EOF!", ex);
                     mListener.onDisconnect(0, "EOF");
 
                 } catch (SSLException ex) {
                     // Connection reset by peer
-                    Log.d(TAG, "Websocket SSL error!", ex);
                     mListener.onDisconnect(0, "SSL");
 
                 } catch (Exception ex) {
@@ -164,7 +162,6 @@ public class WebSocketClient {
                         mSocket.close();
                         mSocket = null;
                     } catch (IOException ex) {
-                        Log.d(TAG, "Error while disconnecting", ex);
                         mListener.onError(ex);
                     }
                 }

@@ -152,4 +152,9 @@ public class MPComponentFactory {
         }
     }
 
+    public void clear() {
+        cachedView.clear();
+        cachedElement.clear();
+    }
+
 }
