@@ -14,9 +14,15 @@ import java.util.regex.Pattern;
 
 public class MPUtils {
 
+    private static Integer scale;
+
     public static float scale(Context context) {
+        if (MPUtils.scale != null) {
+            return MPUtils.scale;
+        }
         float scale = context.getResources().getDisplayMetrics().density;
-        return Math.round(scale);
+        MPUtils.scale = Math.round(scale);
+        return MPUtils.scale;
     }
 
     public static int px2dp(double pxValue, Context context) {
