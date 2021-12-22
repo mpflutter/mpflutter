@@ -17,6 +17,7 @@ import com.mpflutter.runtime.debugger.MPDebugger;
 import com.quickjs.JSContext;
 import com.quickjs.QuickJS;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -108,6 +109,10 @@ public class MPEngine {
                     String type = decodedMessage.getString("type");
                     if (type.equalsIgnoreCase("frame_data")) {
                         didReceivedFrameData(decodedMessage.getJSONObject("message"));
+                    } else if (type.equalsIgnoreCase("diff_data")) {
+                        didReceivedDiffData(decodedMessage.getJSONObject("message"));
+                    } else if (type.equalsIgnoreCase("element_gc")) {
+                        didReceivedElementGC(decodedMessage.getJSONArray("message"));
                     } else if (type.equalsIgnoreCase("route")) {
                         router.didReceivedRouteData(decodedMessage.getJSONObject("message"));
                     } else if (type.equalsIgnoreCase("rich_text")) {
@@ -121,9 +126,28 @@ public class MPEngine {
     }
 
     private void didReceivedFrameData(JSONObject frameData) throws JSONException {
-        int routeId = frameData.getInt("routeId");
-        if (managedViews.containsKey(routeId)) {
+        int routeId = frameData.optInt("routeId", -1);
+        if (routeId >= 0 && managedViews.containsKey(routeId)) {
             managedViews.get(routeId).didReceivedFrameData(frameData);
+        }
+    }
+
+    private void didReceivedDiffData(JSONObject frameData) {
+        JSONArray diffs = frameData.optJSONArray("diffs");
+        if (diffs != null) {
+            for (int i = 0; i < diffs.length(); i++) {
+                JSONObject obj = diffs.optJSONObject(i);
+                if (obj != null) {
+                    componentFactory.create(obj);
+                }
+            }
+        }
+    }
+
+    private void didReceivedElementGC(JSONArray data) {
+        for (int i = 0; i < data.length(); i++) {
+            componentFactory.cachedView.remove(i);
+            componentFactory.cachedElement.remove(i);
         }
     }
 

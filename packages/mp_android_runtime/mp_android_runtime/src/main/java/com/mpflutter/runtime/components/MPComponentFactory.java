@@ -59,8 +59,8 @@ public class MPComponentFactory {
 
     Context context;
     MPEngine engine;
-    Map<Integer, MPComponentView> cachedView = new HashMap();
-    Map<Integer, JSONObject> cachedElement = new HashMap();
+    public Map<Integer, MPComponentView> cachedView = new HashMap();
+    public Map<Integer, JSONObject> cachedElement = new HashMap();
     List<Map> textMeasureResults = new ArrayList();
     public boolean disableCache = false;
 

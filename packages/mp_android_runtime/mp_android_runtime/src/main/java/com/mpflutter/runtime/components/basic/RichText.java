@@ -1,11 +1,14 @@
 package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
+import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
@@ -16,6 +19,7 @@ import android.text.style.StrikethroughSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
 import android.util.Size;
+import android.view.Gravity;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,11 +36,22 @@ public class RichText extends MPComponentView {
     Integer measureId;
     double maxWidth;
     double maxHeight;
+    int maxLines;
 
     public RichText(@NonNull Context context) {
         super(context);
         contentView = new TextView(context);
-        addView(contentView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        contentView.setPadding(0, 0, 0, 0);
+    }
+
+    @Override
+    public void updateLayout() {
+        super.updateLayout();
+        if (constraints == null) return;
+        double w = constraints.optDouble("w");
+        double h = constraints.optDouble("h");
+        removeView(contentView);
+        addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
     }
 
     @Override
@@ -92,6 +107,34 @@ public class RichText extends MPComponentView {
         else {
             this.measureId = null;
         }
+        String textAlign = attributes.optString("textAlign", "");
+        if (textAlign.contentEquals("TextAlign.left")) {
+            contentView.setGravity(Gravity.LEFT);
+            contentView.setTextAlignment(TEXT_ALIGNMENT_TEXT_START);
+        }
+        else if (textAlign.contentEquals("TextAlign.right")) {
+            contentView.setGravity(Gravity.RIGHT);
+            contentView.setTextAlignment(TEXT_ALIGNMENT_TEXT_END);
+        }
+        else if (textAlign.contentEquals("TextAlign.center")) {
+            contentView.setGravity(Gravity.CENTER);
+            contentView.setTextAlignment(TEXT_ALIGNMENT_CENTER);
+        }
+        else if (textAlign.contentEquals("TextAlign.justify")) {
+            contentView.setGravity(Gravity.LEFT);
+            contentView.setTextAlignment(TEXT_ALIGNMENT_TEXT_START);
+        }
+        else if (textAlign.contentEquals("TextAlign.start")) {
+            contentView.setGravity(Gravity.LEFT);
+            contentView.setTextAlignment(TEXT_ALIGNMENT_TEXT_START);
+        }
+        else if (textAlign.contentEquals("TextAlign.end")) {
+            contentView.setGravity(Gravity.RIGHT);
+            contentView.setTextAlignment(TEXT_ALIGNMENT_TEXT_END);
+        }
+        maxLines = attributes.optInt("maxLines", 999999);
+        contentView.setMaxLines(maxLines);
+        contentView.setEllipsize(TextUtils.TruncateAt.END);
     }
 
     void doMeasure() {
@@ -110,10 +153,24 @@ public class RichText extends MPComponentView {
             }
             int widthMeasureSpec = MeasureSpec.makeMeasureSpec(MPUtils.dp2px(maxWidth, getContext()), MeasureSpec.AT_MOST);
             int heightMeasureSpec = MeasureSpec.makeMeasureSpec(MPUtils.dp2px(maxHeight, getContext()), MeasureSpec.AT_MOST);
+            contentView.setMaxLines(maxLines);
             contentView.measure(widthMeasureSpec, heightMeasureSpec);
+            int maxLines = contentView.getMaxLines();
+            if (maxLines <= 0) {
+                maxLines = 999999;
+            }
+            int lineCount = contentView.getLineCount();
+            double textWidth = 0.0;
+            double textHeight = 0.0;
+            Rect rect = new Rect();
+            for (int i = 0; i < maxLines && i < lineCount; i++) {
+                contentView.getLineBounds(i, rect);
+                textWidth = Math.max(rect.width(), textWidth);
+                textHeight += rect.height();
+            }
             factory.callbackTextMeasureResult(measureId, new Size(
-                    MPUtils.px2dp(contentView.getMeasuredWidth() + 1, getContext()),
-                    MPUtils.px2dp(contentView.getMeasuredHeight() + 1, getContext())
+                    MPUtils.px2dp(textWidth + 1, getContext()),
+                    MPUtils.px2dp(textHeight + 1, getContext())
             ));
         }
     }

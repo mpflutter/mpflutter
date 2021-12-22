@@ -30,6 +30,7 @@ public class ListView extends MPComponentView {
         contentAdapter = new ListViewAdapter();
         contentView.setAdapter(contentAdapter);
         contentView.setLayoutManager(waterfallLayout);
+        addView(contentView, new LayoutParams(0, 0));
     }
 
     @Override
@@ -38,8 +39,10 @@ public class ListView extends MPComponentView {
         if (constraints == null) return;
         double w = constraints.optDouble("w");
         double h = constraints.optDouble("h");
-        removeView(contentView);
-        addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
+        LayoutParams layoutParams = (LayoutParams) contentView.getLayoutParams();
+        layoutParams.width = MPUtils.dp2px(w, getContext());
+        layoutParams.height = MPUtils.dp2px(h, getContext());
+        contentView.setLayoutParams(layoutParams);
         waterfallLayout.clientWidth = (int) w;
         waterfallLayout.clientHeight = (int)h;
         waterfallLayout.prepareLayout();

@@ -131,7 +131,7 @@ public class MPRouter {
             put("type", "router");
             put("message", new HashMap(){{
                 put("event", "disposeRoute");
-                put("routeId", String.format("%d", viewId));
+                put("routeId", viewId);
             }});
         }});
     }
@@ -143,8 +143,8 @@ public class MPRouter {
         engine.sendMessage(new HashMap(){{
             put("type", "router");
             put("message", new HashMap(){{
-                put("event", "doPop");
-                put("toRouteId", String.format("%ld", viewId));
+                put("event", "popToRoute");
+                put("routeId", viewId);
             }});
         }});
     }

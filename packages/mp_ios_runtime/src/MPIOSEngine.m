@@ -257,6 +257,7 @@
     }
     [data enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([obj isKindOfClass:[NSNumber class]]) {
+            [[self.componentFactory cachedView] removeObjectForKey:obj];
             [[self.componentFactory cachedElement] removeObjectForKey:obj];
         }
     }];

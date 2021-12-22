@@ -11,7 +11,7 @@ class GridViewWaterfallPage extends StatelessWidget {
         padding: EdgeInsets.all(20),
         gridDelegate: SliverWaterfallDelegate(
           crossAxisCount: 2,
-          mainAxisSpacing: 10,
+          mainAxisSpacing: 5,
           crossAxisSpacing: 10,
         ),
         itemBuilder: (context, index) {

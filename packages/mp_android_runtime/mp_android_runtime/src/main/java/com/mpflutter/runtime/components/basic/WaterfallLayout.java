@@ -210,6 +210,13 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
             RectF rect = itemLayouts.get(i);
             layoutDecorated(child, MPUtils.dp2px(rect.left, child.getContext()), MPUtils.dp2px(rect.top, child.getContext()), MPUtils.dp2px(rect.right, child.getContext()), MPUtils.dp2px(rect.bottom, child.getContext()));
         }
+        mSumDy = Math.max(0, Math.min(mSumDy, (int)maxVLengthPx - getHeight()));
+        if (isHorizontalScroll) {
+            offsetChildrenHorizontal(-mSumDy);
+        }
+        else {
+            offsetChildrenVertical(-mSumDy);
+        }
     }
 
     @Override
