@@ -1,6 +1,7 @@
 package com.mpflutter.runtime.components;
 
 import android.content.Context;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
@@ -11,6 +12,7 @@ import com.mpflutter.runtime.components.basic.DecoratedBox;
 import com.mpflutter.runtime.components.basic.GestureDetector;
 import com.mpflutter.runtime.components.basic.Offstage;
 import com.mpflutter.runtime.components.basic.Visibility;
+import com.mpflutter.runtime.components.mpkit.MPPlatformView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -26,10 +28,17 @@ public class MPComponentView extends FrameLayout {
     public JSONObject constraints;
     public JSONObject attributes;
     protected JSONObject adjustConstraints;
+    View contentView;
 
     public MPComponentView(@NonNull Context context) {
         super(context);
         setClipChildren(false);
+    }
+
+    public void addContentView(View view) {
+        if (view == null) return;
+        contentView = view;
+        addView(contentView, new LayoutParams(0, 0));
     }
 
     public void setConstraints(JSONObject constraints) {
@@ -48,7 +57,7 @@ public class MPComponentView extends FrameLayout {
         double y = constraints.optDouble("y");
         double w = constraints.optDouble("w");
         double h = constraints.optDouble("h");
-        if (this.adjustConstraints != null && (this.getParent() instanceof GestureDetector || this.getParent() instanceof Visibility || this.getParent() instanceof DecoratedBox)) {
+        if (this.adjustConstraints != null && (this.getParent() instanceof GestureDetector || this.getParent() instanceof Visibility || this.getParent() instanceof DecoratedBox || this.getParent() instanceof MPPlatformView)) {
             x -= this.adjustConstraints.optDouble("x", 0.0);
             y -= this.adjustConstraints.optDouble("y", 0.0);
         }
@@ -56,6 +65,12 @@ public class MPComponentView extends FrameLayout {
         setY((MPUtils.dp2px(y, getContext())));
         setMinimumWidth(MPUtils.dp2px(w, getContext()));
         setMinimumHeight(MPUtils.dp2px(h, getContext()));
+        if (contentView != null) {
+            LayoutParams layoutParams = (LayoutParams) contentView.getLayoutParams();
+            layoutParams.width = MPUtils.dp2px(w, getContext());
+            layoutParams.height = MPUtils.dp2px(h, getContext());
+            contentView.setLayoutParams(layoutParams);
+        }
     }
 
     public void setAttributes(JSONObject attributes) {

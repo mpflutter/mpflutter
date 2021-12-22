@@ -23,6 +23,7 @@ import com.mpflutter.runtime.components.basic.RichText;
 import com.mpflutter.runtime.components.basic.Transform;
 import com.mpflutter.runtime.components.basic.Visibility;
 import com.mpflutter.runtime.components.mpkit.MPIcon;
+import com.mpflutter.runtime.components.mpkit.MPPageView;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
 
 import org.json.JSONArray;
@@ -55,6 +56,7 @@ public class MPComponentFactory {
         put("visibility", Visibility.class);
         put("mp_scaffold", MPScaffold.class);
         put("mp_icon", MPIcon.class);
+        put("mp_page_view", MPPageView.class);
     }};
 
     Context context;

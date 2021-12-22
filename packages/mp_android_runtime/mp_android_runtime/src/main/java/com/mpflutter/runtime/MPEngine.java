@@ -14,6 +14,7 @@ import com.mpflutter.runtime.api.MPDeviceInfo;
 import com.mpflutter.runtime.api.MPTimer;
 import com.mpflutter.runtime.components.MPComponentFactory;
 import com.mpflutter.runtime.components.basic.WebDialogs;
+import com.mpflutter.runtime.components.mpkit.MPPlatformView;
 import com.mpflutter.runtime.debugger.MPDebugger;
 import com.quickjs.JSContext;
 import com.quickjs.QuickJS;
@@ -124,6 +125,8 @@ public class MPEngine {
                         router.didReceivedRouteData(decodedMessage.getJSONObject("message"));
                     } else if (type.equalsIgnoreCase("rich_text")) {
                         textMeasurer.didReceivedDoMeasureData(decodedMessage.getJSONObject("message"));
+                    } else if (type.equalsIgnoreCase("platform_view")) {
+                        MPPlatformView.didReceivedPlatformViewMessage(decodedMessage.getJSONObject("message"), MPEngine.this);
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
