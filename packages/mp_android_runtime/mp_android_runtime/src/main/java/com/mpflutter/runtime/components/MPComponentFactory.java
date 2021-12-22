@@ -25,6 +25,7 @@ import com.mpflutter.runtime.components.basic.Visibility;
 import com.mpflutter.runtime.components.mpkit.MPIcon;
 import com.mpflutter.runtime.components.mpkit.MPPageView;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
+import com.mpflutter.runtime.components.mpkit.MPWebView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -57,6 +58,7 @@ public class MPComponentFactory {
         put("mp_scaffold", MPScaffold.class);
         put("mp_icon", MPIcon.class);
         put("mp_page_view", MPPageView.class);
+        put("mp_web_view", MPWebView.class);
     }};
 
     Context context;
