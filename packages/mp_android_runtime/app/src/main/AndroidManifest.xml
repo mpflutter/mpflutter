@@ -10,14 +10,13 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:hardwareAccelerated="true">
+        <activity android:name=".MainActivity" android:hardwareAccelerated="true" android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.mpflutter.runtime.MPActivity" />
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

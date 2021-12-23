@@ -23,9 +23,12 @@ import com.mpflutter.runtime.components.basic.Opacity;
 import com.mpflutter.runtime.components.basic.RichText;
 import com.mpflutter.runtime.components.basic.Transform;
 import com.mpflutter.runtime.components.basic.Visibility;
+import com.mpflutter.runtime.components.mpkit.MPDatePicker;
 import com.mpflutter.runtime.components.mpkit.MPIcon;
 import com.mpflutter.runtime.components.mpkit.MPPageView;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
+import com.mpflutter.runtime.components.mpkit.MPSlider;
+import com.mpflutter.runtime.components.mpkit.MPSwitch;
 import com.mpflutter.runtime.components.mpkit.MPWebView;
 
 import org.json.JSONArray;
@@ -58,8 +61,11 @@ public class MPComponentFactory {
         put("transform", Transform.class);
         put("visibility", Visibility.class);
         put("mp_scaffold", MPScaffold.class);
+        put("mp_date_picker", MPDatePicker.class);
         put("mp_icon", MPIcon.class);
         put("mp_page_view", MPPageView.class);
+        put("mp_slider", MPSlider.class);
+        put("mp_switch", MPSwitch.class);
         put("mp_web_view", MPWebView.class);
     }};
 

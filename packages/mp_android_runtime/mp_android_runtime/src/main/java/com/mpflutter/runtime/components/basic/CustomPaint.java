@@ -9,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.os.Build;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 
@@ -88,36 +89,40 @@ public class CustomPaint extends MPComponentView {
         if (commands == null) {
             return bezierPath;
         }
+        int lastX = 0;
+        int lastY = 0;
         for (int i = 0; i < commands.length(); i++) {
             JSONObject obj = commands.optJSONObject(i);
             if (obj == null) continue;
             String action = obj.optString("action", null);
             if (MPUtils.isNull(action)) continue;
             if (action.contentEquals("moveTo")) {
-                bezierPath.moveTo(
-                        MPUtils.dp2px(obj.optDouble("x", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("y", 0.0), getContext())
-                );
+                lastX = MPUtils.dp2px(obj.optDouble("x", 0.0), getContext());
+                lastY = MPUtils.dp2px(obj.optDouble("y", 0.0), getContext());
+                bezierPath.moveTo(lastX, lastY);
             } else if (action.contentEquals("lineTo")) {
-                bezierPath.lineTo(
-                        MPUtils.dp2px(obj.optDouble("x", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("y", 0.0), getContext())
-                );
+                lastX = MPUtils.dp2px(obj.optDouble("x", 0.0), getContext());
+                lastY = MPUtils.dp2px(obj.optDouble("y", 0.0), getContext());
+                bezierPath.lineTo(lastX, lastY);
             } else if (action.contentEquals("quadraticBezierTo")) {
+                lastX = MPUtils.dp2px(obj.optDouble("x2", 0.0), getContext());
+                lastY = MPUtils.dp2px(obj.optDouble("y2", 0.0), getContext());
                 bezierPath.quadTo(
                         MPUtils.dp2px(obj.optDouble("x1", 0.0), getContext()),
                         MPUtils.dp2px(obj.optDouble("y1", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("x2", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("y2", 0.0), getContext())
+                        lastX,
+                        lastY
                 );
             } else if (action.contentEquals("cubicTo")) {
+                lastX = MPUtils.dp2px(obj.optDouble("x3", 0.0), getContext());
+                lastY = MPUtils.dp2px(obj.optDouble("y3", 0.0), getContext());
                 bezierPath.cubicTo(
                         MPUtils.dp2px(obj.optDouble("x1", 0.0), getContext()),
                         MPUtils.dp2px(obj.optDouble("y1", 0.0), getContext()),
                         MPUtils.dp2px(obj.optDouble("x2", 0.0), getContext()),
                         MPUtils.dp2px(obj.optDouble("y2", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("x3", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("y3", 0.0), getContext())
+                        lastX,
+                        lastY
                 );
             } else if (action.contentEquals("arcTo")) {
                 RectF rectF = new RectF(
@@ -132,6 +137,8 @@ public class CustomPaint extends MPComponentView {
                         MPUtils.dp2px(obj.optDouble("sweepAngle", 0.0), getContext())
                 );
             } else if (action.contentEquals("arcToPoint")) {
+
+                Log.d("TAG", "pathWithParams: ");
                 // todo
             } else if (action.contentEquals("close")) {
                 bezierPath.close();

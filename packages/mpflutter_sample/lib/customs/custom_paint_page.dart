@@ -73,9 +73,19 @@ class MyPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    var rect = Offset.zero & size;
-    drawChessboard(canvas, rect);
-    drawPieces(canvas, rect);
+    final p = Path();
+    // p.addOval(
+    //   Rect.fromCenter(center: Offset(100, 100), width: 100, height: 100),
+    // );
+    p.addRRect(RRect.fromRectXY(Rect.fromLTWH(20, 20, 100, 100), 20, 20));
+    final pa = Paint();
+    pa.style = PaintingStyle.stroke;
+    pa.color = Colors.red;
+    pa.strokeWidth = 2;
+    canvas.drawPath(p, pa);
+    // var rect = Offset.zero & size;
+    // drawChessboard(canvas, rect);
+    // drawPieces(canvas, rect);
   }
 
   @override

@@ -9,6 +9,9 @@ import android.util.SizeF;
 
 import org.json.JSONObject;
 
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -161,6 +164,17 @@ public class MPUtils {
             path.arcTo(new RectF(0.0f, 0.0f, tl * 2, tl * 2), 180, 90);
         }
         path.close();
+    }
+
+    static public long timestampFromString(String value) {
+        if (value == null) return 0;
+        String[] components = value.split("-");
+        if (components.length == 3) {
+            Calendar calendar = new GregorianCalendar();
+            calendar.set(Integer.parseInt(components[0]), Integer.parseInt(components[1]) - 1, Integer.parseInt(components[2]));
+            return calendar.getTimeInMillis();
+        }
+        return 0;
     }
 
     static public boolean isNull(String value) {
