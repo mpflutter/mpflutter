@@ -12,17 +12,32 @@ class MPMiniProgramEvent {
   });
 }
 
+class MPMiniProgramController extends MPPlatformViewController {
+  Future<mpjs.JsObject> getContext() async {
+    if (targetHashCode == null) throw 'The MPMiniProgramView not ready yet.';
+    final obj = await mpjs.context.callMethod(
+      'mp_core_weChatComponentContextGetter',
+      [targetHashCode],
+    );
+    return obj;
+  }
+}
+
 class MPMiniProgramView extends MPPlatformView {
   final String tag;
   final Map? style;
   final Map? attributes;
   final List<MPMiniProgramEvent>? eventListeners;
 
+  @override
+  final MPMiniProgramController? controller;
+
   MPMiniProgramView({
     required this.tag,
     this.style,
     this.attributes,
     this.eventListeners,
+    this.controller,
     Widget? child,
   }) : super(
           viewType: 'mp_mini_program_view',
@@ -46,5 +61,6 @@ class MPMiniProgramView extends MPPlatformView {
               });
             }
           },
+          controller: controller,
         );
 }

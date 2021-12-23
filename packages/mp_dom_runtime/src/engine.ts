@@ -38,6 +38,19 @@ export class Engine {
     this.componentFactory = new ComponentFactory(this);
     this.drawable = new MPDrawable(this);
     MethodChannelHandler.installHandler();
+    this.installWeChatComponentContextGetter();
+  }
+
+  private installWeChatComponentContextGetter() {
+    if (__MP_TARGET_WEAPP__) {
+      MPEnv.platformGlobal().mp_core_weChatComponentContextGetter = async (hashCode: number) => {
+        const target = this.componentFactory.cachedView[hashCode];
+        if (target) {
+          const ctx = await (target.htmlElement as any).$$getContext();
+          return ctx;
+        }
+      }
+    }
   }
 
   public static codeBlockWithCodePath(codePath: string): Promise<() => void> {

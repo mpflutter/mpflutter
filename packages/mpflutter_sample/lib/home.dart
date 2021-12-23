@@ -227,6 +227,8 @@ class MyHomePage extends StatelessWidget {
                 _renderItem('Plugin', context: context, route: '/plugin'),
                 _renderItem('通用小程序 API',
                     context: context, route: '/miniprogramApi'),
+                _renderItem('MapView (WeChat)',
+                    context: context, route: '/mapView'),
               ],
             ),
           ),

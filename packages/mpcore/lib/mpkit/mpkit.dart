@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import '../channel/channel_io.dart'
     if (dart.library.js) '../channel/channel_js.dart';
+import '../mpjs/mpjs.dart' as mpjs;
 import '../mpcore.dart';
 
 part 'app.dart';

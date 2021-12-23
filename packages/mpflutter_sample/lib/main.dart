@@ -4,6 +4,7 @@ import 'package:mpflutter_template/animations/animated_container_page.dart';
 import 'package:mpflutter_template/animations/animation_controller_page.dart';
 import 'package:mpflutter_template/contents/icon_page.dart';
 import 'package:mpflutter_template/contents/image_page.dart';
+import 'package:mpflutter_template/contents/map_view_page.dart';
 import 'package:mpflutter_template/contents/text_page.dart';
 import 'package:mpflutter_template/contents/video_view_page.dart';
 import 'package:mpflutter_template/contents/web_view_page.dart';
@@ -108,6 +109,7 @@ class MyApp extends StatelessWidget {
         '/customPaint': (context) => CustomPaintPage(),
         '/forms': (context) => FormsPage(),
         '/signature': (context) => SignaturePage(),
+        '/mapView': (context) => MapViewPage(),
       },
       navigatorObservers: [MPCore.getNavigationObserver()],
     );
