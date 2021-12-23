@@ -6,25 +6,29 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.FrameLayout;
 
+import com.mpflutter.runtime.MPActivity;
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.MPPage;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 
-public class MainActivity extends AppCompatActivity {
-
-    MPEngine engine;
-    FrameLayout rootView;
-    MPPage mpPage;
+public class MainActivity extends MPActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        engine = new MPEngine(this);
-        engine.initWithDebuggerServerAddr("10.0.2.2:9898");
+        MPEngine engine = new MPEngine(this);
+//        engine.initWithDebuggerServerAddr("10.0.2.2:9898");
+        try {
+            InputStream mpkInputStream = getAssets().open("app.mpk");
+            engine.initWithMpkData(mpkInputStream);
+            mpkInputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         engine.start();
-        rootView = new FrameLayout(this);
-        mpPage = new MPPage(rootView, engine, "/", new HashMap());
-        setContentView(rootView);
+        initializeWithEngine(engine);
+        super.onCreate(savedInstanceState);
     }
 }

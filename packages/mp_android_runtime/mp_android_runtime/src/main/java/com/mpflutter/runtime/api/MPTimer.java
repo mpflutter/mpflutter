@@ -18,7 +18,7 @@ public class MPTimer {
     static private int taskSeqId = 0;
     static private HashMap<Integer, TimerTask> timerTaskHandler = new HashMap<Integer, TimerTask>();
 
-    static public void setupWithJSContext(JSContext context) {
+    static public void setupWithJSContext(JSContext context, JSObject selfObject) {
         context.set("setTimeout", new JSFunction(context, new JavaCallback() {
             @Override
             public Object invoke(JSObject receiver, JSArray args) {
@@ -51,6 +51,7 @@ public class MPTimer {
                 return currentTaskSeqId;
             }
         }));
+        selfObject.set("setTimeout", context.getObject("setTimeout"));
         context.set("clearTimeout", new JSFunction(context, new JavaCallback() {
             @Override
             public Object invoke(JSObject receiver, JSArray args) {
@@ -66,6 +67,7 @@ public class MPTimer {
                 return null;
             }
         }));
+        selfObject.set("clearTimeout", context.getObject("clearTimeout"));
         context.set("setInterval", new JSFunction(context, new JavaCallback() {
             @Override
             public Object invoke(JSObject receiver, JSArray args) {
@@ -98,6 +100,7 @@ public class MPTimer {
                 return currentTaskSeqId;
             }
         }));
+        selfObject.set("setInterval", context.getObject("setInterval"));
         context.set("clearInterval", new JSFunction(context, new JavaCallback() {
             @Override
             public Object invoke(JSObject receiver, JSArray args) {
@@ -113,6 +116,7 @@ public class MPTimer {
                 return null;
             }
         }));
+        selfObject.set("clearInterval", context.getObject("clearInterval"));
         context.set("requestAnimationFrame", new JSFunction(context, new JavaCallback() {
             @Override
             public Object invoke(JSObject receiver, JSArray args) {
@@ -131,7 +135,10 @@ public class MPTimer {
                             public void run() {
                                 timerTaskHandler.remove(currentTaskSeqId);
                                 try {
-                                    callback.call(null, null);
+                                    long time = System.currentTimeMillis();
+                                    JSArray args = new JSArray(context);
+                                    args.push(time);
+                                    callback.call(null, args);
                                 } catch (Throwable e) {
                                     e.printStackTrace();
                                 }
@@ -144,6 +151,7 @@ public class MPTimer {
                 return currentTaskSeqId;
             }
         }));
+        selfObject.set("requestAnimationFrame", context.getObject("requestAnimationFrame"));
         context.set("cancelAnimationFrame", new JSFunction(context, new JavaCallback() {
             @Override
             public Object invoke(JSObject receiver, JSArray args) {
@@ -159,6 +167,7 @@ public class MPTimer {
                 return null;
             }
         }));
+        selfObject.set("cancelAnimationFrame", context.getObject("cancelAnimationFrame"));
     }
 
 }

@@ -5,7 +5,7 @@ import com.quickjs.JSObject;
 
 public class MPDeviceInfo {
 
-    static public void setupWithJSContext(JSContext context) {
+    static public void setupWithJSContext(JSContext context, JSObject selfObject) {
         JSObject document = new JSObject(context);
         document.set("currentScript", "");
         JSObject body = new JSObject(context);
@@ -16,6 +16,8 @@ public class MPDeviceInfo {
         document.set("body", body);
         context.set("document", document);
         context.set("disableMPProxy", true);
+        selfObject.set("document", document);
+        selfObject.set("disableMPProxy", true);
     }
 
 }

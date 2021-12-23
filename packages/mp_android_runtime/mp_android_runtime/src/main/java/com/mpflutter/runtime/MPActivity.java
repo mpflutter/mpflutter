@@ -1,12 +1,12 @@
 package com.mpflutter.runtime;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class MPActivity extends AppCompatActivity {
 
@@ -14,22 +14,35 @@ public class MPActivity extends AppCompatActivity {
     FrameLayout rootView;
     MPPage mpPage;
     boolean firstShowed = false;
+    String initialRoute;
+    Map initialParams;
+
+    public void initializeWithEngine(MPEngine engine) {
+        this.engine = engine;
+    }
+
+    public void initializeWithEngine(MPEngine engine, String initialRoute, Map initialParams) {
+        this.engine = engine;
+        this.initialRoute = initialRoute;
+        this.initialParams = initialParams;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getSupportActionBar().setTitle("");
-        int engineId = getIntent().getIntExtra("engineId", -1);
-        int routeId = getIntent().getIntExtra("routeId", -1);
-        if (engineId < 0 || !MPEngine.engineStore.containsKey(engineId)) {
-            return;
-        }
-        engine = MPEngine.engineStore.get(engineId).get();
         if (engine == null) {
-            return;
+            int engineId = getIntent().getIntExtra("engineId", -1);
+            if (engineId < 0 || !MPEngine.engineStore.containsKey(engineId)) {
+                return;
+            }
+            engine = MPEngine.engineStore.get(engineId).get();
+            if (engine == null) {
+                return;
+            }
         }
         rootView = new FrameLayout(this);
-        mpPage = new MPPage(rootView, engine, "/", new HashMap());
+        mpPage = new MPPage(rootView, engine, initialRoute != null ? initialRoute : "/", initialParams != null ? initialParams : new HashMap());
         setContentView(rootView);
     }
 

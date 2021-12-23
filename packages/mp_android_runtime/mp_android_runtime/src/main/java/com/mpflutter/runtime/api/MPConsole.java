@@ -12,7 +12,9 @@ import com.quickjs.JavaCallback;
 
 public class MPConsole {
 
-    static public void setupWithJSContext(JSContext context) {
+    static JSObject obj;
+
+    static public void setupWithJSContext(JSContext context, JSObject selfObject) {
         JSObject jsConsole = new JSObject(context);
         jsConsole.set("log", new JSFunction(context, new JavaCallback() {
             @Override
@@ -50,6 +52,7 @@ public class MPConsole {
             }
         }));
         context.set("console", jsConsole);
+        selfObject.set("console", jsConsole);
     }
 
     static void printConsole(int priority, JSArray args) {

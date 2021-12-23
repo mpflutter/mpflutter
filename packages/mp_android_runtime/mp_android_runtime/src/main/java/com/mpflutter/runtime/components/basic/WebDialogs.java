@@ -2,6 +2,7 @@ package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Path;
@@ -10,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -18,7 +20,10 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.view.ViewCompat;
 
+import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.android.material.button.MaterialButton;
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.components.mpkit.MPIcon;
@@ -234,28 +239,33 @@ public class WebDialogs {
         if (context == null) {
             return;
         }
-        AlertDialog dialog = null;
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+
         LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         List<View> textViews = new ArrayList();
         for (int i = 0; i < items.length(); i++) {
+            if (i > 0) {
+                View divider = new View(context);
+                divider.setBackgroundColor(0xffe0e0e0);
+                linearLayout.addView(divider, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 1));
+            }
             String item = items.optString(i, "");
             if (item != null) {
                 AppCompatButton textView = new AppCompatButton(context);
-                textView.setBackgroundColor(Color.WHITE);
+                textView.setBackgroundColor(Color.TRANSPARENT);
                 textView.setText(item);
-                textView.setHeight(MPUtils.dp2px(44, context));
+                textView.setHeight(MPUtils.dp2px(48, context));
                 textView.setTextSize(18);
                 textView.setGravity(Gravity.CENTER);
                 textViews.add(textView);
-
                 linearLayout.addView(textView);
             }
         }
-        builder.setView(linearLayout);
-        builder.setCancelable(true);
-        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        bottomSheetDialog.setContentView(linearLayout);
+        bottomSheetDialog.setCancelable(true);
+        bottomSheetDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
                 engine.sendMessage(new HashMap(){{
@@ -268,16 +278,14 @@ public class WebDialogs {
                 }});
             }
         });
-        dialog = builder.create();
-        dialog.show();
+        bottomSheetDialog.show();
         for (int i = 0; i < textViews.size(); i++) {
             View textView = textViews.get(i);
-            AlertDialog finalDialog = dialog;
             int finalI = i;
             textView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    finalDialog.hide();
+                    bottomSheetDialog.hide();
                     engine.sendMessage(new HashMap(){{
                         put("type", "action");
                         put("message", new HashMap(){{

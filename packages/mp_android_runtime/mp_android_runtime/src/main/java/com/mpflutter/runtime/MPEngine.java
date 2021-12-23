@@ -16,14 +16,21 @@ import com.mpflutter.runtime.components.MPComponentFactory;
 import com.mpflutter.runtime.components.basic.WebDialogs;
 import com.mpflutter.runtime.components.mpkit.MPPlatformView;
 import com.mpflutter.runtime.debugger.MPDebugger;
+import com.quickjs.JSArray;
 import com.quickjs.JSContext;
+import com.quickjs.JSFunction;
+import com.quickjs.JSObject;
+import com.quickjs.JavaCallback;
 import com.quickjs.QuickJS;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,11 +44,13 @@ public class MPEngine {
     private JSContext jsContext;
     public Context context;
     public MPDebugger debugger;
+    public MPMPKReader mpkReader;
     public Handler mainThreadHandler;
     public MPTextMeasurer textMeasurer;
     public MPRouter router;
     public MPComponentFactory componentFactory;
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
+    JSObject engineScope;
 
     public MPEngine(Context context) {
         this.context = context;
@@ -68,6 +77,16 @@ public class MPEngine {
         debugger = new MPDebugger(this, debuggerServerAddr);
     }
 
+    public void initWithMpkData(InputStream inputStream) throws IOException {
+        mpkReader = new MPMPKReader();
+        mpkReader.setInputStream(inputStream);
+        byte[] mainDartJSData = mpkReader.dataWithFilePath("main.dart.js");
+        if (mainDartJSData != null) {
+            jsCode = new String(mainDartJSData, Charset.forName("utf-8"));
+            Log.d("TAG", "initWithMpkData: ");
+        }
+    }
+
     public void start() {
         if (started) {
             return;
@@ -75,11 +94,14 @@ public class MPEngine {
         quickJS = QuickJS.createRuntime();
         jsContext = quickJS.createContext();
 
-        MPTimer.setupWithJSContext(jsContext);
-        MPConsole.setupWithJSContext(jsContext);
-        MPDeviceInfo.setupWithJSContext(jsContext);
+        JSObject selfObject = new JSObject(jsContext);
+        jsContext.set("self", selfObject);
 
-        jsContext.set("self", jsContext);
+        setupJSContextEventChannel(selfObject);
+        MPTimer.setupWithJSContext(jsContext, selfObject);
+        MPConsole.setupWithJSContext(jsContext, selfObject);
+        MPDeviceInfo.setupWithJSContext(jsContext, selfObject);
+
         if (jsCode != null) {
             try {
                 jsContext.executeVoidScript(jsCode, "");
@@ -99,10 +121,40 @@ public class MPEngine {
         componentFactory.clear();
     }
 
+    void setupJSContextEventChannel(JSObject selfObject) {
+        this.engineScope = new JSObject(jsContext);
+        engineScope.set("onMessage", new JSFunction(jsContext, new JavaCallback() {
+            @Override
+            public Object invoke(JSObject receiver, JSArray args) {
+                try {
+                    String message = args.getString(0);
+                    didReceivedMessage(message);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }));
+        jsContext.set("engineScope", engineScope);
+        selfObject.set("engineScope", engineScope);
+    }
+
     public void sendMessage(Map message) {
          String data = new JSONObject(message).toString();
          if (debugger != null) {
              debugger.sendMessage(data);
+         }
+         else {
+             try {
+                 if (this.engineScope != null) {
+                     JSArray args = new JSArray(jsContext);
+                     args.push(data);
+                     JSFunction func = (JSFunction) this.engineScope.getObject("postMessage");
+                     func.call(func, args);
+                 }
+             } catch (Throwable e) {
+                 Log.e(MPRuntime.TAG, "sendMessage: ", e);
+             }
          }
     }
 
