@@ -82,6 +82,15 @@ class _PlatformChannelIO {
           }
           _responseCallbacks.remove(seqId);
         }
+      } else if (message['event'] == 'callbackEventSink') {
+        String method = message['method'];
+        String result = message['result'];
+        final _ = ServicesBinding.instance?.defaultBinaryMessenger
+            .handlePlatformMessage(
+                method,
+                StandardMethodCodec()
+                    .encodeSuccessEnvelope(json.decode(result)),
+                (_) {});
       }
     } catch (e) {
       print(e);

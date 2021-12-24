@@ -1,4 +1,4 @@
-import { MPMethodChannel } from "..";
+import { MPEventChannel, MPMethodChannel } from "..";
 import { Engine } from "../engine";
 import { PluginRegister } from "./plugin_register";
 
@@ -53,6 +53,24 @@ export class PlatformChannelIO {
               },
             })
           );
+        }
+      } else if (instance instanceof MPEventChannel) {
+        if (beInvokeMethod === "listen") {
+          instance.onListen(beInvokeParams, (data) => {
+            this.engine.sendMessage(
+              JSON.stringify({
+                type: "platform_channel",
+                message: {
+                  event: "callbackEventSink",
+                  method: method,
+                  result: JSON.stringify(data),
+                  seqId: seqId,
+                },
+              })
+            );
+          });
+        } else if (beInvokeMethod === "cancel") {
+          instance.onCancel(beInvokeParams);
         }
       }
     } else if (message.event === "callbackResult") {

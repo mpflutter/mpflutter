@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
 import 'package:mpcore/mpkit/mpkit.dart';
@@ -60,9 +63,10 @@ class PluginPage extends StatelessWidget {
         children: [
           _renderBlock(Column(
             children: [
-              _renderHeader('The device name will print to the box.'),
+              _renderHeader(
+                  'The device name will print to the box (MethodChannel).'),
               Container(
-                width: 200,
+                width: 300,
                 height: 100,
                 color: Colors.pink,
                 child: Center(
@@ -83,7 +87,82 @@ class PluginPage extends StatelessWidget {
               SizedBox(height: 16),
             ],
           )),
+          _renderBlock(Column(
+            children: [
+              _renderHeader('The date will update per second (EventChannel).'),
+              _EventChannelSample(),
+              SizedBox(height: 16),
+            ],
+          )),
         ],
+      ),
+    );
+  }
+}
+
+class _EventChannelSample extends StatefulWidget {
+  const _EventChannelSample({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_EventChannelSample> createState() => _EventChannelSampleState();
+}
+
+class _EventChannelSampleState extends State<_EventChannelSample> {
+  final eventChannel = EventChannel('com.mpflutter.templateEventChannel');
+  var value = '';
+  StreamSubscription? streamSubscription;
+
+  @override
+  void dispose() {
+    if (streamSubscription != null) {
+      streamSubscription?.cancel();
+    }
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    startListen();
+  }
+
+  void startListen() {
+    streamSubscription = eventChannel.receiveBroadcastStream().listen((data) {
+      setState(() {
+        value = data;
+      });
+    });
+  }
+
+  void stopListen() {
+    if (streamSubscription != null) {
+      streamSubscription?.cancel();
+      streamSubscription = null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        if (streamSubscription == null) {
+          startListen();
+        } else {
+          stopListen();
+        }
+      },
+      child: Container(
+        width: 300,
+        height: 100,
+        color: Colors.pink,
+        child: Center(
+          child: Text(
+            value,
+            style: TextStyle(color: Colors.white, fontSize: 16),
+          ),
+        ),
       ),
     );
   }
