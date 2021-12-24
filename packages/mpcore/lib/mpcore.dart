@@ -2,6 +2,7 @@ library mpcore;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
@@ -23,6 +24,7 @@ export './wechat_miniprogram/wechat_miniprogram.dart';
 part 'document.dart';
 part 'plugin.dart';
 part 'components/coord.dart';
+part 'platform_channel/platform_channel_io.dart';
 part './components/absorb_pointer.dart';
 part './components/custom_scroll_view.dart';
 part './components/gesture_detector.dart';
@@ -140,61 +142,7 @@ class MPCore {
 
   void injectMethodChannelHandler() {
     ui.pluginMessageCallHandler = (method, data, callback) async {
-      final uint8Data = data?.buffer.asUint8List();
-      final base64Data = uint8Data != null ? base64.encode(uint8Data) : null;
-      if (await mpjs.context
-          .hasProperty('mp_core_methodChannelHandlerWebOnly')) {
-        if (data != null) {
-          final methodMessage = StandardMethodCodec().decodeMethodCall(data);
-          void Function(dynamic data)? eventSink;
-          if (methodMessage.method == 'listen') {
-            eventSink = (data) {
-              ServicesBinding.instance?.defaultBinaryMessenger
-                  .handlePlatformMessage(
-                      method,
-                      StandardMethodCodec()
-                          .encodeSuccessEnvelope(json.decode(data)),
-                      null);
-            };
-          }
-          await mpjs.context.callMethod('mp_core_methodChannelHandlerWebOnly', [
-            method,
-            methodMessage.method,
-            methodMessage.arguments,
-            (response) {
-              if (callback != null && response is String) {
-                if (response == 'NOTIMPLEMENTED' ||
-                    response.startsWith('ERROR:')) {
-                  callback(
-                    StandardMethodCodec().encodeErrorEnvelope(
-                      code: response,
-                      message: response,
-                    ),
-                  );
-                } else {
-                  callback(
-                    StandardMethodCodec()
-                        .encodeSuccessEnvelope(json.decode(response)),
-                  );
-                }
-              }
-            },
-            eventSink,
-          ]);
-        } else {
-          callback?.call(null);
-        }
-      } else {
-        await mpjs.context.callMethod('mp_core_methodChannelHandler', [
-          method,
-          base64Data,
-          (response) {
-            if (callback != null && response is String) {
-              callback(base64.decode(response).buffer.asByteData());
-            }
-          }
-        ]);
-      }
+      _PlatformChannelIO.pluginMessageCallHandler(method, data, callback);
     };
   }
 

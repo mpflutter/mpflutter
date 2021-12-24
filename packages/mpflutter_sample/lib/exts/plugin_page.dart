@@ -4,6 +4,19 @@ import 'package:mpcore/mpkit/mpkit.dart';
 import 'package:mpflutter_plugin_template/mpflutter_plugin_template.dart';
 
 class PluginPage extends StatelessWidget {
+  static bool methodChannelHandlerSetuped = false;
+
+  static void setupMethodChannelHandler() {
+    if (methodChannelHandlerSetuped) return;
+    methodChannelHandlerSetuped = true;
+    TemplatePlugin.methodChannel.setMethodCallHandler((call) async {
+      if (call.method == 'getCallerName') {
+        return 'Flutter';
+      }
+      throw 'NOT IMPLEMENTED';
+    });
+  }
+
   Widget _renderBlock(Widget child) {
     return Padding(
       padding: EdgeInsets.all(12),
@@ -39,6 +52,7 @@ class PluginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    setupMethodChannelHandler();
     return MPScaffold(
       name: 'Plugin',
       backgroundColor: Color.fromARGB(255, 236, 236, 236),
@@ -46,48 +60,24 @@ class PluginPage extends StatelessWidget {
         children: [
           _renderBlock(Column(
             children: [
-              _renderHeader('Tap to print the "Hello, World!" on console.'),
-              GestureDetector(
-                onTap: () {
-                  TemplatePlugin.sayHello();
-                },
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.pink,
-                ),
-              ),
-              SizedBox(height: 16),
-            ],
-          )),
-          _renderBlock(Column(
-            children: [
-              _renderHeader('Tap to alert the value.'),
-              GestureDetector(
-                onTap: () async {
-                  final value = await TemplatePlugin.getHello();
-                  MPWebDialogs.alert(message: value);
-                },
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.pink,
-                ),
-              ),
-              SizedBox(height: 16),
-            ],
-          )),
-          _renderBlock(Column(
-            children: [
-              _renderHeader('Tap to listen event channel stream.'),
-              GestureDetector(
-                onTap: () async {
-                  TemplatePlugin.installEventListener();
-                },
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  color: Colors.pink,
+              _renderHeader('The device name will print to the box.'),
+              Container(
+                width: 200,
+                height: 100,
+                color: Colors.pink,
+                child: Center(
+                  child: FutureBuilder(
+                    future: (() async {
+                      return TemplatePlugin.getDeivceName();
+                    })(),
+                    builder: (context, state) {
+                      if (!state.hasData) return Container();
+                      return Text(
+                        state.data as String,
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      );
+                    },
+                  ),
                 ),
               ),
               SizedBox(height: 16),

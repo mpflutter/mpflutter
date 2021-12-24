@@ -11,7 +11,7 @@ import { MPPlatformView } from "./components/mpkit/platform_view";
 import { MPScaffold } from "./components/mpkit/scaffold";
 import { createDebugger, Debugger } from "./debugger/debugger";
 import { MPEnv, PlatformType } from "./env";
-import { MethodChannelHandler } from "./mpjs/method_channel_handler";
+import { PlatformChannelIO } from "./platform_channel/platform_channel_io";
 import { MPJS } from "./mpjs/mpjs";
 import { Page } from "./page";
 import { Router } from "./router";
@@ -33,11 +33,12 @@ export class Engine {
   router?: Router;
   windowInfo = new WindowInfo(this);
   pageMode: boolean = false;
+  platformChannelIO: PlatformChannelIO;
 
   constructor() {
     this.componentFactory = new ComponentFactory(this);
     this.drawable = new MPDrawable(this);
-    MethodChannelHandler.installHandler();
+    this.platformChannelIO = new PlatformChannelIO(this);
   }
 
   public static codeBlockWithCodePath(codePath: string): Promise<() => void> {
@@ -178,6 +179,8 @@ export class Engine {
       TextMeasurer.didReceivedDoMeasureData(this, decodedMessage.message);
     } else if (decodedMessage.type === "platform_view") {
       this.didReceivedPlatformView(decodedMessage.message);
+    } else if (decodedMessage.type === "platform_channel") {
+      this.platformChannelIO.didReceivedPlatformChannel(decodedMessage.message);
     }
   }
 
