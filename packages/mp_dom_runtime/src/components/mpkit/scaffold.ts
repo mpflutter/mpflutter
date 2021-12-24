@@ -90,6 +90,7 @@ export class MPScaffold extends ComponentView {
       };
       setDOMStyle(floatingBody.htmlElement, {
         position: "fixed",
+        zIndex: "9999",
       });
     }
     this.readdSubviews();
