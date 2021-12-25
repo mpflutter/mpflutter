@@ -2,18 +2,27 @@ declare var getCurrentPages: any;
 declare var require: any;
 
 import { Engine } from "./engine";
-import { MPEnv, PlatformType } from "./env";
+import { MPEnv } from "./env";
 import { Page } from "./page";
 import { Router } from "./router";
 import { TextMeasurer } from "./text_measurer";
-import EventEmitter from "eventemitter3";
+
+let usingComponentsConfig = {};
+try {
+  const indexJSON = require('mp-custom-components');
+  if (indexJSON.usingComponents) {
+    usingComponentsConfig = indexJSON.usingComponents;
+  }
+} catch (error) {
+  console.error(error);
+}
 
 const kboneConfig = {
   router: {},
   runtime: {
     subpackagesMap: {},
     tabBarMap: {},
-    usingComponents: {},
+    usingComponents: usingComponentsConfig,
   },
   pages: {
     index: {},
