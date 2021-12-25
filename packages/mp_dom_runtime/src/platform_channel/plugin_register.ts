@@ -1,3 +1,5 @@
+import { ComponentFactory } from "../components/component_factory";
+import { MPPlatformView } from "../components/mpkit/platform_view";
 import { MPMethodChannel } from "./mp_method_channel";
 
 export class PluginRegister {
@@ -5,5 +7,9 @@ export class PluginRegister {
 
   static registerChannel(name: string, clazz: typeof MPMethodChannel) {
     this.registedChannels[name] = clazz;
+  }
+
+  static registerPlatformView(name: string, clazz: typeof MPPlatformView) {
+    ComponentFactory.components[name] = clazz;
   }
 }

@@ -94,6 +94,13 @@ class PluginPage extends StatelessWidget {
               SizedBox(height: 16),
             ],
           )),
+          _renderBlock(Column(
+            children: [
+              _renderHeader('The foo view with text (PlatformView)'),
+              _PlatformViewSample(),
+              SizedBox(height: 16),
+            ],
+          )),
         ],
       ),
     );
@@ -162,6 +169,42 @@ class _EventChannelSampleState extends State<_EventChannelSample> {
             value,
             style: TextStyle(color: Colors.white, fontSize: 16),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PlatformViewSample extends StatefulWidget {
+  const _PlatformViewSample({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_PlatformViewSample> createState() => _PlatformViewSampleState();
+}
+
+class _PlatformViewSampleState extends State<_PlatformViewSample> {
+  String text = 'Hello, Foo.';
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(seconds: 5)).then((value) {
+      setState(() {
+        text = 'Foo changed.';
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 300,
+      height: 100,
+      child: Center(
+        child: TemplateFooView(
+          text: text,
         ),
       ),
     );
