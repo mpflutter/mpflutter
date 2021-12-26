@@ -55,10 +55,10 @@ packages:
     description:
       path: dio
       ref: HEAD
-      resolved-ref: "2d4d154e182b859f9c2ccad3357d1755f493516d"
+      resolved-ref: "5c9cd36eebc848e5e31199a253123d849732ebf6"
       url: "https://github.com/mpflutter-plugins/dio"
     source: git
-    version: "4.0.0"
+    version: "4.0.1"
   ffi:
     dependency: transitive
     description:
@@ -150,7 +150,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "14b4d5cbc6a590d0f6ca6b0270e181f99dcb39dc"
+      resolved-ref: eeeadc736852ceac8a6bb11443c73244cd17aff2
       url: "https://github.com/mpflutter/mpflutter_plugin_template"
     source: git
     version: "0.0.1"
@@ -160,7 +160,7 @@ packages:
       name: path
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.8.0"
+    version: "1.8.1"
   pedantic:
     dependency: transitive
     description:
@@ -210,10 +210,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "22737b7c73a6784cc22def957987635cc061725d"
+      resolved-ref: a6129b36072289774b49c5fa0ab0495265f0daa7
       url: "https://github.com/mpflutter-plugins/universal_miniprogram_api"
     source: git
-    version: "0.0.2"
+    version: "0.0.3"
   usage:
     dependency: transitive
     description:
@@ -248,6 +248,6 @@ packages:
       name: win32
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.3.1"
+    version: "2.3.3"
 sdks:
   dart: ">=2.14.0 <3.0.0"
