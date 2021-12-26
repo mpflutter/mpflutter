@@ -51,7 +51,7 @@ export class MPJS {
     }
   }
 
-  callMethod(
+  async callMethod(
     message: MPJSMessage,
     callback: (result: any) => void,
     funcCallback: (funcId: string, args: any[]) => void
@@ -60,10 +60,13 @@ export class MPJS {
     const callingObject = this.getCallee(params.objectHandler, params.callChain);
     if (typeof callingObject === "object" || typeof callingObject === "function") {
       try {
-        const result = (callingObject[params.method] as Function).apply(
+        let result = (callingObject[params.method] as Function).apply(
           callingObject,
           params.args?.map((it) => this.wrapArgument(it, funcCallback))
         );
+        if (result instanceof Promise) {
+          result = await result;
+        }
         callback(this.wrapResult(result));
       } catch (error) {
         console.error(error);
@@ -71,10 +74,14 @@ export class MPJS {
     }
   }
 
-  getValue(message: MPJSMessage, callback: (result: any) => void) {
+  async getValue(message: MPJSMessage, callback: (result: any) => void) {
     const params = message.params as MPJSGetValueParams;
     const callingObject = this.getCallee(params.objectHandler, params.callChain);
-    callback(this.wrapResult(callingObject[params.key]));
+    let result = callingObject[params.key];
+    if (result instanceof Promise) {
+      result = await result;
+    }
+    callback(this.wrapResult(result));
   }
 
   setValue(message: MPJSMessage, callback: (result: any) => void) {
