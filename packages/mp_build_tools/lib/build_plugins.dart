@@ -89,6 +89,7 @@ void buildWeappPlugin() {
     String basename = path.basename(element.path).replaceFirst('.json', '');
     String basepath = path.dirname(element.path);
     List props = [];
+    List events = [];
     File jsFile = File(path.join(basepath, basename + '.js'));
     File jsonFile = File(path.join(basepath, basename + '.json'));
     File wxmlFile = File(path.join(basepath, basename + '.wxml'));
@@ -102,6 +103,9 @@ void buildWeappPlugin() {
       componentDefines[basename] = jsonData;
       if (jsonData['props'] is List) {
         props.addAll(jsonData['props'] as List);
+      }
+      if (jsonData['events'] is List) {
+        events.addAll(jsonData['events'] as List);
       }
       jsonFile.copySync(path.join('weapp', 'kbone', 'miniprogram-element',
           'custom-component', 'components', basename + '.json'));
@@ -119,6 +123,8 @@ void buildWeappPlugin() {
     componentWXML.writeln('''
 <${basename} wx:if="{{kboneCustomComponentName === '${basename}'}}" id="{{id}}" class="{{className}}" style="{{style}}" ${props.map((e) {
       return '$e="{{$e}}"';
+    }).join(' ')} ${events.map((e) {
+      return 'bind$e="on$e"';
     }).join(' ')}>
     <block wx:if="{{hasSlots}}">
         <element wx:for="{{slots}}" wx:key="nodeId" id="{{item.id}}" class="{{item.className}}" style="{{item.style}}" slot="{{item.slot}}" data-private-node-id="{{item.nodeId}}" data-private-page-id="{{item.pageId}}" generic:custom-component="custom-component"></element>
