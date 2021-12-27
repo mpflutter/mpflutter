@@ -44,6 +44,7 @@ String _buildDartJS() {
       'bundle',
     ],
     runInShell: true,
+    environment: {'PUB_HOSTED_URL': 'https://pub.mpflutter.com'},
   );
   if (Directory('./build/flutter_assets').existsSync()) {
     Directory('./build/flutter_assets').renameSync('./build/assets');

@@ -1,54 +1,168 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path/path.dart' as path;
 
 import 'i18n.dart';
 
 main(List<String> args) {
   if (!File('.packages').existsSync()) return;
-  final stringBuffers = <String, StringBuffer>{
-    'weapp': StringBuffer(),
-    'swanapp': StringBuffer(),
-    'web': StringBuffer(),
-  };
   final lines = File('./.packages').readAsLinesSync();
   for (final line in lines) {
     final pkgPath = line
         .replaceFirst(RegExp('.*?:'), '')
         .replaceFirst('file://', '')
         .replaceFirst('/lib/', '');
-    if (File('$pkgPath/package.json').existsSync()) {
+    if (File('$pkgPath/package.json').existsSync() &&
+        (Directory('$pkgPath/lib/web').existsSync() ||
+            Directory('$pkgPath/lib/weapp').existsSync() ||
+            Directory('$pkgPath/lib/swanapp').existsSync())) {
       runNpmBuild(pkgPath);
-      if (File('$pkgPath/dist/weapp/bundle.min.js').existsSync()) {
-        stringBuffers['weapp']!.writeln(
-            File('$pkgPath/dist/weapp/bundle.min.js').readAsStringSync());
-      }
-      if (File('$pkgPath/dist/web/bundle.min.js').existsSync()) {
-        stringBuffers['web']!.writeln(
-            File('$pkgPath/dist/web/bundle.min.js').readAsStringSync());
-      }
-      if (File('$pkgPath/dist/swanapp/bundle.min.js').existsSync()) {
-        stringBuffers['swanapp']!.writeln(
-            File('$pkgPath/dist/swanapp/bundle.min.js').readAsStringSync());
-      }
+    }
+  }
+  buildWebPlugin();
+  buildWeappPlugin();
+  buildSwanappPlugin();
+}
+
+void buildWebPlugin() {
+  final stringBuffer = StringBuffer();
+  final lines = File('./.packages').readAsLinesSync();
+  for (final line in lines) {
+    final pkgPath = line
+        .replaceFirst(RegExp('.*?:'), '')
+        .replaceFirst('file://', '')
+        .replaceFirst('/lib/', '');
+    if (File('$pkgPath/dist/web/bundle.min.js').existsSync()) {
+      stringBuffer
+          .writeln(File('$pkgPath/dist/web/bundle.min.js').readAsStringSync());
     }
   }
   try {
     File('web/plugins.min.js').writeAsStringSync(
-        '''var MPEnv = window.MPDOM.MPEnv;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = {env: MPEnv,registerPlugin: function(name, target) {MPEnv.platformGlobal()[name] = target;},registerPlatformView: function(name, target){MPComponentFactory.components[name] = target;}};''' +
-            stringBuffers['web']!.toString() +
-            htmlTemplateCode());
+        '''var MPEnv = window.MPDOM.MPEnv;var MPMethodChannel = window.MPDOM.MPMethodChannel;var MPEventChannel = window.MPDOM.MPEventChannel;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = window.MPDOM.PluginRegister;''' +
+            stringBuffer.toString());
   } catch (e) {}
+}
+
+void buildWeappPlugin() {
+  final stringBuffer = StringBuffer();
+  final lines = File('./.packages').readAsLinesSync();
+  final components = <File>[];
+  for (final line in lines) {
+    final pkgPath = line
+        .replaceFirst(RegExp('.*?:'), '')
+        .replaceFirst('file://', '')
+        .replaceFirst('/lib/', '');
+    if (File('$pkgPath/dist/weapp/bundle.min.js').existsSync()) {
+      stringBuffer.writeln(
+          File('$pkgPath/dist/weapp/bundle.min.js').readAsStringSync());
+    }
+    if (Directory('$pkgPath/lib/weapp/components').existsSync()) {
+      // contains wechat components
+      Directory('$pkgPath/lib/weapp/components').listSync().forEach((element) {
+        if (element.path.endsWith(".json")) {
+          components.add(File(element.path));
+        }
+      });
+    }
+  }
   try {
     File('weapp/plugins.min.js').writeAsStringSync(
-        '''var MPEnv = require("./mpdom.min").MPEnv;var MPPlatformView = require("./mpdom.min").MPPlatformView;var MPComponentFactory = require("./mpdom.min").ComponentFactory;var pluginRegisterer = {env: MPEnv,registerPlugin: function(name, target) {MPEnv.platformGlobal()[name] = target;},registerPlatformView: function(name, target){MPComponentFactory.components[name] = target;}};''' +
-            stringBuffers['weapp']!.toString());
-    File('weapp/plugins.wxml').writeAsStringSync(weappTemplateCode());
+        '''var MPEnv = require("./mpdom.min").MPEnv;var MPMethodChannel = require("./mpdom.min").MPMethodChannel;var MPEventChannel = require("./mpdom.min").MPEventChannel;var MPPlatformView = require("./mpdom.min").MPPlatformView;var MPComponentFactory = require("./mpdom.min").ComponentFactory;var pluginRegisterer = require("./mpdom.min").PluginRegister;''' +
+            stringBuffer.toString());
   } catch (e) {}
+
+  final componentJSON = {
+    'component': true,
+    'usingComponents': {},
+  };
+  final componentDefines = {};
+  final componentWXML = StringBuffer();
+  components.forEach((element) {
+    if (!Directory(path.join('weapp', 'kbone', 'miniprogram-element',
+            'custom-component', 'components'))
+        .existsSync()) {
+      Directory(path.join('weapp', 'kbone', 'miniprogram-element',
+              'custom-component', 'components'))
+          .createSync();
+    }
+    String basename = path.basename(element.path).replaceFirst('.json', '');
+    String basepath = path.dirname(element.path);
+    List props = [];
+    List events = [];
+    File jsFile = File(path.join(basepath, basename + '.js'));
+    File jsonFile = File(path.join(basepath, basename + '.json'));
+    File wxmlFile = File(path.join(basepath, basename + '.wxml'));
+    File wxssFile = File(path.join(basepath, basename + '.wxss'));
+    if (jsFile.existsSync()) {
+      jsFile.copySync(path.join('weapp', 'kbone', 'miniprogram-element',
+          'custom-component', 'components', basename + '.js'));
+    }
+    if (jsonFile.existsSync()) {
+      final jsonData = json.decode(jsonFile.readAsStringSync());
+      componentDefines[basename] = jsonData;
+      if (jsonData['props'] is List) {
+        props.addAll(jsonData['props'] as List);
+      }
+      if (jsonData['events'] is List) {
+        events.addAll(jsonData['events'] as List);
+      }
+      jsonFile.copySync(path.join('weapp', 'kbone', 'miniprogram-element',
+          'custom-component', 'components', basename + '.json'));
+    }
+    if (wxmlFile.existsSync()) {
+      wxmlFile.copySync(path.join('weapp', 'kbone', 'miniprogram-element',
+          'custom-component', 'components', basename + '.wxml'));
+    }
+    if (wxssFile.existsSync()) {
+      wxssFile.copySync(path.join('weapp', 'kbone', 'miniprogram-element',
+          'custom-component', 'components', basename + '.wxss'));
+    }
+    (componentJSON['usingComponents'] as Map)[basename] =
+        'components/${basename}';
+    componentWXML.writeln('''
+<${basename} wx:if="{{kboneCustomComponentName === '${basename}'}}" id="{{id}}" class="{{className}}" style="{{style}}" ${props.map((e) {
+      return '$e="{{$e}}"';
+    }).join(' ')} ${events.map((e) {
+      return 'bind$e="on$e"';
+    }).join(' ')}>
+    <block wx:if="{{hasSlots}}">
+        <element wx:for="{{slots}}" wx:key="nodeId" id="{{item.id}}" class="{{item.className}}" style="{{item.style}}" slot="{{item.slot}}" data-private-node-id="{{item.nodeId}}" data-private-page-id="{{item.pageId}}" generic:custom-component="custom-component"></element>
+    </block>
+    <slot/>
+</${basename}>
+    ''');
+  });
+  File(path.join('weapp', 'mp-custom-components.js')).writeAsStringSync('''
+module.exports = {
+  "usingComponents": ${json.encode(componentDefines)}
+};
+  ''');
+  File(path.join('weapp', 'kbone', 'miniprogram-element', 'custom-component',
+          'index.json'))
+      .writeAsStringSync(json.encode(componentJSON));
+  File(path.join('weapp', 'kbone', 'miniprogram-element', 'custom-component',
+          'index.wxml'))
+      .writeAsStringSync(componentWXML.toString());
+}
+
+void buildSwanappPlugin() {
+  final stringBuffer = StringBuffer();
+  final lines = File('./.packages').readAsLinesSync();
+  for (final line in lines) {
+    final pkgPath = line
+        .replaceFirst(RegExp('.*?:'), '')
+        .replaceFirst('file://', '')
+        .replaceFirst('/lib/', '');
+    if (File('$pkgPath/dist/swanapp/bundle.min.js').existsSync()) {
+      stringBuffer.writeln(
+          File('$pkgPath/dist/swanapp/bundle.min.js').readAsStringSync());
+    }
+  }
   try {
     File('swanapp/plugins.min.js').writeAsStringSync(
-        '''var MPEnv = require("./mpdom.min").MPEnv;var MPPlatformView = require("./mpdom.min").MPPlatformView;var MPComponentFactory = require("./mpdom.min").ComponentFactory;var pluginRegisterer = {env: MPEnv,registerPlugin: function(name, target) {MPEnv.platformGlobal()[name] = target;},registerPlatformView: function(name, target){MPComponentFactory.components[name] = target;}};''' +
-            stringBuffers['swanapp']!.toString());
-    File('swanapp/plugins.swan').writeAsStringSync(swanappTemplateCode());
+        '''var MPEnv = window.MPDOM.MPEnv;var MPMethodChannel = window.MPDOM.MPMethodChannel;var MPEventChannel = window.MPDOM.MPEventChannel;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = window.MPDOM.PluginRegister;''' +
+            stringBuffer.toString());
   } catch (e) {}
 }
 
@@ -75,76 +189,6 @@ void runNpmBuild(String pkgPath) {
     print(I18n.needNodeEnv());
     throw I18n.executeFail('npm run build');
   }
-}
-
-String htmlTemplateCode() {
-  var code = '';
-  final stringBuffer = StringBuffer();
-  final lines = File('./.packages').readAsLinesSync();
-  for (final line in lines) {
-    final pkgPath = line
-        .replaceFirst(RegExp('.*?:'), '')
-        .replaceFirst('file://', '')
-        .replaceFirst('/lib/', '');
-    if (File('$pkgPath/dist/index.min.js').existsSync()) {
-      final files = fetchFilesWithSubfix(Directory(pkgPath + '/lib'), '.html');
-      files.forEach((file) {
-        stringBuffer.write(File(file).readAsStringSync());
-      });
-    }
-  }
-  if (stringBuffer.isNotEmpty) {
-    code = '''(function() {
-  var child = document.createElement('div');
-  child.innerHTML = atob('${base64.encode(utf8.encode(stringBuffer.toString()))}');
-  document.body.appendChild(child);
-})();''';
-  }
-  return code;
-}
-
-String weappTemplateCode() {
-  var code = '';
-  final stringBuffer = StringBuffer();
-  final lines = File('./.packages').readAsLinesSync();
-  for (final line in lines) {
-    final pkgPath = line
-        .replaceFirst(RegExp('.*?:'), '')
-        .replaceFirst('file://', '')
-        .replaceFirst('/lib/', '');
-    if (File('$pkgPath/dist/index.min.js').existsSync()) {
-      final files = fetchFilesWithSubfix(Directory(pkgPath + '/lib'), '.wxml');
-      files.forEach((file) {
-        stringBuffer.write(File(file).readAsStringSync());
-      });
-    }
-  }
-  if (stringBuffer.isNotEmpty) {
-    code = stringBuffer.toString();
-  }
-  return code;
-}
-
-String swanappTemplateCode() {
-  var code = '';
-  final stringBuffer = StringBuffer();
-  final lines = File('./.packages').readAsLinesSync();
-  for (final line in lines) {
-    final pkgPath = line
-        .replaceFirst(RegExp('.*?:'), '')
-        .replaceFirst('file://', '')
-        .replaceFirst('/lib/', '');
-    if (File('$pkgPath/dist/index.min.js').existsSync()) {
-      final files = fetchFilesWithSubfix(Directory(pkgPath + '/lib'), '.swan');
-      files.forEach((file) {
-        stringBuffer.write(File(file).readAsStringSync());
-      });
-    }
-  }
-  if (stringBuffer.isNotEmpty) {
-    code = stringBuffer.toString();
-  }
-  return code;
 }
 
 List<String> fetchFilesWithSubfix(Directory dir, String subfix) {

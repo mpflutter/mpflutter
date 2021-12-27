@@ -148,6 +148,8 @@ class MPChannelBase {
         mpjs.JsBridgeInvoker.instance.makeResponse(obj['message']);
       } else if (obj['type'] == 'platform_view') {
         MPChannelBase.onPlatformViewTrigger(obj['message']);
+      } else if (obj['type'] == 'platform_channel') {
+        _PlatformChannelIO.onPlatformChannelTrigger(obj['message']);
       } else if (obj['type'] == 'scroll_view') {
         MPChannelBase.onScrollViewTrigger(obj['message']);
       } else {

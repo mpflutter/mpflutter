@@ -37,15 +37,26 @@ class MPMainTabController extends ChangeNotifier {
   }
 }
 
+enum MPMainTabLocation {
+  top,
+  bottom,
+}
+
 class MPMainTabView extends StatefulWidget {
+  final MPMainTabLocation tabLocation;
   final List<MPMainTabItem> tabs;
   final WidgetBuilder? loadingBuilder;
+  final double tabBarHeight;
+  final Color tabBarColor;
   final Widget Function(BuildContext, int)? tabBarBuilder;
   final MPMainTabController? controller;
 
   MPMainTabView({
     required this.tabs,
+    this.tabLocation = MPMainTabLocation.bottom,
     this.loadingBuilder,
+    this.tabBarHeight = 48,
+    this.tabBarColor = Colors.white,
     this.tabBarBuilder,
     this.controller,
   }) {
@@ -73,13 +84,17 @@ class MPMainTabViewState extends State<MPMainTabView> {
     widget.controller?._state = this;
   }
 
-  Widget renderTabBar(BuildContext context) {
+  PreferredSizeWidget renderTabBar(BuildContext context) {
     if (widget.tabBarBuilder != null) {
-      return widget.tabBarBuilder!(context, currentPage);
+      return _TabBar(
+        widget.tabBarHeight,
+        widget.tabBarBuilder!(context, currentPage),
+        widget.tabBarColor,
+      );
     }
-    return Container(
-      height: 48,
-      child: Row(
+    return _TabBar(
+      widget.tabBarHeight,
+      Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: widget.tabs
             .asMap()
@@ -104,7 +119,7 @@ class MPMainTabViewState extends State<MPMainTabView> {
             .values
             .toList(),
       ),
-      color: Colors.white,
+      widget.tabBarColor,
     );
   }
 
@@ -115,4 +130,24 @@ class MPMainTabViewState extends State<MPMainTabView> {
     }
     return widget.tabs[currentPage].builder(context);
   }
+}
+
+class _TabBar extends StatelessWidget implements PreferredSizeWidget {
+  final double height;
+  final Widget child;
+  final Color tabBarColor;
+
+  _TabBar(this.height, this.child, this.tabBarColor);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: height,
+      child: child,
+      color: tabBarColor,
+    );
+  }
+
+  @override
+  Size get preferredSize => Size.fromHeight(height);
 }

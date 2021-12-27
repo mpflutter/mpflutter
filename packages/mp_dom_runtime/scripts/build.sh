@@ -3,7 +3,7 @@ mkdir dist
 tsc
 cd dist
 browserify index.js --standalone MPDOM > ./mpdom.js
-browserify index.miniprogram.js --standalone MPDOM > ./mpdom.miniprogram.js
+browserify --external "mp-custom-components" index.miniprogram.js --standalone MPDOM > ./mpdom.miniprogram.js
 cd ..
 node scripts/inject_global.js
 

@@ -78,6 +78,7 @@ String _buildDartJS(List<String> args) {
       'bundle',
     ],
     runInShell: true,
+    environment: {'PUB_HOSTED_URL': 'https://pub.mpflutter.com'},
   );
   if (buildBundleResult.exitCode != 0) {
     print(buildBundleResult.stdout);
