@@ -299,7 +299,7 @@ public class WebDialogs {
         }
     }
 
-    static AlertDialog activeHUD;
+    static public AlertDialog activeHUD;
 
     static void showToast(JSONObject message, MPEngine engine) {
         JSONObject params = message.optJSONObject("params");
@@ -320,6 +320,7 @@ public class WebDialogs {
         if (!MPUtils.isNull(icon) && (icon.contentEquals("ToastIcon.loading") || icon.contentEquals("ToastIcon.success") || icon.contentEquals("ToastIcon.error"))) {
             dialog = MPToast.buildHUD(icon, title, engine);
             if (dialog != null) {
+                dialog.setCancelable(false);
                 dialog.show();
                 dialog.getWindow().setLayout(MPUtils.dp2px(120, engine.context), MPUtils.dp2px(120, engine.context));
                 dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

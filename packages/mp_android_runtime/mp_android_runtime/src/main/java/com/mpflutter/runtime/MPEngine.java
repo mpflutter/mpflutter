@@ -98,6 +98,7 @@ public class MPEngine {
         jsContext.set("self", selfObject);
 
         setupJSContextEventChannel(selfObject);
+        setupDeferredLibraryLoader(selfObject);
         MPTimer.setupWithJSContext(jsContext, selfObject);
         MPConsole.setupWithJSContext(jsContext, selfObject);
         MPDeviceInfo.setupWithJSContext(jsContext, selfObject);
@@ -137,6 +138,17 @@ public class MPEngine {
         }));
         jsContext.set("engineScope", engineScope);
         selfObject.set("engineScope", engineScope);
+    }
+
+    void setupDeferredLibraryLoader(JSObject selfObject) {
+        JSFunction func = new JSFunction(jsContext, new JavaCallback() {
+            @Override
+            public Object invoke(JSObject receiver, JSArray args) {
+                return null;
+            }
+        });
+        jsContext.set("dartDeferredLibraryLoader", func);
+        selfObject.set("dartDeferredLibraryLoader", func);
     }
 
     public void sendMessage(Map message) {

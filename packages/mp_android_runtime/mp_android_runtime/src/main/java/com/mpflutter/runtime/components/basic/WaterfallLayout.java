@@ -38,6 +38,14 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
         this.context = context;
     }
 
+    public double scrollX() {
+        return mSumDy;
+    }
+
+    public double scrollY() {
+        return mSumDy;
+    }
+
     public void prepareLayout() {
         if (items == null) return;
         if (isPlain) {

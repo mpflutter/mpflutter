@@ -64,4 +64,15 @@ public class MPActivity extends AppCompatActivity {
         if (engine == null) return;
         engine.router.dispose(mpPage.getViewId());
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mpPage != null) {
+            if (mpPage.shouldInterceptBackPressed()) {
+                mpPage.handleBackPressed();
+                return;
+            }
+        }
+        super.onBackPressed();
+    }
 }

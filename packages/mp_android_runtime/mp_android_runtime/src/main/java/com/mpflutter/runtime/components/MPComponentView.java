@@ -3,6 +3,7 @@ package com.mpflutter.runtime.components;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
@@ -13,6 +14,7 @@ import com.mpflutter.runtime.components.basic.GestureDetector;
 import com.mpflutter.runtime.components.basic.Offstage;
 import com.mpflutter.runtime.components.basic.Visibility;
 import com.mpflutter.runtime.components.mpkit.MPPlatformView;
+import com.mpflutter.runtime.components.mpkit.MPScaffold;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -107,6 +109,23 @@ public class MPComponentView extends FrameLayout {
                 addView(view, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             }
         }
+    }
+
+    public void removeFromSuperview() {
+        if (getParent() != null) {
+            ((ViewGroup)getParent()).removeView(this);
+        }
+    }
+
+    public MPScaffold getScaffold() {
+        ViewParent parent = getParent();
+        while (parent != null) {
+            if (parent != null && parent instanceof MPScaffold) {
+                return (MPScaffold) parent;
+            }
+            parent = parent.getParent();
+        }
+        return null;
     }
 
 }

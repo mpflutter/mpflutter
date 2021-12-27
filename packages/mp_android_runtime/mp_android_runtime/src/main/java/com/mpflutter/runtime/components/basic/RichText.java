@@ -4,13 +4,17 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
+import android.text.method.MovementMethod;
 import android.text.style.AbsoluteSizeSpan;
 import android.text.style.BackgroundColorSpan;
+import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.LineHeightSpan;
 import android.text.style.MetricAffectingSpan;
@@ -18,17 +22,26 @@ import android.text.style.RelativeSizeSpan;
 import android.text.style.StrikethroughSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.util.Size;
 import android.view.Gravity;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.components.mpkit.MPScaffold;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 public class RichText extends MPComponentView {
 
@@ -203,6 +216,13 @@ public class RichText extends MPComponentView {
             if (attributes != null) {
                 String text = attributes.optString("text", "");
                 SpannableStringBuilder spannableString = new SpannableStringBuilder(text);
+                if (!attributes.isNull("onTap_el") && !attributes.isNull("onTap_span")) {
+                    contentView.setClickable(true);
+                    contentView.setMovementMethod(LinkMovementMethod.getInstance());
+                    int onTapEl = attributes.optInt("onTap_el", 0);
+                    int onTapSpan = attributes.optInt("onTap_span", 0);
+                    spannableString.setSpan(new MyClickableSpan(onTapEl, onTapSpan), 0, text.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                }
                 JSONObject style = attributes.optJSONObject("style");
                 if (style != null) {
                     String fontFamily = style.optString("fontFamily", null);
@@ -318,4 +338,36 @@ class MyTypefaceSpan extends MetricAffectingSpan {
         paint.setTypeface(typeface);
     }
 
+}
+
+class MyClickableSpan extends ClickableSpan {
+
+    int onTapEl;
+    int onTapSpan;
+
+    MyClickableSpan(int onTapEl, int onTapSpan) {
+        this.onTapEl = onTapEl;
+        this.onTapSpan = onTapSpan;
+    }
+
+    @Override
+    public void updateDrawState(@NonNull TextPaint ds) {
+        super.updateDrawState(ds);
+        ds.setUnderlineText(false);
+    }
+
+    @Override
+    public void onClick(@NonNull View view) {
+        ViewParent parent = view.getParent();
+        if (parent instanceof MPComponentView) {
+            ((MPComponentView) parent).engine.sendMessage(new HashMap(){{
+                put("type", "rich_text");
+                put("message", new HashMap(){{
+                    put("event", "onTap");
+                    put("target", onTapEl);
+                    put("subTarget", onTapSpan);
+                }});
+            }});
+        }
+    }
 }

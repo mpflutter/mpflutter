@@ -1,6 +1,7 @@
 package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.components.mpkit.MPScaffold;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,12 +23,14 @@ public class CustomScrollView extends MPComponentView {
     RecyclerView contentView;
     CustomScrollViewAdapter contentAdapter;
     CustomScrollViewLayout waterfallLayout;
+    boolean isRoot = false;
 
     public CustomScrollView(@NonNull Context context) {
         super(context);
         waterfallLayout = new CustomScrollViewLayout(context);
         waterfallLayout.isPlain = true;
         contentView = new RecyclerView(context);
+        observeScrollPosition();
         contentAdapter = new CustomScrollViewAdapter();
         contentView.setAdapter(contentAdapter);
         contentView.setLayoutManager(waterfallLayout);
@@ -43,6 +47,28 @@ public class CustomScrollView extends MPComponentView {
         waterfallLayout.clientWidth = (int) w;
         waterfallLayout.clientHeight = (int)h;
         waterfallLayout.prepareLayout();
+    }
+
+    void observeScrollPosition() {
+        contentView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+                if (isRoot) {
+                    double scrollY = waterfallLayout.scrollY();
+                    double maxY = waterfallLayout.maxVLengthPx - recyclerView.getHeight();
+                    MPScaffold scaffold = getScaffold();
+                    if (scrollY >= maxY) {
+                        if (scaffold != null) {
+                            scaffold.onReachBottom();
+                        }
+                    }
+                    if (scaffold != null) {
+                        scaffold.onPageScroll(MPUtils.px2dp(scrollY, getContext()));
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -101,6 +127,7 @@ public class CustomScrollView extends MPComponentView {
             waterfallLayout.isHorizontalScroll = scrollDirection.contentEquals("Axis.horizontal");
         }
         waterfallLayout.prepareLayout();
+        isRoot = attributes.optBoolean("isRoot", false);
     }
 }
 

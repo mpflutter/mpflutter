@@ -3,16 +3,21 @@ package com.mpflutter.runtime;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Size;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.components.basic.Overlay;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class MPPage implements MPDataReceiver {
@@ -28,6 +33,7 @@ public class MPPage implements MPDataReceiver {
     private String initialRoute;
     private Map initialParams;
     private MPComponentView scaffoldView;
+    private List<MPComponentView> overlaysView = new ArrayList();
 
     public MPPage(FrameLayout rootView, MPEngine engine, String initialRoute, Map initialParams) {
         this.rootView = rootView;
@@ -74,5 +80,49 @@ public class MPPage implements MPDataReceiver {
             rootView.addView(scaffoldView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
         }
         this.scaffoldView = scaffoldView;
+        JSONArray overlays = message.optJSONArray("overlays");
+        if (overlays != null) {
+            setOverlays(overlays);
+        }
+    }
+
+    void setOverlays(JSONArray overlays) {
+        if (!overlaysView.isEmpty()) {
+            for (int i = 0; i < overlaysView.size(); i++) {
+                View view = overlaysView.get(i);
+                if (view.getParent() != null) {
+                    ((ViewGroup)view.getParent()).removeView(view);
+                }
+            }
+            overlaysView.clear();
+        }
+        for (int i = 0; i < overlays.length(); i++) {
+            JSONObject obj = overlays.optJSONObject(i);
+            if (obj == null) continue;
+            MPComponentView overlayView = engine.componentFactory.create(obj);
+            if (overlayView != null) {
+                overlaysView.add(overlayView);
+                rootView.addView(overlayView);
+            }
+        }
+    }
+
+    public boolean shouldInterceptBackPressed() {
+        if(!overlaysView.isEmpty()) {
+            View view = overlaysView.get(0);
+            if (view instanceof Overlay) {
+                return ((Overlay) view).onBackgroundTap;
+            }
+        }
+        return false;
+    }
+
+    public void handleBackPressed() {
+        if(!overlaysView.isEmpty()) {
+            View view = overlaysView.get(0);
+            if (view instanceof Overlay) {
+                ((Overlay) view).onBackPressed();
+            }
+        }
     }
 }

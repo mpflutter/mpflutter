@@ -14,6 +14,8 @@ import com.mpflutter.runtime.components.MPUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class MPScaffold extends MPComponentView {
 
     MPComponentView appBar;
@@ -74,15 +76,19 @@ public class MPScaffold extends MPComponentView {
     private void reAddSubviews() {
         removeAllViews();
         if (this.body != null) {
+            this.body.removeFromSuperview();
             addView(this.body, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
         if (this.appBar != null) {
+            this.appBar.removeFromSuperview();
             addView(this.appBar, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
         if (this.bottomBar != null) {
+            this.bottomBar.removeFromSuperview();
             addView(this.bottomBar, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
         if (this.floatingBody != null) {
+            this.floatingBody.removeFromSuperview();
             addView(this.floatingBody, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
     }
@@ -104,6 +110,27 @@ public class MPScaffold extends MPComponentView {
                 actionBar.setTitle("");
             }
         }
+    }
+
+    public void onReachBottom() {
+        engine.sendMessage(new HashMap(){{
+            put("type", "scaffold");
+            put("message", new HashMap(){{
+                put("event", "onReachBottom");
+                put("target", hashCode);
+            }});
+        }});
+    }
+
+    public void onPageScroll(double scrollTop) {
+        engine.sendMessage(new HashMap(){{
+            put("type", "scaffold");
+            put("message", new HashMap(){{
+                put("event", "onPageScroll");
+                put("target", hashCode);
+                put("scrollTop", scrollTop);
+            }});
+        }});
     }
 
     private AppCompatActivity activity() {

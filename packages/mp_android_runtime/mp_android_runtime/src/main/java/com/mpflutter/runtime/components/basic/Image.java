@@ -1,6 +1,7 @@
 package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
+import android.util.Base64;
 
 import androidx.annotation.NonNull;
 
@@ -19,16 +20,7 @@ public class Image extends MPComponentView {
     public Image(@NonNull Context context) {
         super(context);
         contentView = new SimpleDraweeView(context);
-    }
-
-    @Override
-    public void updateLayout() {
-        super.updateLayout();
-        if (constraints == null) return;
-        double w = constraints.optDouble("w");
-        double h = constraints.optDouble("h");
-        removeView(contentView);
-        addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
+        addContentView(contentView);
     }
 
     @Override
@@ -50,6 +42,16 @@ public class Image extends MPComponentView {
             if (engine.debugger != null) {
                 String assetUrl = "http://" + engine.debugger.serverAddr + "/assets/" + assetName;
                 contentView.setImageURI(assetUrl);
+            }
+            else if (engine.mpkReader != null) {
+                byte[] data = engine.mpkReader.dataWithFilePath(assetName);
+                if (data != null) {
+                    String dataUri = "data:image;base64," + Base64.encodeToString(data, 0);
+                    contentView.setImageURI(dataUri);
+                }
+                else {
+                    contentView.setImageURI("");
+                }
             }
 //            else {
 //                if (sImageLoader != NULL) {

@@ -40,16 +40,7 @@ public class MPIcon extends MPComponentView {
                 }
             }
         };
-    }
-
-    @Override
-    public void updateLayout() {
-        super.updateLayout();
-        if (constraints == null) return;
-        double w = constraints.optDouble("w");
-        double h = constraints.optDouble("h");
-        removeView(contentView);
-        addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
+        addContentView(contentView);
     }
 
     @Override
