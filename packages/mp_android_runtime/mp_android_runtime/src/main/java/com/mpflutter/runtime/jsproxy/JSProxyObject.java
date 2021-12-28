@@ -98,12 +98,12 @@ public class JSProxyObject {
 
     public JSProxyObject optObject(String key) {
         if (jsonObject != null) {
-            if (jsonObject.isNull(key)) {
-                return null;
+            Object obj = jsonObject.opt(key);
+            if (obj instanceof JSONObject) {
+                return new JSProxyObject((JSONObject) obj);
             }
-            JSONObject obj = jsonObject.optJSONObject(key);
-            if (obj != null) {
-                return new JSProxyObject(obj);
+            else if (obj instanceof JSProxyObject) {
+                return (JSProxyObject) obj;
             }
         }
         else if (qjsObject != null) {
@@ -117,12 +117,12 @@ public class JSProxyObject {
 
     public JSProxyArray optArray(String key) {
         if (jsonObject != null) {
-            if (jsonObject.isNull(key)) {
-                return null;
+            Object obj = jsonObject.opt(key);
+            if (obj instanceof JSONArray) {
+                return new JSProxyArray((JSONArray) obj);
             }
-            JSONArray obj = jsonObject.optJSONArray(key);
-            if (obj != null) {
-                return new JSProxyArray(obj);
+            else if (obj instanceof JSProxyArray) {
+                return (JSProxyArray) obj;
             }
         }
         else if (qjsObject != null) {
@@ -200,8 +200,8 @@ public class JSProxyObject {
             return jsonObject.isNull(key);
         }
         else if (qjsObject != null) {
-            JSValue.TYPE type = qjsObject.getType(key);
-            return !(type != JSValue.TYPE.UNDEFINED || type != JSValue.TYPE.NULL);
+            Object v = valueFromQjsObject(key);
+            return v == null;
         }
         else {
             return false;

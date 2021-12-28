@@ -46,8 +46,8 @@ public class MPWebView extends MPPlatformView {
         if (method.contentEquals("reload")) {
             contentView.reload();
         }
-        else if (method.contentEquals("loadUrl") && params instanceof JSONObject) {
-            String url = ((JSONObject) params).optString("url", null);
+        else if (method.contentEquals("loadUrl") && params instanceof JSProxyObject) {
+            String url = ((JSProxyObject) params).optString("url", null);
             if (!MPUtils.isNull(url)) {
                 contentView.loadUrl(url);
             }

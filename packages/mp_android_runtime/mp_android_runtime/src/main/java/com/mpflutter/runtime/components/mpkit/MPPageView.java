@@ -16,9 +16,6 @@ import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
 import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 
 public class MPPageView extends MPPlatformView {
@@ -83,19 +80,19 @@ public class MPPageView extends MPPlatformView {
 
     @Override
     public void onMethodCall(String method, Object params, MPPlatformViewCallback callback) {
-        if (method.contentEquals("animateToPage") && params instanceof JSONObject) {
-            int page = ((JSONObject) params).optInt("page", -1);
+        if (method.contentEquals("animateToPage") && params instanceof JSProxyObject) {
+            int page = ((JSProxyObject) params).optInt("page", -1);
             if (page >= 0) {
                 contentView.setCurrentItem(page, true);
             }
         }
-        else if (method.contentEquals("jumpToPage") && params instanceof JSONObject) {
-            int page = ((JSONObject) params).optInt("page", -1);
+        else if (method.contentEquals("jumpToPage") && params instanceof JSProxyObject) {
+            int page = ((JSProxyObject) params).optInt("page", -1);
             if (page >= 0) {
                 contentView.setCurrentItem(page, false);
             }
         }
-        else if (method.contentEquals("nextPage") && params instanceof JSONObject) {
+        else if (method.contentEquals("nextPage") && params instanceof JSProxyObject) {
             int currentPage = contentView.getCurrentItem();
             if (currentPage + 1 < contentAdapter.getCount()) {
                 contentView.setCurrentItem(currentPage + 1, true);
@@ -104,7 +101,7 @@ public class MPPageView extends MPPlatformView {
                 contentView.setCurrentItem(0, true);
             }
         }
-        else if (method.contentEquals("previousPage") && params instanceof JSONObject) {
+        else if (method.contentEquals("previousPage") && params instanceof JSProxyObject) {
             int currentPage = contentView.getCurrentItem();
             if (currentPage - 1 >= 0) {
                 contentView.setCurrentItem(currentPage - 1, true);

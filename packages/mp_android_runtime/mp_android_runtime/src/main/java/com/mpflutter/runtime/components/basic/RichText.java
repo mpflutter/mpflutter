@@ -219,11 +219,13 @@ public class RichText extends MPComponentView {
                 String text = attributes.optString("text", "");
                 SpannableStringBuilder spannableString = new SpannableStringBuilder(text);
                 if (!attributes.isNull("onTap_el") && !attributes.isNull("onTap_span")) {
-                    contentView.setClickable(true);
-                    contentView.setMovementMethod(LinkMovementMethod.getInstance());
                     int onTapEl = attributes.optInt("onTap_el", 0);
                     int onTapSpan = attributes.optInt("onTap_span", 0);
-                    spannableString.setSpan(new MyClickableSpan(onTapEl, onTapSpan), 0, text.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    if (onTapEl > 0 && onTapSpan > 0) {
+                        contentView.setClickable(true);
+                        contentView.setMovementMethod(LinkMovementMethod.getInstance());
+                        spannableString.setSpan(new MyClickableSpan(onTapEl, onTapSpan), 0, text.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
+                    }
                 }
                 JSProxyObject style = attributes.optObject("style");
                 if (style != null) {

@@ -97,9 +97,12 @@ public class JSProxyArray {
 
     public JSProxyObject optObject(int key) {
         if (jsonArray != null) {
-            JSONObject obj = jsonArray.optJSONObject(key);
-            if (obj != null) {
-                return new JSProxyObject(obj);
+            Object obj = jsonArray.opt(key);
+            if (obj instanceof JSONObject) {
+                return new JSProxyObject((JSONObject) obj);
+            }
+            else if (obj instanceof JSProxyObject) {
+                return (JSProxyObject) obj;
             }
         }
         else if (qjsArray != null) {
@@ -113,9 +116,12 @@ public class JSProxyArray {
 
     public JSProxyArray optArray(int key) {
         if (jsonArray != null) {
-            JSONArray obj = jsonArray.optJSONArray(key);
-            if (obj != null) {
-                return new JSProxyArray(obj);
+            Object obj = jsonArray.opt(key);
+            if (obj instanceof JSONArray) {
+                return new JSProxyArray((JSONArray) obj);
+            }
+            else if (obj instanceof JSProxyArray) {
+                return (JSProxyArray) obj;
             }
         }
         else if (qjsArray != null) {

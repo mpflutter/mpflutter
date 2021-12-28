@@ -48,8 +48,8 @@ public class MPSwitch extends MPPlatformView {
 
     @Override
     public void onMethodCall(String method, Object params, MPPlatformViewCallback callback) {
-        if (method.contentEquals("setValue") && params instanceof JSONObject) {
-            boolean value = ((JSONObject) params).optBoolean("value", false);
+        if (method.contentEquals("setValue") && params instanceof JSProxyObject) {
+            boolean value = ((JSProxyObject) params).optBoolean("value", false);
             contentView.setChecked(value);
         }
     }
