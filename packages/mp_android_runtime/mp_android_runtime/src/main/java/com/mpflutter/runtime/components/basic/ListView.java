@@ -87,13 +87,6 @@ public class ListView extends MPComponentView {
         }
         waterfallLayout.prepareLayout();
         contentAdapter.notifyDataSetChanged();
-        for (int i = 0; i < children.length(); i++) {
-            JSProxyObject obj = children.optObject(i);
-            RecyclerView.ViewHolder holder = contentView.findViewHolderForLayoutPosition(i);
-            if (obj != null && holder != null && holder instanceof ListViewCell) {
-                ((ListViewCell) holder).setData(obj);
-            }
-        }
     }
 
     @Override

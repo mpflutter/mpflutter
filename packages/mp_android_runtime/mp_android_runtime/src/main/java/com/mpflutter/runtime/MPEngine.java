@@ -189,22 +189,26 @@ public class MPEngine {
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                String type = decodedMessage.optString("type", "");
-                if (type.equalsIgnoreCase("frame_data")) {
-                    didReceivedFrameData(decodedMessage.optObject("message"));
-                } else if (type.equalsIgnoreCase("diff_data")) {
-                    didReceivedDiffData(decodedMessage.optObject("message"));
-                } else if (type.equalsIgnoreCase("element_gc")) {
-                    didReceivedElementGC(decodedMessage.optArray("message"));
-                } else if (type.equalsIgnoreCase("action:web_dialogs")) {
-                    WebDialogs.didReceivedWebDialogsMessage(decodedMessage.optObject("message"), MPEngine.this);
-                } else if (type.equalsIgnoreCase("route")) {
-                    router.didReceivedRouteData(decodedMessage.optObject("message"));
-                } else if (type.equalsIgnoreCase("rich_text")) {
-                    textMeasurer.didReceivedDoMeasureData(decodedMessage.optObject("message"));
-                }
-                else if (type.equalsIgnoreCase("platform_view")) {
-                    MPPlatformView.didReceivedPlatformViewMessage(decodedMessage.optObject("message"), MPEngine.this);
+                try {
+                    String type = decodedMessage.optString("type", "");
+                    if (type.equalsIgnoreCase("frame_data")) {
+                        didReceivedFrameData(decodedMessage.optObject("message"));
+                    } else if (type.equalsIgnoreCase("diff_data")) {
+                        didReceivedDiffData(decodedMessage.optObject("message"));
+                    } else if (type.equalsIgnoreCase("element_gc")) {
+                        didReceivedElementGC(decodedMessage.optArray("message"));
+                    } else if (type.equalsIgnoreCase("action:web_dialogs")) {
+                        WebDialogs.didReceivedWebDialogsMessage(decodedMessage.optObject("message"), MPEngine.this);
+                    } else if (type.equalsIgnoreCase("route")) {
+                        router.didReceivedRouteData(decodedMessage.optObject("message"));
+                    } else if (type.equalsIgnoreCase("rich_text")) {
+                        textMeasurer.didReceivedDoMeasureData(decodedMessage.optObject("message"));
+                    }
+                    else if (type.equalsIgnoreCase("platform_view")) {
+                        MPPlatformView.didReceivedPlatformViewMessage(decodedMessage.optObject("message"), MPEngine.this);
+                    }
+                } catch (Throwable e) {
+                    e.printStackTrace();
                 }
             }
         });

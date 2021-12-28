@@ -229,9 +229,17 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
         return new RecyclerView.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
+    List<View> currentLayoutChildren = new ArrayList();
+
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
         if (!layoutChanged) {
+            for (int i = 0; i < getItemCount() && i < itemLayouts.size() && i < currentLayoutChildren.size(); i++) {
+                View child = currentLayoutChildren.get(i);
+                measureChildWithMargins(child, 0, 0);
+                RectF rect = itemLayouts.get(i);
+                layoutDecorated(child, MPUtils.dp2px(rect.left, child.getContext()), MPUtils.dp2px(rect.top, child.getContext()), MPUtils.dp2px(rect.right, child.getContext()), MPUtils.dp2px(rect.bottom, child.getContext()));
+            }
             return;
         }
         layoutChanged = false;
@@ -239,12 +247,14 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
         if (getItemCount() == 0) {
             return;
         }
+        currentLayoutChildren.clear();
         for (int i = 0; i < getItemCount() && i < itemLayouts.size(); i++) {
             View child = recycler.getViewForPosition(i);
             addView(child);
             measureChildWithMargins(child, 0, 0);
             RectF rect = itemLayouts.get(i);
             layoutDecorated(child, MPUtils.dp2px(rect.left, child.getContext()), MPUtils.dp2px(rect.top, child.getContext()), MPUtils.dp2px(rect.right, child.getContext()), MPUtils.dp2px(rect.bottom, child.getContext()));
+            currentLayoutChildren.add(child);
         }
         mSumDy = Math.max(0, Math.min(mSumDy, (int)maxVLengthPx - getHeight()));
         if (isHorizontalScroll) {
