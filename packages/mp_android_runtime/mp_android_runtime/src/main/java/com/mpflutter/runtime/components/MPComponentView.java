@@ -65,15 +65,31 @@ public class MPComponentView extends FrameLayout {
             x -= this.adjustConstraints.optDouble("x", 0.0);
             y -= this.adjustConstraints.optDouble("y", 0.0);
         }
-        setX(MPUtils.dp2px(x, getContext()));
-        setY((MPUtils.dp2px(y, getContext())));
-        setMinimumWidth(MPUtils.dp2px(w, getContext()));
-        setMinimumHeight(MPUtils.dp2px(h, getContext()));
+        if (getX() != MPUtils.dp2px(x, getContext())) {
+            setX(MPUtils.dp2px(x, getContext()));
+        }
+        if (getY() != MPUtils.dp2px(y, getContext())) {
+            setY(MPUtils.dp2px(y, getContext()));
+        }
+        if (getMinimumWidth() != MPUtils.dp2px(w, getContext())) {
+            setMinimumWidth(MPUtils.dp2px(w, getContext()));
+        }
+        if (getMinimumHeight() != MPUtils.dp2px(h, getContext())) {
+            setMinimumHeight(MPUtils.dp2px(h, getContext()));
+        }
         if (contentView != null) {
             LayoutParams layoutParams = (LayoutParams) contentView.getLayoutParams();
-            layoutParams.width = MPUtils.dp2px(w, getContext());
-            layoutParams.height = MPUtils.dp2px(h, getContext());
-            contentView.setLayoutParams(layoutParams);
+            if (layoutParams != null && (layoutParams.width != MPUtils.dp2px(w, getContext()) || layoutParams.height != MPUtils.dp2px(h, getContext()))) {
+                layoutParams.width = MPUtils.dp2px(w, getContext());
+                layoutParams.height = MPUtils.dp2px(h, getContext());
+                contentView.setLayoutParams(layoutParams);
+            }
+        }
+        LayoutParams thisLayoutParams = (LayoutParams) this.getLayoutParams();
+        if (thisLayoutParams != null && (thisLayoutParams.width != MPUtils.dp2px(w, getContext()) || thisLayoutParams.height != MPUtils.dp2px(h, getContext()))) {
+            thisLayoutParams.width = MPUtils.dp2px(w, getContext());
+            thisLayoutParams.height = MPUtils.dp2px(h, getContext());
+            this.setLayoutParams(thisLayoutParams);
         }
     }
 

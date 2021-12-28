@@ -185,7 +185,7 @@ public class JSProxyObject {
 
     public boolean has(String key) {
         if (jsonObject != null) {
-            return jsonObject.has(key);
+            return jsonObject.has(key) && !jsonObject.isNull(key);
         }
         else if (qjsObject != null) {
             return !isNull(key);

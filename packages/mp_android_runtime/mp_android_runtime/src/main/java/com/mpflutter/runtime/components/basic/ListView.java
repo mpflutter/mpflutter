@@ -17,9 +17,6 @@ import com.mpflutter.runtime.components.mpkit.MPScaffold;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
 import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 public class ListView extends MPComponentView {
 
     RecyclerView contentView;
@@ -90,6 +87,13 @@ public class ListView extends MPComponentView {
         }
         waterfallLayout.prepareLayout();
         contentAdapter.notifyDataSetChanged();
+        for (int i = 0; i < children.length(); i++) {
+            JSProxyObject obj = children.optObject(i);
+            RecyclerView.ViewHolder holder = contentView.findViewHolderForLayoutPosition(i);
+            if (obj != null && holder != null && holder instanceof ListViewCell) {
+                ((ListViewCell) holder).setData(obj);
+            }
+        }
     }
 
     @Override
@@ -153,14 +157,18 @@ class ListViewCell extends RecyclerView.ViewHolder {
 
     void setData(JSProxyObject object) {
         MPComponentView contentView = engine.componentFactory.create(object);
-        if (contentView.getParent() != null) {
+        boolean childViewChanged = false;
+        if (contentView.getParent() != null && contentView.getParent() != itemView) {
+            childViewChanged = true;
             ((ViewGroup)contentView.getParent()).removeView(contentView);
         }
         if (contentView != null) {
-            ((FrameLayout)itemView).removeAllViews();
-            ((FrameLayout)itemView).addView(contentView, contentView.getMinimumWidth(), contentView.getMinimumHeight());
-            ((FrameLayout)itemView).setMinimumWidth(contentView.getMinimumWidth());
-            ((FrameLayout)itemView).setMinimumHeight(contentView.getMinimumHeight());
+            if (contentView.getParent() == null || childViewChanged) {
+                ((FrameLayout)itemView).removeAllViews();
+                ((FrameLayout)itemView).addView(contentView, contentView.getMinimumWidth(), contentView.getMinimumHeight());
+            }
+            itemView.setMinimumWidth(contentView.getMinimumWidth());
+            itemView.setMinimumHeight(contentView.getMinimumHeight());
         }
     }
 }

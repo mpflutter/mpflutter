@@ -112,7 +112,7 @@ public class MPComponentFactory {
             }
             JSProxyArray children = data.optArray("children");
             if (children != null) {
-                cachedView.setChildren(children);
+                cachedView.setChildren(fetchCachedChildren(children));
             }
             return cachedView;
         }
@@ -135,7 +135,12 @@ public class MPComponentFactory {
             }
             JSProxyArray children = data.optArray("children");
             if (children != null) {
-                view.setChildren(children);
+                if (disableCache) {
+                    view.setChildren(children);
+                }
+                else {
+                    view.setChildren(fetchCachedChildren(children));
+                }
             }
             if (!disableCache) {
                 this.cachedView.put(hashCode, view);
@@ -145,6 +150,23 @@ public class MPComponentFactory {
             e.printStackTrace();
             return null;
         }
+    }
+
+    JSProxyArray fetchCachedChildren(JSProxyArray children) {
+        JSONArray finalChildren = new JSONArray();
+        for (int i = 0; i < children.length(); i++) {
+            JSProxyObject obj = children.optObject(i);
+            if (obj == null) continue;
+            int same = obj.optInt("^", -1);
+            int hashCode = obj.optInt("hashCode", -1);
+            if (same >= 0 && hashCode >= 0 && cachedElement.containsKey(hashCode)) {
+                finalChildren.put(cachedElement.get(hashCode));
+            }
+            else {
+                finalChildren.put(obj);
+            }
+        }
+        return new JSProxyArray(finalChildren);
     }
 
     public void callbackTextMeasureResult(int measureId, Size size) {

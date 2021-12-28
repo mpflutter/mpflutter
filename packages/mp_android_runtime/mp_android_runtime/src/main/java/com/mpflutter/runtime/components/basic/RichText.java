@@ -56,17 +56,8 @@ public class RichText extends MPComponentView {
     public RichText(@NonNull Context context) {
         super(context);
         contentView = new TextView(context);
+        addContentView(contentView);
         contentView.setPadding(0, 0, 0, 0);
-    }
-
-    @Override
-    public void updateLayout() {
-        super.updateLayout();
-        if (constraints == null) return;
-        double w = constraints.optDouble("w");
-        double h = constraints.optDouble("h");
-        removeView(contentView);
-        addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
     }
 
     @Override
@@ -80,7 +71,6 @@ public class RichText extends MPComponentView {
 
     @Override
     public void setConstraints(JSProxyObject constraints) {
-        super.setConstraints(constraints);
         if (measureId == null) {
             if (constraints.has("w")) {
                 double w = constraints.optDouble("w");
@@ -95,6 +85,7 @@ public class RichText extends MPComponentView {
                 }
             }
         }
+        super.setConstraints(constraints);
     }
 
     @Override
@@ -166,8 +157,8 @@ public class RichText extends MPComponentView {
             else {
                 contentView.setMaxHeight(999999);
             }
-            int widthMeasureSpec = MeasureSpec.makeMeasureSpec(MPUtils.dp2px(maxWidth, getContext()), MeasureSpec.AT_MOST);
-            int heightMeasureSpec = MeasureSpec.makeMeasureSpec(MPUtils.dp2px(maxHeight, getContext()), MeasureSpec.AT_MOST);
+            int widthMeasureSpec = MeasureSpec.makeMeasureSpec(contentView.getMaxWidth(), MeasureSpec.AT_MOST);
+            int heightMeasureSpec = MeasureSpec.makeMeasureSpec(contentView.getMaxHeight(), MeasureSpec.AT_MOST);
             contentView.setMaxLines(maxLines);
             contentView.measure(widthMeasureSpec, heightMeasureSpec);
             int maxLines = contentView.getMaxLines();

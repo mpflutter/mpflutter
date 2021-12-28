@@ -2,6 +2,7 @@ package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
 import android.graphics.RectF;
+import android.os.Handler;
 import android.util.SizeF;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
     public List<RectF> itemLayouts = new ArrayList();
     public double maxVLength = 0.0;
     public double maxVLengthPx = 0.0;
+    private boolean layoutChanged = true;
 
     WaterfallLayout(Context context) {
         this.context = context;
@@ -189,9 +191,29 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
             }
         }
         maxVLength += padding[2];
+        if (compareLayouts(itemLayouts, layouts)) {
+            layoutChanged = true;
+        }
         itemLayouts = layouts;
         this.maxVLength = maxVLength;
         this.maxVLengthPx = MPUtils.dp2px(maxVLength, context);
+    }
+
+    boolean compareLayouts(List<RectF> a, List<RectF> b) {
+        if (a == null || b == null) {
+            return true;
+        }
+        else if (a.size() != b.size()) {
+            return true;
+        }
+        for (int i = 0; i < a.size(); i++) {
+            RectF ar = a.get(i);
+            RectF br = b.get(i);
+            if (ar.top != br.top || ar.left != br.left || ar.bottom != br.bottom || ar.right != br.right) {
+                return true;
+            }
+        }
+        return false;
     }
 
     SizeF sizeForItem(JSProxyObject data) {
@@ -209,6 +231,10 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
 
     @Override
     public void onLayoutChildren(RecyclerView.Recycler recycler, RecyclerView.State state) {
+        if (!layoutChanged) {
+            return;
+        }
+        layoutChanged = false;
         detachAndScrapAttachedViews(recycler);
         if (getItemCount() == 0) {
             return;
