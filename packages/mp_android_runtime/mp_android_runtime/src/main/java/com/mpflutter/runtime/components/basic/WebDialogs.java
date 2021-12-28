@@ -27,6 +27,9 @@ import com.google.android.material.button.MaterialButton;
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.components.mpkit.MPIcon;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
+import com.quickjs.JSObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,8 +41,8 @@ import java.util.List;
 
 public class WebDialogs {
 
-    static public void didReceivedWebDialogsMessage(JSONObject message, MPEngine engine) {
-        JSONObject params = message.optJSONObject("params");
+    static public void didReceivedWebDialogsMessage(JSProxyObject message, MPEngine engine) {
+        JSProxyObject params = message.optObject("params");
         if (params != null) {
             String dialogType = params.optString("dialogType", null);
             if (dialogType != null && dialogType != "null") {
@@ -65,9 +68,9 @@ public class WebDialogs {
         }
     }
 
-    static void alert(JSONObject message, MPEngine engine) {
+    static void alert(JSProxyObject message, MPEngine engine) {
         String callbackId = message.optString("id", null);
-        String alertMessage = message.optJSONObject("params").optString("message");
+        String alertMessage = message.optObject("params").optString("message", null);
         if (MPUtils.isNull(callbackId)) {
             return;
         }
@@ -106,9 +109,9 @@ public class WebDialogs {
         builder.create().show();
     }
 
-    static void confirm(JSONObject message, MPEngine engine) {
+    static void confirm(JSProxyObject message, MPEngine engine) {
         String callbackId = message.optString("id", null);
-        String alertMessage = message.optJSONObject("params").optString("message");
+        String alertMessage = message.optObject("params").optString("message", null);
         if (MPUtils.isNull(callbackId)) {
             return;
         }
@@ -162,10 +165,10 @@ public class WebDialogs {
         builder.create().show();
     }
 
-    static void prompt(JSONObject message, MPEngine engine) {
+    static void prompt(JSProxyObject message, MPEngine engine) {
         String callbackId = message.optString("id", null);
-        String alertMessage = message.optJSONObject("params").optString("message");
-        String defaultValue = message.optJSONObject("params").optString("defaultValue");
+        String alertMessage = message.optObject("params").optString("message", null);
+        String defaultValue = message.optObject("params").optString("defaultValue", null);
         if (MPUtils.isNull(callbackId)) {
             return;
         }
@@ -226,10 +229,10 @@ public class WebDialogs {
         builder.create().show();
     }
 
-    static void actionSheet(JSONObject message, MPEngine engine) {
+    static void actionSheet(JSProxyObject message, MPEngine engine) {
         Context context = engine.router.activeActivity;
         String callbackId = message.optString("id", null);
-        JSONArray items = message.optJSONObject("params").optJSONArray("items");
+        JSProxyArray items = message.optObject("params").optArray("items");
         if (MPUtils.isNull(callbackId)) {
             return;
         }
@@ -301,8 +304,8 @@ public class WebDialogs {
 
     static public AlertDialog activeHUD;
 
-    static void showToast(JSONObject message, MPEngine engine) {
-        JSONObject params = message.optJSONObject("params");
+    static void showToast(JSProxyObject message, MPEngine engine) {
+        JSProxyObject params = message.optObject("params");
         if (params == null) {
             return;
         }
@@ -346,7 +349,7 @@ public class WebDialogs {
         }
     }
 
-    static void hideToast(JSONObject message, MPEngine engine) {
+    static void hideToast(JSProxyObject message, MPEngine engine) {
         if (activeHUD != null) {
             activeHUD.hide();
             activeHUD = null;
@@ -396,7 +399,7 @@ class MPToast {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            successIcon.setAttributes(attributes);
+            successIcon.setAttributes(new JSProxyObject(attributes));
             JSONObject constraints = new JSONObject();
             try {
                 constraints.putOpt("x", 0);
@@ -406,7 +409,7 @@ class MPToast {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            successIcon.setConstraints(constraints);
+            successIcon.setConstraints(new JSProxyObject(constraints));
             successIcon.setX(MPUtils.dp2px((120 - 44) / 2, context));
             linearLayout.addView(successIcon);
         }

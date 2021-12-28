@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONObject;
 
@@ -29,9 +30,9 @@ public class ClipRRect extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
-        String borderRadiusValue = attributes.optString("borderRadius");
+        String borderRadiusValue = attributes.optString("borderRadius", null);
         double[] radius = new double[4];
         if (borderRadiusValue != null) {
             radius = MPUtils.cornerRadiusFromString(borderRadiusValue);

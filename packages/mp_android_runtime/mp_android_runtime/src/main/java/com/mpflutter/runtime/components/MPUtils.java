@@ -7,7 +7,7 @@ import android.graphics.RectF;
 import android.util.Size;
 import android.util.SizeF;
 
-import org.json.JSONObject;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -42,37 +42,38 @@ public class MPUtils {
         return (int)longValue;
     }
 
-    public static SizeF sizeFromMPElement(JSONObject element) {
+    public static SizeF sizeFromMPElement(JSProxyObject element) {
         if (element == null) {
             return new SizeF(0, 0);
         }
         double w = 0.0, h = 0.0;
-        if (element.optJSONObject("constraints") != null &&
-                !element.optJSONObject("constraints").isNull("w") &&
-                !element.optJSONObject("constraints").isNull("h")) {
-            w = element.optJSONObject("constraints").optDouble("w", 0.0);
-            h = element.optJSONObject("constraints").optDouble("h", 0.0);
+        JSProxyObject constraints = element.optObject("constraints");
+        if (constraints != null &&
+                constraints.has("w") &&
+                constraints.has("h")) {
+            w = constraints.optDouble("w", 0.0);
+            h = constraints.optDouble("h", 0.0);
         }
-        else if (element.optJSONArray("children") != null &&
-                element.optJSONArray("children").length() == 1) {
-            return sizeFromMPElement(element.optJSONArray("children").optJSONObject(0));
+        else if (element.optArray("children") != null &&
+                element.optArray("children").length() == 1) {
+            return sizeFromMPElement(element.optArray("children").optObject(0));
         }
         return new SizeF((float) w, (float)h);
     }
 
-    public static double[] sliverPaddingFromMPElement(JSONObject element) {
+    public static double[] sliverPaddingFromMPElement(JSProxyObject element) {
         if (element == null) {
             return new double[4];
         }
         if (element.optString("name", "").contentEquals("padding") &&
-                element.optJSONObject("attributes") != null &&
-                !element.optJSONObject("attributes").isNull("padding") &&
-                element.optJSONObject("attributes").optString("sliver", "0").contentEquals("1")) {
-            return edgeInsetsFromString(element.optJSONObject("attributes").optString("padding", null));
+                element.optObject("attributes") != null &&
+                !element.optObject("attributes").has("padding") &&
+                element.optObject("attributes").optString("sliver", "0").contentEquals("1")) {
+            return edgeInsetsFromString(element.optObject("attributes").optString("padding", null));
         }
-        else if (element.optJSONArray("children") != null &&
-                element.optJSONArray("children").length() == 1) {
-            return sliverPaddingFromMPElement(element.optJSONArray("children").optJSONObject(0));
+        else if (element.optArray("children") != null &&
+                element.optArray("children").length() == 1) {
+            return sliverPaddingFromMPElement(element.optArray("children").optObject(0));
         }
         return new double[4];
     }

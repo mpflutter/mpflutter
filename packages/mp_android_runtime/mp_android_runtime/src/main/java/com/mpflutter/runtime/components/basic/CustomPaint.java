@@ -15,13 +15,14 @@ import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class CustomPaint extends MPComponentView {
 
-    JSONArray commands;
+    JSProxyArray commands;
 
     public CustomPaint(@NonNull Context context) {
         super(context);
@@ -29,18 +30,18 @@ public class CustomPaint extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
-        this.commands = attributes.optJSONArray("commands");
+        this.commands = attributes.optArray("commands");
         invalidate();
     }
 
-    void drawRect(JSONObject cmd, Canvas canvas, Paint paint) {
+    void drawRect(JSProxyObject cmd, Canvas canvas, Paint paint) {
         double x = cmd.optDouble("x");
         double y = cmd.optDouble("y");
         double width = cmd.optDouble("width");
         double height = cmd.optDouble("height");
-        setPaint(cmd.optJSONObject("paint"), paint);
+        setPaint(cmd.optObject("paint"), paint);
         canvas.drawRect(
                 MPUtils.dp2px(x, getContext()),
                 MPUtils.dp2px(y, getContext()),
@@ -49,23 +50,23 @@ public class CustomPaint extends MPComponentView {
                 paint);
     }
 
-    void drawDRRect(JSONObject cmd, Canvas canvas, Paint paint) {
+    void drawDRRect(JSProxyObject cmd, Canvas canvas, Paint paint) {
 
     }
 
-    void drawPath(JSONObject cmd, Canvas canvas, Paint paint) {
-        Path bezierPath = pathWithParams(cmd.optJSONObject("path"));
-        setPaint(cmd.optJSONObject("paint"), paint);
+    void drawPath(JSProxyObject cmd, Canvas canvas, Paint paint) {
+        Path bezierPath = pathWithParams(cmd.optObject("path"));
+        setPaint(cmd.optObject("paint"), paint);
         canvas.drawPath(bezierPath, paint);
     }
 
-    void clipPath(JSONObject cmd, Canvas canvas, Paint paint) {
-        Path bezierPath = pathWithParams(cmd.optJSONObject("path"));
-        setPaint(cmd.optJSONObject("paint"), paint);
+    void clipPath(JSProxyObject cmd, Canvas canvas, Paint paint) {
+        Path bezierPath = pathWithParams(cmd.optObject("path"));
+        setPaint(cmd.optObject("paint"), paint);
         canvas.clipPath(bezierPath);
     }
 
-    void drawColor(JSONObject cmd, Canvas canvas, Paint paint) {
+    void drawColor(JSProxyObject cmd, Canvas canvas, Paint paint) {
         String blendMode = cmd.optString("blendMode", null);
         String color = cmd.optString("color", null);
         if (blendMode != null && blendMode.contentEquals("BlendMode.clear")) {
@@ -80,19 +81,19 @@ public class CustomPaint extends MPComponentView {
         }
     }
 
-    Path pathWithParams(JSONObject path) {
+    Path pathWithParams(JSProxyObject path) {
         Path bezierPath = new Path();
         if (path == null) {
             return bezierPath;
         }
-        JSONArray commands = path.optJSONArray("commands");
+        JSProxyArray commands = path.optArray("commands");
         if (commands == null) {
             return bezierPath;
         }
         int lastX = 0;
         int lastY = 0;
         for (int i = 0; i < commands.length(); i++) {
-            JSONObject obj = commands.optJSONObject(i);
+            JSProxyObject obj = commands.optObject(i);
             if (obj == null) continue;
             String action = obj.optString("action", null);
             if (MPUtils.isNull(action)) continue;
@@ -147,7 +148,7 @@ public class CustomPaint extends MPComponentView {
         return bezierPath;
     }
 
-    void setPaint(JSONObject params, Paint paint) {
+    void setPaint(JSProxyObject params, Paint paint) {
         paint.reset();
         if (params == null) {
             return;
@@ -204,7 +205,7 @@ public class CustomPaint extends MPComponentView {
         if (commands != null) {
             Paint paint = new Paint();
             for (int i = 0; i < commands.length(); i++) {
-                JSONObject cmd = commands.optJSONObject(i);
+                JSProxyObject cmd = commands.optObject(i);
                 if (cmd == null) continue;
                 String action = cmd.optString("action", null);
                 if (!MPUtils.isNull(action)) {

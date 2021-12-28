@@ -6,6 +6,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.components.MPComponentView;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,7 +18,7 @@ public class Visibility extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) {
+    public void setChildren(JSProxyArray children) {
         super.setChildren(children);
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
@@ -27,7 +29,7 @@ public class Visibility extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         Boolean visible = attributes.has("visible") ? attributes.optBoolean("visible", false) : null;
         if (visible != null && !visible) {

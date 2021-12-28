@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,15 +31,15 @@ public class MPScaffold extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         setWillNotDraw(false);
-        this.setBody(factory.create(attributes.optJSONObject("body")));
-        this.setAppBar(factory.create(attributes.optJSONObject("appBar")));
-        this.setBottomBar(factory.create(attributes.optJSONObject("bottomBar")));
-        this.setFloatingBody(factory.create(attributes.optJSONObject("floatingBody")));
-        String backgroundColor = attributes.optString("backgroundColor");
-        if (backgroundColor != null && backgroundColor != "null") {
+        this.setBody(factory.create(attributes.optObject("body")));
+        this.setAppBar(factory.create(attributes.optObject("appBar")));
+        this.setBottomBar(factory.create(attributes.optObject("bottomBar")));
+        this.setFloatingBody(factory.create(attributes.optObject("floatingBody")));
+        String backgroundColor = attributes.optString("backgroundColor", null);
+        if (backgroundColor != null) {
             setBackgroundColor(MPUtils.colorFromString(backgroundColor));
         }
         else {
@@ -47,7 +49,7 @@ public class MPScaffold extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) { }
+    public void setChildren(JSProxyArray children) { }
 
     private void setBody(MPComponentView body) {
         if (body == this.body) return;
@@ -97,8 +99,8 @@ public class MPScaffold extends MPComponentView {
         if (attributes == null) return;
         AppCompatActivity activity = activity();
         if (activity == null) return;
-        String title = attributes.optString("name");
-        if (!MPUtils.isNull(title)) {
+        String title = attributes.optString("name", null);
+        if (title != null) {
             androidx.appcompat.app.ActionBar actionBar = activity.getSupportActionBar();
             if (actionBar != null) {
                 actionBar.setTitle(title);

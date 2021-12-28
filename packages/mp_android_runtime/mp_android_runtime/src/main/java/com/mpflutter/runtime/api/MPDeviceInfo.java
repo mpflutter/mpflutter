@@ -15,9 +15,11 @@ public class MPDeviceInfo {
         body.set("windowPaddingBottom", 0);
         document.set("body", body);
         context.set("document", document);
-        context.set("disableMPProxy", true);
+        context.set("enableMPProxy", true);
+//        context.set("disableMPProxy", true);
         selfObject.set("document", document);
-        selfObject.set("disableMPProxy", true);
+        selfObject.set("enableMPProxy", true);
+//        selfObject.set("disableMPProxy", true);
     }
 
 }

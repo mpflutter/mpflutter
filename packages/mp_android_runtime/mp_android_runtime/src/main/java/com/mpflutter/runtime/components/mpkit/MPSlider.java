@@ -5,6 +5,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.slider.Slider;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
 
 import org.json.JSONArray;
 
@@ -19,5 +20,5 @@ public class MPSlider extends MPPlatformView {
     }
 
     @Override
-    public void setChildren(JSONArray children) { }
+    public void setChildren(JSProxyArray children) { }
 }

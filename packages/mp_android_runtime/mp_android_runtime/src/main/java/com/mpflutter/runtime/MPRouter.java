@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Size;
 
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -73,7 +75,7 @@ public class MPRouter {
         }});
     }
 
-    void didReceivedRouteData(JSONObject message) throws JSONException {
+    void didReceivedRouteData(JSProxyObject message) {
         String event = message.optString("event", null);
         if (event == null) return;
         if (event.contentEquals("responseRoute")) {
@@ -90,7 +92,7 @@ public class MPRouter {
         }
     }
 
-    void didPush(JSONObject message) {
+    void didPush(JSProxyObject message) {
         int routeId = message.optInt("routeId", -1);
         if (routeId < 0) return;
         thePushingRouteId = routeId;
@@ -101,7 +103,7 @@ public class MPRouter {
         engine.context.startActivity(intent);
     }
 
-    void didReplace(JSONObject message) {
+    void didReplace(JSProxyObject message) {
         int routeId = message.optInt("routeId", -1);
         if (routeId < 0) return;
         thePushingRouteId = routeId;
@@ -149,16 +151,12 @@ public class MPRouter {
         }});
     }
 
-    private void responseRoute(JSONObject message) {
-        try {
-            String requestId = message.getString("requestId");
-            int routeId = message.getInt("routeId");
-            if (routeResponseHandler.containsKey(requestId)) {
-                routeResponseHandler.get(requestId).onResponse(routeId);
-                routeResponseHandler.remove(requestId);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+    private void responseRoute(JSProxyObject message) {
+        String requestId = message.optString("requestId", "");
+        int routeId = message.optInt("routeId");
+        if (routeResponseHandler.containsKey(requestId)) {
+            routeResponseHandler.get(requestId).onResponse(routeId);
+            routeResponseHandler.remove(requestId);
         }
     }
 

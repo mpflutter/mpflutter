@@ -32,6 +32,8 @@ import com.mpflutter.runtime.components.mpkit.MPScaffold;
 import com.mpflutter.runtime.components.mpkit.MPSlider;
 import com.mpflutter.runtime.components.mpkit.MPSwitch;
 import com.mpflutter.runtime.components.mpkit.MPWebView;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -76,7 +78,7 @@ public class MPComponentFactory {
     Context context;
     MPEngine engine;
     public Map<Integer, MPComponentView> cachedView = new HashMap();
-    public Map<Integer, JSONObject> cachedElement = new HashMap();
+    public Map<Integer, JSProxyObject> cachedElement = new HashMap();
     List<Map> textMeasureResults = new ArrayList();
     public boolean disableCache = false;
 
@@ -85,7 +87,7 @@ public class MPComponentFactory {
         this.engine = engine;
     }
 
-    public MPComponentView create(JSONObject data) {
+    public MPComponentView create(JSProxyObject data) {
         if (data == null) return null;
         int same = data.optInt("^", -1);
         String name = data.optString("name", null);
@@ -100,15 +102,15 @@ public class MPComponentFactory {
         cachedElement.put(hashCode, data);
         MPComponentView cachedView = !disableCache ? this.cachedView.get(hashCode) : null;
         if (cachedView != null) {
-            JSONObject constraints = data.optJSONObject("constraints");
+            JSProxyObject constraints = data.optObject("constraints");
             if (constraints != null) {
                 cachedView.setConstraints(constraints);
             }
-            JSONObject attributes = data.optJSONObject("attributes");
+            JSProxyObject attributes = data.optObject("attributes");
             if (attributes != null) {
                 cachedView.setAttributes(attributes);
             }
-            JSONArray children = data.optJSONArray("children");
+            JSProxyArray children = data.optArray("children");
             if (children != null) {
                 cachedView.setChildren(children);
             }
@@ -123,15 +125,15 @@ public class MPComponentFactory {
             view.factory = this;
             view.engine = engine;
             view.hashCode = hashCode;
-            JSONObject constraints = data.optJSONObject("constraints");
+            JSProxyObject constraints = data.optObject("constraints");
             if (constraints != null) {
                 view.setConstraints(constraints);
             }
-            JSONObject attributes = data.optJSONObject("attributes");
+            JSProxyObject attributes = data.optObject("attributes");
             if (attributes != null) {
                 view.setAttributes(attributes);
             }
-            JSONArray children = data.optJSONArray("children");
+            JSProxyArray children = data.optArray("children");
             if (children != null) {
                 view.setChildren(children);
             }

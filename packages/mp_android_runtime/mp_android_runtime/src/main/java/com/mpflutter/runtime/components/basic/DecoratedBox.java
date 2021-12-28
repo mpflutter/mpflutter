@@ -20,6 +20,8 @@ import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -31,7 +33,7 @@ public class DecoratedBox extends MPComponentView {
     Paint backgroundPaint = new Paint();
     Paint borderPaint = new Paint();
     String color;
-    JSONObject gradient;
+    JSProxyObject gradient;
     Path borderRadiusPath = new Path();
     double tlRadius = 0.0;
     double blRadius = 0.0;
@@ -49,7 +51,7 @@ public class DecoratedBox extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) {
+    public void setChildren(JSProxyArray children) {
         super.setChildren(children);
         JSONObject offsetConstraints = new JSONObject();
         try {
@@ -61,13 +63,13 @@ public class DecoratedBox extends MPComponentView {
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);
             if (view instanceof MPComponentView) {
-                ((MPComponentView) view).setAdjustConstraints(offsetConstraints);
+                ((MPComponentView) view).setAdjustConstraints(new JSProxyObject(offsetConstraints));
             }
         }
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         if (attributes.has("color")) {
             this.color = attributes.optString("color", null);
@@ -75,16 +77,16 @@ public class DecoratedBox extends MPComponentView {
         else {
             this.color = null;
         }
-        JSONObject decoration = attributes.optJSONObject("decoration");
-        if (decoration != null && decoration.optJSONObject("gradient") != null) {
-            JSONObject gradient = decoration.optJSONObject("gradient");
+        JSProxyObject decoration = attributes.optObject("decoration");
+        if (decoration != null && decoration.optObject("gradient") != null) {
+            JSProxyObject gradient = decoration.optObject("gradient");
             this.gradient = gradient;
         }
         else {
             this.gradient = null;
         }
         if (decoration != null) {
-            String borderRadiusValue = decoration.optString("borderRadius");
+            String borderRadiusValue = decoration.optString("borderRadius", null);
             double[] radius = new double[4];
             if (borderRadiusValue != null) {
                 radius = MPUtils.cornerRadiusFromString(borderRadiusValue);
@@ -94,20 +96,20 @@ public class DecoratedBox extends MPComponentView {
             brRadius = radius[2];
             trRadius = radius[3];
         }
-        if (decoration != null && decoration.optJSONObject("border") != null) {
-            JSONObject border = decoration.optJSONObject("border");
+        if (decoration != null && decoration.optObject("border") != null) {
+            JSProxyObject border = decoration.optObject("border");
             borderWidth = border.optDouble("topWidth");
-            borderColor = MPUtils.colorFromString(border.optString("topColor"));
+            borderColor = MPUtils.colorFromString(border.optString("topColor", null));
         }
         else {
             borderWidth = 0;
             borderColor = 0;
         }
-        if (decoration != null && decoration.optJSONArray("boxShadow") != null && decoration.optJSONArray("boxShadow").length() > 0) {
-            JSONObject boxShadow = decoration.optJSONArray("boxShadow").optJSONObject(0);
+        if (decoration != null && decoration.optArray("boxShadow") != null && decoration.optArray("boxShadow").length() > 0) {
+            JSProxyObject boxShadow = decoration.optArray("boxShadow").optObject(0);
             shadowBlurRadius = boxShadow.optDouble("blurRadius");
-            shadowColor = MPUtils.colorFromString(boxShadow.optString("color"));
-            shadowOffset = shadowOffsetFromValue(boxShadow.optString("offset"));
+            shadowColor = MPUtils.colorFromString(boxShadow.optString("color", null));
+            shadowOffset = shadowOffsetFromValue(boxShadow.optString("offset", null));
         }
         else {
             shadowOffset = null;
@@ -171,11 +173,11 @@ public class DecoratedBox extends MPComponentView {
     }
 
     int[] colorsFromGradient() {
-        JSONArray values = gradient.optJSONArray("colors");
+        JSProxyArray values = gradient.optArray("colors");
         if (values != null) {
             int[] colors = new int[values.length()];
             for (int i = 0; i < values.length(); i++) {
-                colors[i] = MPUtils.colorFromString(values.optString(i));
+                colors[i] = MPUtils.colorFromString(values.optString(i, null));
             }
             return colors;
         }
@@ -185,7 +187,7 @@ public class DecoratedBox extends MPComponentView {
     }
 
     float[] positionsFromGradient() {
-        JSONArray values = gradient.optJSONArray("stops");
+        JSProxyArray values = gradient.optArray("stops");
         if (values != null) {
             float[] positions = new float[values.length()];
             for (int i = 0; i < values.length(); i++) {
@@ -194,7 +196,7 @@ public class DecoratedBox extends MPComponentView {
             return positions;
         }
         else {
-            int length = gradient.optJSONArray("colors").length();
+            int length = gradient.optArray("colors").length();
             float[] positions = new float[length];
             for (int i = 0; i < length; i++) {
                 positions[i] = (float)i / 1.0f;

@@ -6,6 +6,7 @@ import android.view.MotionEvent;
 import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.components.MPComponentView;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONObject;
 
@@ -18,7 +19,7 @@ public class IgnorePointer extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         this.ignoring = attributes.optBoolean("ignoring", false);
     }

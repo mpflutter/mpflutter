@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONObject;
 
@@ -17,7 +18,7 @@ public class ColoredBox extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         if (attributes.has("color")) {
             setBackgroundColor(MPUtils.colorFromString(attributes.optString("color", null)));

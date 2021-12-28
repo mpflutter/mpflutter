@@ -9,6 +9,8 @@ import com.facebook.drawee.drawable.ScalingUtils;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,10 +26,10 @@ public class Image extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) { }
+    public void setChildren(JSProxyArray children) { }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         String src = attributes.optString("src", null);
         String base64 = attributes.optString("base64", null);

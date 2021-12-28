@@ -13,6 +13,8 @@ import androidx.viewpager.widget.ViewPager;
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -56,7 +58,7 @@ public class MPPageView extends MPPlatformView {
     }
 
     @Override
-    public void setChildren(JSONArray children) {
+    public void setChildren(JSProxyArray children) {
         contentAdapter.engine = engine;
         contentAdapter.children = children;
         contentAdapter.notifyDataSetChanged();
@@ -68,7 +70,7 @@ public class MPPageView extends MPPlatformView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         String scrollDirection = attributes.optString("scrollDirection", null);
         if (!MPUtils.isNull(scrollDirection) && scrollDirection.contentEquals("Axis.vertical")) {
@@ -123,7 +125,7 @@ public class MPPageView extends MPPlatformView {
 
     static class Adapter extends PagerAdapter {
 
-        JSONArray children;
+        JSProxyArray children;
         MPEngine engine;
 
         @Override
@@ -142,7 +144,7 @@ public class MPPageView extends MPPlatformView {
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             if (children == null || engine == null) return null;
             if (position < children.length()) {
-                JSONObject data = children.optJSONObject(position);
+                JSProxyObject data = children.optObject(position);
                 MPComponentView view = engine.componentFactory.create(data);
                 if (view != null) {
                     if (view.getParent() != null && view.getParent() != container) {

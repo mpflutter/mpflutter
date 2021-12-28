@@ -5,8 +5,10 @@ import android.os.Looper;
 import android.util.Log;
 
 import com.mpflutter.runtime.MPEngine;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -42,7 +44,12 @@ public class MPDebugger {
 
             @Override
             public void onMessage(String message) {
-                engine.didReceivedMessage(message);
+                try {
+                    JSProxyObject obj = new JSProxyObject(new JSONObject(message));
+                    engine.didReceivedMessage(obj);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override

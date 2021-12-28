@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,9 +22,9 @@ public class MPPlatformView extends MPComponentView {
 
     static Map<String, MPPlatformViewCallback> invokeMethodCallback = new HashMap();
 
-    static public void didReceivedPlatformViewMessage(JSONObject message, MPEngine engine) {
+    static public void didReceivedPlatformViewMessage(JSProxyObject message, MPEngine engine) {
         String event = message.optString("event", null);
-        if (!MPUtils.isNull(event) && event.contentEquals("methodCall") && !message.isNull("hashCode")) {
+        if (event != null && event.contentEquals("methodCall") && message.optInt("hashCode", 0) != 0) {
             int hashCode = message.optInt("hashCode", 0);
             MPComponentView target = engine.componentFactory.cachedView.get(hashCode);
             if (target instanceof MPPlatformView) {
@@ -59,7 +61,7 @@ public class MPPlatformView extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) {
+    public void setChildren(JSProxyArray children) {
         super.setChildren(children);
         for (int i = 0; i < getChildCount(); i++) {
             View view = getChildAt(i);

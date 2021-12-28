@@ -16,6 +16,8 @@ import com.mpflutter.runtime.components.MPComponentFactory;
 import com.mpflutter.runtime.components.basic.WebDialogs;
 import com.mpflutter.runtime.components.mpkit.MPPlatformView;
 import com.mpflutter.runtime.debugger.MPDebugger;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 import com.quickjs.JSArray;
 import com.quickjs.JSContext;
 import com.quickjs.JSFunction;
@@ -129,7 +131,20 @@ public class MPEngine {
             public Object invoke(JSObject receiver, JSArray args) {
                 try {
                     String message = args.getString(0);
-                    didReceivedMessage(message);
+                    JSProxyObject obj = new JSProxyObject(new JSONObject(message));
+                    didReceivedMessage(obj);
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }));
+        engineScope.set("onMapMessage", new JSFunction(jsContext, new JavaCallback() {
+            @Override
+            public Object invoke(JSObject receiver, JSArray args) {
+                try {
+                    JSProxyObject obj = new JSProxyObject(args.getObject(0));
+                    didReceivedMessage(obj);
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
@@ -170,47 +185,43 @@ public class MPEngine {
          }
     }
 
-    public void didReceivedMessage(String message) {
+    public void didReceivedMessage(JSProxyObject decodedMessage) {
         mainThreadHandler.post(new Runnable() {
             @Override
             public void run() {
-                try {
-                    JSONObject decodedMessage = new JSONObject(message);
-                    String type = decodedMessage.getString("type");
-                    if (type.equalsIgnoreCase("frame_data")) {
-                        didReceivedFrameData(decodedMessage.getJSONObject("message"));
-                    } else if (type.equalsIgnoreCase("diff_data")) {
-                        didReceivedDiffData(decodedMessage.getJSONObject("message"));
-                    } else if (type.equalsIgnoreCase("element_gc")) {
-                        didReceivedElementGC(decodedMessage.getJSONArray("message"));
-                    } else if (type.equalsIgnoreCase("action:web_dialogs")) {
-                        WebDialogs.didReceivedWebDialogsMessage(decodedMessage.getJSONObject("message"), MPEngine.this);
-                    } else if (type.equalsIgnoreCase("route")) {
-                        router.didReceivedRouteData(decodedMessage.getJSONObject("message"));
-                    } else if (type.equalsIgnoreCase("rich_text")) {
-                        textMeasurer.didReceivedDoMeasureData(decodedMessage.getJSONObject("message"));
-                    } else if (type.equalsIgnoreCase("platform_view")) {
-                        MPPlatformView.didReceivedPlatformViewMessage(decodedMessage.getJSONObject("message"), MPEngine.this);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                String type = decodedMessage.optString("type", "");
+                if (type.equalsIgnoreCase("frame_data")) {
+                    didReceivedFrameData(decodedMessage.optObject("message"));
+                } else if (type.equalsIgnoreCase("diff_data")) {
+                    didReceivedDiffData(decodedMessage.optObject("message"));
+                } else if (type.equalsIgnoreCase("element_gc")) {
+                    didReceivedElementGC(decodedMessage.optArray("message"));
+                } else if (type.equalsIgnoreCase("action:web_dialogs")) {
+                    WebDialogs.didReceivedWebDialogsMessage(decodedMessage.optObject("message"), MPEngine.this);
+                } else if (type.equalsIgnoreCase("route")) {
+                    router.didReceivedRouteData(decodedMessage.optObject("message"));
+                } else if (type.equalsIgnoreCase("rich_text")) {
+                    textMeasurer.didReceivedDoMeasureData(decodedMessage.optObject("message"));
+                }
+                else if (type.equalsIgnoreCase("platform_view")) {
+                    MPPlatformView.didReceivedPlatformViewMessage(decodedMessage.optObject("message"), MPEngine.this);
                 }
             }
         });
     }
 
-    private void didReceivedFrameData(JSONObject frameData) throws JSONException {
+    private void didReceivedFrameData(JSProxyObject frameData) {
         int routeId = frameData.optInt("routeId", -1);
         if (routeId >= 0 && managedViews.containsKey(routeId)) {
             managedViews.get(routeId).didReceivedFrameData(frameData);
         }
     }
 
-    private void didReceivedDiffData(JSONObject frameData) {
-        JSONArray diffs = frameData.optJSONArray("diffs");
+    private void didReceivedDiffData(JSProxyObject frameData) {
+        JSProxyArray diffs = frameData.optArray("diffs");
         if (diffs != null) {
             for (int i = 0; i < diffs.length(); i++) {
-                JSONObject obj = diffs.optJSONObject(i);
+                JSProxyObject obj = diffs.optObject(i);
                 if (obj != null) {
                     componentFactory.create(obj);
                 }
@@ -218,7 +229,7 @@ public class MPEngine {
         }
     }
 
-    private void didReceivedElementGC(JSONArray data) {
+    private void didReceivedElementGC(JSProxyArray data) {
         for (int i = 0; i < data.length(); i++) {
             componentFactory.cachedView.remove(i);
             componentFactory.cachedElement.remove(i);

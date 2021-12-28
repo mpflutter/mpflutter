@@ -15,6 +15,8 @@ import com.mpflutter.runtime.components.basic.Offstage;
 import com.mpflutter.runtime.components.basic.Visibility;
 import com.mpflutter.runtime.components.mpkit.MPPlatformView;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,9 +29,9 @@ public class MPComponentView extends FrameLayout {
     public MPComponentFactory factory;
     public MPEngine engine;
     public int hashCode;
-    public JSONObject constraints;
-    public JSONObject attributes;
-    protected JSONObject adjustConstraints;
+    public JSProxyObject constraints;
+    public JSProxyObject attributes;
+    protected JSProxyObject adjustConstraints;
     View contentView;
 
     public MPComponentView(@NonNull Context context) {
@@ -43,12 +45,12 @@ public class MPComponentView extends FrameLayout {
         addView(contentView, new LayoutParams(0, 0));
     }
 
-    public void setConstraints(JSONObject constraints) {
+    public void setConstraints(JSProxyObject constraints) {
         this.constraints = constraints;
         updateLayout();
     }
 
-    public void setAdjustConstraints(JSONObject adjustConstraints) {
+    public void setAdjustConstraints(JSProxyObject adjustConstraints) {
         this.adjustConstraints = adjustConstraints;
         updateLayout();
     }
@@ -75,15 +77,15 @@ public class MPComponentView extends FrameLayout {
         }
     }
 
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         this.attributes = attributes;
     }
 
-    public void setChildren(JSONArray children) {
+    public void setChildren(JSProxyArray children) {
         if (children == null) return;
         List<MPComponentView> makeSubviews = new ArrayList();
         for (int i = 0; i < children.length(); i++) {
-            MPComponentView view = factory.create(children.optJSONObject(i));
+            MPComponentView view = factory.create(children.optObject(i));
             if (view != null) {
                 makeSubviews.add(view);
             }

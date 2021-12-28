@@ -37,6 +37,8 @@ import androidx.annotation.NonNull;
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,7 +70,7 @@ public class RichText extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) {
+    public void setChildren(JSProxyArray children) {
         SpannableStringBuilder text = spannableStringFromData(children);
         contentView.setText(text);
         if (measureId != null) {
@@ -77,7 +79,7 @@ public class RichText extends MPComponentView {
     }
 
     @Override
-    public void setConstraints(JSONObject constraints) {
+    public void setConstraints(JSProxyObject constraints) {
         super.setConstraints(constraints);
         if (measureId == null) {
             if (constraints.has("w")) {
@@ -96,7 +98,7 @@ public class RichText extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         contentView.setSingleLine(false);
         Object maxWidth = attributes.opt("maxWidth");
@@ -188,11 +190,11 @@ public class RichText extends MPComponentView {
         }
     }
 
-    private SpannableStringBuilder spannableStringFromData(JSONArray children) {
+    private SpannableStringBuilder spannableStringFromData(JSProxyArray children) {
         if (children == null) return null;
         SpannableStringBuilder builder = new SpannableStringBuilder();
         for (int i = 0; i < children.length(); i++) {
-            JSONObject obj = children.optJSONObject(i);
+            JSProxyObject obj = children.optObject(i);
             if (obj == null) continue;
             String name = obj.optString("name", null);
             if (name == null) continue;
@@ -209,10 +211,10 @@ public class RichText extends MPComponentView {
         return builder;
     }
 
-    private SpannableStringBuilder spannableStringFromTextSpanData(JSONObject data) {
-        JSONArray childrenArray = data.optJSONArray("children");
+    private SpannableStringBuilder spannableStringFromTextSpanData(JSProxyObject data) {
+        JSProxyArray childrenArray = data.optArray("children");
         if (childrenArray == null) {
-            JSONObject attributes = data.optJSONObject("attributes");
+            JSProxyObject attributes = data.optObject("attributes");
             if (attributes != null) {
                 String text = attributes.optString("text", "");
                 SpannableStringBuilder spannableString = new SpannableStringBuilder(text);
@@ -223,7 +225,7 @@ public class RichText extends MPComponentView {
                     int onTapSpan = attributes.optInt("onTap_span", 0);
                     spannableString.setSpan(new MyClickableSpan(onTapEl, onTapSpan), 0, text.length(), Spanned.SPAN_INCLUSIVE_INCLUSIVE);
                 }
-                JSONObject style = attributes.optJSONObject("style");
+                JSProxyObject style = attributes.optObject("style");
                 if (style != null) {
                     String fontFamily = style.optString("fontFamily", null);
                     double fontSize = style.optDouble("fontSize", 14.0);

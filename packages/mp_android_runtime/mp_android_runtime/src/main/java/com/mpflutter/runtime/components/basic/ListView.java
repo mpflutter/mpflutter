@@ -14,6 +14,8 @@ import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -76,7 +78,7 @@ public class ListView extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) {
+    public void setChildren(JSProxyArray children) {
         contentAdapter.engine = engine;
         if (children != null) {
             contentAdapter.items = children;
@@ -91,14 +93,14 @@ public class ListView extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         String scrollDirection = attributes.optString("scrollDirection", null);
-        if (!attributes.isNull("scrollDirection") && scrollDirection != null) {
+        if (scrollDirection != null) {
             waterfallLayout.isHorizontalScroll = scrollDirection.contentEquals("Axis.horizontal");
         }
         String padding = attributes.optString("padding", null);
-        if (!attributes.isNull("padding") && padding != null) {
+        if (padding != null) {
             double[] edgeInsets = MPUtils.edgeInsetsFromString(padding);
             this.edgeInsets = edgeInsets;
             waterfallLayout.padding = edgeInsets;
@@ -110,7 +112,7 @@ public class ListView extends MPComponentView {
 
 class ListViewAdapter extends RecyclerView.Adapter {
 
-    public JSONArray items;
+    public JSProxyArray items;
     public MPEngine engine;
 
     @NonNull
@@ -125,7 +127,7 @@ class ListViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof ListViewCell && position < items.length()) {
-            JSONObject data = items.optJSONObject(position);
+            JSProxyObject data = items.optObject(position);
             if (data != null) {
                 ((ListViewCell) holder).setData(data);
             }
@@ -149,7 +151,7 @@ class ListViewCell extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
-    void setData(JSONObject object) {
+    void setData(JSProxyObject object) {
         MPComponentView contentView = engine.componentFactory.create(object);
         if (contentView.getParent() != null) {
             ((ViewGroup)contentView.getParent()).removeView(contentView);

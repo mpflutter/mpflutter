@@ -7,6 +7,8 @@ import android.widget.CompoundButton;
 import androidx.annotation.NonNull;
 
 import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -33,10 +35,10 @@ public class MPSwitch extends MPPlatformView {
     }
 
     @Override
-    public void setChildren(JSONArray children) { }
+    public void setChildren(JSProxyArray children) { }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         if (!firstSetted) {
             firstSetted = true;

@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,7 +31,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
     public int crossAxisCount = 1;
     public double crossAxisSpacing = 0.0;
     public double mainAxisSpacing = 0.0;
-    public JSONArray items;
+    public JSProxyArray items;
     public List<RectF> itemLayouts = new ArrayList();
     public double maxVLength = 0.0;
     public double maxVLengthPx = 0.0;
@@ -64,7 +66,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
         double currentY = paddingTop;
         double maxVLength = 0.0;
         for (int i = 0; i < items.length(); i++) {
-            JSONObject obj = items.optJSONObject(i);
+            JSProxyObject obj = items.optObject(i);
             if (obj == null) continue;
             SizeF itemSize = sizeForItem(obj);
             double itemWidth = itemSize.getWidth();
@@ -108,7 +110,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
         List<RectF> layouts = new ArrayList();
         double maxVLength = 0.0;
         for (int i = 0; i < items.length(); i++) {
-            JSONObject obj = items.optJSONObject(i);
+            JSProxyObject obj = items.optObject(i);
             if (obj == null) continue;
             SizeF itemSize = sizeForItem(obj);
             double itemWidth = itemSize.getWidth();
@@ -192,8 +194,8 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
         this.maxVLengthPx = MPUtils.dp2px(maxVLength, context);
     }
 
-    SizeF sizeForItem(JSONObject data) {
-        JSONObject constraints = data.optJSONObject("constraints");
+    SizeF sizeForItem(JSProxyObject data) {
+        JSProxyObject constraints = data.optObject("constraints");
         if (constraints != null) {
             return new SizeF((float)constraints.optDouble("w", 0.0), (float)constraints.optDouble("h", 0.0));
         }

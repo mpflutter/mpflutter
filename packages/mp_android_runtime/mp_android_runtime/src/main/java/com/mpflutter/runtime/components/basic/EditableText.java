@@ -16,6 +16,8 @@ import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,10 +37,10 @@ public class EditableText extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) { }
+    public void setChildren(JSProxyArray children) { }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         int inputType = InputType.TYPE_CLASS_TEXT;
         int maxLines = attributes.optInt("maxLines", 1);

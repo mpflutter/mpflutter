@@ -6,6 +6,8 @@ import android.util.Size;
 import android.util.SizeF;
 
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -29,13 +31,13 @@ public class CustomScrollViewLayout extends WaterfallLayout {
         WaterfallLayout currentWaterfallLayout = null;
         int currentWaterfallItemPos = 0;
         for (int i = 0; i < items.length(); i++) {
-            JSONObject data = items.optJSONObject(i);
+            JSProxyObject data = items.optObject(i);
             if (data == null) continue;
             String name = data.optString("name", null);
             if (name != null && name.contentEquals("sliver_grid")) {
                 currentWaterfallLayout = new WaterfallLayout(context);
-                if (data.optJSONObject("attributes") != null && data.optJSONObject("attributes").optString("padding", null) != null) {
-                    String padding = data.optJSONObject("attributes").optString("padding");
+                if (data.optObject("attributes") != null && data.optObject("attributes").optString("padding", null) != null) {
+                    String padding = data.optObject("attributes").optString("padding", null);
                     if (padding != null && padding != "null") {
                         currentWaterfallLayout.padding = MPUtils.edgeInsetsFromString(padding);
                     }
@@ -43,7 +45,7 @@ public class CustomScrollViewLayout extends WaterfallLayout {
                 currentWaterfallLayout.isHorizontalScroll = isHorizontalScroll;
                 JSONArray waterfallItems = new JSONArray();
                 for (int j = i + 1; j < items.length(); j++) {
-                    JSONObject item = items.optJSONObject(j);
+                    JSProxyObject item = items.optObject(j);
                     if (item == null) continue;
                     if (item.optString("name", "").contentEquals("sliver_grid_end")) {
                         break;
@@ -52,13 +54,13 @@ public class CustomScrollViewLayout extends WaterfallLayout {
                 }
                 currentWaterfallLayout.clientWidth = clientWidth;
                 currentWaterfallLayout.clientHeight = clientHeight;
-                if (data.optJSONObject("attributes") != null && data.optJSONObject("attributes").optJSONObject("gridDelegate") != null) {
-                    JSONObject gridDelegate = data.optJSONObject("attributes").optJSONObject("gridDelegate");
+                if (data.optObject("attributes") != null && data.optObject("attributes").optObject("gridDelegate") != null) {
+                    JSProxyObject gridDelegate = data.optObject("attributes").optObject("gridDelegate");
                     currentWaterfallLayout.crossAxisCount = gridDelegate.optInt("crossAxisCount", 1);
                     currentWaterfallLayout.mainAxisSpacing = gridDelegate.optDouble("mainAxisSpacing", 0.0);
                     currentWaterfallLayout.crossAxisSpacing = gridDelegate.optDouble("crossAxisSpacing", 0.0);
                 }
-                currentWaterfallLayout.items = waterfallItems;
+                currentWaterfallLayout.items = new JSProxyArray(waterfallItems);
                 currentWaterfallLayout.prepareLayout();
                 currentWaterfallItemPos = 0;
                 layouts.add(new RectF(0, 0, 0, 0));

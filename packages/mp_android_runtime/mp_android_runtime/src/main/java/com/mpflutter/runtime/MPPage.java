@@ -11,6 +11,8 @@ import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.components.basic.Overlay;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,8 +68,8 @@ public class MPPage implements MPDataReceiver {
     }
 
     @Override
-    public void didReceivedFrameData(JSONObject message) throws JSONException {
-        JSONObject scaffold = message.optJSONObject("scaffold");
+    public void didReceivedFrameData(JSProxyObject message) {
+        JSProxyObject scaffold = message.optObject("scaffold");
         MPComponentView scaffoldView = engine.componentFactory.create(scaffold);
         if (scaffoldView instanceof MPScaffold) {
             ((MPScaffold) scaffoldView).rootViewContext = rootView.getContext();
@@ -80,13 +82,13 @@ public class MPPage implements MPDataReceiver {
             rootView.addView(scaffoldView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
         }
         this.scaffoldView = scaffoldView;
-        JSONArray overlays = message.optJSONArray("overlays");
+        JSProxyArray overlays = message.optArray("overlays");
         if (overlays != null) {
             setOverlays(overlays);
         }
     }
 
-    void setOverlays(JSONArray overlays) {
+    void setOverlays(JSProxyArray overlays) {
         if (!overlaysView.isEmpty()) {
             for (int i = 0; i < overlaysView.size(); i++) {
                 View view = overlaysView.get(i);
@@ -97,7 +99,7 @@ public class MPPage implements MPDataReceiver {
             overlaysView.clear();
         }
         for (int i = 0; i < overlays.length(); i++) {
-            JSONObject obj = overlays.optJSONObject(i);
+            JSProxyObject obj = overlays.optObject(i);
             if (obj == null) continue;
             MPComponentView overlayView = engine.componentFactory.create(obj);
             if (overlayView != null) {

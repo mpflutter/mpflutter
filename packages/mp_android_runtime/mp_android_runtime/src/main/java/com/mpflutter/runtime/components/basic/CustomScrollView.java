@@ -13,6 +13,8 @@ import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,26 +74,26 @@ public class CustomScrollView extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) {
+    public void setChildren(JSProxyArray children) {
         contentAdapter.engine = engine;
         if (children != null) {
             JSONArray newChildren = new JSONArray();
             for (int i = 0; i < children.length(); i++) {
-                JSONObject child = children.optJSONObject(i);
+                JSProxyObject child = children.optObject(i);
                 if (child == null) continue;
                 String name = child.optString("name", null);
-                if (name != null && (name.contentEquals("sliver_list") || name.contentEquals("sliver_grid")) && child.optJSONArray("children") != null) {
+                if (name != null && (name.contentEquals("sliver_list") || name.contentEquals("sliver_grid")) && child.optArray("children") != null) {
                     JSONObject gridStart = new JSONObject();
                     try {
                         gridStart.put("name", "sliver_grid");
-                        gridStart.put("attributes", child.opt("attributes"));
+                        gridStart.put("attributes", child.optObject("attributes"));
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     newChildren.put(gridStart);
-                    JSONArray sliverListChildren = child.optJSONArray("children");
+                    JSProxyArray sliverListChildren = child.optArray("children");
                     for (int j = 0; j < sliverListChildren.length(); j++) {
-                        JSONObject sliverListChild = sliverListChildren.optJSONObject(j);
+                        JSProxyObject sliverListChild = sliverListChildren.optObject(j);
                         if (sliverListChild != null) {
                             newChildren.put(sliverListChild);
                         }
@@ -108,8 +110,8 @@ public class CustomScrollView extends MPComponentView {
                     newChildren.put(child);
                 }
             }
-            contentAdapter.items = newChildren;
-            waterfallLayout.items = newChildren;
+            contentAdapter.items = new JSProxyArray(newChildren);
+            waterfallLayout.items = new JSProxyArray(newChildren);
         }
         else {
             contentAdapter.items = null;
@@ -120,10 +122,10 @@ public class CustomScrollView extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         String scrollDirection = attributes.optString("scrollDirection", null);
-        if (!attributes.isNull("scrollDirection") && scrollDirection != null) {
+        if (scrollDirection != null) {
             waterfallLayout.isHorizontalScroll = scrollDirection.contentEquals("Axis.horizontal");
         }
         waterfallLayout.prepareLayout();
@@ -133,7 +135,7 @@ public class CustomScrollView extends MPComponentView {
 
 class CustomScrollViewAdapter extends RecyclerView.Adapter {
 
-    public JSONArray items;
+    public JSProxyArray items;
     public MPEngine engine;
 
     @NonNull
@@ -148,7 +150,7 @@ class CustomScrollViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof CustomScrollViewCell && position < items.length()) {
-            JSONObject data = items.optJSONObject(position);
+            JSProxyObject data = items.optObject(position);
             if (data != null) {
                 ((CustomScrollViewCell) holder).setData(data);
             }
@@ -172,7 +174,7 @@ class CustomScrollViewCell extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
-    void setData(JSONObject object) {
+    void setData(JSProxyObject object) {
         MPComponentView contentView = engine.componentFactory.create(object);
         if (contentView == null) return;
         if (contentView.getParent() != null) {

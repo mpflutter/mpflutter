@@ -15,6 +15,8 @@ import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.components.mpkit.MPScaffold;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -75,7 +77,7 @@ public class GridView extends MPComponentView {
     }
 
     @Override
-    public void setChildren(JSONArray children) {
+    public void setChildren(JSProxyArray children) {
         contentAdapter.engine = engine;
         if (children != null) {
             contentAdapter.items = children;
@@ -90,9 +92,9 @@ public class GridView extends MPComponentView {
     }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
-        JSONObject gridDelegate = attributes.optJSONObject("gridDelegate");
+        JSProxyObject gridDelegate = attributes.optObject("gridDelegate");
         if (gridDelegate != null) {
             waterfallLayout.crossAxisCount = gridDelegate.optInt("crossAxisCount", 1);
             crossAxisSpacing = gridDelegate.optDouble("crossAxisSpacing", 0.0);
@@ -117,7 +119,7 @@ public class GridView extends MPComponentView {
 
 class GridViewAdapter extends RecyclerView.Adapter {
 
-    public JSONArray items;
+    public JSProxyArray items;
     public MPEngine engine;
 
     @NonNull
@@ -132,7 +134,7 @@ class GridViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         if (holder instanceof GridViewCell && position < items.length()) {
-            JSONObject data = items.optJSONObject(position);
+            JSProxyObject data = items.optObject(position);
             if (data != null) {
                 ((GridViewCell) holder).setData(data);
             }
@@ -156,7 +158,7 @@ class GridViewCell extends RecyclerView.ViewHolder {
         super(itemView);
     }
 
-    void setData(JSONObject object) {
+    void setData(JSProxyObject object) {
         MPComponentView contentView = engine.componentFactory.create(object);
         if (contentView.getParent() != null) {
             ((ViewGroup)contentView.getParent()).removeView(contentView);

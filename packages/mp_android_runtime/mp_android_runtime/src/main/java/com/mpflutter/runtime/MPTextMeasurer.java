@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.mpflutter.runtime.components.MPComponentView;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,13 +23,14 @@ public class MPTextMeasurer {
         this.engine = engine;
     }
 
-    public void didReceivedDoMeasureData(JSONObject data) {
-        JSONArray items = data.optJSONArray("items");
+    public void didReceivedDoMeasureData(JSProxyObject data) {
+        if (data == null) return;
+        JSProxyArray items = data.optArray("items");
         if (items == null) return;
         engine.componentFactory.disableCache = true;
         List<MPComponentView> views = new ArrayList();
         for (int i = 0; i < items.length(); i++) {
-            MPComponentView view = engine.componentFactory.create(items.optJSONObject(i));
+            MPComponentView view = engine.componentFactory.create(items.optObject(i));
             if (view != null) {
                 views.add(view);
             }

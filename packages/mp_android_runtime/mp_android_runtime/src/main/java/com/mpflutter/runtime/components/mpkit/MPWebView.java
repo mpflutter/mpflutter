@@ -8,6 +8,8 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 
 import com.mpflutter.runtime.components.MPUtils;
+import com.mpflutter.runtime.jsproxy.JSProxyArray;
+import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,10 +29,10 @@ public class MPWebView extends MPPlatformView {
     }
 
     @Override
-    public void setChildren(JSONArray children) { }
+    public void setChildren(JSProxyArray children) { }
 
     @Override
-    public void setAttributes(JSONObject attributes) {
+    public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         String url = attributes.optString("url", null);
         if (!MPUtils.isNull(url) && !firstSetted) {
