@@ -7,7 +7,7 @@ import 'i18n.dart';
 main(List<String> args) {
   _checkPubspec();
   _createBuildDir();
-  _buildDartJS();
+  _buildDartJS(args);
   _buildMpk();
 }
 
@@ -26,12 +26,16 @@ _createBuildDir() {
   }
 }
 
-String _buildDartJS() {
+String _buildDartJS(List<String> args) {
+  final dart2JSParams = args.toList();
+  if (!dart2JSParams.any((element) => element.startsWith('-O'))) {
+    dart2JSParams.add('-O4');
+  }
   Process.runSync(
       'dart2js',
       [
         'lib/main.dart',
-        '-O4',
+        ...dart2JSParams,
         '-Ddart.vm.product=true',
         '-o',
         'build/main.dart.js'

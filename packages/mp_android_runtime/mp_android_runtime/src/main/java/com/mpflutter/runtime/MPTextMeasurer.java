@@ -29,6 +29,7 @@ public class MPTextMeasurer {
         if (items == null) return;
         engine.componentFactory.disableCache = true;
         List<MPComponentView> views = new ArrayList();
+        Log.d("MPRuntime", "didReceivedDoMeasureData: " + items.length());
         for (int i = 0; i < items.length(); i++) {
             MPComponentView view = engine.componentFactory.create(items.optObject(i));
             if (view != null) {

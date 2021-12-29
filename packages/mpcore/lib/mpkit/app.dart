@@ -40,7 +40,10 @@ class MPApp extends StatelessWidget {
         if (pageRouteBuilder != null) {
           return pageRouteBuilder!.call(settings, builder);
         }
-        return MPPageRoute<T>(settings: settings, builder: builder);
+        return MPPageRoute<T>(
+          settings: settings,
+          builder: (context) => SplashScreen(null, builder),
+        );
       },
       onGenerateRoute: (settings) {
         return onGenerateRoute?.call(settings) ??
@@ -64,7 +67,7 @@ class MPApp extends StatelessWidget {
                 builder: (context) {
                   final routeBuilder = routes[routeName];
                   if (routeBuilder != null) {
-                    return routeBuilder(context);
+                    return SplashScreen(routeBuilder(context), null);
                   } else {
                     return Container();
                   }
@@ -74,5 +77,41 @@ class MPApp extends StatelessWidget {
         ];
       },
     );
+  }
+}
+
+class SplashScreen extends StatefulWidget {
+  final Widget? home;
+  final WidgetBuilder? homeBuilder;
+
+  SplashScreen(this.home, this.homeBuilder);
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  bool finished = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration(milliseconds: 50)).then((_) {
+      setState(() {
+        finished = true;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (finished) {
+      if (widget.home != null) {
+        return widget.home!;
+      } else if (widget.homeBuilder != null) {
+        return widget.homeBuilder!.call(context);
+      }
+    }
+    return MPScaffold(backgroundColor: Colors.white);
   }
 }

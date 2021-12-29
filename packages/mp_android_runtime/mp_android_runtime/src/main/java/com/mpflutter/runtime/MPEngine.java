@@ -49,6 +49,7 @@ public class MPEngine {
     public MPMPKReader mpkReader;
     public Handler mainThreadHandler;
     public MPTextMeasurer textMeasurer;
+    public MPWindowInfo windowInfo;
     public MPRouter router;
     public MPComponentFactory componentFactory;
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
@@ -59,6 +60,7 @@ public class MPEngine {
         initializeFresco(context);
         mainThreadHandler = new Handler(Looper.getMainLooper());
         textMeasurer = new MPTextMeasurer(this);
+        windowInfo = new MPWindowInfo(this);
         router = new MPRouter(this);
         componentFactory = new MPComponentFactory(context, this);
         engineStore.put(this.hashCode(), new WeakReference(this));
@@ -85,7 +87,7 @@ public class MPEngine {
         byte[] mainDartJSData = mpkReader.dataWithFilePath("main.dart.js");
         if (mainDartJSData != null) {
             jsCode = new String(mainDartJSData, Charset.forName("utf-8"));
-            Log.d("TAG", "initWithMpkData: ");
+            Log.d("MPRuntime", "initWithMpkData: ");
         }
     }
 
@@ -93,21 +95,21 @@ public class MPEngine {
         if (started) {
             return;
         }
+
         quickJS = QuickJS.createRuntime();
         jsContext = quickJS.createContext();
-
         JSObject selfObject = new JSObject(jsContext);
         jsContext.set("self", selfObject);
-
         setupJSContextEventChannel(selfObject);
         setupDeferredLibraryLoader(selfObject);
         MPTimer.setupWithJSContext(jsContext, selfObject);
         MPConsole.setupWithJSContext(jsContext, selfObject);
         MPDeviceInfo.setupWithJSContext(jsContext, selfObject);
-
         if (jsCode != null) {
             try {
+                Log.d("MPRuntime", "start execcode: ");
                 jsContext.executeVoidScript(jsCode, "");
+                Log.d("MPRuntime", "end execcode: ");
             } catch (Throwable e) {
                 Log.e(MPRuntime.TAG, "error: ", e);
             }
@@ -115,6 +117,7 @@ public class MPEngine {
         else if (debugger != null) {
             debugger.start();
         }
+        windowInfo.updateWindowInfo();
         started = true;
     }
 
@@ -167,11 +170,12 @@ public class MPEngine {
     }
 
     public void sendMessage(Map message) {
-         String data = new JSONObject(message).toString();
-         if (debugger != null) {
-             debugger.sendMessage(data);
-         }
-         else {
+        Log.d(MPRuntime.TAG, "[out] type: " + message.get("type"));
+        String data = new JSONObject(message).toString();
+        if (debugger != null) {
+            debugger.sendMessage(data);
+        }
+        else {
              try {
                  if (this.engineScope != null) {
                      JSArray args = new JSArray(jsContext);
@@ -182,7 +186,7 @@ public class MPEngine {
              } catch (Throwable e) {
                  Log.e(MPRuntime.TAG, "sendMessage: ", e);
              }
-         }
+        }
     }
 
     public void didReceivedMessage(JSProxyObject decodedMessage) {
@@ -191,6 +195,7 @@ public class MPEngine {
             public void run() {
                 try {
                     String type = decodedMessage.optString("type", "");
+                    Log.d(MPRuntime.TAG, "[in] type: " + type);
                     if (type.equalsIgnoreCase("frame_data")) {
                         didReceivedFrameData(decodedMessage.optObject("message"));
                     } else if (type.equalsIgnoreCase("diff_data")) {
@@ -203,8 +208,7 @@ public class MPEngine {
                         router.didReceivedRouteData(decodedMessage.optObject("message"));
                     } else if (type.equalsIgnoreCase("rich_text")) {
                         textMeasurer.didReceivedDoMeasureData(decodedMessage.optObject("message"));
-                    }
-                    else if (type.equalsIgnoreCase("platform_view")) {
+                    } else if (type.equalsIgnoreCase("platform_view")) {
                         MPPlatformView.didReceivedPlatformViewMessage(decodedMessage.optObject("message"), MPEngine.this);
                     }
                 } catch (Throwable e) {
@@ -215,6 +219,7 @@ public class MPEngine {
     }
 
     private void didReceivedFrameData(JSProxyObject frameData) {
+        if (frameData == null) return;
         int routeId = frameData.optInt("routeId", -1);
         if (routeId >= 0 && managedViews.containsKey(routeId)) {
             managedViews.get(routeId).didReceivedFrameData(frameData);
@@ -222,6 +227,7 @@ public class MPEngine {
     }
 
     private void didReceivedDiffData(JSProxyObject frameData) {
+        if (frameData == null) return;
         JSProxyArray diffs = frameData.optArray("diffs");
         if (diffs != null) {
             for (int i = 0; i < diffs.length(); i++) {
@@ -234,6 +240,7 @@ public class MPEngine {
     }
 
     private void didReceivedElementGC(JSProxyArray data) {
+        if (data == null) return;
         for (int i = 0; i < data.length(); i++) {
             componentFactory.cachedView.remove(i);
             componentFactory.cachedElement.remove(i);

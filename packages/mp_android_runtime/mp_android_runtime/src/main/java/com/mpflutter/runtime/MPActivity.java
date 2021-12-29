@@ -1,6 +1,8 @@
 package com.mpflutter.runtime;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;

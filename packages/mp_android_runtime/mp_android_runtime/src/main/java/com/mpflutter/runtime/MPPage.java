@@ -2,6 +2,7 @@ package com.mpflutter.runtime;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.Size;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,7 @@ public class MPPage implements MPDataReceiver {
             public void run() {
                 if (!rootView.isAttachedToWindow() || rootView.getWidth() <= 0.0) {
                     loopCheckRootViewAttached();
+                    return;
                 }
                 MPPage.this.requestRoute(new MPRouteResponse() {
                     @Override
