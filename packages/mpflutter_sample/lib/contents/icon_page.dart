@@ -76,6 +76,18 @@ class IconPage extends StatelessWidget {
               SizedBox(height: 16),
             ],
           )),
+          _renderBlock(Column(
+            children: [
+              _renderHeader('Loading icon.'),
+              Container(
+                child: MPCircularProgressIndicator(
+                  size: 66,
+                  color: Colors.blue,
+                ),
+              ),
+              SizedBox(height: 16),
+            ],
+          )),
         ],
       ),
     );

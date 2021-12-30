@@ -36,3 +36,4 @@ part 'sliver_persistent_header.dart';
 part 'custom_paint_to_image.dart';
 part 'rich_text.dart';
 part 'main_tab_view.dart';
+part 'circular_progress_indicator.dart';

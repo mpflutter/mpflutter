@@ -33,6 +33,7 @@ import { MPSwitch } from "./mpkit/switch";
 import { MPSlider } from "./mpkit/slider";
 import { MPPicker } from "./mpkit/picker";
 import { MPDatePicker } from "./mpkit/date_picker";
+import { MPCircularProgressIndicator } from "./mpkit/circular_progress_indicator";
 
 export class ComponentFactory {
   static components: { [key: string]: typeof ComponentView } = {
@@ -70,6 +71,7 @@ export class ComponentFactory {
     mp_picker: MPPicker,
     mp_date_picker: MPDatePicker,
     mp_mini_program_view: MPMiniProgramView,
+    mp_circular_progress_indicator: MPCircularProgressIndicator,
   };
 
   static ancestors: { [key: string]: typeof AncestorView } = {
