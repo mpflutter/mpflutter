@@ -39,12 +39,12 @@ void _buildDartJS(List<String> args) {
   final dart2JsResult = Process.runSync(
       'dart2js',
       [
-        'lib/main.dart',
+        p.join('lib', 'main.dart'),
         ...dart2JSParams,
         '-Ddart.vm.product=true',
         '-Dmpflutter.hostType=browser',
         '-o',
-        'build/main.dart.js'
+        p.join('build', 'main.dart.js')
       ]..removeWhere((element) => element.isEmpty),
       runInShell: true);
   if (dart2JsResult.exitCode != 0) {
@@ -67,47 +67,51 @@ void _buildDartJS(List<String> args) {
     print(buildBundleResult.stderr);
     throw I18n.executeFail('flutter build bundle');
   }
-  if (Directory('./build/flutter_assets').existsSync()) {
-    Directory('./build/flutter_assets').renameSync('./build/assets');
+  if (Directory(p.join('build', 'flutter_assets')).existsSync()) {
+    Directory(p.join('build', 'flutter_assets'))
+        .renameSync(p.join('build', 'assets'));
   }
   _removeFiles([
-    './build/assets/isolate_snapshot_data',
-    './build/assets/kernel_blob.bin',
-    './build/assets/vm_snapshot_data',
-    './build/snapshot_blob.bin.d'
+    p.join('build', 'assets', 'isolate_snapshot_data'),
+    p.join('build', 'assets', 'kernel_blob.bin'),
+    p.join('build', 'assets', 'vm_snapshot_data'),
+    p.join('build', 'assets', 'snapshot_blob.bin.d'),
   ]);
 }
 
 _fixDefererLoader() {
-  var code = File('build/main.dart.js').readAsStringSync();
+  var code = File(p.join('build', 'main.dart.js')).readAsStringSync();
   code = code.replaceAllMapped(RegExp(r"m=\$\.([a-z0-9A-Z]+)\(\)\nm.toString"),
       (match) {
     return "m=\$.${match.group(1)}() || ''\nm.toString";
   });
   code = code.replaceFirst(
       "\$.\$get\$thisScript();", "\$.\$get\$thisScript() || '';");
-  File('build/main.dart.js').writeAsStringSync(code);
+  File(p.join('build', 'main.dart.js')).writeAsStringSync(code);
 }
 
 _copyWebSource() async {
-  _copyPathSync('./web', './build');
-  final mainDartJSHashCode = File('./build/main.dart.js').existsSync()
-      ? (await md5.bind(File('./build/main.dart.js').openRead()).first)
+  _copyPathSync(p.join('web'), p.join('build'));
+  final mainDartJSHashCode = File(p.join('build', 'main.dart.js')).existsSync()
+      ? (await md5.bind(File(p.join('build', 'main.dart.js')).openRead()).first)
           .toString()
           .substring(0, 8)
       : "";
-  final pluginMinJSHashCode = File('./build/plugins.min.js').existsSync()
-      ? (await md5.bind(File('./build/plugins.min.js').openRead()).first)
-          .toString()
-          .substring(0, 8)
-      : "";
-  var indexFileContent = File('./web/index.html').readAsStringSync();
+  final pluginMinJSHashCode =
+      File(p.join('build', 'plugins.min.js')).existsSync()
+          ? (await md5
+                  .bind(File(p.join('build', 'plugins.min.js')).openRead())
+                  .first)
+              .toString()
+              .substring(0, 8)
+          : "";
+  var indexFileContent = File(p.join('web', 'index.html')).readAsStringSync();
   indexFileContent =
       indexFileContent.replaceAll("var dev = true;", "var dev = false;");
   indexFileContent = indexFileContent
       .replaceAll("main.dart.js", "main.dart.js?$mainDartJSHashCode")
       .replaceAll("plugins.min.js", "plugins.min.js?$pluginMinJSHashCode");
-  File("./build/index.html").writeAsStringSync(indexFileContent);
+  File(p.join('build', 'index.html')).writeAsStringSync(indexFileContent);
 }
 
 _removeFiles(List<String> files) {

@@ -6,16 +6,16 @@ import 'i18n.dart';
 
 main(List<String> args) {
   if (!File('.packages').existsSync()) return;
-  final lines = File('./.packages').readAsLinesSync();
+  final lines = File('.packages').readAsLinesSync();
   for (final line in lines) {
     final pkgPath = line
         .replaceFirst(RegExp('.*?:'), '')
         .replaceFirst('file://', '')
         .replaceFirst('/lib/', '');
-    if (File('$pkgPath/package.json').existsSync() &&
-        (Directory('$pkgPath/lib/web').existsSync() ||
-            Directory('$pkgPath/lib/weapp').existsSync() ||
-            Directory('$pkgPath/lib/swanapp').existsSync())) {
+    if (File(path.join(pkgPath, 'package.json')).existsSync() &&
+        (Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
+            Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
+            Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync())) {
       runNpmBuild(pkgPath);
     }
   }
@@ -26,15 +26,16 @@ main(List<String> args) {
 
 void buildWebPlugin() {
   final stringBuffer = StringBuffer();
-  final lines = File('./.packages').readAsLinesSync();
+  final lines = File('.packages').readAsLinesSync();
   for (final line in lines) {
     final pkgPath = line
         .replaceFirst(RegExp('.*?:'), '')
         .replaceFirst('file://', '')
         .replaceFirst('/lib/', '');
-    if (File('$pkgPath/dist/web/bundle.min.js').existsSync()) {
-      stringBuffer
-          .writeln(File('$pkgPath/dist/web/bundle.min.js').readAsStringSync());
+    if (File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js')).existsSync()) {
+      stringBuffer.writeln(
+          File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
+              .readAsStringSync());
     }
   }
   try {
@@ -53,13 +54,18 @@ void buildWeappPlugin() {
         .replaceFirst(RegExp('.*?:'), '')
         .replaceFirst('file://', '')
         .replaceFirst('/lib/', '');
-    if (File('$pkgPath/dist/weapp/bundle.min.js').existsSync()) {
+    if (File(path.join(pkgPath, 'dist', 'weapp', 'bundle.min.js'))
+        .existsSync()) {
       stringBuffer.writeln(
-          File('$pkgPath/dist/weapp/bundle.min.js').readAsStringSync());
+          File(path.join(pkgPath, 'dist', 'weapp', 'bundle.min.js'))
+              .readAsStringSync());
     }
-    if (Directory('$pkgPath/lib/weapp/components').existsSync()) {
+    if (Directory(path.join(pkgPath, 'lib', 'weapp', 'components'))
+        .existsSync()) {
       // contains wechat components
-      Directory('$pkgPath/lib/weapp/components').listSync().forEach((element) {
+      Directory(path.join(pkgPath, 'lib', 'weapp', 'components'))
+          .listSync()
+          .forEach((element) {
         if (element.path.endsWith(".json")) {
           components.add(File(element.path));
         }
@@ -148,19 +154,21 @@ module.exports = {
 
 void buildSwanappPlugin() {
   final stringBuffer = StringBuffer();
-  final lines = File('./.packages').readAsLinesSync();
+  final lines = File('.packages').readAsLinesSync();
   for (final line in lines) {
     final pkgPath = line
         .replaceFirst(RegExp('.*?:'), '')
         .replaceFirst('file://', '')
         .replaceFirst('/lib/', '');
-    if (File('$pkgPath/dist/swanapp/bundle.min.js').existsSync()) {
+    if (File(path.join(pkgPath, 'dist', 'swanapp', 'bundle.min.js'))
+        .existsSync()) {
       stringBuffer.writeln(
-          File('$pkgPath/dist/swanapp/bundle.min.js').readAsStringSync());
+          File(path.join(pkgPath, 'dist', 'swanapp', 'bundle.min.js'))
+              .readAsStringSync());
     }
   }
   try {
-    File('swanapp/plugins.min.js').writeAsStringSync(
+    File(path.join('swanapp', 'plugins.min.js')).writeAsStringSync(
         '''var MPEnv = window.MPDOM.MPEnv;var MPMethodChannel = window.MPDOM.MPMethodChannel;var MPEventChannel = window.MPDOM.MPEventChannel;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = window.MPDOM.PluginRegister;''' +
             stringBuffer.toString());
   } catch (e) {}

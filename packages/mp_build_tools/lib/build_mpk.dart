@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'i18n.dart';
+import 'package:path/path.dart' as p;
 
 main(List<String> args) {
   _checkPubspec();
@@ -26,15 +27,15 @@ _createBuildDir() {
   }
 }
 
-String _buildDartJS() {
+void _buildDartJS() {
   Process.runSync(
       'dart2js',
       [
-        'lib/main.dart',
+        p.join('lib', 'main.dart'),
         '-O4',
         '-Ddart.vm.product=true',
         '-o',
-        'build/main.dart.js'
+        p.join('build', 'main.dart.js'),
       ],
       runInShell: true);
   Process.runSync(
@@ -46,18 +47,16 @@ String _buildDartJS() {
     runInShell: true,
     environment: {'PUB_HOSTED_URL': 'https://pub.mpflutter.com'},
   );
-  if (Directory('./build/flutter_assets').existsSync()) {
-    Directory('./build/flutter_assets').renameSync('./build/assets');
+  if (Directory(p.join('build', 'flutter_assets')).existsSync()) {
+    Directory(p.join('build', 'flutter_assets'))
+        .renameSync(p.join('build', 'assets'));
   }
   _removeFiles([
-    './build/assets/isolate_snapshot_data',
-    './build/assets/kernel_blob.bin',
-    './build/assets/vm_snapshot_data',
-    './build/snapshot_blob.bin.d'
+    p.join('build', 'assets', 'isolate_snapshot_data'),
+    p.join('build', 'assets', 'kernel_blob.bin'),
+    p.join('build', 'assets', 'vm_snapshot_data'),
+    p.join('build', 'assets', 'snapshot_blob.bin.d'),
   ]);
-  return File('./build/assets/.last_build_id')
-      .readAsStringSync()
-      .substring(0, 6);
 }
 
 _buildMpk() {
@@ -68,9 +67,11 @@ _buildMpk() {
     }
   });
   void pushAsset(String prefix) {
-    if (Directory('build/assets/$prefix').existsSync()) {
-      Directory('build/assets/$prefix').listSync().forEach((element) {
-        final name = prefix + "/" + element.path.split('/').last;
+    if (Directory(p.join('build', 'assets', prefix)).existsSync()) {
+      Directory(p.join('build', 'assets', prefix))
+          .listSync()
+          .forEach((element) {
+        final name = prefix + "/" + p.basename(element.path);
         if (element.statSync().type == FileSystemEntityType.directory) {
           pushAsset(name);
         } else {
@@ -84,7 +85,7 @@ _buildMpk() {
   print(allFiles);
   final mpkFile = MPKFile(allFiles);
   final data = mpkFile.encode();
-  File('build/app.mpk').writeAsBytesSync(data);
+  File(p.join('build', 'app.mpk')).writeAsBytesSync(data);
 }
 
 _removeFiles(List<String> files) {
