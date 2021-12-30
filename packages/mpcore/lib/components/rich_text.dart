@@ -87,6 +87,31 @@ MPElement _encodeRichText(Element element) {
     maxWidth: double.infinity,
     maxHeight: double.infinity,
   );
+  var maxWidth = constraints.maxWidth;
+  var maxHeight = constraints.maxHeight;
+  var currentRenderObject = element.findRenderObject();
+  while (currentRenderObject != null) {
+    // ignore: invalid_use_of_protected_member
+    dynamic currentConstraints = currentRenderObject.constraints;
+    if (currentConstraints is BoxConstraints) {
+      if (maxWidth.isInfinite && currentConstraints.maxWidth.isFinite) {
+        maxWidth = currentConstraints.maxWidth;
+      } else if (maxWidth.isFinite && currentConstraints.maxWidth.isFinite) {
+        maxWidth = min(maxWidth, currentConstraints.maxWidth);
+      }
+      if (maxHeight.isInfinite && currentConstraints.maxHeight.isFinite) {
+        maxHeight = currentConstraints.maxHeight;
+      } else if (maxHeight.isFinite && currentConstraints.maxHeight.isFinite) {
+        maxHeight = min(maxHeight, currentConstraints.maxHeight);
+      }
+    }
+    dynamic parent = currentRenderObject.parent;
+    if (parent is RenderObject) {
+      currentRenderObject = parent;
+    } else {
+      currentRenderObject = null;
+    }
+  }
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
@@ -94,8 +119,8 @@ MPElement _encodeRichText(Element element) {
     children: [_encodeSpan(widget.text, element, 0, 0)],
     attributes: {
       'measureId': shouldMeasure ? element.hashCode : null,
-      'maxWidth': constraints.maxWidth.toString(),
-      'maxHeight': constraints.maxHeight.toString(),
+      'maxWidth': maxWidth.toString(),
+      'maxHeight': maxHeight.toString(),
       'maxLines': widget.maxLines,
       'textAlign': widget.textAlign.toString(),
     },
