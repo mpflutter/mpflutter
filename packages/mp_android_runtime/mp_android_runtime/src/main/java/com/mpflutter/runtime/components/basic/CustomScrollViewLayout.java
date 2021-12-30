@@ -111,6 +111,9 @@ public class CustomScrollViewLayout extends WaterfallLayout {
             layouts.add(itemFrame);
         }
         maxVLength += padding[2];
+        if (compareLayouts(itemLayouts, layouts)) {
+            layoutChanged = true;
+        }
         itemLayouts = layouts;
         this.maxVLengthPx = MPUtils.dp2px(maxVLength, context);
     }

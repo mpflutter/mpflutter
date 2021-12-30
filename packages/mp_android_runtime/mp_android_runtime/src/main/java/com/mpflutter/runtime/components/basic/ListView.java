@@ -86,6 +86,9 @@ public class ListView extends MPComponentView {
             waterfallLayout.items = null;
         }
         waterfallLayout.prepareLayout();
+        if (!waterfallLayout.layoutChanged) {
+            contentAdapter.refreshData(contentView);
+        }
         contentAdapter.notifyDataSetChanged();
     }
 
@@ -138,6 +141,15 @@ class ListViewAdapter extends RecyclerView.Adapter {
         }
         return 0;
     }
+
+    public void refreshData(RecyclerView view) {
+        for (int i = 0; i < getItemCount(); i++) {
+            RecyclerView.ViewHolder viewHolder = view.findViewHolderForLayoutPosition(i);
+            if (viewHolder != null) {
+                onBindViewHolder(viewHolder, i);
+            }
+        }
+    }
 }
 
 class ListViewCell extends RecyclerView.ViewHolder {
@@ -151,11 +163,11 @@ class ListViewCell extends RecyclerView.ViewHolder {
     void setData(JSProxyObject object) {
         MPComponentView contentView = engine.componentFactory.create(object);
         boolean childViewChanged = false;
-        if (contentView.getParent() != null && contentView.getParent() != itemView) {
-            childViewChanged = true;
-            ((ViewGroup)contentView.getParent()).removeView(contentView);
-        }
         if (contentView != null) {
+            if (contentView.getParent() != null && contentView.getParent() != itemView) {
+                childViewChanged = true;
+                ((ViewGroup)contentView.getParent()).removeView(contentView);
+            }
             if (contentView.getParent() == null || childViewChanged) {
                 ((FrameLayout)itemView).removeAllViews();
                 ((FrameLayout)itemView).addView(contentView, contentView.getMinimumWidth(), contentView.getMinimumHeight());

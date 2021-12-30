@@ -36,7 +36,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
     public List<RectF> itemLayouts = new ArrayList();
     public double maxVLength = 0.0;
     public double maxVLengthPx = 0.0;
-    private boolean layoutChanged = true;
+    protected boolean layoutChanged = true;
 
     WaterfallLayout(Context context) {
         this.context = context;
@@ -95,6 +95,9 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
             }
         }
         maxVLength += padding[2];
+        if (compareLayouts(itemLayouts, layouts)) {
+            layoutChanged = true;
+        }
         itemLayouts = layouts;
         this.maxVLength = maxVLength;
         this.maxVLengthPx = MPUtils.dp2px(maxVLength, context);

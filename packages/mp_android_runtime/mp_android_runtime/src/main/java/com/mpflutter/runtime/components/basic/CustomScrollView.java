@@ -118,6 +118,9 @@ public class CustomScrollView extends MPComponentView {
             waterfallLayout.items = null;
         }
         waterfallLayout.prepareLayout();
+        if (!waterfallLayout.layoutChanged) {
+            contentAdapter.refreshData(contentView);
+        }
         contentAdapter.notifyDataSetChanged();
     }
 
@@ -164,6 +167,15 @@ class CustomScrollViewAdapter extends RecyclerView.Adapter {
         }
         return 0;
     }
+
+    public void refreshData(RecyclerView view) {
+        for (int i = 0; i < getItemCount(); i++) {
+            RecyclerView.ViewHolder viewHolder = view.findViewHolderForLayoutPosition(i);
+            if (viewHolder != null) {
+                onBindViewHolder(viewHolder, i);
+            }
+        }
+    }
 }
 
 class CustomScrollViewCell extends RecyclerView.ViewHolder {
@@ -176,15 +188,18 @@ class CustomScrollViewCell extends RecyclerView.ViewHolder {
 
     void setData(JSProxyObject object) {
         MPComponentView contentView = engine.componentFactory.create(object);
-        if (contentView == null) return;
-        if (contentView.getParent() != null) {
-            ((ViewGroup)contentView.getParent()).removeView(contentView);
-        }
+        boolean childViewChanged = false;
         if (contentView != null) {
-            ((FrameLayout)itemView).removeAllViews();
-            ((FrameLayout)itemView).addView(contentView, contentView.getMinimumWidth(), contentView.getMinimumHeight());
-            ((FrameLayout)itemView).setMinimumWidth(contentView.getMinimumWidth());
-            ((FrameLayout)itemView).setMinimumHeight(contentView.getMinimumHeight());
+            if (contentView.getParent() != null && contentView.getParent() != itemView) {
+                childViewChanged = true;
+                ((ViewGroup)contentView.getParent()).removeView(contentView);
+            }
+            if (contentView.getParent() == null || childViewChanged) {
+                ((FrameLayout)itemView).removeAllViews();
+                ((FrameLayout)itemView).addView(contentView, contentView.getMinimumWidth(), contentView.getMinimumHeight());
+            }
+            itemView.setMinimumWidth(contentView.getMinimumWidth());
+            itemView.setMinimumHeight(contentView.getMinimumHeight());
         }
     }
 }
