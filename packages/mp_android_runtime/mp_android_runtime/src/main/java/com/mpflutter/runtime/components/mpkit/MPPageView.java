@@ -26,6 +26,7 @@ public class MPPageView extends MPPlatformView {
 
     public MPPageView(@NonNull Context context) {
         super(context);
+        setClipChildren(true);
         contentView = new MPViewPager(context);
         contentView.setOffscreenPageLimit(9999);
         contentAdapter = new Adapter();
@@ -118,6 +119,12 @@ public class MPPageView extends MPPlatformView {
         canvas.clipRect(0, 0, canvas.getWidth(), canvas.getHeight());
         super.draw(canvas);
         canvas.restore();
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        getParent().requestDisallowInterceptTouchEvent(true);
+        return super.onInterceptTouchEvent(ev);
     }
 
     static class Adapter extends PagerAdapter {

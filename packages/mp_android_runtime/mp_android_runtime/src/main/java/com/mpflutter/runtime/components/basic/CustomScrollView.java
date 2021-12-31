@@ -2,6 +2,7 @@ package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -29,6 +30,7 @@ public class CustomScrollView extends MPComponentView {
 
     public CustomScrollView(@NonNull Context context) {
         super(context);
+        setClipChildren(true);
         waterfallLayout = new CustomScrollViewLayout(context);
         waterfallLayout.isPlain = true;
         contentView = new RecyclerView(context);
@@ -133,6 +135,12 @@ public class CustomScrollView extends MPComponentView {
         }
         waterfallLayout.prepareLayout();
         isRoot = attributes.optBoolean("isRoot", false);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        getParent().requestDisallowInterceptTouchEvent(true);
+        return super.onInterceptTouchEvent(ev);
     }
 }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -33,6 +34,7 @@ public class GridView extends MPComponentView {
 
     public GridView(@NonNull Context context) {
         super(context);
+        setClipChildren(true);
         waterfallLayout = new WaterfallLayout(context);
         contentView = new RecyclerView(context);
         observeScrollPosition();
@@ -117,6 +119,12 @@ public class GridView extends MPComponentView {
         }
         waterfallLayout.prepareLayout();
         isRoot = attributes.optBoolean("isRoot", false);
+    }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        getParent().requestDisallowInterceptTouchEvent(true);
+        return super.onInterceptTouchEvent(ev);
     }
 }
 

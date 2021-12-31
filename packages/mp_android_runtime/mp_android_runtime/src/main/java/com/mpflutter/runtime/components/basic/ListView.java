@@ -27,6 +27,7 @@ public class ListView extends MPComponentView {
 
     public ListView(@NonNull Context context) {
         super(context);
+        setClipChildren(true);
         waterfallLayout = new WaterfallLayout(context);
         waterfallLayout.isPlain = true;
         contentView = new RecyclerView(context);
@@ -108,6 +109,13 @@ public class ListView extends MPComponentView {
         waterfallLayout.prepareLayout();
         isRoot = attributes.optBoolean("isRoot", false);
     }
+
+    @Override
+    public boolean onInterceptTouchEvent(MotionEvent ev) {
+        getParent().requestDisallowInterceptTouchEvent(true);
+        return super.onInterceptTouchEvent(ev);
+    }
+
 }
 
 class ListViewAdapter extends RecyclerView.Adapter {
