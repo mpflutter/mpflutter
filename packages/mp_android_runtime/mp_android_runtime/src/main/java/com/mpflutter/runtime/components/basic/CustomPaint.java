@@ -43,15 +43,20 @@ public class CustomPaint extends MPComponentView {
         double height = cmd.optDouble("height");
         setPaint(cmd.optObject("paint"), paint);
         canvas.drawRect(
-                MPUtils.dp2px(x, getContext()),
-                MPUtils.dp2px(y, getContext()),
-                MPUtils.dp2px(x + width, getContext()),
-                MPUtils.dp2px(y + height, getContext()),
+                (int)x,
+                (int)y,
+                (int)(x + width),
+                (int)(y + height),
                 paint);
     }
 
     void drawDRRect(JSProxyObject cmd, Canvas canvas, Paint paint) {
-
+        Path outer = pathWithParams(cmd.optObject("outer"));
+        Path inner = pathWithParams(cmd.optObject("inner"));
+        outer.addPath(inner);
+        outer.setFillType(Path.FillType.EVEN_ODD);
+        setPaint(cmd.optObject("paint"), paint);
+        canvas.drawPath(outer, paint);
     }
 
     void drawPath(JSProxyObject cmd, Canvas canvas, Paint paint) {
@@ -98,54 +103,98 @@ public class CustomPaint extends MPComponentView {
             String action = obj.optString("action", null);
             if (MPUtils.isNull(action)) continue;
             if (action.contentEquals("moveTo")) {
-                lastX = MPUtils.dp2px(obj.optDouble("x", 0.0), getContext());
-                lastY = MPUtils.dp2px(obj.optDouble("y", 0.0), getContext());
+                lastX = (int) obj.optDouble("x", 0.0);
+                lastY = (int) obj.optDouble("y", 0.0);
                 bezierPath.moveTo(lastX, lastY);
             } else if (action.contentEquals("lineTo")) {
-                lastX = MPUtils.dp2px(obj.optDouble("x", 0.0), getContext());
-                lastY = MPUtils.dp2px(obj.optDouble("y", 0.0), getContext());
+                lastX = (int) obj.optDouble("x", 0.0);
+                lastY = (int) obj.optDouble("y", 0.0);
                 bezierPath.lineTo(lastX, lastY);
             } else if (action.contentEquals("quadraticBezierTo")) {
-                lastX = MPUtils.dp2px(obj.optDouble("x2", 0.0), getContext());
-                lastY = MPUtils.dp2px(obj.optDouble("y2", 0.0), getContext());
+                lastX = (int) obj.optDouble("x2", 0.0);
+                lastY = (int) obj.optDouble("y2", 0.0);
                 bezierPath.quadTo(
-                        MPUtils.dp2px(obj.optDouble("x1", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("y1", 0.0), getContext()),
+                        (int)obj.optDouble("y1", 0.0),
+                        (int)obj.optDouble("x1", 0.0),
                         lastX,
                         lastY
                 );
             } else if (action.contentEquals("cubicTo")) {
-                lastX = MPUtils.dp2px(obj.optDouble("x3", 0.0), getContext());
-                lastY = MPUtils.dp2px(obj.optDouble("y3", 0.0), getContext());
+                lastX = (int) obj.optDouble("x3", 0.0);
+                lastY = (int) obj.optDouble("y3", 0.0);
                 bezierPath.cubicTo(
-                        MPUtils.dp2px(obj.optDouble("x1", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("y1", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("x2", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("y2", 0.0), getContext()),
+                        (float) obj.optDouble("x1", 0.0),
+                        (float) obj.optDouble("y1", 0.0),
+                        (float) obj.optDouble("x2", 0.0),
+                        (float) obj.optDouble("y2", 0.0),
                         lastX,
                         lastY
                 );
             } else if (action.contentEquals("arcTo")) {
                 RectF rectF = new RectF(
-                        MPUtils.dp2px(obj.optDouble("x", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("y", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("x", 0.0), getContext()) + MPUtils.dp2px(obj.optDouble("width", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("y", 0.0), getContext()) + MPUtils.dp2px(obj.optDouble("height", 0.0), getContext())
+                        (float)(obj.optDouble("x", 0.0) - obj.optDouble("width", 0.0) / 2.0),
+                        (float)(obj.optDouble("y", 0.0) - obj.optDouble("height", 0.0) / 2.0),
+                        (float)(obj.optDouble("x", 0.0) + obj.optDouble("width", 0.0) / 2.0),
+                        (float)(obj.optDouble("y", 0.0) + obj.optDouble("height", 0.0) / 2.0)
                 );
-                bezierPath.addArc(
+                bezierPath.arcTo(
                         rectF,
-                        MPUtils.dp2px(obj.optDouble("startAngle", 0.0), getContext()),
-                        MPUtils.dp2px(obj.optDouble("sweepAngle", 0.0), getContext())
+                        (float)(obj.optDouble("startAngle", 0.0) * 180 / Math.PI),
+                        (float)(obj.optDouble("sweepAngle", 0.0) * 180 / Math.PI)
                 );
             } else if (action.contentEquals("arcToPoint")) {
-
-                Log.d("TAG", "pathWithParams: ");
-                // todo
+                double x1 = obj.optDouble("arcControlX", 0.0);
+                double y1 = obj.optDouble("arcControlY", 0.0);
+                double x2 = obj.optDouble("arcEndX", 0.0);
+                double y2 = obj.optDouble("arcEndY", 0.0);
+                double radius = obj.optDouble("radiusX", 0.0);
+                if (radius == 0.0) {
+                    lastX = (int) x1;
+                    lastY = (int) y1;
+                    bezierPath.lineTo((int)x1, (int)y1);
+                    continue;
+                }
+                double startX = lastX;
+                double startY = lastY;
+                SkDVector befored = new SkDVector();
+                SkDVector afterd = new SkDVector();
+                befored.set(x1 - startX, y1 - startY).normalize();
+                afterd.set(x2 - x1, y2 - y1).normalize();
+                double cosh = befored.dot(afterd);
+                double sinh = befored.cross(afterd);
+                if (!befored.isFinite() || !afterd.isFinite() || SKUtils.SkScalarNearlyZero(sinh)) {
+                    lastX = (int) x1;
+                    lastY = (int) y1;
+                    bezierPath.lineTo((int)x1, (int)y1);
+                    continue;
+                }
+                double dist = Math.abs(radius * (1 - cosh) / sinh);
+                double xx = x1 - dist * befored.fX;
+                double yy = y1 - dist * befored.fY;
+                afterd.setLength(dist);
+                bezierPath.lineTo((int)xx, (int)yy);
+                double weight = Math.sqrt(0.5 + cosh * 0.5);
+                conicTo(bezierPath, x1, y1, x1 + afterd.fX, y1 + afterd.fY, weight);
+                lastX = (int)x1;
+                lastY = (int)y1;
             } else if (action.contentEquals("close")) {
                 bezierPath.close();
             }
         }
         return bezierPath;
+    }
+
+    void conicTo(Path bezierPath, double x1, double y1, double x2, double y2, double w) {
+        if (!(w > 0)) {
+            bezierPath.lineTo((int)x2, (int)y2);
+        } else if (((Double)w).isInfinite()) {
+            bezierPath.lineTo((int)x1, (int)y1);
+            bezierPath.lineTo((int)x2, (int)y2);
+        } else if (1.0 == w) {
+            bezierPath.quadTo((float)x1, (float)y1, (float)x2, (float)y2);
+        } else {
+            bezierPath.quadTo((float)x1, (float)y1, (float)x2, (float)y2);
+        }
     }
 
     void setPaint(JSProxyObject params, Paint paint) {
@@ -154,10 +203,10 @@ public class CustomPaint extends MPComponentView {
             return;
         }
         if (!params.isNull("strokeWidth")) {
-            paint.setStrokeWidth(MPUtils.dp2px(params.optDouble("strokeWidth", 0.0), getContext()));
+            paint.setStrokeWidth((float) params.optDouble("strokeWidth", 0.0));
         }
         if (!params.isNull("miterLimit")) {
-            paint.setStrokeMiter(MPUtils.dp2px(params.optDouble("miterLimit", 0.0), getContext()));
+            paint.setStrokeMiter((float) params.optDouble("miterLimit", 0.0));
         }
         String strokeCap = params.optString("strokeCap", null);
         if (!MPUtils.isNull(strokeCap)) {
@@ -202,6 +251,7 @@ public class CustomPaint extends MPComponentView {
     public void draw(Canvas canvas) {
         super.draw(canvas);
         canvas.save();
+        canvas.scale(MPUtils.scale(getContext()), MPUtils.scale(getContext()));
         if (commands != null) {
             Paint paint = new Paint();
             for (int i = 0; i < commands.length(); i++) {
@@ -240,8 +290,9 @@ public class CustomPaint extends MPComponentView {
                     }
                     else if (action.contentEquals("translate")) {
                         canvas.translate(
-                                MPUtils.dp2px(cmd.optDouble("dx", 1.0), getContext()),
-                                MPUtils.dp2px(cmd.optDouble("dy", 1.0), getContext()));
+                                (int)cmd.optDouble("dx", 0.0),
+                                (int)cmd.optDouble("dy", 0.0)
+                        );
                     }
                     else if (action.contentEquals("transform")) {
                         Matrix matrix = new Matrix();
@@ -249,8 +300,8 @@ public class CustomPaint extends MPComponentView {
                         float b = (float) cmd.optDouble("b");
                         float c = (float) cmd.optDouble("c");
                         float d = (float) cmd.optDouble("d");
-                        float tx = MPUtils.dp2px(cmd.optDouble("tx"), getContext());
-                        float ty = MPUtils.dp2px(cmd.optDouble("ty"), getContext());
+                        float tx = (float) cmd.optDouble("tx");
+                        float ty = (float) cmd.optDouble("ty");
                         final float[] values = { a, c, tx, b, d, ty, 0.0f, 0.0f, 1.0f };
                         matrix.setValues(values);
                         canvas.concat(matrix);
@@ -258,11 +309,65 @@ public class CustomPaint extends MPComponentView {
                     else if (action.contentEquals("skew")) {
                         canvas.skew(
                                 (float)cmd.optDouble("sx", 1.0),
-                                (float)cmd.optDouble("sy", 1.0));
+                                (float)cmd.optDouble("sy", 1.0)
+                        );
                     }
                 }
             }
         }
         canvas.restore();
     }
+}
+
+class SkDVector {
+
+    double fX;
+    double fY;
+
+    SkDVector set(double x, double y) {
+        fX = x;
+        fY = y;
+        return this;
+    }
+
+    double cross(SkDVector a) {
+        return fX * a.fY - fY * a.fX;
+    }
+
+    double dot(SkDVector a) {
+        return fX * a.fX + fY * a.fY;
+    }
+
+    double length() {
+        return Math.sqrt(lengthSquared());
+    }
+
+    double lengthSquared() {
+        return fX * fX + fY * fY;
+    }
+
+    SkDVector normalize() {
+        double inverseLength = (1 / this.length());
+        fX *= inverseLength;
+        fY *= inverseLength;
+        return this;
+    }
+
+    void setLength(double v) {
+        fX *= v;
+        fY *= v;
+    }
+
+    boolean isFinite() {
+        return !((Double)fX).isInfinite() && !((Double)fY).isInfinite();
+    }
+
+}
+
+class SKUtils {
+
+    static boolean SkScalarNearlyZero(double value) {
+        return Math.abs(value) < 0.01;
+    }
+
 }
