@@ -11,7 +11,10 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.decoder.ImageDecoderConfig;
 import com.mpflutter.runtime.api.MPConsole;
 import com.mpflutter.runtime.api.MPDeviceInfo;
+import com.mpflutter.runtime.api.MPGlobalScope;
+import com.mpflutter.runtime.api.MPNetworkHttp;
 import com.mpflutter.runtime.api.MPTimer;
+import com.mpflutter.runtime.api.MPWXCompat;
 import com.mpflutter.runtime.components.MPComponentFactory;
 import com.mpflutter.runtime.components.basic.WebDialogs;
 import com.mpflutter.runtime.components.mpkit.MPPlatformView;
@@ -33,7 +36,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class MPEngine {
@@ -53,6 +58,7 @@ public class MPEngine {
     public MPRouter router;
     public MPComponentFactory componentFactory;
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
+    public Map<Integer, List<JSProxyObject>> managedViewsQueueMessage = new HashMap();
     JSObject engineScope;
 
     public MPEngine(Context context) {
@@ -102,9 +108,12 @@ public class MPEngine {
         jsContext.set("self", selfObject);
         setupJSContextEventChannel(selfObject);
         setupDeferredLibraryLoader(selfObject);
+        MPGlobalScope.setupWithJSContext(jsContext, selfObject);
         MPTimer.setupWithJSContext(jsContext, selfObject);
         MPConsole.setupWithJSContext(jsContext, selfObject);
         MPDeviceInfo.setupWithJSContext(jsContext, selfObject);
+        MPWXCompat.setupWithJSContext(jsContext, selfObject);
+        MPNetworkHttp.setupWithJSContext(jsContext, selfObject);
         if (jsCode != null) {
             try {
                 Log.d("MPRuntime", "start execcode: ");
@@ -223,6 +232,14 @@ public class MPEngine {
         int routeId = frameData.optInt("routeId", -1);
         if (routeId >= 0 && managedViews.containsKey(routeId)) {
             managedViews.get(routeId).didReceivedFrameData(frameData);
+        }
+        else if (routeId >= 0) {
+            List<JSProxyObject> queue;
+            if (!managedViewsQueueMessage.containsKey(routeId)) {
+                managedViewsQueueMessage.put(routeId, new ArrayList());
+            }
+            queue = managedViewsQueueMessage.get(routeId);
+            queue.add(frameData);
         }
     }
 

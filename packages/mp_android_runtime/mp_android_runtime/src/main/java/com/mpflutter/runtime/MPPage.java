@@ -59,6 +59,13 @@ public class MPPage implements MPDataReceiver {
                     public void onResponse(int viewId) {
                         MPPage.this.viewId = viewId;
                         MPPage.this.engine.managedViews.put(viewId, MPPage.this);
+                        if (MPPage.this.engine.managedViewsQueueMessage.containsKey(viewId)) {
+                            List<JSProxyObject> queue = MPPage.this.engine.managedViewsQueueMessage.get(viewId);
+                            for (int i = 0; i < queue.size(); i++) {
+                                didReceivedFrameData(queue.get(i));
+                            }
+                            MPPage.this.engine.managedViewsQueueMessage.remove(viewId);
+                        }
                     }
                 });
             }

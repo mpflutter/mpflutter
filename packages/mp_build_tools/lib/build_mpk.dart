@@ -31,7 +31,7 @@ String _buildDartJS(List<String> args) {
   if (!dart2JSParams.any((element) => element.startsWith('-O'))) {
     dart2JSParams.add('-O4');
   }
-  Process.runSync(
+  final dart2JsResult = Process.runSync(
       'dart2js',
       [
         'lib/main.dart',
@@ -41,7 +41,13 @@ String _buildDartJS(List<String> args) {
         'build/main.dart.js'
       ],
       runInShell: true);
-  Process.runSync(
+  if (dart2JsResult.exitCode != 0) {
+    print(dart2JsResult.stdout);
+    print(dart2JsResult.stderr);
+    throw I18n.executeFail('dart2js');
+  }
+  _fixDefererLoader();
+  final buildBundleResult = Process.runSync(
     'flutter',
     [
       'build',
@@ -50,6 +56,11 @@ String _buildDartJS(List<String> args) {
     runInShell: true,
     environment: {'PUB_HOSTED_URL': 'https://pub.mpflutter.com'},
   );
+  if (buildBundleResult.exitCode != 0) {
+    print(buildBundleResult.stdout);
+    print(buildBundleResult.stderr);
+    throw I18n.executeFail('flutter build bundle');
+  }
   if (Directory('./build/flutter_assets').existsSync()) {
     Directory('./build/flutter_assets').renameSync('./build/assets');
   }
@@ -62,6 +73,17 @@ String _buildDartJS(List<String> args) {
   return File('./build/assets/.last_build_id')
       .readAsStringSync()
       .substring(0, 6);
+}
+
+_fixDefererLoader() {
+  var code = File('build/main.dart.js').readAsStringSync();
+  code = code.replaceAllMapped(RegExp(r"m=\$\.([a-z0-9A-Z]+)\(\)\nm.toString"),
+      (match) {
+    return "m=\$.${match.group(1)}() || ''\nm.toString";
+  });
+  code = code.replaceFirst(
+      "\$.\$get\$thisScript();", "\$.\$get\$thisScript() || '';");
+  File('build/main.dart.js').writeAsStringSync(code);
 }
 
 _buildMpk() {

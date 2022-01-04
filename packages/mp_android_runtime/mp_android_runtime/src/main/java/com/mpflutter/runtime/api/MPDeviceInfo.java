@@ -20,6 +20,7 @@ public class MPDeviceInfo {
         selfObject.set("document", document);
         selfObject.set("enableMPProxy", true);
 //        selfObject.set("disableMPProxy", true);
+
     }
 
 }

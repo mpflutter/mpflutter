@@ -45,6 +45,7 @@ public class MPDebugger {
             @Override
             public void onMessage(String message) {
                 try {
+                    Log.d(TAG, "onMessage: " + message);
                     JSProxyObject obj = new JSProxyObject(new JSONObject(message));
                     engine.didReceivedMessage(obj);
                 } catch (Throwable e) {
