@@ -13,10 +13,12 @@ import com.mpflutter.runtime.api.MPConsole;
 import com.mpflutter.runtime.api.MPDeviceInfo;
 import com.mpflutter.runtime.api.MPGlobalScope;
 import com.mpflutter.runtime.api.MPNetworkHttp;
+import com.mpflutter.runtime.api.MPStorage;
 import com.mpflutter.runtime.api.MPTimer;
 import com.mpflutter.runtime.api.MPWXCompat;
 import com.mpflutter.runtime.components.MPComponentFactory;
 import com.mpflutter.runtime.components.basic.WebDialogs;
+import com.mpflutter.runtime.components.mpkit.MPJS;
 import com.mpflutter.runtime.components.mpkit.MPPlatformView;
 import com.mpflutter.runtime.debugger.MPDebugger;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
@@ -48,7 +50,7 @@ public class MPEngine {
     private boolean started = false;
     private String jsCode;
     private QuickJS quickJS;
-    private JSContext jsContext;
+    public JSContext jsContext;
     public Context context;
     public MPDebugger debugger;
     public MPMPKReader mpkReader;
@@ -56,6 +58,7 @@ public class MPEngine {
     public MPTextMeasurer textMeasurer;
     public MPWindowInfo windowInfo;
     public MPRouter router;
+    public MPJS mpjs;
     public MPComponentFactory componentFactory;
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
     public Map<Integer, List<JSProxyObject>> managedViewsQueueMessage = new HashMap();
@@ -101,7 +104,6 @@ public class MPEngine {
         if (started) {
             return;
         }
-
         quickJS = QuickJS.createRuntime();
         jsContext = quickJS.createContext();
         JSObject selfObject = new JSObject(jsContext);
@@ -114,6 +116,8 @@ public class MPEngine {
         MPDeviceInfo.setupWithJSContext(jsContext, selfObject);
         MPWXCompat.setupWithJSContext(jsContext, selfObject);
         MPNetworkHttp.setupWithJSContext(jsContext, selfObject);
+        MPStorage.setupWithJSContext(this, jsContext, selfObject);
+        mpjs = new MPJS(this);
         if (jsCode != null) {
             try {
                 Log.d("MPRuntime", "start execcode: ");
@@ -215,6 +219,8 @@ public class MPEngine {
                         WebDialogs.didReceivedWebDialogsMessage(decodedMessage.optObject("message"), MPEngine.this);
                     } else if (type.equalsIgnoreCase("route")) {
                         router.didReceivedRouteData(decodedMessage.optObject("message"));
+                    } else if (type.equalsIgnoreCase("mpjs")) {
+                        mpjs.didReceivedMessage(decodedMessage.optObject("message"));
                     } else if (type.equalsIgnoreCase("rich_text")) {
                         textMeasurer.didReceivedDoMeasureData(decodedMessage.optObject("message"));
                     } else if (type.equalsIgnoreCase("platform_view")) {

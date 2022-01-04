@@ -9,8 +9,8 @@ import org.json.JSONObject;
 
 public class JSProxyObject {
 
-    private JSONObject jsonObject;
-    private JSObject qjsObject;
+    public JSONObject jsonObject;
+    public JSObject qjsObject;
 
     public JSProxyObject(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
