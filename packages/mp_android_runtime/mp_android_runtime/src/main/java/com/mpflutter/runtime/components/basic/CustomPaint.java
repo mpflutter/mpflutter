@@ -1,18 +1,22 @@
 package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BlendMode;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
+import android.util.Base64;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
@@ -20,7 +24,37 @@ import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
 import org.json.JSONArray;
 
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+
 public class CustomPaint extends MPComponentView {
+
+    public static void didReceivedCustomPaintMessage(JSProxyObject message, MPEngine engine) {
+        String event = message.optString("event", null);
+        if (event == null) return;
+        if (event.contentEquals("fetchImage")) {
+            int target = message.optInt("target", 0);
+            MPComponentView targetView = engine.componentFactory.cachedView.get(target);
+            if (targetView instanceof CustomPaint) {
+                CustomPaint customPaint = (CustomPaint) targetView;
+                Bitmap offscreenBitmap = Bitmap.createBitmap(customPaint.getWidth(), customPaint.getHeight(), Bitmap.Config.ARGB_8888);
+                Canvas offscreenCanvas = new Canvas(offscreenBitmap);
+                customPaint.draw(offscreenCanvas);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                offscreenBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                offscreenBitmap.recycle();
+                String base64EncodedData = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.NO_WRAP);
+                engine.sendMessage(new HashMap(){{
+                    put("type", "custom_paint");
+                    put("message", new HashMap(){{
+                        put("event", "onFetchImageResult");
+                        put("seqId", message.optString("seqId", null));
+                        put("data", base64EncodedData);
+                    }});
+                }});
+            }
+        }
+    }
 
     JSProxyArray commands;
 
@@ -28,6 +62,9 @@ public class CustomPaint extends MPComponentView {
         super(context);
         setWillNotDraw(false);
     }
+
+    @Override
+    public void setChildren(JSProxyArray children) { }
 
     @Override
     public void setAttributes(JSProxyObject attributes) {
@@ -72,18 +109,42 @@ public class CustomPaint extends MPComponentView {
     }
 
     void drawColor(JSProxyObject cmd, Canvas canvas, Paint paint) {
-        String blendMode = cmd.optString("blendMode", null);
+//        String blendMode = cmd.optString("blendMode", null);
         String color = cmd.optString("color", null);
-        if (blendMode != null && blendMode.contentEquals("BlendMode.clear")) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                canvas.drawColor(MPUtils.colorFromString(color), BlendMode.CLEAR);
-            } else {
-                canvas.drawColor(MPUtils.colorFromString(color), PorterDuff.Mode.CLEAR);
-            }
-        }
-        else {
-            canvas.drawColor(MPUtils.colorFromString(color));
-        }
+        canvas.drawColor(MPUtils.colorFromString(color));
+    }
+
+    void drawImage(JSProxyObject cmd, Canvas canvas, Paint paint) {
+        int drawable = cmd.optInt("drawable", 0);
+        if (drawable == 0) return;
+        Bitmap image = engine.drawableStorage.decodedDrawables.get(drawable);
+        if (image == null) return;
+        double x = cmd.optDouble("dx", 0.0);
+        double y = cmd.optDouble("dy", 0.0);
+        setPaint(cmd.optObject("paint"), paint);
+        canvas.drawBitmap(image, (float)x, (float)y, paint);
+    }
+
+    void drawImageRect(JSProxyObject cmd, Canvas canvas, Paint paint) {
+        int drawable = cmd.optInt("drawable", 0);
+        if (drawable == 0) return;
+        Bitmap image = engine.drawableStorage.decodedDrawables.get(drawable);
+        if (image == null) return;
+        double srcX = cmd.optDouble("srcX", 0.0);
+        double srcY = cmd.optDouble("srcY", 0.0);
+        double srcW = cmd.optDouble("srcW", 0.0);
+        double srcH = cmd.optDouble("srcH", 0.0);
+        double dstX = cmd.optDouble("dstX", 0.0);
+        double dstY = cmd.optDouble("dstY", 0.0);
+        double dstW = cmd.optDouble("dstW", 0.0);
+        double dstH = cmd.optDouble("dstH", 0.0);
+        setPaint(cmd.optObject("paint"), paint);
+        canvas.drawBitmap(
+                image,
+                new Rect((int)srcX, (int)srcY, (int)(srcX + srcW), (int)(srcY + srcH)),
+                new RectF((float)dstX, (float)dstY, (float)(dstX + dstW), (float)(dstY + dstH)),
+                paint
+                );
     }
 
     Path pathWithParams(JSProxyObject path) {
@@ -250,6 +311,7 @@ public class CustomPaint extends MPComponentView {
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+        canvas.clipRect(new Rect(0, 0, canvas.getWidth(), canvas.getHeight()));
         canvas.save();
         canvas.scale(MPUtils.scale(getContext()), MPUtils.scale(getContext()));
         if (commands != null) {
@@ -273,6 +335,12 @@ public class CustomPaint extends MPComponentView {
                     }
                     else if (action.contentEquals("drawColor")) {
                         drawColor(cmd, canvas, paint);
+                    }
+                    else if (action.contentEquals("drawImage")) {
+                        drawImage(cmd, canvas, paint);
+                    }
+                    else if (action.contentEquals("drawImageRect")) {
+                        drawImageRect(cmd, canvas, paint);
                     }
                     else if (action.contentEquals("save")) {
                         canvas.save();

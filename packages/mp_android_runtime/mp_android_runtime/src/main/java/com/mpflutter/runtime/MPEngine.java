@@ -17,6 +17,8 @@ import com.mpflutter.runtime.api.MPStorage;
 import com.mpflutter.runtime.api.MPTimer;
 import com.mpflutter.runtime.api.MPWXCompat;
 import com.mpflutter.runtime.components.MPComponentFactory;
+import com.mpflutter.runtime.components.basic.CustomPaint;
+import com.mpflutter.runtime.components.basic.DrawableStorage;
 import com.mpflutter.runtime.components.basic.WebDialogs;
 import com.mpflutter.runtime.components.mpkit.MPJS;
 import com.mpflutter.runtime.components.mpkit.MPPlatformView;
@@ -59,6 +61,7 @@ public class MPEngine {
     public MPWindowInfo windowInfo;
     public MPRouter router;
     public MPJS mpjs;
+    public DrawableStorage drawableStorage;
     public MPComponentFactory componentFactory;
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
     public Map<Integer, List<JSProxyObject>> managedViewsQueueMessage = new HashMap();
@@ -72,6 +75,7 @@ public class MPEngine {
         windowInfo = new MPWindowInfo(this);
         router = new MPRouter(this);
         componentFactory = new MPComponentFactory(context, this);
+        drawableStorage = new DrawableStorage(this);
         engineStore.put(this.hashCode(), new WeakReference(this));
     }
 
@@ -215,6 +219,10 @@ public class MPEngine {
                         didReceivedDiffData(decodedMessage.optObject("message"));
                     } else if (type.equalsIgnoreCase("element_gc")) {
                         didReceivedElementGC(decodedMessage.optArray("message"));
+                    } else if (type.equalsIgnoreCase("decode_drawable")) {
+                        drawableStorage.decodeDrawable(decodedMessage.optObject("message"));
+                    } else if (type.equalsIgnoreCase("custom_paint")) {
+                        CustomPaint.didReceivedCustomPaintMessage(decodedMessage.optObject("message"), MPEngine.this);
                     } else if (type.equalsIgnoreCase("action:web_dialogs")) {
                         WebDialogs.didReceivedWebDialogsMessage(decodedMessage.optObject("message"), MPEngine.this);
                     } else if (type.equalsIgnoreCase("route")) {

@@ -4,7 +4,35 @@ import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
 import 'package:mpcore/mpkit/mpkit.dart';
 
-class CustomPaintPage extends StatelessWidget {
+class CustomPaintPage extends StatefulWidget {
+  @override
+  State<CustomPaintPage> createState() => _CustomPaintPageState();
+}
+
+class _CustomPaintPageState extends State<CustomPaintPage> {
+  MPDrawable? logoDrawable;
+
+  @override
+  void dispose() {
+    logoDrawable?.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadLogo();
+  }
+
+  void loadLogo() async {
+    final drawable = await MPDrawable.fromNetworkImage(
+      'https://mpflutter.com/zh/img/logo.png',
+    );
+    setState(() {
+      logoDrawable = drawable;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MPScaffold(
@@ -17,7 +45,7 @@ class CustomPaintPage extends StatelessWidget {
           height: 500,
           child: CustomPaint(
             size: Size(500, 500),
-            painter: MyPainter(),
+            painter: MyPainter()..logoDrawable = logoDrawable,
             child: RepaintBoundary(
               child: Container(),
             ),
@@ -29,6 +57,8 @@ class CustomPaintPage extends StatelessWidget {
 }
 
 class MyPainter extends CustomPainter {
+  MPDrawable? logoDrawable;
+
   void drawChessboard(Canvas canvas, Rect rect) {
     var paint = Paint()
       ..isAntiAlias = true
@@ -71,11 +101,28 @@ class MyPainter extends CustomPainter {
     );
   }
 
+  void drawLogo(Canvas canvas) {
+    if (logoDrawable != null) {
+      canvas.drawImageRect(
+        logoDrawable!,
+        Rect.fromLTWH(
+          0,
+          0,
+          logoDrawable!.width.toDouble(),
+          logoDrawable!.height.toDouble(),
+        ),
+        Rect.fromLTWH(20, 20, 88, 88),
+        Paint()..color = Colors.white54,
+      );
+    }
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     var rect = Offset.zero & size;
     drawChessboard(canvas, rect);
     drawPieces(canvas, rect);
+    drawLogo(canvas);
   }
 
   @override

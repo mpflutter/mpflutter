@@ -48,7 +48,7 @@ public class Image extends MPComponentView {
             else if (engine.mpkReader != null) {
                 byte[] data = engine.mpkReader.dataWithFilePath(assetName);
                 if (data != null) {
-                    String dataUri = "data:image;base64," + Base64.encodeToString(data, 0);
+                    String dataUri = "data:image;base64," + Base64.encodeToString(data, Base64.NO_WRAP);
                     contentView.setImageURI(dataUri);
                 }
                 else {
