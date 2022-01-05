@@ -2,19 +2,17 @@ package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
 import android.graphics.RectF;
-import android.os.Handler;
+import android.text.Selection;
 import android.util.SizeF;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.mpflutter.runtime.components.MPUtils;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
 import com.mpflutter.runtime.jsproxy.JSProxyObject;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -253,6 +251,13 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
             return;
         }
         layoutChanged = false;
+        EditText currentFocus = null;
+        int currentFocusSelection = 0;
+        if (EditableText.currentFocus != null) {
+            currentFocus = EditableText.currentFocus;
+            currentFocusSelection = EditableText.currentFocus.getSelectionStart();
+            EditableText.currentFocus.clearFocus();
+        }
         detachAndScrapAttachedViews(recycler);
         if (getItemCount() == 0) {
             return;
@@ -273,6 +278,10 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
         else {
             offsetChildrenVertical(-mSumDy);
         }
+        if (currentFocus != null) {
+            currentFocus.requestFocus();
+            currentFocus.setSelection(currentFocusSelection, currentFocusSelection);
+        }
     }
 
     @Override
@@ -289,6 +298,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
 
     @Override
     public int scrollHorizontallyBy(int dx, RecyclerView.Recycler recycler, RecyclerView.State state) {
+        EditableText.clearCurrentFocus(false);
         int travel = dx;
         boolean zero = false;
         if (mSumDy + dx < 0) {
@@ -315,6 +325,7 @@ public class WaterfallLayout extends RecyclerView.LayoutManager {
 
     @Override
     public int scrollVerticallyBy(int dy, RecyclerView.Recycler recycler, RecyclerView.State state) {
+        EditableText.clearCurrentFocus(false);
         int travel = dy;
         boolean zero = false;
         if (mSumDy + dy < 0) {

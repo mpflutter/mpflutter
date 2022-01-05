@@ -9,7 +9,9 @@ import android.text.method.PasswordTransformationMethod;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -27,12 +29,43 @@ import java.util.HashMap;
 
 public class EditableText extends MPComponentView {
 
+    public static EditText currentFocus;
+    public static long currentFocusTime;
+
+    public static void clearCurrentFocus(boolean force) {
+        if (System.currentTimeMillis() - currentFocusTime < 1000 && !force) {
+            return;
+        }
+        if (currentFocus != null) {
+            EditText view = currentFocus;
+            currentFocus.clearFocus();
+            InputMethodManager inputMethodManager = (InputMethodManager) view.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            currentFocus = null;
+        }
+    }
+
     EditText contentView;
 
     public EditableText(@NonNull Context context) {
         super(context);
         contentView = new EditText(context);
         contentView.setBackgroundColor(Color.TRANSPARENT);
+        contentView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        contentView.setOnFocusChangeListener(new OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (b) {
+                    currentFocus = contentView;
+                    currentFocusTime = System.currentTimeMillis();
+                }
+                else {
+                    if (currentFocus == contentView) {
+                        currentFocus = null;
+                    }
+                }
+            }
+        });
         setupContentViewEvents();
         addContentView(contentView);
     }
@@ -97,6 +130,7 @@ public class EditableText extends MPComponentView {
                             put("data", textView.getText().toString());
                         }});
                     }});
+                    clearFocus();
                 }
                 return false;
             }
@@ -129,7 +163,7 @@ public class EditableText extends MPComponentView {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        if (contentView.isInEditMode()) {
+        if (contentView.isFocused()) {
             getParent().requestDisallowInterceptTouchEvent(true);
         }
         return super.onInterceptTouchEvent(ev);
