@@ -27,7 +27,7 @@ _createBuildDir() {
   }
 }
 
-String _buildDartJS(List<String> args) {
+void _buildDartJS(List<String> args) {
   final dart2JSParams = args.toList();
   if (!dart2JSParams.any((element) => element.startsWith('-O'))) {
     dart2JSParams.add('-O4');
