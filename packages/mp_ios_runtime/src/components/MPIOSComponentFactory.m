@@ -130,6 +130,7 @@ NSDictionary *ancestors;
 
 - (void)clear {
     [self.cachedView removeAllObjects];
+    [self.cachedElement removeAllObjects];
 }
 
 - (MPIOSComponentView *)create:(NSDictionary *)data {

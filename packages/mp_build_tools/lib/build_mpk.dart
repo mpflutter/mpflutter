@@ -8,7 +8,7 @@ import 'package:path/path.dart' as p;
 main(List<String> args) {
   _checkPubspec();
   _createBuildDir();
-  _buildDartJS();
+  _buildDartJS(args);
   _buildMpk();
 }
 
@@ -27,18 +27,28 @@ _createBuildDir() {
   }
 }
 
-void _buildDartJS() {
-  Process.runSync(
+String _buildDartJS(List<String> args) {
+  final dart2JSParams = args.toList();
+  if (!dart2JSParams.any((element) => element.startsWith('-O'))) {
+    dart2JSParams.add('-O4');
+  }
+  final dart2JsResult = Process.runSync(
       'dart2js',
       [
         p.join('lib', 'main.dart'),
-        '-O4',
+        ...dart2JSParams,
         '-Ddart.vm.product=true',
         '-o',
         p.join('build', 'main.dart.js'),
       ],
       runInShell: true);
-  Process.runSync(
+  if (dart2JsResult.exitCode != 0) {
+    print(dart2JsResult.stdout);
+    print(dart2JsResult.stderr);
+    throw I18n.executeFail('dart2js');
+  }
+  _fixDefererLoader();
+  final buildBundleResult = Process.runSync(
     'flutter',
     [
       'build',
@@ -47,6 +57,11 @@ void _buildDartJS() {
     runInShell: true,
     environment: {'PUB_HOSTED_URL': 'https://pub.mpflutter.com'},
   );
+  if (buildBundleResult.exitCode != 0) {
+    print(buildBundleResult.stdout);
+    print(buildBundleResult.stderr);
+    throw I18n.executeFail('flutter build bundle');
+  }
   if (Directory(p.join('build', 'flutter_assets')).existsSync()) {
     Directory(p.join('build', 'flutter_assets'))
         .renameSync(p.join('build', 'assets'));
@@ -57,6 +72,17 @@ void _buildDartJS() {
     p.join('build', 'assets', 'vm_snapshot_data'),
     p.join('build', 'assets', 'snapshot_blob.bin.d'),
   ]);
+}
+
+_fixDefererLoader() {
+  var code = File('build/main.dart.js').readAsStringSync();
+  code = code.replaceAllMapped(RegExp(r"m=\$\.([a-z0-9A-Z]+)\(\)\nm.toString"),
+      (match) {
+    return "m=\$.${match.group(1)}() || ''\nm.toString";
+  });
+  code = code.replaceFirst(
+      "\$.\$get\$thisScript();", "\$.\$get\$thisScript() || '';");
+  File('build/main.dart.js').writeAsStringSync(code);
 }
 
 _buildMpk() {

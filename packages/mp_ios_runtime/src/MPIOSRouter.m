@@ -151,8 +151,8 @@
         [engine sendMessage:@{
             @"type": @"router",
             @"message": @{
-                    @"event": @"doPop",
-                    @"toRouteId": [NSString stringWithFormat:@"%ld", (long)[viewId integerValue]],
+                    @"event": @"popToRoute",
+                    @"routeId": viewId,
             },
         }];
     }

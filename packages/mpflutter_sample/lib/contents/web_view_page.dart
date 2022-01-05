@@ -91,27 +91,23 @@ class _WebViewPageState extends State<WebViewPage> {
     return MPScaffold(
       name: 'WebView',
       backgroundColor: Color.fromARGB(255, 236, 236, 236),
-      body: ListView(
+      body: _renderBlock(Column(
         children: [
-          _renderBlock(Column(
-            children: [
-              _renderHeader('WebView'),
-              Container(
-                height: 400,
-                child: MPWebView(
-                  url: 'https://www.baidu.com/',
-                  controller: webViewController,
-                ),
-              ),
-              SizedBox(height: 16),
-              _renderReloadButton(),
-              SizedBox(height: 16),
-              _renderLoadUrlButton(),
-              SizedBox(height: 16),
-            ],
-          )),
+          _renderHeader('WebView'),
+          Container(
+            height: 240,
+            child: MPWebView(
+              url: 'https://www.baidu.com/',
+              controller: webViewController,
+            ),
+          ),
+          SizedBox(height: 16),
+          _renderReloadButton(),
+          SizedBox(height: 16),
+          _renderLoadUrlButton(),
+          SizedBox(height: 16),
         ],
-      ),
+      )),
     );
   }
 }

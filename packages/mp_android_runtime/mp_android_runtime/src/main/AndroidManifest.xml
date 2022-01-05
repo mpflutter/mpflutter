@@ -1,0 +1,8 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.mpflutter.runtime">
+    <application>
+        <activity
+            android:name=".MPActivity"
+            android:theme="@style/Theme.MaterialComponents.Light.DarkActionBar" />
+    </application>
+</manifest>
