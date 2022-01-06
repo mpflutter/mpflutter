@@ -54,6 +54,22 @@ void main() {
   MPCore().connectToHostChannel();
 }
 
+class SimplePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MPScaffold(
+      backgroundColor: Colors.yellow,
+      body: Center(
+        child: Container(
+          width: 44,
+          height: 44,
+          color: Colors.blue,
+        ),
+      ),
+    );
+  }
+}
+
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -61,7 +77,8 @@ class MyApp extends StatelessWidget {
       title: 'MPFlutter Demo',
       color: Colors.blue,
       routes: {
-        '/': (context) => MyHomePage(),
+        '/': (context) => SimplePage(),
+        // '/': (context) => MyHomePage(),
         '/container': (context) => ContainerPage(),
         '/padding': (context) => PaddingPage(),
         '/aspectRatio': (context) => AspectRatioPage(),

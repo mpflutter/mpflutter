@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/mp_flutter_runtime.iml" filepath="$PROJECT_DIR$/mp_flutter_runtime.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/mp_flutter_runtime_android.iml" filepath="$PROJECT_DIR$/android/mp_flutter_runtime_android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/example/android/mp_flutter_runtime_example_android.iml" filepath="$PROJECT_DIR$/example/android/mp_flutter_runtime_example_android.iml" />
+    </modules>
+  </component>
+</project>
