@@ -2,6 +2,7 @@ part of 'mpkit.dart';
 
 class MPRichText extends RichText {
   final bool? noMeasure;
+  final bool? selectable;
 
   MPRichText({
     Key? key,
@@ -16,6 +17,7 @@ class MPRichText extends RichText {
     StrutStyle? strutStyle,
     TextWidthBasis textWidthBasis = TextWidthBasis.parent,
     this.noMeasure,
+    this.selectable,
   }) : super(
           key: key,
           text: text,
@@ -33,6 +35,7 @@ class MPRichText extends RichText {
 
 class MPText extends Text {
   final bool? noMeasure;
+  final bool? selectable;
 
   MPText(
     String data, {
@@ -48,6 +51,7 @@ class MPText extends Text {
     int? maxLines,
     TextWidthBasis textWidthBasis = TextWidthBasis.parent,
     this.noMeasure,
+    this.selectable,
   }) : super(
           data,
           key: key,

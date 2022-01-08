@@ -123,6 +123,18 @@ MPElement _encodeRichText(Element element) {
       'maxHeight': maxHeight.toString(),
       'maxLines': widget.maxLines,
       'textAlign': widget.textAlign.toString(),
+      'selectable': (() {
+        final maybeMPText = element.findAncestorWidgetOfExactType<MPText>();
+        if (maybeMPText != null) {
+          return maybeMPText.selectable;
+        }
+        final maybeMPRichText =
+            element.findAncestorWidgetOfExactType<MPRichText>();
+        if (maybeMPRichText != null) {
+          return maybeMPRichText.selectable;
+        }
+        return false;
+      })(),
     },
   );
 }

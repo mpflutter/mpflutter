@@ -130,13 +130,13 @@ class TextPage extends StatelessWidget {
           )),
           _renderBlock(Column(
             children: [
-              _renderHeader('Text with limit lines.'),
+              _renderHeader('Text with limit lines (selectable).'),
               Container(
                 height: 200,
                 padding: EdgeInsets.only(left: 20, right: 20),
                 color: Colors.pink,
                 alignment: Alignment.center,
-                child: Text(
+                child: MPText(
                   'Millions of developers and companies build, ship, and maintain their software on GitHub—the largest and most advanced development platform in the world.',
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
@@ -146,6 +146,7 @@ class TextPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                     fontStyle: FontStyle.italic,
                   ),
+                  selectable: true,
                 ),
               ),
               SizedBox(height: 16),
