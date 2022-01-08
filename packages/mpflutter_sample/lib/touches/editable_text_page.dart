@@ -123,6 +123,38 @@ class _EditableTextPageState extends State<EditableTextPage> {
           )),
         ],
       ),
+      bottomBar: _BottomInput(),
+      bottomBarWithSafeArea: true,
+      bottomBarSafeAreaColor: Colors.white,
+    );
+  }
+}
+
+class _BottomInput extends StatefulWidget {
+  @override
+  State<_BottomInput> createState() => _BottomInputState();
+}
+
+class _BottomInputState extends State<_BottomInput> {
+  final editingController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 44,
+      color: Colors.yellow,
+      child: Center(
+        child: Container(
+          height: 32,
+          width: MediaQuery.of(context).size.width - 16,
+          color: Colors.grey.shade100,
+          child: MPEditableText(
+            controller: editingController,
+            focusNode: FocusNode(),
+            style: TextStyle(fontSize: 14),
+          ),
+        ),
+      ),
     );
   }
 }
