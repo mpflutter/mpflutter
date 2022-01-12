@@ -1,15 +1,17 @@
 part of '../../mp_flutter_runtime.dart';
 
-class _MPScaffold extends StatelessWidget {
-  final Map? data;
-
-  const _MPScaffold({Key? key, this.data}) : super(key: key);
+class _MPScaffold extends ComponentView {
+  _MPScaffold({
+    Key? key,
+    Map? data,
+  }) : super(key: key, data: data);
 
   @override
-  Widget build(BuildContext context) {
+  Widget builder(BuildContext context) {
+    final body = getWidgetFromAttributes(context, 'body');
     return Scaffold(
-      backgroundColor: Colors.yellow,
-      body: Container(),
+      backgroundColor: getColorFromAttributes(context, 'backgroundColor'),
+      body: body,
     );
   }
 }

@@ -17,6 +17,17 @@ part 'page.dart';
 part 'router.dart';
 part 'debugger/debugger.dart';
 part 'components/component_factory.dart';
+part 'components/component_view.dart';
+part 'components/basic/absorb_pointer.dart';
+part 'components/basic/clip_oval.dart';
+part 'components/basic/clip_r_rect.dart';
+part 'components/basic/colored_box.dart';
+part 'components/basic/gesture_detector.dart';
+part 'components/basic/ignore_pointer.dart';
+part 'components/basic/offstage.dart';
+part 'components/basic/opacity.dart';
+part 'components/basic/transform.dart';
+part 'components/basic/visibility.dart';
 part 'components/mpkit/scaffold.dart';
 
 class MPFlutterRuntime {}

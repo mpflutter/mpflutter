@@ -60,10 +60,21 @@ class SimplePage extends StatelessWidget {
     return MPScaffold(
       backgroundColor: Colors.yellow,
       body: Center(
-        child: Container(
-          width: 44,
-          height: 44,
-          color: Colors.blue,
+        child: Opacity(
+          opacity: 0.8,
+          child: IgnorePointer(
+            ignoring: false,
+            child: GestureDetector(
+              onTap: () {
+                print("12j3h1lk23h");
+              },
+              child: Container(
+                width: 100,
+                height: 100,
+                color: Colors.blue,
+              ),
+            ),
+          ),
         ),
       ),
     );

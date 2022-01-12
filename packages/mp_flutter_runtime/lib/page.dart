@@ -39,8 +39,8 @@ class _MPPageState extends State<MPPage> with MPDataReceiver {
   @override
   Widget build(BuildContext context) {
     if (scaffoldData != null) {
-      return _MPComponentFactory(
-        data: scaffoldData,
+      return _MPComponentFactory.create(
+        scaffoldData,
       );
     }
     return Container();
