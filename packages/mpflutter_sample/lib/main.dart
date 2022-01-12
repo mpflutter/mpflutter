@@ -59,23 +59,61 @@ class SimplePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MPScaffold(
       backgroundColor: Colors.yellow,
-      body: Center(
-        child: Opacity(
-          opacity: 0.8,
-          child: IgnorePointer(
-            ignoring: false,
-            child: GestureDetector(
-              onTap: () {
-                print("12j3h1lk23h");
-              },
-              child: Container(
-                width: 100,
-                height: 100,
-                color: Colors.blue,
+      body: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.all(20.0),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return Container(
+                    height: 44,
+                    color: Color.fromARGB(
+                      255,
+                      Random().nextInt(255),
+                      Random().nextInt(255),
+                      Random().nextInt(255),
+                    ),
+                  );
+                },
+                childCount: 10,
               ),
             ),
           ),
-        ),
+          SliverOpacity(
+            opacity: 0.5,
+            sliver: SliverToBoxAdapter(
+              child: Container(
+                height: 88,
+                color: Colors.red,
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.all(20.0),
+            sliver: SliverWaterfall(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return Container(
+                    height: 44 + 30 * (index % 5),
+                    color: Color.fromARGB(
+                      255,
+                      Random().nextInt(255),
+                      Random().nextInt(255),
+                      Random().nextInt(255),
+                    ),
+                  );
+                },
+                childCount: 10,
+              ),
+              gridDelegate: SliverWaterfallDelegate(
+                crossAxisCount: 2,
+                crossAxisSpacing: 10,
+                mainAxisSpacing: 10,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

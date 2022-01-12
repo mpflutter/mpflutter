@@ -4,11 +4,13 @@ class ComponentView extends StatefulWidget {
   final Map? data;
   final Widget? child;
   final int? dataHashCode;
+  final bool? noLayout;
 
   ComponentView({
     Key? key,
     this.data,
     this.child,
+    this.noLayout,
   })  : dataHashCode = (() {
           if (data?['hashCode'] is int) {
             return data!['hashCode'];
@@ -26,6 +28,14 @@ class ComponentView extends StatefulWidget {
 
   MPEngine? getEngine(BuildContext context) {
     return context.findAncestorWidgetOfExactType<MPPage>()?.engine;
+  }
+
+  dynamic getValueFromAttributes(BuildContext context, String attributeKey) {
+    final attributes =
+        ComponentViewState.getData(context)?['attributes'] as Map?;
+    if (attributes != null) {
+      return attributes[attributeKey];
+    }
   }
 
   Color? getColorFromAttributes(BuildContext context, String attributeKey) {
@@ -68,6 +78,17 @@ class ComponentView extends StatefulWidget {
       dynamic attributeValue = attributes[attributeKey];
       if (attributeValue is num) {
         return attributeValue.toInt();
+      }
+    }
+  }
+
+  String? getStringFromAttributes(BuildContext context, String attributeKey) {
+    final attributes =
+        ComponentViewState.getData(context)?['attributes'] as Map?;
+    if (attributes != null) {
+      dynamic attributeValue = attributes[attributeKey];
+      if (attributeValue is String) {
+        return attributeValue;
       }
     }
   }
@@ -124,6 +145,33 @@ class ComponentView extends StatefulWidget {
     }
   }
 
+  EdgeInsets? getEdgeInsetsFromAttributes(
+      BuildContext context, String attributeKey) {
+    final attributes =
+        ComponentViewState.getData(context)?['attributes'] as Map?;
+    if (attributes != null) {
+      dynamic attributeValue = attributes[attributeKey];
+      if (attributeValue is String) {
+        if (attributeValue.startsWith('EdgeInsets.all(')) {
+          final trimedValue = attributeValue
+              .replaceAll("EdgeInsets.all(", "")
+              .replaceAll(")", "");
+          return EdgeInsets.all(double.tryParse(trimedValue) ?? 0);
+        } else if (attributeValue.startsWith('EdgeInsets(')) {
+          final trimedValue =
+              attributeValue.replaceAll("EdgeInsets(", "").replaceAll(")", "");
+          final parts = trimedValue.split(',');
+          return EdgeInsets.fromLTRB(
+            double.tryParse(parts[0]) ?? 0.0,
+            double.tryParse(parts[1]) ?? 0.0,
+            double.tryParse(parts[2]) ?? 0.0,
+            double.tryParse(parts[3]) ?? 0.0,
+          );
+        }
+      }
+    }
+  }
+
   Matrix4? getTransformMatrixFromAttributes(
       BuildContext context, String attributeKey) {
     final attributes =
@@ -170,10 +218,17 @@ class ComponentView extends StatefulWidget {
     final children = ComponentViewState.getData(context)?['children'] as List?;
     if (children != null) {
       if (children.length > 1) {
-        return SizedBox();
+        return const SizedBox();
       } else if (children.length == 1) {
         return _MPComponentFactory.create(children[0]);
       }
+    }
+  }
+
+  List<Widget>? getWidgetsFromChildren(BuildContext context) {
+    final children = ComponentViewState.getData(context)?['children'] as List?;
+    if (children != null) {
+      return children.map((e) => _MPComponentFactory.create(e)).toList();
     }
   }
 
@@ -206,13 +261,16 @@ class ComponentViewState extends State<ComponentView> {
   }
 
   Widget buildLayoutWidget(Widget widget) {
+    if (this.widget.noLayout == true) {
+      return widget;
+    }
     final constraints = data?['constraints'] as Map?;
     if (constraints != null) {
       double? x = constraints['x'];
       double? y = constraints['y'];
       double? w = constraints['w'];
       double? h = constraints['h'];
-      if (w != null && h != null) {
+      if (w != null && h != null && (w > 0 && h > 0)) {
         widget = Container(
           alignment: Alignment.topLeft,
           child: ConstrainedBox(
@@ -226,7 +284,7 @@ class ComponentViewState extends State<ComponentView> {
           ),
         );
       }
-      if (x != null && y != null) {
+      if (x != null && y != null && (x > 0 || y > 0)) {
         widget = Transform.translate(
           offset: Offset(x, y),
           child: widget,

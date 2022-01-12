@@ -14,10 +14,20 @@ class _MPComponentFactory {
             return _ClipRRect(data: data);
           case 'colored_box':
             return _ColoredBox(data: data);
+          case 'custom_scroll_view':
+            return _CustomScrollView(data: data);
+          case 'sliver_list':
+            return _SliverList(data: data);
+          case 'sliver_grid':
+            return _SliverGrid(data: data);
           case 'gesture_detector':
             return _GestureDetector(data: data);
+          case 'grid_view':
+            return _GridView(data: data);
           case 'ignore_pointer':
             return _IgnorePointer(data: data);
+          case 'list_view':
+            return _ListView(data: data);
           case 'opacity':
             return _Opacity(data: data);
           case 'offstage':
