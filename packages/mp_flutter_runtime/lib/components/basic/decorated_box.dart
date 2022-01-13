@@ -1,0 +1,184 @@
+part of '../../mp_flutter_runtime.dart';
+
+class _DecoratedBox extends ComponentView {
+  final bool isFront;
+
+  _DecoratedBox({
+    Key? key,
+    Map? data,
+    required this.isFront,
+  }) : super(key: key, data: data);
+
+  AlignmentGeometry _alignmentGeometryFromString(String? value) {
+    switch (value) {
+      case 'centerRight':
+        return Alignment.centerRight;
+      case 'centerLeft':
+        return Alignment.centerLeft;
+      case 'topRight':
+        return Alignment.topRight;
+      case 'bottomRight':
+        return Alignment.bottomRight;
+      case 'topLeft':
+        return Alignment.topLeft;
+      case 'bottomLeft':
+        return Alignment.bottomLeft;
+      case 'topCenter':
+        return Alignment.topCenter;
+      case 'bottomCenter':
+        return Alignment.bottomCenter;
+      default:
+        return Alignment.topLeft;
+    }
+  }
+
+  Offset _offsetFromString(String? attributeValue) {
+    if (attributeValue == null) return const Offset(0, 0);
+    if (attributeValue.startsWith('Offset(')) {
+      final trimedValue =
+          attributeValue.replaceAll("Offset(", "").replaceAll(")", "");
+      final parts = trimedValue.split(',');
+      return Offset(
+        double.tryParse(parts[0]) ?? 0.0,
+        double.tryParse(parts[1]) ?? 0.0,
+      );
+    }
+    return const Offset(0, 0);
+  }
+
+  BorderRadius? getBorderRadiusFromValue(String attributeValue) {
+    if (attributeValue.startsWith('BorderRadius.circular(')) {
+      final trimedValue = attributeValue
+          .replaceAll("BorderRadius.circular(", "")
+          .replaceAll(")", "");
+      return BorderRadius.circular(double.tryParse(trimedValue) ?? 0);
+    } else if (attributeValue.startsWith('BorderRadius.all(')) {
+      final trimedValue = attributeValue
+          .replaceAll("BorderRadius.all(", "")
+          .replaceAll(")", "");
+      return BorderRadius.circular(double.tryParse(trimedValue) ?? 0);
+    } else if (attributeValue.startsWith('BorderRadius.only(')) {
+      final trimedValue = attributeValue
+          .replaceAll("BorderRadius.only(", "")
+          .replaceAll("Radius.circular(", "")
+          .replaceAll(")", "");
+      final tl = _floatFromRegularFirstObject(
+          RegExp('topLeft: ([0-9|.]+)'), trimedValue);
+      final bl = _floatFromRegularFirstObject(
+          RegExp('bottomLeft: ([0-9|.]+)'), trimedValue);
+      final br = _floatFromRegularFirstObject(
+          RegExp('bottomRight: ([0-9|.]+)'), trimedValue);
+      final tr = _floatFromRegularFirstObject(
+          RegExp('topRight: ([0-9|.]+)'), trimedValue);
+      return BorderRadius.only(
+        topLeft: Radius.circular(tl),
+        bottomLeft: Radius.circular(bl),
+        bottomRight: Radius.circular(br),
+        topRight: Radius.circular(tr),
+      );
+    }
+  }
+
+  @override
+  Widget builder(BuildContext context) {
+    Color? color = getColorFromAttributes(context, 'color');
+    Map? decoration = getValueFromAttributes(context, 'decoration');
+    Gradient? gradient = (() {
+      if (decoration != null && decoration['gradient'] is Map) {
+        Map gradientData = decoration['gradient'];
+        if (gradientData['classname'] == 'RadialGradient') {
+          return RadialGradient(
+            stops: (gradientData['stops'] as List?)?.map((e) {
+              if (e is num) {
+                return e.toDouble();
+              } else {
+                return 0.0;
+              }
+            }).toList(),
+            colors: (gradientData['colors'] as List).map((e) {
+              return Color(int.tryParse(e) ?? 0);
+            }).toList(),
+          );
+        } else {
+          return LinearGradient(
+            begin: _alignmentGeometryFromString(gradientData['begin']),
+            end: _alignmentGeometryFromString(gradientData['end']),
+            colors: (gradientData['colors'] as List).map((e) {
+              return Color(int.tryParse(e) ?? 0);
+            }).toList(),
+            stops: (gradientData['stops'] as List?)?.map((e) {
+              if (e is num) {
+                return e.toDouble();
+              } else {
+                return 0.0;
+              }
+            }).toList(),
+          );
+        }
+      }
+    })();
+    BorderRadius? borderRadius = (() {
+      if (decoration != null) {
+        String? borderRadius = decoration['borderRadius'];
+        if (borderRadius != null) {
+          return getBorderRadiusFromValue(borderRadius);
+        }
+      }
+    })();
+    BoxBorder? boxBorder = (() {
+      if (decoration != null) {
+        Map? borderData = decoration['border'];
+        if (borderData != null) {
+          return Border(
+            top: BorderSide(
+              width: borderData['topWidth'] ?? 0.0,
+              color: Color(int.tryParse(borderData['topColor'] ?? '0') ?? 0),
+            ),
+            left: BorderSide(
+              width: borderData['leftWidth'] ?? 0.0,
+              color: Color(int.tryParse(borderData['leftColor'] ?? '0') ?? 0),
+            ),
+            bottom: BorderSide(
+              width: borderData['bottomWidth'] ?? 0.0,
+              color: Color(int.tryParse(borderData['bottomColor'] ?? '0') ?? 0),
+            ),
+            right: BorderSide(
+              width: borderData['rightWidth'] ?? 0.0,
+              color: Color(int.tryParse(borderData['rightColor'] ?? '0') ?? 0),
+            ),
+          );
+        }
+      }
+    })();
+    List<BoxShadow>? boxShadow = (() {
+      if (decoration != null) {
+        List? boxShadowsData = decoration['boxShadow'];
+        if (boxShadowsData != null) {
+          return boxShadowsData
+              .map((e) {
+                return BoxShadow(
+                  color: Color(int.tryParse(e['color'] ?? '0') ?? 0),
+                  offset: _offsetFromString(e['offset']),
+                  blurRadius: e['blurRadius'] ?? 0,
+                );
+              })
+              .toList()
+              .cast<BoxShadow>();
+        }
+      }
+    })();
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: color,
+        gradient: gradient,
+        borderRadius: borderRadius,
+        border: boxBorder,
+        boxShadow: boxShadow,
+      ),
+      position: isFront
+          ? DecorationPosition.foreground
+          : DecorationPosition.background,
+      child: getWidgetFromChildren(context),
+    );
+  }
+}

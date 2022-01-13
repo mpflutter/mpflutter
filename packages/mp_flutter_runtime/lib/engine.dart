@@ -1,6 +1,7 @@
 part of './mp_flutter_runtime.dart';
 
 abstract class MPDataReceiver {
+  NavigatorState? getNavigator();
   void didReceivedFrameData(Map message);
 }
 

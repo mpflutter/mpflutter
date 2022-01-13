@@ -16,6 +16,10 @@ class _MPComponentFactory {
             return _ColoredBox(data: data);
           case 'custom_scroll_view':
             return _CustomScrollView(data: data);
+          case 'decorated_box':
+            return _DecoratedBox(data: data, isFront: false);
+          case 'foreground_decorated_box':
+            return _DecoratedBox(data: data, isFront: true);
           case 'sliver_list':
             return _SliverList(data: data);
           case 'sliver_grid':
@@ -42,6 +46,8 @@ class _MPComponentFactory {
             return _Visibility(data: data);
           case 'mp_scaffold':
             return _MPScaffold(data: data);
+          case 'mp_icon':
+            return _MPIcon(data: data);
           default:
             return ComponentView(data: data);
         }

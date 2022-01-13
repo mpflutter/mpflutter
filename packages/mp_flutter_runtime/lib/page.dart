@@ -16,9 +16,18 @@ class MPPage extends StatefulWidget {
   State<MPPage> createState() => _MPPageState();
 }
 
-class _MPPageState extends State<MPPage> with MPDataReceiver {
+class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
+  ModalRoute? route;
   int? viewId;
   Map? scaffoldData;
+
+  @override
+  void dispose() {
+    super.dispose();
+    if (route != null && !route!.isActive && viewId != null) {
+      widget.engine._router._disposeRoute(viewId!);
+    }
+  }
 
   @override
   void initState() {
@@ -27,6 +36,17 @@ class _MPPageState extends State<MPPage> with MPDataReceiver {
       this.viewId = viewId;
       widget.engine._addManageView(viewId, this);
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    route = ModalRoute.of(context);
+  }
+
+  @override
+  NavigatorState? getNavigator() {
+    return Navigator.of(context);
   }
 
   @override
@@ -39,9 +59,7 @@ class _MPPageState extends State<MPPage> with MPDataReceiver {
   @override
   Widget build(BuildContext context) {
     if (scaffoldData != null) {
-      return _MPComponentFactory.create(
-        scaffoldData,
-      );
+      return _MPComponentFactory.create(scaffoldData);
     }
     return Container();
   }

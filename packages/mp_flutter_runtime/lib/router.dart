@@ -70,9 +70,48 @@ class _MPRouter {
     }
   }
 
-  void _didPush(Map message) {}
+  void _didPush(Map message) {
+    if (engine._managedViews.isEmpty) return;
+    MPDataReceiver dataReceiver = engine._managedViews.values.first;
+    NavigatorState? navigator = dataReceiver.getNavigator();
+    if (navigator == null) return;
+    int? routeId = message['routeId'];
+    thePushingRouteId = routeId;
+    navigator.push(
+      MaterialPageRoute(
+        builder: (context) {
+          return MPPage(engine: engine);
+        },
+        settings: RouteSettings(
+          name: message['name'],
+          arguments: message['params'],
+        ),
+      ),
+    );
+  }
 
   void _didReplace(Map message) {}
 
-  void _didPop() {}
+  void _didPop() async {
+    if (engine._managedViews.isEmpty) return;
+    MPDataReceiver dataReceiver = engine._managedViews.values.first;
+    NavigatorState? navigator = dataReceiver.getNavigator();
+    if (navigator == null) return;
+    doBacking = true;
+    navigator.pop();
+    doBacking = false;
+  }
+
+  void _disposeRoute(int viewId) {
+    if (doBacking) {
+      return;
+    }
+    engine._sendMessage({
+      'type': 'router',
+      'message': {
+        'event': 'disposeRoute',
+        'routeId': viewId,
+      },
+    });
+  }
 }
