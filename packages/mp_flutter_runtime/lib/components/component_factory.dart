@@ -20,6 +20,8 @@ class _MPComponentFactory {
             return _SliverList(data: data);
           case 'sliver_grid':
             return _SliverGrid(data: data);
+          case 'sliver_persistent_header':
+            return _SliverPersistentHeader(data: data);
           case 'gesture_detector':
             return _GestureDetector(data: data);
           case 'grid_view':
@@ -30,6 +32,8 @@ class _MPComponentFactory {
             return _ListView(data: data);
           case 'opacity':
             return _Opacity(data: data);
+          case 'rich_text':
+            return _RichText(data: data);
           case 'offstage':
             return _Offstage(data: data);
           case 'transform':
@@ -44,5 +48,30 @@ class _MPComponentFactory {
       }
     }
     return Container();
+  }
+
+  MPEngine engine;
+  List<Map> _textMeasureResults = [];
+
+  _MPComponentFactory({required this.engine});
+
+  void _callbackTextMeasureResult(int measureId, Size size) {
+    _textMeasureResults.add({
+      'measureId': measureId,
+      'size': {'width': size.width, 'height': size.height},
+    });
+  }
+
+  void _flushTextMeasureResult() {
+    if (_textMeasureResults.isNotEmpty) {
+      engine._sendMessage({
+        'type': 'rich_text',
+        'message': {
+          'event': 'onMeasured',
+          'data': _textMeasureResults,
+        },
+      });
+      _textMeasureResults.clear();
+    }
   }
 }

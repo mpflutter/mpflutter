@@ -22,7 +22,9 @@ class _CustomScrollView extends ComponentView {
         }
       })(),
       slivers: childrenWidget.map((e) {
-        if (e is _SliverList || e is _SliverGrid) {
+        if (e is _SliverList ||
+            e is _SliverGrid ||
+            e is _SliverPersistentHeader) {
           return e;
         } else {
           return SliverToBoxAdapter(child: e);
@@ -120,5 +122,52 @@ class _SliverGrid extends ComponentView {
       child = SliverPadding(padding: padding, sliver: child);
     }
     return child ?? const SliverToBoxAdapter(child: SizedBox());
+  }
+}
+
+class _SliverPersistentHeader extends ComponentView {
+  _SliverPersistentHeader({
+    Key? key,
+    Map? data,
+  }) : super(key: key, data: data, noLayout: true);
+
+  @override
+  Widget builder(BuildContext context) {
+    final child = getWidgetFromChildren(context);
+    double height = 0;
+    if (child is ComponentView) {
+      height = child.getSize().height;
+    }
+    return SliverPersistentHeader(
+      delegate: _SliverPersistentHeaderDelegate(
+        child ?? const SizedBox(),
+        height,
+      ),
+      pinned: getBoolFromAttributes(context, 'pinned') ?? false,
+    );
+  }
+}
+
+class _SliverPersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final double height;
+
+  _SliverPersistentHeaderDelegate(this.child, this.height);
+
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => height;
+
+  @override
+  double get minExtent => height;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
   }
 }

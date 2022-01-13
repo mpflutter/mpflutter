@@ -12,10 +12,14 @@ class MPEngine {
   _JSContext? jsContext;
   List<String> _messageQueue = [];
   _MPDebugger? _debugger;
+  late _MPComponentFactory _componentFactory;
   late _MPRouter _router;
+  late _TextMeasurer _textMeasurer;
 
   MPEngine() {
+    _componentFactory = _MPComponentFactory(engine: this);
     _router = _MPRouter(engine: this);
+    _textMeasurer = _TextMeasurer(engine: this);
   }
 
   void initWithJSCode(String jsCode) {
@@ -48,6 +52,9 @@ class MPEngine {
         break;
       case 'route':
         _router._didReceivedRouteData(decodedMessage['message']);
+        break;
+      case 'rich_text':
+        _textMeasurer._didReceivedDoMeasureData(decodedMessage['message']);
         break;
       default:
     }

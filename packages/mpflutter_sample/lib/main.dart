@@ -54,66 +54,58 @@ void main() {
   MPCore().connectToHostChannel();
 }
 
+class SimpleD extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      height: 44,
+      color: Colors.blue,
+    );
+  }
+
+  @override
+  double get maxExtent => 44;
+
+  @override
+  double get minExtent => 44;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
+  }
+}
+
 class SimplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MPScaffold(
       backgroundColor: Colors.yellow,
-      body: CustomScrollView(
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.all(20.0),
-            sliver: SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return Container(
-                    height: 44,
-                    color: Color.fromARGB(
-                      255,
-                      Random().nextInt(255),
-                      Random().nextInt(255),
-                      Random().nextInt(255),
-                    ),
-                  );
-                },
-                childCount: 10,
+      body: Center(
+        child: RichText(
+          text: TextSpan(children: [
+            TextSpan(
+              text: 'Hello, World!',
+              style: TextStyle(
+                fontSize: 24,
+                color: Colors.blue,
+                fontWeight: FontWeight.w900,
+                fontStyle: FontStyle.italic,
+                letterSpacing: 5,
+                wordSpacing: 10,
+                backgroundColor: Colors.white,
+                decoration: TextDecoration.underline,
               ),
             ),
-          ),
-          SliverOpacity(
-            opacity: 0.5,
-            sliver: SliverToBoxAdapter(
-              child: Container(
-                height: 88,
+            TextSpan(
+              text: '!!!',
+              style: TextStyle(
+                fontSize: 18,
                 color: Colors.red,
               ),
             ),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.all(20.0),
-            sliver: SliverWaterfall(
-              delegate: SliverChildBuilderDelegate(
-                (context, index) {
-                  return Container(
-                    height: 44 + 30 * (index % 5),
-                    color: Color.fromARGB(
-                      255,
-                      Random().nextInt(255),
-                      Random().nextInt(255),
-                      Random().nextInt(255),
-                    ),
-                  );
-                },
-                childCount: 10,
-              ),
-              gridDelegate: SliverWaterfallDelegate(
-                crossAxisCount: 2,
-                crossAxisSpacing: 10,
-                mainAxisSpacing: 10,
-              ),
-            ),
-          ),
-        ],
+          ]),
+        ),
       ),
     );
   }
@@ -126,8 +118,8 @@ class MyApp extends StatelessWidget {
       title: 'MPFlutter Demo',
       color: Colors.blue,
       routes: {
-        '/': (context) => SimplePage(),
-        // '/': (context) => MyHomePage(),
+        // '/': (context) => SimplePage(),
+        '/': (context) => MyHomePage(),
         '/container': (context) => ContainerPage(),
         '/padding': (context) => PaddingPage(),
         '/aspectRatio': (context) => AspectRatioPage(),

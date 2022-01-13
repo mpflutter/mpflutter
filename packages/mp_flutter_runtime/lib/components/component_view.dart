@@ -21,13 +21,31 @@ class ComponentView extends StatefulWidget {
         super(key: key);
 
   Widget builder(BuildContext context) {
-    return SizedBox(
-      child: getWidgetFromChildren(context),
-    );
+    List<Widget>? children = getWidgetsFromChildren(context);
+    if (children != null && children.isNotEmpty) {
+      if (children.length > 1) {
+        return Stack(children: children);
+      } else {
+        return children[0];
+      }
+    }
+    return const SizedBox();
   }
 
   MPEngine? getEngine(BuildContext context) {
     return context.findAncestorWidgetOfExactType<MPPage>()?.engine;
+  }
+
+  Size getSize() {
+    final constraints = data?['constraints'] as Map?;
+    if (constraints != null) {
+      double? w = constraints['w'];
+      double? h = constraints['h'];
+      if (w != null && h != null) {
+        return Size(w, h);
+      }
+    }
+    return const Size(0, 0);
   }
 
   dynamic getValueFromAttributes(BuildContext context, String attributeKey) {
