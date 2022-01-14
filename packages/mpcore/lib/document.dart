@@ -290,6 +290,10 @@ class MPElement {
       fromFlutterElementMethodCache[element.widget.runtimeType] =
           _encodeListView;
       return _encodeListView(element);
+    } else if (element.widget is SingleChildScrollView) {
+      fromFlutterElementMethodCache[element.widget.runtimeType] =
+          _encodeSingleChildScrollView;
+      return _encodeSingleChildScrollView(element);
     } else if (element.widget is GridView) {
       fromFlutterElementMethodCache[element.widget.runtimeType] =
           _encodeGridView;

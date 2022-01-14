@@ -91,6 +91,10 @@ MPElement _encodeRichText(Element element) {
   var maxHeight = constraints.maxHeight;
   var currentRenderObject = element.findRenderObject();
   while (currentRenderObject != null) {
+    if (currentRenderObject is RenderViewport ||
+        currentRenderObject is RenderAbstractViewport) {
+      break;
+    }
     // ignore: invalid_use_of_protected_member
     dynamic currentConstraints = currentRenderObject.constraints;
     if (currentConstraints is BoxConstraints) {

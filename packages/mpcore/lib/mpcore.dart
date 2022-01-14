@@ -40,6 +40,7 @@ part './components/ignore_pointer.dart';
 part './components/clip_r_rect.dart';
 part './components/image.dart';
 part './components/rich_text.dart';
+part './components/single_child_scroll_view.dart';
 part './components/transform.dart';
 part './components/colored_box.dart';
 part './components/list_view.dart';
