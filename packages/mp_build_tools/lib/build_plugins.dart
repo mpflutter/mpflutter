@@ -8,16 +8,18 @@ main(List<String> args) {
   if (!File('.packages').existsSync()) return;
   final lines = File('.packages').readAsLinesSync();
   for (final line in lines) {
-    final pkgPath = line
-        .replaceFirst(RegExp('.*?:'), '')
-        .replaceFirst('file://', '')
-        .replaceFirst('/lib/', '');
-    if (File(path.join(pkgPath, 'package.json')).existsSync() &&
-        (Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
-            Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
-            Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync())) {
-      runNpmBuild(pkgPath);
-    }
+    try {
+      final pkgPath = line
+          .replaceFirst(RegExp('.*?:'), '')
+          .replaceFirst('file://', '')
+          .replaceFirst('/lib/', '');
+      if (File(path.join(pkgPath, 'package.json')).existsSync() &&
+          (Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
+              Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
+              Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync())) {
+        runNpmBuild(pkgPath);
+      }
+    } catch (e) {}
   }
   buildWebPlugin();
   buildWeappPlugin();
@@ -28,15 +30,18 @@ void buildWebPlugin() {
   final stringBuffer = StringBuffer();
   final lines = File('.packages').readAsLinesSync();
   for (final line in lines) {
-    final pkgPath = line
-        .replaceFirst(RegExp('.*?:'), '')
-        .replaceFirst('file://', '')
-        .replaceFirst('/lib/', '');
-    if (File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js')).existsSync()) {
-      stringBuffer.writeln(
-          File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
-              .readAsStringSync());
-    }
+    try {
+      final pkgPath = line
+          .replaceFirst(RegExp('.*?:'), '')
+          .replaceFirst('file://', '')
+          .replaceFirst('/lib/', '');
+      if (File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
+          .existsSync()) {
+        stringBuffer.writeln(
+            File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
+                .readAsStringSync());
+      }
+    } catch (e) {}
   }
   try {
     File('web/plugins.min.js').writeAsStringSync(
@@ -50,27 +55,29 @@ void buildWeappPlugin() {
   final lines = File('./.packages').readAsLinesSync();
   final components = <File>[];
   for (final line in lines) {
-    final pkgPath = line
-        .replaceFirst(RegExp('.*?:'), '')
-        .replaceFirst('file://', '')
-        .replaceFirst('/lib/', '');
-    if (File(path.join(pkgPath, 'dist', 'weapp', 'bundle.min.js'))
-        .existsSync()) {
-      stringBuffer.writeln(
-          File(path.join(pkgPath, 'dist', 'weapp', 'bundle.min.js'))
-              .readAsStringSync());
-    }
-    if (Directory(path.join(pkgPath, 'lib', 'weapp', 'components'))
-        .existsSync()) {
-      // contains wechat components
-      Directory(path.join(pkgPath, 'lib', 'weapp', 'components'))
-          .listSync()
-          .forEach((element) {
-        if (element.path.endsWith(".json")) {
-          components.add(File(element.path));
-        }
-      });
-    }
+    try {
+      final pkgPath = line
+          .replaceFirst(RegExp('.*?:'), '')
+          .replaceFirst('file://', '')
+          .replaceFirst('/lib/', '');
+      if (File(path.join(pkgPath, 'dist', 'weapp', 'bundle.min.js'))
+          .existsSync()) {
+        stringBuffer.writeln(
+            File(path.join(pkgPath, 'dist', 'weapp', 'bundle.min.js'))
+                .readAsStringSync());
+      }
+      if (Directory(path.join(pkgPath, 'lib', 'weapp', 'components'))
+          .existsSync()) {
+        // contains wechat components
+        Directory(path.join(pkgPath, 'lib', 'weapp', 'components'))
+            .listSync()
+            .forEach((element) {
+          if (element.path.endsWith(".json")) {
+            components.add(File(element.path));
+          }
+        });
+      }
+    } catch (e) {}
   }
   try {
     File('weapp/plugins.min.js').writeAsStringSync(
@@ -156,16 +163,18 @@ void buildSwanappPlugin() {
   final stringBuffer = StringBuffer();
   final lines = File('.packages').readAsLinesSync();
   for (final line in lines) {
-    final pkgPath = line
-        .replaceFirst(RegExp('.*?:'), '')
-        .replaceFirst('file://', '')
-        .replaceFirst('/lib/', '');
-    if (File(path.join(pkgPath, 'dist', 'swanapp', 'bundle.min.js'))
-        .existsSync()) {
-      stringBuffer.writeln(
-          File(path.join(pkgPath, 'dist', 'swanapp', 'bundle.min.js'))
-              .readAsStringSync());
-    }
+    try {
+      final pkgPath = line
+          .replaceFirst(RegExp('.*?:'), '')
+          .replaceFirst('file://', '')
+          .replaceFirst('/lib/', '');
+      if (File(path.join(pkgPath, 'dist', 'swanapp', 'bundle.min.js'))
+          .existsSync()) {
+        stringBuffer.writeln(
+            File(path.join(pkgPath, 'dist', 'swanapp', 'bundle.min.js'))
+                .readAsStringSync());
+      }
+    } catch (e) {}
   }
   try {
     File(path.join('swanapp', 'plugins.min.js')).writeAsStringSync(
