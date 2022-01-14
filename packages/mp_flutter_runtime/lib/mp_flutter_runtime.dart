@@ -31,12 +31,14 @@ part 'components/basic/decorated_box.dart';
 part 'components/basic/gesture_detector.dart';
 part 'components/basic/grid_view.dart';
 part 'components/basic/ignore_pointer.dart';
+part 'components/basic/image.dart';
 part 'components/basic/list_view.dart';
 part 'components/basic/offstage.dart';
 part 'components/basic/opacity.dart';
 part 'components/basic/rich_text.dart';
 part 'components/basic/transform.dart';
 part 'components/basic/visibility.dart';
+part 'components/basic/web_dialogs.dart';
 part 'components/mpkit/scaffold.dart';
 part 'components/mpkit/icon.dart';
 

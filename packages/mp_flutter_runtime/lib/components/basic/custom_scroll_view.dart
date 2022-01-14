@@ -4,7 +4,13 @@ class _CustomScrollView extends ComponentView {
   _CustomScrollView({
     Key? key,
     Map? data,
-  }) : super(key: key, data: data);
+    Map? parentData,
+    required _MPComponentFactory componentFactory,
+  }) : super(
+            key: key,
+            data: data,
+            parentData: parentData,
+            componentFactory: componentFactory);
 
   @override
   Widget builder(BuildContext context) {
@@ -38,7 +44,14 @@ class _SliverList extends ComponentView {
   _SliverList({
     Key? key,
     Map? data,
-  }) : super(key: key, data: data, noLayout: true);
+    Map? parentData,
+    required _MPComponentFactory componentFactory,
+  }) : super(
+            key: key,
+            data: data,
+            parentData: parentData,
+            componentFactory: componentFactory,
+            noLayout: true);
 
   @override
   Widget builder(BuildContext context) {
@@ -63,7 +76,14 @@ class _SliverGrid extends ComponentView {
   _SliverGrid({
     Key? key,
     Map? data,
-  }) : super(key: key, data: data, noLayout: true);
+    Map? parentData,
+    required _MPComponentFactory componentFactory,
+  }) : super(
+            key: key,
+            data: data,
+            parentData: parentData,
+            componentFactory: componentFactory,
+            noLayout: true);
 
   @override
   Widget builder(BuildContext context) {
@@ -129,7 +149,14 @@ class _SliverPersistentHeader extends ComponentView {
   _SliverPersistentHeader({
     Key? key,
     Map? data,
-  }) : super(key: key, data: data, noLayout: true);
+    Map? parentData,
+    required _MPComponentFactory componentFactory,
+  }) : super(
+            key: key,
+            data: data,
+            parentData: parentData,
+            componentFactory: componentFactory,
+            noLayout: true);
 
   @override
   Widget builder(BuildContext context) {

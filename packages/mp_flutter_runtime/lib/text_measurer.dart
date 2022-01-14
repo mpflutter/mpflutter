@@ -27,6 +27,7 @@ class _TextMeasurer {
       if (attributes != null) {
         maxWidth = double.tryParse(attributes['maxWidth'] ?? '0') ?? 0.0;
         maxHeight = double.tryParse(attributes['maxHeight'] ?? '0') ?? 0.0;
+        textPainter.maxLines = attributes['maxLines'] ?? 99999;
       }
       textPainter.layout(maxWidth: maxWidth);
       Size measureResult = textPainter.size;

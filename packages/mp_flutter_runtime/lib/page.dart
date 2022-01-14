@@ -17,6 +17,7 @@ class MPPage extends StatefulWidget {
 }
 
 class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
+  bool firstSetted = false;
   ModalRoute? route;
   int? viewId;
   Map? scaffoldData;
@@ -30,18 +31,18 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   }
 
   @override
-  void initState() {
-    super.initState();
-    widget.engine._router.requestRoute().then((viewId) {
-      this.viewId = viewId;
-      widget.engine._addManageView(viewId, this);
-    });
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    route = ModalRoute.of(context);
+    if (!firstSetted) {
+      firstSetted = true;
+      route = ModalRoute.of(context);
+      widget.engine._router
+          .requestRoute(viewport: MediaQuery.of(context).size)
+          .then((viewId) {
+        this.viewId = viewId;
+        widget.engine._addManageView(viewId, this);
+      });
+    }
   }
 
   @override
@@ -59,7 +60,7 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   @override
   Widget build(BuildContext context) {
     if (scaffoldData != null) {
-      return _MPComponentFactory.create(scaffoldData);
+      return widget.engine._componentFactory.create(scaffoldData);
     }
     return Container();
   }

@@ -1,14 +1,19 @@
 part of '../mp_flutter_runtime.dart';
 
 class ComponentView extends StatefulWidget {
+  final _MPComponentFactory componentFactory;
   final Map? data;
+  final Map? parentData;
   final Widget? child;
   final int? dataHashCode;
   final bool? noLayout;
+  final Offset? adjustOffset;
 
   ComponentView({
     Key? key,
+    required this.componentFactory,
     this.data,
+    this.parentData,
     this.child,
     this.noLayout,
   })  : dataHashCode = (() {
@@ -18,7 +23,14 @@ class ComponentView extends StatefulWidget {
             return null;
           }
         })(),
-        super(key: key);
+        adjustOffset = (() {
+          if (parentData != null && parentData['adjustOffset'] is Offset) {
+            return parentData['adjustOffset'] as Offset;
+          }
+        })(),
+        super(
+          key: key ?? Key('mp_${data?['hashCode'] ?? Random().nextDouble()}'),
+        );
 
   Widget builder(BuildContext context) {
     List<Widget>? children = getWidgetsFromChildren(context);
@@ -33,7 +45,7 @@ class ComponentView extends StatefulWidget {
   }
 
   MPEngine? getEngine(BuildContext context) {
-    return context.findAncestorWidgetOfExactType<MPPage>()?.engine;
+    return componentFactory.engine;
   }
 
   Size getSize() {
@@ -117,7 +129,7 @@ class ComponentView extends StatefulWidget {
     if (attributes != null) {
       dynamic attributeValue = attributes[attributeKey];
       if (attributeValue is Map) {
-        return _MPComponentFactory.create(attributeValue);
+        return componentFactory.create(attributeValue);
       }
     }
   }
@@ -232,21 +244,24 @@ class ComponentView extends StatefulWidget {
     return double.tryParse(matches.first.group(1) ?? "") ?? 0.0;
   }
 
-  Widget? getWidgetFromChildren(BuildContext context) {
+  Widget? getWidgetFromChildren(BuildContext context, {Map? parentData}) {
     final children = ComponentViewState.getData(context)?['children'] as List?;
     if (children != null) {
       if (children.length > 1) {
         return const SizedBox();
       } else if (children.length == 1) {
-        return _MPComponentFactory.create(children[0]);
+        return componentFactory.create(children[0], parentData: parentData);
       }
     }
   }
 
-  List<Widget>? getWidgetsFromChildren(BuildContext context) {
+  List<Widget>? getWidgetsFromChildren(BuildContext context,
+      {Map? parentData}) {
     final children = ComponentViewState.getData(context)?['children'] as List?;
     if (children != null) {
-      return children.map((e) => _MPComponentFactory.create(e)).toList();
+      return children
+          .map((e) => componentFactory.create(e, parentData: parentData))
+          .toList();
     }
   }
 
@@ -265,9 +280,20 @@ class ComponentViewState extends State<ComponentView> {
   }
 
   @override
+  void dispose() {
+    if (widget.dataHashCode != null) {
+      widget.componentFactory._cacheViews.remove(widget.dataHashCode!);
+    }
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
     data = widget.data;
+    if (widget.dataHashCode != null) {
+      widget.componentFactory._cacheViews[widget.dataHashCode!] = this;
+    }
   }
 
   @override
@@ -275,6 +301,14 @@ class ComponentViewState extends State<ComponentView> {
     super.didUpdateWidget(oldWidget);
     setState(() {
       data = widget.data;
+    });
+  }
+
+  void updateData(Map? newData) {
+    setState(() {
+      if (newData != null) {
+        data?.addAll(newData);
+      }
     });
   }
 
@@ -288,6 +322,14 @@ class ComponentViewState extends State<ComponentView> {
       double? y = constraints['y'];
       double? w = constraints['w'];
       double? h = constraints['h'];
+      if (this.widget.adjustOffset != null) {
+        if (x != null) {
+          x += this.widget.adjustOffset!.dx;
+        }
+        if (y != null) {
+          y += this.widget.adjustOffset!.dy;
+        }
+      }
       if (w != null && h != null && (w > 0 && h > 0)) {
         widget = Container(
           alignment: Alignment.topLeft,

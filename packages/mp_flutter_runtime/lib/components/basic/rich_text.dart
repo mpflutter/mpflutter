@@ -131,12 +131,42 @@ class _RichText extends ComponentView {
   _RichText({
     Key? key,
     Map? data,
-  }) : super(key: key, data: data);
+    Map? parentData,
+    required _MPComponentFactory componentFactory,
+  }) : super(
+            key: key,
+            data: data,
+            parentData: parentData,
+            componentFactory: componentFactory);
+
+  TextAlign getTextAlign(BuildContext context) {
+    String? value = getStringFromAttributes(context, 'textAlign');
+    if (value == null) return TextAlign.left;
+    switch (value) {
+      case "TextAlign.left":
+        return TextAlign.left;
+      case "TextAlign.right":
+        return TextAlign.right;
+      case "TextAlign.center":
+        return TextAlign.center;
+      case "TextAlign.justify":
+        return TextAlign.justify;
+      case "TextAlign.start":
+        return TextAlign.start;
+      case "TextAlign.end":
+        return TextAlign.end;
+      default:
+        return TextAlign.left;
+    }
+  }
 
   @override
   Widget builder(BuildContext context) {
     return RichText(
       text: spanFromData(ComponentViewState.getData(context)?['children']),
+      maxLines: getIntFromAttributes(context, 'maxLines') ?? 99999,
+      overflow: TextOverflow.ellipsis,
+      textAlign: getTextAlign(context),
     );
   }
 }

@@ -1,9 +1,9 @@
 part of '../mp_flutter_runtime.dart';
 
 class _MPDebugger {
-  MPEngine engine;
-  String serverAddr;
-  List<String> _messageQueue = [];
+  final MPEngine engine;
+  final String serverAddr;
+  final List<String> _messageQueue = [];
   WebSocketChannel? socket;
 
   _MPDebugger({

@@ -51,11 +51,18 @@ class MPEngine {
       case 'frame_data':
         _didReceivedFrameData(decodedMessage['message']);
         break;
+      case 'diff_data':
+        _didReceivedDiffData(decodedMessage['message']);
+        break;
       case 'route':
         _router._didReceivedRouteData(decodedMessage['message']);
         break;
       case 'rich_text':
         _textMeasurer._didReceivedDoMeasureData(decodedMessage['message']);
+        break;
+      case 'action:web_dialogs':
+        _WebDialogs.didReceivedWebDialogsMessage(
+            decodedMessage['message'], this);
         break;
       default:
     }
@@ -66,6 +73,18 @@ class MPEngine {
     MPDataReceiver? targetView = _managedViews[routeId];
     if (targetView != null) {
       targetView.didReceivedFrameData(frameData);
+    }
+  }
+
+  void _didReceivedDiffData(Map frameData) {
+    List diffs = frameData['diffs'];
+    for (final data in diffs) {
+      if (data is Map) {
+        int? hashCode = data['hashCode'];
+        if (hashCode != null) {
+          _componentFactory._cacheViews[hashCode]?.updateData(data);
+        }
+      }
     }
   }
 

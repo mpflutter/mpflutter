@@ -4,7 +4,13 @@ class _ListView extends ComponentView {
   _ListView({
     Key? key,
     Map? data,
-  }) : super(key: key, data: data);
+    Map? parentData,
+    required _MPComponentFactory componentFactory,
+  }) : super(
+            key: key,
+            data: data,
+            parentData: parentData,
+            componentFactory: componentFactory);
 
   @override
   Widget builder(BuildContext context) {

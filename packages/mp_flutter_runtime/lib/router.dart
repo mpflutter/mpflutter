@@ -3,7 +3,7 @@ part of './mp_flutter_runtime.dart';
 class _MPRouter {
   static Map<String, Completer<int>> routeResponseHandler = {};
 
-  MPEngine engine;
+  final MPEngine engine;
   bool doBacking = false;
   int? thePushingRouteId;
 
@@ -18,7 +18,17 @@ class _MPRouter {
     if (thePushingRouteId != null) {
       int value = thePushingRouteId!;
       thePushingRouteId = null;
-      // todo update route.
+      engine._sendMessage({
+        'type': 'router',
+        'message': {
+          'event': 'updateRoute',
+          'routeId': value,
+          'viewport': {
+            'width': viewport?.width ?? 0,
+            'height': viewport?.height ?? 0,
+          },
+        }
+      });
       return value;
     }
     String requestId = Random().nextDouble().toString();
@@ -32,8 +42,8 @@ class _MPRouter {
         'name': routeName ?? '/',
         'params': routeParams ?? {},
         'viewport': {
-          'width': 375,
-          'height': 667,
+          'width': viewport?.width ?? 0,
+          'height': viewport?.height ?? 0,
         },
         'root': isRoot ?? false,
       },
@@ -90,7 +100,25 @@ class _MPRouter {
     );
   }
 
-  void _didReplace(Map message) {}
+  void _didReplace(Map message) {
+    if (engine._managedViews.isEmpty) return;
+    MPDataReceiver dataReceiver = engine._managedViews.values.first;
+    NavigatorState? navigator = dataReceiver.getNavigator();
+    if (navigator == null) return;
+    int? routeId = message['routeId'];
+    thePushingRouteId = routeId;
+    navigator.pushReplacement(
+      MaterialPageRoute(
+        builder: (context) {
+          return MPPage(engine: engine);
+        },
+        settings: RouteSettings(
+          name: message['name'],
+          arguments: message['params'],
+        ),
+      ),
+    );
+  }
 
   void _didPop() async {
     if (engine._managedViews.isEmpty) return;

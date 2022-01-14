@@ -1,65 +1,97 @@
 part of '../mp_flutter_runtime.dart';
 
 class _MPComponentFactory {
-  static Widget create(Map? data) {
+  final MPEngine engine;
+  final List<Map> _textMeasureResults = [];
+  final Map<int, ComponentViewState> _cacheViews = {};
+
+  _MPComponentFactory({required this.engine});
+
+  Widget create(Map? data, {Map? parentData}) {
     if (data != null) {
       String? name = data['name'];
       if (name != null) {
         switch (name) {
           case 'absorb_pointer':
-            return _AbsorbPointer(data: data);
+            return _AbsorbPointer(
+                data: data, parentData: parentData, componentFactory: this);
           case 'clip_oval':
-            return _ClipOval(data: data);
+            return _ClipOval(
+                data: data, parentData: parentData, componentFactory: this);
           case 'clip_r_rect':
-            return _ClipRRect(data: data);
+            return _ClipRRect(
+                data: data, parentData: parentData, componentFactory: this);
           case 'colored_box':
-            return _ColoredBox(data: data);
+            return _ColoredBox(
+                data: data, parentData: parentData, componentFactory: this);
           case 'custom_scroll_view':
-            return _CustomScrollView(data: data);
+            return _CustomScrollView(
+                data: data, parentData: parentData, componentFactory: this);
           case 'decorated_box':
-            return _DecoratedBox(data: data, isFront: false);
+            return _DecoratedBox(
+                data: data,
+                parentData: parentData,
+                componentFactory: this,
+                isFront: false);
           case 'foreground_decorated_box':
-            return _DecoratedBox(data: data, isFront: true);
+            return _DecoratedBox(
+                data: data,
+                parentData: parentData,
+                componentFactory: this,
+                isFront: true);
           case 'sliver_list':
-            return _SliverList(data: data);
+            return _SliverList(
+                data: data, parentData: parentData, componentFactory: this);
           case 'sliver_grid':
-            return _SliverGrid(data: data);
+            return _SliverGrid(
+                data: data, parentData: parentData, componentFactory: this);
           case 'sliver_persistent_header':
-            return _SliverPersistentHeader(data: data);
+            return _SliverPersistentHeader(
+                data: data, parentData: parentData, componentFactory: this);
           case 'gesture_detector':
-            return _GestureDetector(data: data);
+            return _GestureDetector(
+                data: data, parentData: parentData, componentFactory: this);
           case 'grid_view':
-            return _GridView(data: data);
+            return _GridView(
+                data: data, parentData: parentData, componentFactory: this);
           case 'ignore_pointer':
-            return _IgnorePointer(data: data);
+            return _IgnorePointer(
+                data: data, parentData: parentData, componentFactory: this);
+          case 'image':
+            return _Image(
+                data: data, parentData: parentData, componentFactory: this);
           case 'list_view':
-            return _ListView(data: data);
+            return _ListView(
+                data: data, parentData: parentData, componentFactory: this);
           case 'opacity':
-            return _Opacity(data: data);
+            return _Opacity(
+                data: data, parentData: parentData, componentFactory: this);
           case 'rich_text':
-            return _RichText(data: data);
+            return _RichText(
+                data: data, parentData: parentData, componentFactory: this);
           case 'offstage':
-            return _Offstage(data: data);
+            return _Offstage(
+                data: data, parentData: parentData, componentFactory: this);
           case 'transform':
-            return _Transform(data: data);
+            return _Transform(
+                data: data, parentData: parentData, componentFactory: this);
           case 'visibility':
-            return _Visibility(data: data);
+            return _Visibility(
+                data: data, parentData: parentData, componentFactory: this);
           case 'mp_scaffold':
-            return _MPScaffold(data: data);
+            return _MPScaffold(
+                data: data, parentData: parentData, componentFactory: this);
           case 'mp_icon':
-            return _MPIcon(data: data);
+            return _MPIcon(
+                data: data, parentData: parentData, componentFactory: this);
           default:
-            return ComponentView(data: data);
+            return ComponentView(
+                data: data, parentData: parentData, componentFactory: this);
         }
       }
     }
     return Container();
   }
-
-  MPEngine engine;
-  List<Map> _textMeasureResults = [];
-
-  _MPComponentFactory({required this.engine});
 
   void _callbackTextMeasureResult(int measureId, Size size) {
     _textMeasureResults.add({

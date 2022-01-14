@@ -4,7 +4,15 @@ class _GestureDetector extends ComponentView {
   _GestureDetector({
     Key? key,
     Map? data,
-  }) : super(key: key, data: data);
+    Map? parentData,
+    required _MPComponentFactory componentFactory,
+  }) : super(
+          key: key,
+          data: data,
+          parentData: parentData,
+          componentFactory: componentFactory,
+          noLayout: true,
+        );
 
   @override
   Widget builder(BuildContext context) {

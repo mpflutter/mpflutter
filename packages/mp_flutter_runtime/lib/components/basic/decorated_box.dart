@@ -7,7 +7,13 @@ class _DecoratedBox extends ComponentView {
     Key? key,
     Map? data,
     required this.isFront,
-  }) : super(key: key, data: data);
+    Map? parentData,
+    required _MPComponentFactory componentFactory,
+  }) : super(
+            key: key,
+            data: data,
+            parentData: parentData,
+            componentFactory: componentFactory);
 
   AlignmentGeometry _alignmentGeometryFromString(String? value) {
     switch (value) {
