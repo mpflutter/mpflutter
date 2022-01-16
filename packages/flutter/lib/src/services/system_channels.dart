@@ -106,7 +106,7 @@ class SystemChannels {
   /// (so it is safe to call methods when the relevant plugin might be missing).
   static const MethodChannel platform = OptionalMethodChannel(
     'flutter/platform',
-    JSONMethodCodec(),
+    StandardMethodCodec(),
   );
 
   /// A JSON [MethodChannel] for handling text input.

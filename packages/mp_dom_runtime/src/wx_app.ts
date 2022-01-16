@@ -1,6 +1,8 @@
 declare var getCurrentPages: any;
 declare var require: any;
 
+import { PluginRegister } from "./platform_channel/plugin_register";
+import { MPMethodChannel } from "./platform_channel/mp_method_channel";
 import { Engine } from "./engine";
 import { MPEnv } from "./env";
 import { Page } from "./page";
@@ -9,7 +11,7 @@ import { TextMeasurer } from "./text_measurer";
 
 let usingComponentsConfig = {};
 try {
-  const indexJSON = require('mp-custom-components');
+  const indexJSON = require("mp-custom-components");
   if (indexJSON.usingComponents) {
     usingComponentsConfig = indexJSON.usingComponents;
   }
@@ -244,3 +246,27 @@ class WXRouter extends Router {
     }
   }
 }
+
+class FlutterPlatformChannel extends MPMethodChannel {
+  async onMethodCall(method: string, params: any) {
+    if (method === "Clipboard.setData") {
+      MPEnv.platformScope.setClipboardData({ data: params.text });
+      return null;
+    } else if (method === "Clipboard.getData") {
+      return new Promise((res, rej) => {
+        MPEnv.platformScope.getClipboardData({
+          success: (result: any) => {
+            res({ text: result.data });
+          },
+          fail: (e: any) => {
+            rej(e);
+          },
+        });
+      });
+    } else {
+      throw "NOTIMPLEMENTED";
+    }
+  }
+}
+
+PluginRegister.registerChannel("flutter/platform", FlutterPlatformChannel);

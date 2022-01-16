@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -16,7 +15,7 @@ import 'system_channels.dart';
 @immutable
 class ClipboardData {
   /// Creates data for the system clipboard.
-  const ClipboardData({ this.text });
+  const ClipboardData({this.text});
 
   /// Plain text variant of this clipboard data.
   final String? text;
@@ -54,12 +53,11 @@ class Clipboard {
   /// Returns a future which completes to null if the data could not be
   /// obtained, and to a [ClipboardData] object if it could.
   static Future<ClipboardData?> getData(String format) async {
-    final Map<String, dynamic>? result = await SystemChannels.platform.invokeMethod(
+    final Map? result = await SystemChannels.platform.invokeMethod(
       'Clipboard.getData',
       format,
     );
-    if (result == null)
-      return null;
+    if (result == null) return null;
     return ClipboardData(text: result['text'] as String?);
   }
 }

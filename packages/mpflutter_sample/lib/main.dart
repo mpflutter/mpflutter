@@ -11,6 +11,7 @@ import 'package:mpflutter_template/contents/text_page.dart';
 import 'package:mpflutter_template/contents/video_view_page.dart';
 import 'package:mpflutter_template/contents/web_view_page.dart';
 import 'package:mpflutter_template/customs/custom_paint_page.dart';
+import 'package:mpflutter_template/exts/clip_board_page.dart';
 import 'package:mpflutter_template/exts/http_network_page.dart';
 import 'package:mpflutter_template/exts/plugin_page.dart';
 import 'package:mpflutter_template/exts/shared_preference_page.dart';
@@ -112,6 +113,7 @@ class MyApp extends StatelessWidget {
         '/forms': (context) => FormsPage(),
         '/signature': (context) => SignaturePage(),
         '/mapView': (context) => MapViewPage(),
+        '/clipBoard': (context) => ClipBoardPage(),
       },
       navigatorObservers: [MPCore.getNavigationObserver()],
     );

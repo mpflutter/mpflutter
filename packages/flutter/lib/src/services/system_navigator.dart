@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import 'dart:async';
 
 import 'system_channels.dart';
@@ -33,17 +32,16 @@ class SystemNavigator {
   /// method, as the latter may cause the underlying platform to act
   /// as if the application had crashed.
   static Future<void> pop({bool? animated}) async {
-    await SystemChannels.platform.invokeMethod<void>('SystemNavigator.pop', animated);
+    await SystemChannels.platform
+        .invokeMethod<void>('SystemNavigator.pop', animated);
   }
 
   /// Notifies the platform for a route information change.
   ///
   /// On Web, creates a new browser history entry and update URL with the route
   /// information.
-  static void routeInformationUpdated({
-    required String location,
-    Object? state
-  }) {
+  static void routeInformationUpdated(
+      {required String location, Object? state}) {
     SystemChannels.navigation.invokeMethod<void>(
       'routeInformationUpdated',
       <String, dynamic>{
@@ -56,10 +54,7 @@ class SystemNavigator {
   /// Notifies the platform of a route change.
   ///
   /// On Web, updates the URL bar with the [routeName].
-  static void routeUpdated({
-    String? routeName,
-    String? previousRouteName
-  }) {
+  static void routeUpdated({String? routeName, String? previousRouteName}) {
     SystemChannels.navigation.invokeMethod<void>(
       'routeUpdated',
       <String, dynamic>{

@@ -143,7 +143,11 @@ class MPCore {
 
   void injectMethodChannelHandler() {
     ui.pluginMessageCallHandler = (method, data, callback) async {
-      _PlatformChannelIO.pluginMessageCallHandler(method, data, callback);
+      try {
+        _PlatformChannelIO.pluginMessageCallHandler(method, data, callback);
+      } catch (e) {
+        print(e);
+      }
     };
   }
 
