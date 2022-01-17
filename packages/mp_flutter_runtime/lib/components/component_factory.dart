@@ -84,6 +84,15 @@ class _MPComponentFactory {
           case 'mp_icon':
             return _MPIcon(
                 data: data, parentData: parentData, componentFactory: this);
+          case 'mp_page_view':
+            return _MPPageView(
+                data: data, parentData: parentData, componentFactory: this);
+          case 'mp_switch':
+            return _MPSwitch(
+                data: data, parentData: parentData, componentFactory: this);
+          case 'mp_slider':
+            return _MPSlider(
+                data: data, parentData: parentData, componentFactory: this);
           default:
             return ComponentView(
                 data: data, parentData: parentData, componentFactory: this);

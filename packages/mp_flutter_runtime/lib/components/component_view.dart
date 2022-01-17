@@ -271,12 +271,20 @@ class ComponentView extends StatefulWidget {
 
 class ComponentViewState extends State<ComponentView> {
   Map? data;
+  final stateConfiguration = {};
 
   static Map? getData(BuildContext context) {
     if (context is StatefulElement && context.state is ComponentViewState) {
       return (context.state as ComponentViewState).data;
     }
     return context.findAncestorStateOfType<ComponentViewState>()?.data;
+  }
+
+  static ComponentViewState? getState(BuildContext context) {
+    if (context is StatefulElement && context.state is ComponentViewState) {
+      return (context.state as ComponentViewState);
+    }
+    return context.findAncestorStateOfType<ComponentViewState>();
   }
 
   @override

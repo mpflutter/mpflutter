@@ -15,9 +15,25 @@ class _MPScaffold extends ComponentView {
   @override
   Widget builder(BuildContext context) {
     final body = getWidgetFromAttributes(context, 'body');
+    final bottomBar = getWidgetFromAttributes(context, 'bottomBar');
+    final appBar = getWidgetFromAttributes(context, 'appBar');
+    final floatingBody = getWidgetFromAttributes(context, 'floatingBody');
+    final children = <Widget>[];
+    if (body != null) {
+      children.add(body);
+    }
+    if (bottomBar != null) {
+      children.add(bottomBar);
+    }
+    if (appBar != null) {
+      children.add(appBar);
+    }
+    if (floatingBody != null) {
+      children.add(floatingBody);
+    }
     return Scaffold(
       backgroundColor: getColorFromAttributes(context, 'backgroundColor'),
-      body: body,
+      body: Stack(children: children),
     );
   }
 }

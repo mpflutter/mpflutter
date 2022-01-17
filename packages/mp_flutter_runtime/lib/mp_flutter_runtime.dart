@@ -41,5 +41,9 @@ part 'components/basic/visibility.dart';
 part 'components/basic/web_dialogs.dart';
 part 'components/mpkit/scaffold.dart';
 part 'components/mpkit/icon.dart';
+part 'components/mpkit/page_view.dart';
+part 'components/mpkit/platform_view.dart';
+part 'components/mpkit/slider.dart';
+part 'components/mpkit/switch.dart';
 
 class MPFlutterRuntime {}

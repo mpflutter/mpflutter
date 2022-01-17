@@ -65,6 +65,10 @@ class MPEngine {
         _WebDialogs.didReceivedWebDialogsMessage(
             decodedMessage['message'], this);
         break;
+      case 'platform_view':
+        _MPPlatformView._didReceivedPlatformViewMessage(
+            decodedMessage['message'], this);
+        break;
       default:
     }
   }
