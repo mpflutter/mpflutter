@@ -51,6 +51,11 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   }
 
   @override
+  BuildContext? getContext() {
+    return context;
+  }
+
+  @override
   void didReceivedFrameData(Map message) {
     setState(() {
       scaffoldData = message['scaffold'];

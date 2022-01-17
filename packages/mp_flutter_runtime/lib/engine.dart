@@ -2,6 +2,7 @@ part of './mp_flutter_runtime.dart';
 
 abstract class MPDataReceiver {
   NavigatorState? getNavigator();
+  BuildContext? getContext();
   void didReceivedFrameData(Map message);
 }
 
