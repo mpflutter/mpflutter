@@ -60,21 +60,10 @@ MPElement _encodeSingleChildScrollView(Element element) {
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
-    name: 'list_view',
+    name: 'div',
     children: MPElement.childrenFromFlutterElement(
       scrollable,
     ),
-    attributes: {
-      'isRoot': isRoot,
-      'appBarPinned': appBarPinnedElement != null
-          ? MPElement.fromFlutterElement(appBarPinnedElement)
-          : null,
-      'bottomBarHeight': bottomBarHeight,
-      'bottomBarWithSafeArea': bottomBarWithSafeArea,
-      'padding': widget.padding?.toString(),
-      'scrollDirection': widget.scrollDirection.toString(),
-      'restorationId': widget.restorationId,
-      'onScroll': hasScrollNotificationListener ? element.hashCode : null,
-    },
+    attributes: {},
   );
 }
