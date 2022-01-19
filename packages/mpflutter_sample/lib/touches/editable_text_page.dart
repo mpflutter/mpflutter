@@ -195,7 +195,7 @@ class _SingleLineEditableTextState extends State<_SingleLineEditableText> {
         child: MPEditableText(
           controller: widget.editingController,
           focusNode: focusNode,
-          // placeholder: widget.isPassword ? 'Password' : 'Username',
+          placeholder: widget.isPassword ? 'Password' : 'Username',
           obscureText: widget.isPassword,
           style: TextStyle(fontSize: 16, color: Colors.black),
         ),

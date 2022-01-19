@@ -27,6 +27,9 @@ class _MPComponentFactory {
           case 'custom_scroll_view':
             return _CustomScrollView(
                 data: data, parentData: parentData, componentFactory: this);
+          case 'editable_text':
+            return _EditableText(
+                data: data, parentData: parentData, componentFactory: this);
           case 'decorated_box':
             return _DecoratedBox(
                 data: data,

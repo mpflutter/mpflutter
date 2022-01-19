@@ -30,6 +30,7 @@ part 'components/basic/clip_r_rect.dart';
 part 'components/basic/colored_box.dart';
 part 'components/basic/custom_scroll_view.dart';
 part 'components/basic/decorated_box.dart';
+part 'components/basic/editable_text.dart';
 part 'components/basic/gesture_detector.dart';
 part 'components/basic/grid_view.dart';
 part 'components/basic/ignore_pointer.dart';
