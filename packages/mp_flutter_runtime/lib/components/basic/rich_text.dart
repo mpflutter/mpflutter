@@ -1,13 +1,15 @@
 part of '../../mp_flutter_runtime.dart';
 
 class _RichText extends ComponentView {
-  static InlineSpan spanFromData(List children) {
+  static InlineSpan spanFromData(List children, MPEngine engine) {
     final childrenSpan = <InlineSpan>[];
     for (final element in children) {
       if (element is Map) {
         String name = element['name'];
         if (name == 'text_span') {
-          childrenSpan.add(textSpanFromData(element));
+          childrenSpan.add(textSpanFromData(element, engine));
+        } else if (name == 'widget_span') {
+          childrenSpan.add(widgetSpanFromData(element, engine));
         }
       }
     }
@@ -15,7 +17,7 @@ class _RichText extends ComponentView {
     return span;
   }
 
-  static InlineSpan textSpanFromData(Map child) {
+  static InlineSpan textSpanFromData(Map child, MPEngine engine) {
     final children = child['children'];
     final attributes = child['attributes'];
     if (children == null && attributes is Map) {
@@ -118,14 +120,43 @@ class _RichText extends ComponentView {
         decoration: spanTextDecoration,
         backgroundColor: spanBackgroundColor,
       );
-      return TextSpan(
+      final onTapEl = attributes['onTap_el'];
+      final onTapSpan = attributes['onTap_span'];
+      final span = TextSpan(
         text: spanText,
         style: spanTextStyle,
+        recognizer: (() {
+          if (onTapEl != null && onTapSpan != null) {
+            return TapGestureRecognizer()
+              ..onTap = () {
+                engine._sendMessage({
+                  "type": "rich_text",
+                  "message": {
+                    "event": "onTap",
+                    "target": onTapEl,
+                    "subTarget": onTapSpan,
+                  }
+                });
+              };
+          }
+        })(),
       );
+      return span;
     } else if (children != null) {
-      return spanFromData(children);
+      return spanFromData(children, engine);
     }
     return const TextSpan(text: '');
+  }
+
+  static InlineSpan widgetSpanFromData(Map child, MPEngine engine) {
+    List? children = child['children'];
+    if (children == null || children.isEmpty) {
+      return const WidgetSpan(child: SizedBox());
+    }
+    final childWidget = engine._componentFactory.create(children[0]);
+    return WidgetSpan(
+      child: childWidget,
+    );
   }
 
   _RichText({
@@ -163,7 +194,8 @@ class _RichText extends ComponentView {
   @override
   Widget builder(BuildContext context) {
     return RichText(
-      text: spanFromData(ComponentViewState.getData(context)?['children']),
+      text: spanFromData(ComponentViewState.getData(context)?['children'],
+          componentFactory.engine),
       maxLines: getIntFromAttributes(context, 'maxLines') ?? 99999,
       overflow: TextOverflow.ellipsis,
       textAlign: getTextAlign(context),
