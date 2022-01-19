@@ -60,6 +60,18 @@ class ComponentView extends StatefulWidget {
     return const Size(0, 0);
   }
 
+  Offset getOffset() {
+    final constraints = data?['constraints'] as Map?;
+    if (constraints != null) {
+      double? x = constraints['x'];
+      double? y = constraints['y'];
+      if (x != null && y != null) {
+        return Offset(x, y);
+      }
+    }
+    return const Offset(0, 0);
+  }
+
   dynamic getValueFromAttributes(BuildContext context, String attributeKey) {
     final attributes =
         ComponentViewState.getData(context)?['attributes'] as Map?;

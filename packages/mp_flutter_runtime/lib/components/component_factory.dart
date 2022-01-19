@@ -66,6 +66,9 @@ class _MPComponentFactory {
           case 'opacity':
             return _Opacity(
                 data: data, parentData: parentData, componentFactory: this);
+          case 'overlay':
+            return _Overlay(
+                data: data, parentData: parentData, componentFactory: this);
           case 'rich_text':
             return _RichText(
                 data: data, parentData: parentData, componentFactory: this);
@@ -80,6 +83,12 @@ class _MPComponentFactory {
                 data: data, parentData: parentData, componentFactory: this);
           case 'mp_scaffold':
             return _MPScaffold(
+                data: data, parentData: parentData, componentFactory: this);
+          case 'mp_date_picker':
+            return _MPDatePicker(
+                data: data, parentData: parentData, componentFactory: this);
+          case 'mp_picker':
+            return _MPPicker(
                 data: data, parentData: parentData, componentFactory: this);
           case 'mp_icon':
             return _MPIcon(

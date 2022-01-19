@@ -21,6 +21,7 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   ModalRoute? route;
   int? viewId;
   Map? scaffoldData;
+  List? overlaysData;
 
   @override
   void dispose() {
@@ -58,15 +59,34 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   @override
   void didReceivedFrameData(Map message) {
     setState(() {
-      scaffoldData = message['scaffold'];
+      if (message['ignoreScaffold'] != true) {
+        scaffoldData = message['scaffold'];
+      }
+      overlaysData = message['overlays'];
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final widgets = <Widget>[];
     if (scaffoldData != null) {
-      return widget.engine._componentFactory.create(scaffoldData);
+      widgets.add(widget.engine._componentFactory.create(scaffoldData));
     }
-    return Container();
+    if (overlaysData != null) {
+      for (final element in overlaysData!) {
+        widgets.add(widget.engine._componentFactory.create(element));
+      }
+    }
+    if (widgets.length == 1) {
+      return widgets[0];
+    } else {
+      return Stack(
+        children: widgets
+            .map<Widget>(
+              (it) => Positioned.fill(child: it),
+            )
+            .toList(),
+      );
+    }
   }
 }
