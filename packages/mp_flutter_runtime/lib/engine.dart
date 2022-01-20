@@ -17,11 +17,13 @@ class MPEngine {
   late _MPComponentFactory _componentFactory;
   late _MPRouter _router;
   late _TextMeasurer _textMeasurer;
+  late _DrawableStore _drawableStore;
 
   MPEngine() {
     _componentFactory = _MPComponentFactory(engine: this);
     _router = _MPRouter(engine: this);
     _textMeasurer = _TextMeasurer(engine: this);
+    _drawableStore = _DrawableStore(engine: this);
   }
 
   void initWithJSCode(String jsCode) {
@@ -54,6 +56,9 @@ class MPEngine {
         break;
       case 'diff_data':
         _didReceivedDiffData(decodedMessage['message']);
+        break;
+      case 'decode_drawable':
+        _drawableStore.decodeDrawable(decodedMessage['message']);
         break;
       case 'route':
         _router._didReceivedRouteData(decodedMessage['message']);

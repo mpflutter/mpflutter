@@ -17,9 +17,23 @@ class _MPIcon extends ComponentView {
     final iconUrl = getStringFromAttributes(context, 'iconUrl');
     if (iconUrl == null) return const SizedBox();
     final color = getStringFromAttributes(context, 'color');
-    return SvgPicture.network(
-      iconUrl,
-      color: color != null ? (Color(int.tryParse(color) ?? 0)) : Colors.black,
+    return FutureBuilder(
+      future: (() async {
+        return (await DefaultCacheManager().getSingleFile(iconUrl))
+            .readAsBytesSync();
+      })(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return SvgPicture.memory(
+            snapshot.data as Uint8List,
+            color: color != null
+                ? (Color(int.tryParse(color) ?? 0))
+                : Colors.black,
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
     );
   }
 }

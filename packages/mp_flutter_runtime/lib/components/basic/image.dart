@@ -14,9 +14,21 @@ class _Image extends ComponentView {
 
   Widget buildNetworkImage(String src) {
     if (src.endsWith('.svg')) {
-      return SvgPicture.network(src);
+      return FutureBuilder(
+        future: (() async {
+          return (await DefaultCacheManager().getSingleFile(src))
+              .readAsBytesSync();
+        })(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return SvgPicture.memory(snapshot.data as Uint8List);
+          } else {
+            return const SizedBox();
+          }
+        },
+      );
     } else {
-      return Image.network(src);
+      return CachedNetworkImage(imageUrl: src);
     }
   }
 

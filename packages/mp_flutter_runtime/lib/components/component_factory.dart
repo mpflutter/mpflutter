@@ -24,6 +24,9 @@ class _MPComponentFactory {
           case 'colored_box':
             return _ColoredBox(
                 data: data, parentData: parentData, componentFactory: this);
+          case 'custom_paint':
+            return _CustomPaint(
+                data: data, parentData: parentData, componentFactory: this);
           case 'custom_scroll_view':
             return _CustomScrollView(
                 data: data, parentData: parentData, componentFactory: this);
