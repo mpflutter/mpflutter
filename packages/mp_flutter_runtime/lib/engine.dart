@@ -57,6 +57,9 @@ class MPEngine {
       case 'diff_data':
         _didReceivedDiffData(decodedMessage['message']);
         break;
+      case 'element_gc':
+        _didReceivedElementGC(decodedMessage['message']);
+        break;
       case 'decode_drawable':
         _drawableStore.decodeDrawable(decodedMessage['message']);
         break;
@@ -98,6 +101,14 @@ class MPEngine {
         if (hashCode != null) {
           _componentFactory._cacheViews[hashCode]?.updateData(data);
         }
+      }
+    }
+  }
+
+  void _didReceivedElementGC(List data) {
+    for (final item in data) {
+      if (item is int) {
+        _componentFactory._cacheViews.remove(item);
       }
     }
   }

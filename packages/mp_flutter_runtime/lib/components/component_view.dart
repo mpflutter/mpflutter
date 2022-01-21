@@ -326,6 +326,7 @@ class ComponentViewState extends State<ComponentView> {
 
   void updateData(Map? newData) {
     setState(() {
+      if (!mounted) return;
       if (newData != null) {
         data?.addAll(newData);
       }
