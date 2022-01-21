@@ -9,21 +9,24 @@ abstract class MPDataReceiver {
 class MPEngine {
   bool _started = false;
   bool get started => _started;
-  Map<int, MPDataReceiver> _managedViews = {};
+  final BuildContext flutterContext;
+  final Map<int, MPDataReceiver> _managedViews = {};
   String? _jsCode;
-  _JSContext? jsContext;
-  List<String> _messageQueue = [];
+  final List<String> _messageQueue = [];
   _MPDebugger? _debugger;
+  _MPKReader? _mpkReader;
+  late _JSContext _jsContext;
   late _MPComponentFactory _componentFactory;
   late _MPRouter _router;
   late _TextMeasurer _textMeasurer;
   late _DrawableStore _drawableStore;
 
-  MPEngine() {
+  MPEngine({required this.flutterContext}) {
     _componentFactory = _MPComponentFactory(engine: this);
     _router = _MPRouter(engine: this);
     _textMeasurer = _TextMeasurer(engine: this);
     _drawableStore = _DrawableStore(engine: this);
+    _jsContext = _JSContext();
   }
 
   void initWithJSCode(String jsCode) {
@@ -34,18 +37,50 @@ class MPEngine {
     _debugger = _MPDebugger(engine: this, serverAddr: debuggerServerAddr);
   }
 
-  void initWithMpkData(Uint8List mpkData) {}
+  void initWithMpkData(Uint8List mpkData) {
+    _mpkReader = _MPKReader(mpkData);
+    Uint8List? mainDataJSData = _mpkReader?.dataWithFilePath('main.dart.js');
+    if (mainDataJSData != null) {
+      _jsCode = utf8.decode(mainDataJSData);
+    }
+  }
 
-  void start() {
+  Future start() async {
     if (_started) return;
     if (_jsCode == null && _debugger == null) return;
-    if (_debugger != null) {
+    await _jsContext.createContext();
+    await _setupJSContextEventChannel();
+    await _JSDeviceInfo.install(_jsContext, flutterContext);
+    if (_jsCode != null) {
+      await _jsContext.evaluateScript(_jsCode!);
+    } else if (_debugger != null) {
       _debugger!.start();
     }
     _started = true;
   }
 
   void stop() {}
+
+  Future _setupJSContextEventChannel() async {
+    _jsContext.addMessageListener((message, type) {
+      if (type == '\$engine') {
+        _didReceivedMessage(message);
+      }
+    });
+    await _jsContext.evaluateScript('let self = globalThis');
+    await _jsContext.evaluateScript('''
+    globalThis.engineScope = {
+      onMessage: function(message) {
+        globalThis.postMessage(message, '\$engine');
+      },
+    };
+    globalThis.onMessage = function(message, type) {
+      if (type == '\$engine') {
+        globalThis.engineScope.postMessage(message);
+      }
+    }
+    ''');
+  }
 
   void _didReceivedMessage(String message) {
     final decodedMessage = json.decode(message) as Map;
@@ -121,6 +156,8 @@ class MPEngine {
     String message = json.encode(mapMessage);
     if (_debugger != null) {
       _debugger!.sendMessage(message);
+    } else {
+      _jsContext.postMessage(message, '\$engine');
     }
   }
 }

@@ -26,10 +26,13 @@ class _GridView extends ComponentView {
       if (classname == 'SliverGridDelegateWithFixedCrossAxisCount') {
         widget = GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisSpacing: gridDelegate['mainAxisSpacing'] ?? 0,
-            crossAxisSpacing: gridDelegate['crossAxisSpacing'] ?? 0,
-            crossAxisCount: gridDelegate['crossAxisCount'] ?? 1,
-            childAspectRatio: gridDelegate['childAspectRatio'] ?? 0,
+            mainAxisSpacing:
+                _Utils.toDouble(gridDelegate['mainAxisSpacing'], 0.0),
+            crossAxisSpacing:
+                _Utils.toDouble(gridDelegate['crossAxisSpacing'], 0),
+            crossAxisCount: _Utils.toInt(gridDelegate['crossAxisCount'], 1),
+            childAspectRatio:
+                _Utils.toDouble(gridDelegate['childAspectRatio'], 0),
           ),
           scrollDirection: (() {
             if (getStringFromAttributes(context, 'scrollDirection') ==
@@ -48,10 +51,13 @@ class _GridView extends ComponentView {
       } else if (classname == 'SliverGridDelegateWithMaxCrossAxisExtent') {
         widget = GridView.builder(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-            mainAxisSpacing: gridDelegate['mainAxisSpacing'] ?? 0,
-            crossAxisSpacing: gridDelegate['crossAxisSpacing'] ?? 0,
-            maxCrossAxisExtent: gridDelegate['maxCrossAxisExtent'] ?? 0,
-            childAspectRatio: gridDelegate['childAspectRatio'] ?? 0,
+            mainAxisSpacing: _Utils.toDouble(gridDelegate['mainAxisSpacing']),
+            crossAxisSpacing:
+                _Utils.toDouble(gridDelegate['crossAxisSpacing'], 0),
+            maxCrossAxisExtent:
+                _Utils.toDouble(gridDelegate['maxCrossAxisExtent'], 0.0),
+            childAspectRatio:
+                _Utils.toDouble(gridDelegate['childAspectRatio'], 1.0),
           ),
           scrollDirection: (() {
             if (getStringFromAttributes(context, 'scrollDirection') ==
@@ -70,9 +76,11 @@ class _GridView extends ComponentView {
       } else if (classname == 'SliverWaterfallDelegate') {
         widget = WaterfallFlow.builder(
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-            mainAxisSpacing: gridDelegate['mainAxisSpacing'] ?? 0,
-            crossAxisSpacing: gridDelegate['crossAxisSpacing'] ?? 0,
-            crossAxisCount: gridDelegate['crossAxisCount'] ?? 0,
+            mainAxisSpacing:
+                _Utils.toDouble(gridDelegate['mainAxisSpacing'], 0.0),
+            crossAxisSpacing:
+                _Utils.toDouble(gridDelegate['crossAxisSpacing'], 0.0),
+            crossAxisCount: _Utils.toInt(gridDelegate['crossAxisCount'], 0),
           ),
           scrollDirection: (() {
             if (getStringFromAttributes(context, 'scrollDirection') ==

@@ -112,10 +112,13 @@ class _SliverGrid extends ComponentView {
       if (classname == 'SliverGridDelegateWithFixedCrossAxisCount') {
         child = SliverGrid(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            mainAxisSpacing: gridDelegate['mainAxisSpacing'] ?? 0,
-            crossAxisSpacing: gridDelegate['crossAxisSpacing'] ?? 0,
-            crossAxisCount: gridDelegate['crossAxisCount'] ?? 1,
-            childAspectRatio: gridDelegate['childAspectRatio'] ?? 0,
+            mainAxisSpacing:
+                _Utils.toDouble(gridDelegate['mainAxisSpacing'], 0),
+            crossAxisSpacing:
+                _Utils.toDouble(gridDelegate['crossAxisSpacing'], 0),
+            crossAxisCount: _Utils.toInt(gridDelegate['crossAxisCount'], 1),
+            childAspectRatio:
+                _Utils.toDouble(gridDelegate['childAspectRatio'], 1.0),
           ),
           delegate: SliverChildBuilderDelegate(
             (context, index) {
@@ -127,16 +130,20 @@ class _SliverGrid extends ComponentView {
       } else if (classname == 'SliverGridDelegateWithMaxCrossAxisExtent') {
         child = SliverGrid(
             gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              mainAxisSpacing: gridDelegate['mainAxisSpacing'] ?? 0,
-              crossAxisSpacing: gridDelegate['crossAxisSpacing'] ?? 0,
-              maxCrossAxisExtent: gridDelegate['maxCrossAxisExtent'] ?? 0,
-              childAspectRatio: gridDelegate['childAspectRatio'] ?? 0,
+              mainAxisSpacing:
+                  _Utils.toDouble(gridDelegate['mainAxisSpacing'], 0),
+              crossAxisSpacing:
+                  _Utils.toDouble(gridDelegate['crossAxisSpacing'], 0),
+              maxCrossAxisExtent:
+                  _Utils.toDouble(gridDelegate['maxCrossAxisExtent'], 0),
+              childAspectRatio:
+                  _Utils.toDouble(gridDelegate['childAspectRatio'], 1),
             ),
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 return childrenWidget![index];
               },
-              childCount: childrenWidget?.length ?? 0,
+              childCount: _Utils.toInt(childrenWidget?.length, 0),
             ));
       } else if (classname == 'SliverWaterfallDelegate') {
         child = SliverWaterfallFlow(
@@ -144,12 +151,14 @@ class _SliverGrid extends ComponentView {
             (context, index) {
               return childrenWidget![index];
             },
-            childCount: childrenWidget?.length ?? 0,
+            childCount: _Utils.toInt(childrenWidget?.length, 0),
           ),
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
-            mainAxisSpacing: gridDelegate['mainAxisSpacing'] ?? 0,
-            crossAxisSpacing: gridDelegate['crossAxisSpacing'] ?? 0,
-            crossAxisCount: gridDelegate['crossAxisCount'] ?? 0,
+            mainAxisSpacing:
+                _Utils.toDouble(gridDelegate['mainAxisSpacing'], 0),
+            crossAxisSpacing:
+                _Utils.toDouble(gridDelegate['crossAxisSpacing'], 0),
+            crossAxisCount: _Utils.toInt(gridDelegate['crossAxisCount'], 1),
           ),
         );
       }

@@ -51,8 +51,8 @@ class ComponentView extends StatefulWidget {
   Size getSize() {
     final constraints = data?['constraints'] as Map?;
     if (constraints != null) {
-      double? w = constraints['w'];
-      double? h = constraints['h'];
+      double? w = _Utils.toDouble(constraints['w']);
+      double? h = _Utils.toDouble(constraints['h']);
       if (w != null && h != null) {
         return Size(w, h);
       }
@@ -63,8 +63,8 @@ class ComponentView extends StatefulWidget {
   Offset getOffset() {
     final constraints = data?['constraints'] as Map?;
     if (constraints != null) {
-      double? x = constraints['x'];
-      double? y = constraints['y'];
+      double? x = _Utils.toDouble(constraints['x']);
+      double? y = _Utils.toDouble(constraints['y']);
       if (x != null && y != null) {
         return Offset(x, y);
       }
@@ -86,7 +86,7 @@ class ComponentView extends StatefulWidget {
     if (attributes != null) {
       dynamic attributeValue = attributes[attributeKey];
       if (attributeValue is String) {
-        return Color(int.tryParse(attributeValue) ?? 0);
+        return _Utils.toColor(attributeValue);
       }
     }
   }
@@ -107,9 +107,7 @@ class ComponentView extends StatefulWidget {
         ComponentViewState.getData(context)?['attributes'] as Map?;
     if (attributes != null) {
       dynamic attributeValue = attributes[attributeKey];
-      if (attributeValue is num) {
-        return attributeValue.toDouble();
-      }
+      return _Utils.toDouble(attributeValue);
     }
   }
 
@@ -118,9 +116,7 @@ class ComponentView extends StatefulWidget {
         ComponentViewState.getData(context)?['attributes'] as Map?;
     if (attributes != null) {
       dynamic attributeValue = attributes[attributeKey];
-      if (attributeValue is num) {
-        return attributeValue.toInt();
-      }
+      return _Utils.toInt(attributeValue);
     }
   }
 
@@ -339,10 +335,10 @@ class ComponentViewState extends State<ComponentView> {
     }
     final constraints = data?['constraints'] as Map?;
     if (constraints != null) {
-      double? x = constraints['x'];
-      double? y = constraints['y'];
-      double? w = constraints['w'];
-      double? h = constraints['h'];
+      double? x = _Utils.toDouble(constraints['x']);
+      double? y = _Utils.toDouble(constraints['y']);
+      double? w = _Utils.toDouble(constraints['w']);
+      double? h = _Utils.toDouble(constraints['h']);
       if (this.widget.adjustOffset != null) {
         if (x != null) {
           x += this.widget.adjustOffset!.dx;

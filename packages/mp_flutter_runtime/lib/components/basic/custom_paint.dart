@@ -189,7 +189,7 @@ class _CustomPainter extends CustomPainter {
             break;
           case 'drawColor':
             canvas.drawColor(
-              Color(int.tryParse(command['color'] ?? '0') ?? 0),
+              _Utils.toColor(command['color']),
               (() {
                 switch (command['blendMode']) {
                   case 'BlendMode.clear':
@@ -391,7 +391,7 @@ class _CustomPainter extends CustomPainter {
     sharedPaint.style = paintData['style'] == 'PaintingStyle.fill'
         ? PaintingStyle.fill
         : PaintingStyle.stroke;
-    sharedPaint.color = Color(int.tryParse(paintData['color'] ?? '0') ?? 0);
+    sharedPaint.color = _Utils.toColor(paintData['color']);
     final alpha =
         paintData['alpha'] != null ? doubleFromMap(paintData, 'alpha') : 1.0;
     if (alpha < 1.0) {

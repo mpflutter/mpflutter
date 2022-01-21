@@ -30,7 +30,7 @@ class _RichText extends ComponentView {
     Color? spanBackgroundColor;
     if (style != null) {
       if (style['color'] is String) {
-        spanTextColor = Color(int.tryParse(style['color'] ?? '') ?? 0);
+        spanTextColor = _Utils.toColor(style['color']);
       }
       if (style['fontSize'] is num) {
         spanTextSize = (style['fontSize'] as num).toDouble();
@@ -99,8 +99,7 @@ class _RichText extends ComponentView {
         }
       }
       if (style['backgroundColor'] is String) {
-        spanBackgroundColor =
-            Color(int.tryParse(style['backgroundColor'] ?? '') ?? 0);
+        spanBackgroundColor = _Utils.toColor(style['backgroundColor']);
       }
     }
     return TextStyle(

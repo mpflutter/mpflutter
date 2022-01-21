@@ -1,4 +1,4 @@
-part of './mp_flutter_runtime.dart';
+part of '../mp_flutter_runtime.dart';
 
 class _JSContext {
   static const _methodChannel = MethodChannel(
@@ -11,15 +11,28 @@ class _JSContext {
 
   static Stream<dynamic>? _eventStream;
 
-  static void onMessage(dynamic value) {
-    print(value);
+  static final Map<String, _JSContext> _refs = {};
+
+  static void onMessage(Map value) {
+    final contextRef = value['contextRef'];
+    final message = value['data'] as String;
+    final type = value['type'] as String?;
+    final context = _refs[contextRef];
+    if (context != null) {
+      for (final messageListener in context._messageListeners) {
+        messageListener(message, type);
+      }
+    }
   }
+
+  final List<Function(String message, String? type)> _messageListeners = [];
 
   String? _contextRef;
 
   Future releaseContext() async {
     if (_contextRef != null) {
       await _methodChannel.invokeMethod<String>('releaseContext', _contextRef);
+      _refs.remove(_contextRef);
       _contextRef = null;
     }
   }
@@ -32,6 +45,12 @@ class _JSContext {
       });
     }
     _contextRef ??= await _methodChannel.invokeMethod<String>('createContext');
+    _refs[_contextRef!] = this;
+    await _installFeatures();
+  }
+
+  Future _installFeatures() async {
+    await _JSConsole.install(this);
   }
 
   Future evaluateScript(String script) async {
@@ -44,14 +63,22 @@ class _JSContext {
     });
   }
 
-  Future setValue(String key, dynamic value) async {
+  Future postMessage(String message, [String? type]) async {
     if (_contextRef == null) {
       throw "no context";
     }
-    return await _methodChannel.invokeMethod('setValue', {
+    return await _methodChannel.invokeMethod('invokeFunc', {
       "contextRef": _contextRef,
-      "key": key,
-      "value": value,
+      'func': 'onMessage',
+      "args": [message, type],
     });
+  }
+
+  void addMessageListener(Function(String message, String? type) listener) {
+    _messageListeners.add(listener);
+  }
+
+  void removeMessageListener(Function(String message, String? type) listener) {
+    _messageListeners.remove(listener);
   }
 }

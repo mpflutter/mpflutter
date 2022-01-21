@@ -26,9 +26,7 @@ class _MPIcon extends ComponentView {
         if (snapshot.hasData) {
           return SvgPicture.memory(
             snapshot.data as Uint8List,
-            color: color != null
-                ? (Color(int.tryParse(color) ?? 0))
-                : Colors.black,
+            color: color != null ? _Utils.toColor(color) : Colors.black,
           );
         } else {
           return const SizedBox();

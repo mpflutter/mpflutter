@@ -1,33 +1,48 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 
 import 'package:mp_flutter_runtime/mp_flutter_runtime.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const MaterialApp(
+    home: SamplePage(),
+  ));
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
+class SamplePage extends StatefulWidget {
+  const SamplePage({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  _SamplePageState createState() => _SamplePageState();
 }
 
-class _MyAppState extends State<MyApp> {
-  final engine = MPEngine();
+class _SamplePageState extends State<SamplePage> {
+  MPEngine? engine;
 
   @override
-  void initState() {
-    super.initState();
-    engine.initWithDebuggerServerAddr('127.0.0.1:9898');
-    engine.start();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    initEngine();
+  }
+
+  void initEngine() async {
+    if (engine == null) {
+      final engine = MPEngine(flutterContext: context);
+      // engine.initWithDebuggerServerAddr('127.0.0.1:9898');
+      engine.initWithMpkData(
+        (await rootBundle.load('assets/app.mpk')).buffer.asUint8List(),
+      );
+      await engine.start();
+      setState(() {
+        this.engine = engine;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: MPPage(engine: engine),
-    );
+    if (engine == null) return const SizedBox();
+    return MPPage(engine: engine!);
   }
 }

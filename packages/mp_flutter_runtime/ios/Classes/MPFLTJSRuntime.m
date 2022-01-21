@@ -6,6 +6,7 @@
 //
 
 #import "MPFLTJSRuntime.h"
+#import "MPFLTJSRuntimeTimer.h"
 #import <JavaScriptCore/JavaScriptCore.h>
 
 @interface MPFLTJSRuntime ()
@@ -38,14 +39,19 @@ static NSMutableDictionary<NSString *, JSContext *> *contextRefs;
     if ([call.method isEqualToString:@"createContext"]) {
         NSString *ref = [[NSUUID UUID] UUIDString];
         JSContext *context = [[JSContext alloc] init];
+        [MPFLTJSRuntimeTimer setupWithJSContext:context];
         __weak MPFLTJSRuntime *welf = self;
-        context[@"postMessage"] = ^(NSString *message) {
+        context[@"postMessage"] = ^(NSString *message, NSString *type) {
             __strong MPFLTJSRuntime *self = welf;
             if (self == nil) {
                 return;
             }
             if (self.eventSink != nil) {
-                self.eventSink(message);
+                self.eventSink(@{
+                    @"contextRef": ref,
+                    @"data": message ?: @"",
+                    @"type": type ?: @"",
+                });
             }
         };
         [contextRefs setObject:context forKey:ref];
@@ -69,6 +75,33 @@ static NSMutableDictionary<NSString *, JSContext *> *contextRefs;
                 if (context != nil) {
                     [context setException:nil];
                     JSValue *ret = [context evaluateScript:script];
+                    JSValue *exception = [context exception];
+                    if (exception != nil) {
+                        result([FlutterError errorWithCode:@"JSContext"
+                                                   message:[exception toString]
+                                                   details:[exception toString]]);
+                    }
+                    else {
+                        result([ret toObject]);
+                    }
+                }
+            }
+        }
+    }
+    else if ([call.method isEqualToString:@"invokeFunc"]) {
+        NSDictionary *options = call.arguments;
+        if ([options isKindOfClass:[NSDictionary class]]) {
+            NSString *contextRef = options[@"contextRef"];
+            NSString *func = options[@"func"];
+            NSArray *args = options[@"args"];
+            if ([contextRef isKindOfClass:[NSString class]] &&
+                [func isKindOfClass:[NSString class]] &&
+                [args isKindOfClass:[NSArray class]]) {
+                JSContext *context = contextRefs[contextRef];
+                if (context != nil) {
+                    [context setException:nil];
+                    JSValue *jsFunc = context[func];
+                    JSValue *ret = [jsFunc callWithArguments:args];
                     JSValue *exception = [context exception];
                     if (exception != nil) {
                         result([FlutterError errorWithCode:@"JSContext"

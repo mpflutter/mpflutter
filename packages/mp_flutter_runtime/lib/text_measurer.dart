@@ -26,9 +26,9 @@ class _TextMeasurer {
       textPainter.textDirection = TextDirection.ltr;
       Map? attributes = item['attributes'];
       if (attributes != null) {
-        maxWidth = double.tryParse(attributes['maxWidth'] ?? '0') ?? 0.0;
-        maxHeight = double.tryParse(attributes['maxHeight'] ?? '0') ?? 0.0;
-        textPainter.maxLines = attributes['maxLines'] ?? 99999;
+        maxWidth = _Utils.toDouble(attributes['maxWidth'], 0.0);
+        maxHeight = _Utils.toDouble(attributes['maxHeight'], 0.0);
+        textPainter.maxLines = _Utils.toInt(attributes['maxLines'], 99999);
       }
       final dimensions = <PlaceholderDimensions>[];
       _addPlaceholderDimensions(textSpan, dimensions);

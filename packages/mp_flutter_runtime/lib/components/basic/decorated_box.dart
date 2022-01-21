@@ -102,7 +102,7 @@ class _DecoratedBox extends ComponentView {
               }
             }).toList(),
             colors: (gradientData['colors'] as List).map((e) {
-              return Color(int.tryParse(e) ?? 0);
+              return _Utils.toColor(e);
             }).toList(),
           );
         } else {
@@ -110,7 +110,7 @@ class _DecoratedBox extends ComponentView {
             begin: _alignmentGeometryFromString(gradientData['begin']),
             end: _alignmentGeometryFromString(gradientData['end']),
             colors: (gradientData['colors'] as List).map((e) {
-              return Color(int.tryParse(e) ?? 0);
+              return _Utils.toColor(e);
             }).toList(),
             stops: (gradientData['stops'] as List?)?.map((e) {
               if (e is num) {
@@ -137,20 +137,20 @@ class _DecoratedBox extends ComponentView {
         if (borderData != null) {
           return Border(
             top: BorderSide(
-              width: borderData['topWidth'] ?? 0.0,
-              color: Color(int.tryParse(borderData['topColor'] ?? '0') ?? 0),
+              width: _Utils.toDouble(borderData['topWidth'], 0.0),
+              color: _Utils.toColor(borderData['topColor']),
             ),
             left: BorderSide(
-              width: borderData['leftWidth'] ?? 0.0,
-              color: Color(int.tryParse(borderData['leftColor'] ?? '0') ?? 0),
+              width: _Utils.toDouble(borderData['leftWidth'], 0.0),
+              color: _Utils.toColor(borderData['leftColor']),
             ),
             bottom: BorderSide(
-              width: borderData['bottomWidth'] ?? 0.0,
-              color: Color(int.tryParse(borderData['bottomColor'] ?? '0') ?? 0),
+              width: _Utils.toDouble(borderData['bottomWidth'], 0.0),
+              color: _Utils.toColor(borderData['bottomColor']),
             ),
             right: BorderSide(
-              width: borderData['rightWidth'] ?? 0.0,
-              color: Color(int.tryParse(borderData['rightColor'] ?? '0') ?? 0),
+              width: _Utils.toDouble(borderData['rightWidth'], 0.0),
+              color: _Utils.toColor(borderData['rightColor']),
             ),
           );
         }
@@ -163,7 +163,7 @@ class _DecoratedBox extends ComponentView {
           return boxShadowsData
               .map((e) {
                 return BoxShadow(
-                  color: Color(int.tryParse(e['color'] ?? '0') ?? 0),
+                  color: _Utils.toColor(e['color']),
                   offset: _offsetFromString(e['offset']),
                   blurRadius: e['blurRadius'] ?? 0,
                 );

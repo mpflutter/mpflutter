@@ -18,12 +18,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_picker/flutter_picker.dart' as flutter_picker;
+import 'package:archive/archive.dart' as archive;
 
 part 'engine.dart';
-part 'js_context.dart';
 part 'page.dart';
 part 'router.dart';
+part 'mpk_reader.dart';
 part 'text_measurer.dart';
+part 'utils.dart';
 part 'debugger/debugger.dart';
 part 'components/component_factory.dart';
 part 'components/component_view.dart';
@@ -55,5 +57,8 @@ part 'components/mpkit/page_view.dart';
 part 'components/mpkit/platform_view.dart';
 part 'components/mpkit/slider.dart';
 part 'components/mpkit/switch.dart';
+part 'jskit/js_context.dart';
+part 'jskit/js_console.dart';
+part 'jskit/js_device_info.dart';
 
 class MPFlutterRuntime {}

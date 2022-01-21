@@ -25,7 +25,7 @@ class _MPPageView extends _MPPlatformView {
       if (state is! _MPPageViewState) return const SizedBox();
       state.pageController?.animateToPage(
         page,
-        duration: Duration(milliseconds: duration ?? 300),
+        duration: Duration(milliseconds: _Utils.toInt(duration)),
         curve: Curves.ease,
       );
     } else if (method == 'jumpToPage' && params is Map) {
@@ -38,7 +38,7 @@ class _MPPageView extends _MPPlatformView {
       final state = ComponentViewState.getState(context!);
       if (state is! _MPPageViewState) return const SizedBox();
       state.pageController?.nextPage(
-        duration: Duration(milliseconds: duration ?? 300),
+        duration: Duration(milliseconds: _Utils.toInt(duration)),
         curve: Curves.ease,
       );
     } else if (method == 'previousPage' && params is Map) {
@@ -46,7 +46,7 @@ class _MPPageView extends _MPPlatformView {
       final state = ComponentViewState.getState(context!);
       if (state is! _MPPageViewState) return const SizedBox();
       state.pageController?.previousPage(
-        duration: Duration(milliseconds: duration ?? 300),
+        duration: Duration(milliseconds: _Utils.toInt(duration)),
         curve: Curves.ease,
       );
     }
