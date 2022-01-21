@@ -66,7 +66,34 @@ class _DrawableStore {
   }
 }
 
+// ignore: must_be_immutable
 class _CustomPaint extends ComponentView {
+  static void _didReceivedCustomPaintMessage(
+      Map message, MPEngine engine) async {
+    String? event = message['event'];
+    if (event == 'fetchImage') {
+      int? target = message['target'];
+      if (target != null) {
+        ComponentView? targetView =
+            engine._componentFactory._cacheViews[target]?.widget;
+        if (targetView is _CustomPaint && targetView.context != null) {
+          String base64EncodedData =
+              await targetView._fetchEncodedImage(targetView.context!);
+          engine._sendMessage({
+            "type": "custom_paint",
+            "message": {
+              "event": "onFetchImageResult",
+              "seqId": message["seqId"],
+              "data": base64EncodedData,
+            },
+          });
+        }
+      }
+    }
+  }
+
+  BuildContext? context;
+
   _CustomPaint({
     Key? key,
     Map? data,
@@ -78,8 +105,29 @@ class _CustomPaint extends ComponentView {
             parentData: parentData,
             componentFactory: componentFactory);
 
+  Future<String> _fetchEncodedImage(BuildContext context) async {
+    final pictureRecorder = ui.PictureRecorder();
+    final canvas = Canvas(pictureRecorder);
+    final canvasSize = getSize();
+    _CustomPainter(
+      commands: getValueFromAttributes(context, 'commands'),
+      drawableStore: componentFactory.engine._drawableStore,
+    ).paint(canvas, canvasSize);
+    final picture = pictureRecorder.endRecording();
+    final img = await picture.toImage(
+      canvasSize.width.toInt(),
+      canvasSize.height.toInt(),
+    );
+    final imgData = await img.toByteData(format: ui.ImageByteFormat.png);
+    if (imgData == null) {
+      return '';
+    }
+    return base64.encode(imgData.buffer.asUint8List());
+  }
+
   @override
   Widget builder(BuildContext context) {
+    this.context = context;
     return CustomPaint(
       size: getSize(),
       painter: _CustomPainter(

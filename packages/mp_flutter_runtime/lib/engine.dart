@@ -63,6 +63,10 @@ class MPEngine {
       case 'route':
         _router._didReceivedRouteData(decodedMessage['message']);
         break;
+      case 'custom_paint':
+        _CustomPaint._didReceivedCustomPaintMessage(
+            decodedMessage['message'], this);
+        break;
       case 'rich_text':
         _textMeasurer._didReceivedDoMeasureData(decodedMessage['message']);
         break;
