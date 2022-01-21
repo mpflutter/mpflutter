@@ -18,7 +18,8 @@ class _ListView extends ComponentView {
     if (childrenWidget == null) {
       return const SizedBox();
     }
-    return ListView.builder(
+    final isRoot = getBoolFromAttributes(context, 'isRoot') ?? false;
+    Widget widget = ListView.builder(
       scrollDirection: (() {
         if (getStringFromAttributes(context, 'scrollDirection') ==
             'Axis.horizontal') {
@@ -33,5 +34,21 @@ class _ListView extends ComponentView {
       },
       itemCount: childrenWidget.length,
     );
+    if (isRoot) {
+      widget = NotificationListener<ScrollNotification>(
+        onNotification: (details) {
+          final mpPage = context.findAncestorStateOfType<_MPPageState>();
+          if (mpPage != null) {
+            if (details.metrics.atEdge && details.metrics.pixels > 0) {
+              mpPage.onReachBottom();
+            }
+            mpPage.onPageScroll(details.metrics.pixels);
+          }
+          return true;
+        },
+        child: widget,
+      );
+    }
+    return widget;
   }
 }

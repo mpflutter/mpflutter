@@ -18,7 +18,8 @@ class _CustomScrollView extends ComponentView {
     if (childrenWidget == null) {
       return const SizedBox();
     }
-    return CustomScrollView(
+    final isRoot = getBoolFromAttributes(context, 'isRoot') ?? false;
+    Widget widget = CustomScrollView(
       scrollDirection: (() {
         if (getStringFromAttributes(context, 'scrollDirection') ==
             'Axis.horizontal') {
@@ -37,6 +38,22 @@ class _CustomScrollView extends ComponentView {
         }
       }).toList(),
     );
+    if (isRoot) {
+      widget = NotificationListener<ScrollNotification>(
+        onNotification: (details) {
+          final mpPage = context.findAncestorStateOfType<_MPPageState>();
+          if (mpPage != null) {
+            if (details.metrics.atEdge && details.metrics.pixels > 0) {
+              mpPage.onReachBottom();
+            }
+            mpPage.onPageScroll(details.metrics.pixels);
+          }
+          return true;
+        },
+        child: widget,
+      );
+    }
+    return widget;
   }
 }
 

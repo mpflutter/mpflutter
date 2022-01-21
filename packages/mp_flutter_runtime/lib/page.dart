@@ -66,6 +66,31 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
     });
   }
 
+  void onReachBottom() {
+    if (scaffoldData != null) {
+      widget.engine._sendMessage({
+        "type": "scaffold",
+        "message": {
+          "event": "onReachBottom",
+          "target": scaffoldData!['hashCode'],
+        },
+      });
+    }
+  }
+
+  void onPageScroll(double y) {
+    if (scaffoldData != null) {
+      widget.engine._sendMessage({
+        "type": "scaffold",
+        "message": {
+          "event": "onPageScroll",
+          "target": scaffoldData!['hashCode'],
+          "scrollTop": y,
+        },
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final widgets = <Widget>[];

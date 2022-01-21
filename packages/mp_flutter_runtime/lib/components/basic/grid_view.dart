@@ -19,10 +19,12 @@ class _GridView extends ComponentView {
     if (childrenWidget == null) {
       return const SizedBox();
     }
+    final isRoot = getBoolFromAttributes(context, 'isRoot') ?? false;
+    Widget widget = SizedBox();
     if (gridDelegate is Map) {
       String classname = gridDelegate['classname'];
       if (classname == 'SliverGridDelegateWithFixedCrossAxisCount') {
-        return GridView.builder(
+        widget = GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             mainAxisSpacing: gridDelegate['mainAxisSpacing'] ?? 0,
             crossAxisSpacing: gridDelegate['crossAxisSpacing'] ?? 0,
@@ -44,7 +46,7 @@ class _GridView extends ComponentView {
           itemCount: childrenWidget.length,
         );
       } else if (classname == 'SliverGridDelegateWithMaxCrossAxisExtent') {
-        return GridView.builder(
+        widget = GridView.builder(
           gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
             mainAxisSpacing: gridDelegate['mainAxisSpacing'] ?? 0,
             crossAxisSpacing: gridDelegate['crossAxisSpacing'] ?? 0,
@@ -66,7 +68,7 @@ class _GridView extends ComponentView {
           itemCount: childrenWidget.length,
         );
       } else if (classname == 'SliverWaterfallDelegate') {
-        return WaterfallFlow.builder(
+        widget = WaterfallFlow.builder(
           gridDelegate: SliverWaterfallFlowDelegateWithFixedCrossAxisCount(
             mainAxisSpacing: gridDelegate['mainAxisSpacing'] ?? 0,
             crossAxisSpacing: gridDelegate['crossAxisSpacing'] ?? 0,
@@ -88,6 +90,21 @@ class _GridView extends ComponentView {
         );
       }
     }
-    return const SizedBox();
+    if (isRoot) {
+      widget = NotificationListener<ScrollNotification>(
+        onNotification: (details) {
+          final mpPage = context.findAncestorStateOfType<_MPPageState>();
+          if (mpPage != null) {
+            if (details.metrics.atEdge && details.metrics.pixels > 0) {
+              mpPage.onReachBottom();
+            }
+            mpPage.onPageScroll(details.metrics.pixels);
+          }
+          return true;
+        },
+        child: widget,
+      );
+    }
+    return widget;
   }
 }
