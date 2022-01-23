@@ -8,7 +8,15 @@ class _PlatformChannelIO {
     ByteData? data,
     ui.PlatformMessageResponseCallback? callback,
   ) {
-    final methodMessage = StandardMethodCodec().decodeMethodCall(data);
+    MethodCall? methodMessage;
+    try {
+      methodMessage = StandardMethodCodec().decodeMethodCall(data);
+    } catch (e) {
+      methodMessage = JSONMethodCodec().decodeMethodCall(data);
+    }
+    if (methodMessage == null) {
+      throw 'FormatException: Message corrupted';
+    }
     final seqId = _generateSeqId();
     if (callback != null) {
       _responseCallbacks[seqId] = callback;

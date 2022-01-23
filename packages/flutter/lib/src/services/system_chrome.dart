@@ -246,10 +246,10 @@ class SystemChrome {
   /// setting "Requires full screen" to true in the Xcode Deployment Info.
   static Future<void> setPreferredOrientations(
       List<DeviceOrientation> orientations) async {
-    await SystemChannels.platform.invokeMethod<void>(
-      'SystemChrome.setPreferredOrientations',
-      _stringify(orientations),
-    );
+    // await SystemChannels.platform.invokeMethod<void>(
+    //   'SystemChrome.setPreferredOrientations',
+    //   _stringify(orientations),
+    // );
   }
 
   /// Specifies the description of the current state of the application as it
@@ -259,13 +259,13 @@ class SystemChrome {
   /// will be ignored.
   static Future<void> setApplicationSwitcherDescription(
       ApplicationSwitcherDescription description) async {
-    await SystemChannels.platform.invokeMethod<void>(
-      'SystemChrome.setApplicationSwitcherDescription',
-      <String, dynamic>{
-        'label': description.label,
-        'primaryColor': description.primaryColor,
-      },
-    );
+    // await SystemChannels.platform.invokeMethod<void>(
+    //   'SystemChrome.setApplicationSwitcherDescription',
+    //   <String, dynamic>{
+    //     'label': description.label,
+    //     'primaryColor': description.primaryColor,
+    //   },
+    // );
   }
 
   /// Specifies the set of system overlays to have visible when the application
@@ -292,10 +292,10 @@ class SystemChrome {
   /// automatically restored only when the application loses and regains focus.
   static Future<void> setEnabledSystemUIOverlays(
       List<SystemUiOverlay> overlays) async {
-    await SystemChannels.platform.invokeMethod<void>(
-      'SystemChrome.setEnabledSystemUIOverlays',
-      _stringify(overlays),
-    );
+    // await SystemChannels.platform.invokeMethod<void>(
+    //   'SystemChrome.setEnabledSystemUIOverlays',
+    //   _stringify(overlays),
+    // );
   }
 
   /// Restores the system overlays to the last settings provided via
@@ -308,10 +308,10 @@ class SystemChrome {
   /// On Android, the system UI cannot be changed until 1 second after the previous
   /// change. This is to prevent malware from permanently hiding navigation buttons.
   static Future<void> restoreSystemUIOverlays() async {
-    await SystemChannels.platform.invokeMethod<void>(
-      'SystemChrome.restoreSystemUIOverlays',
-      null,
-    );
+    // await SystemChannels.platform.invokeMethod<void>(
+    //   'SystemChrome.restoreSystemUIOverlays',
+    //   null,
+    // );
   }
 
   /// Specifies the style to use for the system overlays that are visible (if
@@ -398,29 +398,29 @@ class SystemChrome {
   ///
   ///  * [AnnotatedRegion], the widget used to place data into the layer tree.
   static void setSystemUIOverlayStyle(SystemUiOverlayStyle style) {
-    assert(style != null);
-    if (_pendingStyle != null) {
-      // The microtask has already been queued; just update the pending value.
-      _pendingStyle = style;
-      return;
-    }
-    if (style == _latestStyle) {
-      // Trivial success: no microtask has been queued and the given style is
-      // already in effect, so no need to queue a microtask.
-      return;
-    }
-    _pendingStyle = style;
-    scheduleMicrotask(() {
-      assert(_pendingStyle != null);
-      if (_pendingStyle != _latestStyle) {
-        SystemChannels.platform.invokeMethod<void>(
-          'SystemChrome.setSystemUIOverlayStyle',
-          _pendingStyle!._toMap(),
-        );
-        _latestStyle = _pendingStyle;
-      }
-      _pendingStyle = null;
-    });
+    // assert(style != null);
+    // if (_pendingStyle != null) {
+    //   // The microtask has already been queued; just update the pending value.
+    //   _pendingStyle = style;
+    //   return;
+    // }
+    // if (style == _latestStyle) {
+    //   // Trivial success: no microtask has been queued and the given style is
+    //   // already in effect, so no need to queue a microtask.
+    //   return;
+    // }
+    // _pendingStyle = style;
+    // scheduleMicrotask(() {
+    //   assert(_pendingStyle != null);
+    //   if (_pendingStyle != _latestStyle) {
+    //     SystemChannels.platform.invokeMethod<void>(
+    //       'SystemChrome.setSystemUIOverlayStyle',
+    //       _pendingStyle!._toMap(),
+    //     );
+    //     _latestStyle = _pendingStyle;
+    //   }
+    //   _pendingStyle = null;
+    // });
   }
 
   static SystemUiOverlayStyle? _pendingStyle;

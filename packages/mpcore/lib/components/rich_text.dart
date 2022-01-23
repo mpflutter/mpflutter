@@ -91,6 +91,10 @@ MPElement _encodeRichText(Element element) {
   var maxHeight = constraints.maxHeight;
   var currentRenderObject = element.findRenderObject();
   while (currentRenderObject != null) {
+    if (currentRenderObject is RenderViewport ||
+        currentRenderObject is RenderAbstractViewport) {
+      break;
+    }
     // ignore: invalid_use_of_protected_member
     dynamic currentConstraints = currentRenderObject.constraints;
     if (currentConstraints is BoxConstraints) {
@@ -123,6 +127,18 @@ MPElement _encodeRichText(Element element) {
       'maxHeight': maxHeight.toString(),
       'maxLines': widget.maxLines,
       'textAlign': widget.textAlign.toString(),
+      'selectable': (() {
+        final maybeMPText = element.findAncestorWidgetOfExactType<MPText>();
+        if (maybeMPText != null) {
+          return maybeMPText.selectable;
+        }
+        final maybeMPRichText =
+            element.findAncestorWidgetOfExactType<MPRichText>();
+        if (maybeMPRichText != null) {
+          return maybeMPRichText.selectable;
+        }
+        return false;
+      })(),
     },
   );
 }

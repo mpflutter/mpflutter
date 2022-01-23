@@ -67,6 +67,10 @@ export class RichText extends ComponentView {
     let style: any = {};
     if (children[0].attributes.style) {
       let s = cssTextStyle(children[0].attributes.style);
+      if (this.attributes.selectable) {
+        delete s.userSelect;
+        delete s.WebkitUserSelect;
+      }
       for (const key in s) {
         style[key] = s[key];
       }
@@ -133,6 +137,10 @@ export class TextSpan extends ComponentView {
     };
     if (attributes.style) {
       let s = cssTextStyle(attributes.style);
+      if (attributes.selectable) {
+        delete s.userSelect;
+        delete s.WebkitUserSelect;
+      }
       for (const key in s) {
         style[key] = s[key];
       }
