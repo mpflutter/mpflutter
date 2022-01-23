@@ -9,6 +9,7 @@
 #import <JavaScriptCore/JavaScriptCore.h>
 #import "MPIOSEngine.h"
 #import "MPIOSEngine+Private.h"
+#import "MPIOSProvider.h"
 #import "MPIOSConsole.h"
 #import "MPIOSTimer.h"
 #import "MPIOSDeviceInfo.h"
@@ -96,6 +97,7 @@
     _textMeasurer.engine = self;
     _windowInfo = [[MPIOSWindowInfo alloc] init];
     _windowInfo.engine = self;
+    _provider = [[MPIOSProvider alloc] init];
 }
 
 - (void)start {

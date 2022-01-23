@@ -9,6 +9,7 @@
 #import "MPIOSMPIcon.h"
 #import "MPIOSImage.h"
 #import "MPIOSComponentUtils.h"
+#import "MPIOSProvider.h"
 #import <objc/runtime.h>
 
 @interface MPIOSMPIcon ()
@@ -61,7 +62,8 @@
     [super setAttributes:attributes];
     NSString *iconUrl = attributes[@"iconUrl"];
     if ([iconUrl isKindOfClass:[NSString class]]) {
-        [MPIOSImage loadImageWithView:self.contentView src:iconUrl];
+        [self.engine.provider.imageProvider loadImageWithURLString:iconUrl
+                                                         imageView:self.contentView];
     }
     NSString *color = attributes[@"color"];
     if ([color isKindOfClass:[NSString class]]) {

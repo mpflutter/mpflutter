@@ -55,6 +55,8 @@
 		638D4C0927625B9600DD4558 /* MPIOSMPDatePicker.m in Sources */ = {isa = PBXBuildFile; fileRef = 638D4C0827625B9600DD4558 /* MPIOSMPDatePicker.m */; };
 		639C27EB270DFE1D006835E6 /* MPIOSTextMeasurer.m in Sources */ = {isa = PBXBuildFile; fileRef = 639C27EA270DFE1D006835E6 /* MPIOSTextMeasurer.m */; };
 		639C27EE2711EF4C006835E6 /* MPIOSAncestorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 639C27ED2711EF4C006835E6 /* MPIOSAncestorView.m */; };
+		63A37AC9279D9F8600622327 /* MPIOSProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37AC8279D9F8600622327 /* MPIOSProvider.m */; };
+		63A37ACC279DA26E00622327 /* MPSampleProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37ACB279DA26E00622327 /* MPSampleProvider.m */; };
 		63C3ADBD266091170000A492 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C3ADBC266091170000A492 /* AppDelegate.m */; };
 		63C3ADC8266091180000A492 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63C3ADC7266091180000A492 /* Assets.xcassets */; };
 		63C3ADCB266091180000A492 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C3ADC9266091180000A492 /* LaunchScreen.storyboard */; };
@@ -164,6 +166,10 @@
 		639C27EA270DFE1D006835E6 /* MPIOSTextMeasurer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSTextMeasurer.m; sourceTree = "<group>"; };
 		639C27EC2711EF4C006835E6 /* MPIOSAncestorView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSAncestorView.h; sourceTree = "<group>"; };
 		639C27ED2711EF4C006835E6 /* MPIOSAncestorView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSAncestorView.m; sourceTree = "<group>"; };
+		63A37AC7279D9F8600622327 /* MPIOSProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSProvider.h; sourceTree = "<group>"; };
+		63A37AC8279D9F8600622327 /* MPIOSProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSProvider.m; sourceTree = "<group>"; };
+		63A37ACA279DA26E00622327 /* MPSampleProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPSampleProvider.h; sourceTree = "<group>"; };
+		63A37ACB279DA26E00622327 /* MPSampleProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPSampleProvider.m; sourceTree = "<group>"; };
 		63C3ADB8266091170000A492 /* mp_ios_runtime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mp_ios_runtime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C3ADBB266091170000A492 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		63C3ADBC266091170000A492 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -264,6 +270,8 @@
 				633E6682268313E700DF66AA /* app.mpk */,
 				63C3ADBB266091170000A492 /* AppDelegate.h */,
 				63C3ADBC266091170000A492 /* AppDelegate.m */,
+				63A37ACA279DA26E00622327 /* MPSampleProvider.h */,
+				63A37ACB279DA26E00622327 /* MPSampleProvider.m */,
 				63C3ADC7266091180000A492 /* Assets.xcassets */,
 				63C3ADC9266091180000A492 /* LaunchScreen.storyboard */,
 				63C3ADCC266091180000A492 /* Info.plist */,
@@ -282,6 +290,8 @@
 				63C3ADD7266093010000A492 /* MPIOSRuntime.m */,
 				63C3ADDB266093CD0000A492 /* MPIOSEngine.h */,
 				63C3ADDC266093CD0000A492 /* MPIOSEngine.m */,
+				63A37AC7279D9F8600622327 /* MPIOSProvider.h */,
+				63A37AC8279D9F8600622327 /* MPIOSProvider.m */,
 				63C3ADEB266098670000A492 /* MPIOSEngine+Private.h */,
 				6304127B268035AC00ED3CD4 /* MPIOSRouter.h */,
 				6304127C268035AC00ED3CD4 /* MPIOSRouter.m */,
@@ -559,6 +569,7 @@
 				633E668C2684295700DF66AA /* MPIOSMPWebView.m in Sources */,
 				63C3ADDD266093CD0000A492 /* MPIOSEngine.m in Sources */,
 				630412682678BA1000ED3CD4 /* MPIOSCustomScrollViewLayout.m in Sources */,
+				63A37ACC279DA26E00622327 /* MPSampleProvider.m in Sources */,
 				633E66922684305E00DF66AA /* MPIOSMPPageView.m in Sources */,
 				633E668926833D3800DF66AA /* MPIOSOverlay.m in Sources */,
 				63C3ADBD266091170000A492 /* AppDelegate.m in Sources */,
@@ -575,6 +586,7 @@
 				345D6B6D27159BA40016D0B9 /* MPIOSForegroundDecoratedBox.m in Sources */,
 				630412652678B8D600ED3CD4 /* MPIOSCustomScrollView.m in Sources */,
 				63041244266FBE4200ED3CD4 /* MPIOSGestureDetector.m in Sources */,
+				63A37AC9279D9F8600622327 /* MPIOSProvider.m in Sources */,
 				63C3AE6B266F22AF0000A492 /* MPIOSMPScaffold.m in Sources */,
 				6304126E2679DB9500ED3CD4 /* MPIOSMPIcon.m in Sources */,
 				633E669B26843D1D00DF66AA /* MPIOSWXCompat.m in Sources */,

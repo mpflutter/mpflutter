@@ -10,12 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^MPIOSImageLoader)(UIImageView *, NSString *);
-
 @interface MPIOSImage : MPIOSComponentView
-
-+ (void)setupImageLoader:(MPIOSImageLoader)imageLoader;
-+ (void)loadImageWithView:(UIView *)view src:(NSString *)src;
 
 @end
 

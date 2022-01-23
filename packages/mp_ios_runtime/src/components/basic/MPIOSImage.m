@@ -9,6 +9,7 @@
 #import "MPIOSImage.h"
 #import "MPIOSDebugger.h"
 #import "MPIOSMpkReader.h"
+#import "MPIOSProvider.h"
 
 @interface MPIOSImage ()
 
@@ -17,18 +18,6 @@
 @end
 
 @implementation MPIOSImage
-
-static MPIOSImageLoader sImageLoader;
-
-+ (void)setupImageLoader:(MPIOSImageLoader)imageLoader {
-    sImageLoader = imageLoader;
-}
-
-+ (void)loadImageWithView:(UIView *)view src:(NSString *)src {
-    if (sImageLoader != NULL) {
-        sImageLoader((id)view, src);
-    }
-}
 
 - (instancetype)init
 {
@@ -48,9 +37,7 @@ static MPIOSImageLoader sImageLoader;
     NSString *base64 = attributes[@"base64"];
     NSString *assetName = attributes[@"assetName"];
     if ([src isKindOfClass:[NSString class]]) {
-        if (sImageLoader != NULL) {
-            sImageLoader(self.contentView, src);
-        }
+        [self.engine.provider.imageProvider loadImageWithURLString:src imageView:self.contentView];
     }
     else if ([base64 isKindOfClass:[NSString class]]) {
         NSData *imgData = [[NSData alloc] initWithBase64EncodedString:base64 options:kNilOptions];
@@ -68,19 +55,24 @@ static MPIOSImageLoader sImageLoader;
                 UIImage *image = [UIImage imageWithData:imageData];
                 self.contentView.image = image;
             }
+            else {
+                [self.engine.provider.imageProvider
+                 loadImageWithURLString:assetName
+                 imageView:self.contentView];
+            }
         }
         else if (self.engine.debugger != nil) {
             NSString *assetUrl = [NSString stringWithFormat:@"http://%@/assets/%@",
                                   self.engine.debugger.serverAddr,
                                   assetName];
-            if (sImageLoader != NULL) {
-                sImageLoader(self.contentView, assetUrl);
-            }
+            [self.engine.provider.imageProvider
+             loadImageWithURLString:assetUrl
+             imageView:self.contentView];
         }
         else {
-            if (sImageLoader != NULL) {
-                sImageLoader(self.contentView, assetName);
-            }
+            [self.engine.provider.imageProvider
+             loadImageWithURLString:assetName
+             imageView:self.contentView];
         }
     }
     else {

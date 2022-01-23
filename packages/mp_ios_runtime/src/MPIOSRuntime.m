@@ -11,8 +11,4 @@
 
 @implementation MPIOSRuntime
 
-+ (void)setupImageLoader:(MPIOSImageLoader)imageLoader {
-    [MPIOSImage setupImageLoader:imageLoader];
-}
-
 @end
