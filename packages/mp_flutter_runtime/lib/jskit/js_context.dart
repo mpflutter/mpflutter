@@ -74,6 +74,27 @@ class _JSContext {
     });
   }
 
+  Future invokeJSFunc(String func, List args) async {
+    if (_contextRef == null) {
+      throw "no context";
+    }
+    return await _methodChannel.invokeMethod('invokeFunc', {
+      "contextRef": _contextRef,
+      'func': func,
+      "args": args,
+    });
+  }
+
+  Future invokeMPJSFunc(Map message) async {
+    if (_contextRef == null) {
+      throw "no context";
+    }
+    return await _methodChannel.invokeMethod('invokeMPJSFunc', {
+      "contextRef": _contextRef,
+      "message": message,
+    });
+  }
+
   void addMessageListener(Function(String message, String? type) listener) {
     _messageListeners.add(listener);
   }

@@ -16,6 +16,8 @@ dependencies:
   flutter_picker: ^2.0.2
   cached_network_image: ^3.2.0
   archive: ^3.1.9
+  shared_preferences: ^2.0.12
+  dio: ^4.0.4
 
 dev_dependencies:
   flutter_test:

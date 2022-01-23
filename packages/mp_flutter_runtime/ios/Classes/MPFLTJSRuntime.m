@@ -41,10 +41,10 @@ static NSMutableDictionary<NSString *, JSContext *> *contextRefs;
         JSContext *context = [[JSContext alloc] init];
         [MPFLTJSRuntimeTimer setupWithJSContext:context];
         __weak MPFLTJSRuntime *welf = self;
-        context[@"postMessage"] = ^(NSString *message, NSString *type) {
+        context[@"postMessage"] = ^id (NSString *message, NSString *type) {
             __strong MPFLTJSRuntime *self = welf;
             if (self == nil) {
-                return;
+                return nil;
             }
             if (self.eventSink != nil) {
                 self.eventSink(@{
@@ -53,6 +53,7 @@ static NSMutableDictionary<NSString *, JSContext *> *contextRefs;
                     @"type": type ?: @"",
                 });
             }
+            return nil;
         };
         [contextRefs setObject:context forKey:ref];
         result(ref);
@@ -100,7 +101,7 @@ static NSMutableDictionary<NSString *, JSContext *> *contextRefs;
                 JSContext *context = contextRefs[contextRef];
                 if (context != nil) {
                     [context setException:nil];
-                    JSValue *jsFunc = context[func];
+                    JSValue *jsFunc = [func containsString:@"."] ? [context evaluateScript:func] : context[func];
                     JSValue *ret = [jsFunc callWithArguments:args];
                     JSValue *exception = [context exception];
                     if (exception != nil) {
@@ -110,6 +111,31 @@ static NSMutableDictionary<NSString *, JSContext *> *contextRefs;
                     }
                     else {
                         result([ret toObject]);
+                    }
+                }
+            }
+        }
+    }
+    else if ([call.method isEqualToString:@"invokeMPJSFunc"]) {
+        NSDictionary *options = call.arguments;
+        if ([options isKindOfClass:[NSDictionary class]]) {
+            NSString *contextRef = options[@"contextRef"];
+            NSDictionary *message = options[@"message"];
+            if ([contextRef isKindOfClass:[NSString class]] &&
+                [message isKindOfClass:[NSDictionary class]]) {
+                JSContext *context = contextRefs[contextRef];
+                if (context != nil) {
+                    JSValue *value = context[@"MPJS"][@"instance"][@"handleMessage"];
+                    if ([value isObject]) {
+                        [value callWithArguments:@[
+                            message,
+                            ^(NSString *jsRet) {
+                                result(jsRet);
+                            },
+                            ^(NSString *jsRet) {
+                                result(jsRet);
+                            },
+                        ]];
                     }
                 }
             }

@@ -19,6 +19,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_picker/flutter_picker.dart' as flutter_picker;
 import 'package:archive/archive.dart' as archive;
+import 'package:shared_preferences/shared_preferences.dart'
+    as shared_preferences;
+import 'package:dio/dio.dart' as dio;
 
 part 'engine.dart';
 part 'page.dart';
@@ -60,5 +63,9 @@ part 'components/mpkit/switch.dart';
 part 'jskit/js_context.dart';
 part 'jskit/js_console.dart';
 part 'jskit/js_device_info.dart';
+part 'jskit/js_network_http.dart';
+part 'jskit/js_storage.dart';
+part 'jskit/js_wx_compat.dart';
+part 'jskit/mpjs.dart';
 
 class MPFlutterRuntime {}

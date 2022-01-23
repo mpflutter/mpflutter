@@ -16,6 +16,7 @@ class MPEngine {
   _MPDebugger? _debugger;
   _MPKReader? _mpkReader;
   late _JSContext _jsContext;
+  late _MPJS _mpjs;
   late _MPComponentFactory _componentFactory;
   late _MPRouter _router;
   late _TextMeasurer _textMeasurer;
@@ -27,6 +28,7 @@ class MPEngine {
     _textMeasurer = _TextMeasurer(engine: this);
     _drawableStore = _DrawableStore(engine: this);
     _jsContext = _JSContext();
+    _mpjs = _MPJS(engine: this);
   }
 
   void initWithJSCode(String jsCode) {
@@ -50,12 +52,19 @@ class MPEngine {
     if (_jsCode == null && _debugger == null) return;
     await _jsContext.createContext();
     await _setupJSContextEventChannel();
+    await _MPJS.install(_jsContext);
     await _JSDeviceInfo.install(_jsContext, flutterContext);
+    await _JSWXCompat.install(_jsContext);
+    await _JSNetworkHttp.install(_jsContext);
+    await _JSStorage.install(_jsContext);
     if (_jsCode != null) {
       await _jsContext.evaluateScript(_jsCode!);
     } else if (_debugger != null) {
       _debugger!.start();
     }
+    Future.delayed(Duration(seconds: 5)).then((value) {
+      _jsContext.evaluateScript('console.log(wx.getStorageSync("sss"));');
+    });
     _started = true;
   }
 
@@ -115,6 +124,9 @@ class MPEngine {
       case 'platform_view':
         _MPPlatformView._didReceivedPlatformViewMessage(
             decodedMessage['message'], this);
+        break;
+      case 'mpjs':
+        _mpjs._didReceivedMessage(decodedMessage['message']);
         break;
       default:
     }

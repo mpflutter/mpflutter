@@ -127,19 +127,19 @@ class _WebDialogs {
               MaterialButton(
                 minWidth: 28,
                 onPressed: () {
+                  Navigator.of(context).pop(null);
+                },
+                child: const Text('取消'),
+              ),
+              MaterialButton(
+                minWidth: 28,
+                onPressed: () {
                   Navigator.of(context).pop(controller.text);
                 },
                 child: const Text(
                   '确认',
                   style: TextStyle(color: Colors.blue),
                 ),
-              ),
-              MaterialButton(
-                minWidth: 28,
-                onPressed: () {
-                  Navigator.of(context).pop(null);
-                },
-                child: const Text('取消'),
               ),
             ],
           );
