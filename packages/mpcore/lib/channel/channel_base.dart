@@ -539,6 +539,12 @@ class MPChannelBase {
               axisDirection: AxisDirection.down,
             ),
           ).dispatch(element);
+          if (message['isRoot'] == true) {
+            element
+                .findAncestorWidgetOfExactType<MPScaffold>()
+                ?.onPageScroll
+                ?.call((message['scrollTop'] as num).toDouble());
+          }
         }
       } else if (message['event'] == 'onRefresh') {
         final element = MPCore.findTargetHashCode(message['target']);
@@ -554,6 +560,30 @@ class MPChannelBase {
                 'target': message['target'],
               },
             }));
+          } else {
+            if (message['isRoot'] == true) {
+              await element
+                  .findAncestorWidgetOfExactType<MPScaffold>()
+                  ?.onRefresh
+                  ?.call();
+              MPChannel.postMessage(json.encode({
+                'type': 'scroll_view',
+                'message': {
+                  'event': 'onRefreshEnd',
+                  'target': message['target'],
+                },
+              }));
+            }
+          }
+        }
+      } else if (message['event'] == 'onScrollToLower') {
+        final element = MPCore.findTargetHashCode(message['target']);
+        if (element != null) {
+          if (message['isRoot'] == true) {
+            element
+                .findAncestorWidgetOfExactType<MPScaffold>()
+                ?.onReachBottom
+                ?.call();
           }
         }
       }

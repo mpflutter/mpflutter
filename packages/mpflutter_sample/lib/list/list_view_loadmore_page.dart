@@ -34,10 +34,9 @@ class _ListViewLoadmorePageState extends State<ListViewLoadmorePage> {
       name: 'ListView + LoadMore',
       backgroundColor: Color.fromARGB(255, 236, 236, 236),
       onRefresh: () async {
+        print('start refresh');
         await Future.delayed(Duration(seconds: 5));
-        setState(() {
-          count = 20;
-        });
+        print('end refresh');
       },
       onReachBottom: () async {
         if (loadingMore) return;
@@ -50,11 +49,11 @@ class _ListViewLoadmorePageState extends State<ListViewLoadmorePage> {
         loadingMore = false;
       },
       onPageScroll: (scrollTop) {
-        if (scrollTop > 300 && !showFloatingTop) {
+        if (scrollTop > 100 && !showFloatingTop) {
           setState(() {
             showFloatingTop = true;
           });
-        } else if (scrollTop <= 300 && showFloatingTop) {
+        } else if (scrollTop <= 100 && showFloatingTop) {
           setState(() {
             showFloatingTop = false;
           });

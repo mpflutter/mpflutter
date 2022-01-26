@@ -19,6 +19,7 @@ export class CollectionView extends ComponentView {
   layout!: CollectionViewLayout;
   didAddScrollListener = false;
   didAddRefreshListener = false;
+  didAddScrollToLowerListener = false;
   refreshEndResolver?: (_: any) => void;
 
   constructor(document: Document, readonly initialAttributes?: any) {
@@ -85,6 +86,7 @@ export class CollectionView extends ComponentView {
           message: {
             event: "onScroll",
             target: this.attributes.onScroll,
+            isRoot: this.attributes.isRoot,
             scrollLeft: this.htmlElement.scrollLeft,
             scrollTop: this.htmlElement.scrollTop,
           },
@@ -109,6 +111,7 @@ export class CollectionView extends ComponentView {
             message: {
               event: "onRefresh",
               target: this.hashCode,
+              isRoot: this.attributes.isRoot,
             },
           })
         );
@@ -121,6 +124,27 @@ export class CollectionView extends ComponentView {
     if (this.didAddRefreshListener) return;
     this.didAddRefreshListener = true;
     this.htmlElement.addEventListener("refresherrefresh", this.onRefreshEvent.bind(this));
+  }
+
+  onScrollToLowerEvent() {
+    if (this.attributes.isRoot) {
+      this.engine.sendMessage(
+        JSON.stringify({
+          type: "scroll_view",
+          message: {
+            event: "onScrollToLower",
+            target: this.hashCode,
+            isRoot: this.attributes.isRoot,
+          },
+        })
+      );
+    }
+  }
+
+  addScrollToLowerListener() {
+    if (this.didAddScrollToLowerListener) return;
+    this.didAddScrollToLowerListener = true;
+    this.htmlElement.addEventListener("scrolltolower", this.onScrollToLowerEvent.bind(this));
   }
 
   didMoveToWindow() {
@@ -195,8 +219,10 @@ export class CollectionView extends ComponentView {
       left: "0px",
       width: contentSize.width + "px",
       height: this.bottomBarWithSafeArea
-        ? `calc(${contentSize.height + this.bottomBarHeight}px + env(safe-area-inset-bottom))`
-        : contentSize.height + this.bottomBarHeight + "px",
+        ? `calc(${
+            contentSize.height + (this.elementType() === "div" ? this.bottomBarHeight : 0)
+          }px + env(safe-area-inset-bottom))`
+        : contentSize.height + (this.elementType() === "div" ? this.bottomBarHeight : 0) + "px",
     });
   }
 
@@ -223,6 +249,7 @@ export class CollectionView extends ComponentView {
     } else {
       this.addScrollListener();
       this.addRefreshListener();
+      this.addScrollToLowerListener();
       this.htmlElement.setAttribute("refresher-enabled", attributes["onRefresh"] ? "true" : "false");
     }
   }
