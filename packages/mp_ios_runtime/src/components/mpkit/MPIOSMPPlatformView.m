@@ -57,16 +57,6 @@ static NSMutableDictionary<NSString *, MPIOSPlatformViewCallback> *invokeMethodC
     }
 }
 
-- (void)setChildren:(NSArray *)children {
-    [super setChildren:children];
-    [self.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([obj isKindOfClass:[MPIOSComponentView class]]) {
-            [(MPIOSComponentView *)obj setPlatformViewConstraints:CGPointMake([self.constraints[@"x"] floatValue],
-                                                                              [self.constraints[@"y"] floatValue])];
-        }
-    }];
-}
-
 - (void)onMethodCall:(NSString *)method
               params:(id)params
       resultCallback:(MPIOSPlatformViewCallback)resultCallback {

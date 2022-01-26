@@ -11,7 +11,6 @@ class _GestureDetector extends ComponentView {
           data: data,
           parentData: parentData,
           componentFactory: componentFactory,
-          noLayout: true,
         );
 
   @override

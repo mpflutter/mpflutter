@@ -74,10 +74,10 @@ public class CustomPaint extends MPComponentView {
     }
 
     void drawRect(JSProxyObject cmd, Canvas canvas, Paint paint) {
-        double x = cmd.optDouble("x");
-        double y = cmd.optDouble("y");
-        double width = cmd.optDouble("width");
-        double height = cmd.optDouble("height");
+        double x = cmd.optDouble("x") * MPUtils.scale(getContext());
+        double y = cmd.optDouble("y") * MPUtils.scale(getContext());
+        double width = cmd.optDouble("width") * MPUtils.scale(getContext());
+        double height = cmd.optDouble("height") * MPUtils.scale(getContext());
         setPaint(cmd.optObject("paint"), paint);
         canvas.drawRect(
                 (int)x,
@@ -119,8 +119,8 @@ public class CustomPaint extends MPComponentView {
         if (drawable == 0) return;
         Bitmap image = engine.drawableStorage.decodedDrawables.get(drawable);
         if (image == null) return;
-        double x = cmd.optDouble("dx", 0.0);
-        double y = cmd.optDouble("dy", 0.0);
+        double x = cmd.optDouble("dx", 0.0) * MPUtils.scale(getContext());
+        double y = cmd.optDouble("dy", 0.0) * MPUtils.scale(getContext());
         setPaint(cmd.optObject("paint"), paint);
         canvas.drawBitmap(image, (float)x, (float)y, paint);
     }
@@ -130,14 +130,14 @@ public class CustomPaint extends MPComponentView {
         if (drawable == 0) return;
         Bitmap image = engine.drawableStorage.decodedDrawables.get(drawable);
         if (image == null) return;
-        double srcX = cmd.optDouble("srcX", 0.0);
-        double srcY = cmd.optDouble("srcY", 0.0);
-        double srcW = cmd.optDouble("srcW", 0.0);
-        double srcH = cmd.optDouble("srcH", 0.0);
-        double dstX = cmd.optDouble("dstX", 0.0);
-        double dstY = cmd.optDouble("dstY", 0.0);
-        double dstW = cmd.optDouble("dstW", 0.0);
-        double dstH = cmd.optDouble("dstH", 0.0);
+        double srcX = cmd.optDouble("srcX", 0.0) * MPUtils.scale(getContext());
+        double srcY = cmd.optDouble("srcY", 0.0) * MPUtils.scale(getContext());
+        double srcW = cmd.optDouble("srcW", 0.0) * MPUtils.scale(getContext());
+        double srcH = cmd.optDouble("srcH", 0.0) * MPUtils.scale(getContext());
+        double dstX = cmd.optDouble("dstX", 0.0) * MPUtils.scale(getContext());
+        double dstY = cmd.optDouble("dstY", 0.0) * MPUtils.scale(getContext());
+        double dstW = cmd.optDouble("dstW", 0.0) * MPUtils.scale(getContext());
+        double dstH = cmd.optDouble("dstH", 0.0) * MPUtils.scale(getContext());
         setPaint(cmd.optObject("paint"), paint);
         canvas.drawBitmap(
                 image,
@@ -164,39 +164,39 @@ public class CustomPaint extends MPComponentView {
             String action = obj.optString("action", null);
             if (MPUtils.isNull(action)) continue;
             if (action.contentEquals("moveTo")) {
-                lastX = (int) obj.optDouble("x", 0.0);
-                lastY = (int) obj.optDouble("y", 0.0);
+                lastX = (int) (obj.optDouble("x", 0.0) * MPUtils.scale(getContext()));
+                lastY = (int) (obj.optDouble("y", 0.0) * MPUtils.scale(getContext()));
                 bezierPath.moveTo(lastX, lastY);
             } else if (action.contentEquals("lineTo")) {
-                lastX = (int) obj.optDouble("x", 0.0);
-                lastY = (int) obj.optDouble("y", 0.0);
+                lastX = (int) (obj.optDouble("x", 0.0) * MPUtils.scale(getContext()));
+                lastY = (int) (obj.optDouble("y", 0.0) * MPUtils.scale(getContext()));
                 bezierPath.lineTo(lastX, lastY);
             } else if (action.contentEquals("quadraticBezierTo")) {
-                lastX = (int) obj.optDouble("x2", 0.0);
-                lastY = (int) obj.optDouble("y2", 0.0);
+                lastX = (int) (obj.optDouble("x2", 0.0) * MPUtils.scale(getContext()));
+                lastY = (int) (obj.optDouble("y2", 0.0) * MPUtils.scale(getContext()));
                 bezierPath.quadTo(
-                        (int)obj.optDouble("y1", 0.0),
-                        (int)obj.optDouble("x1", 0.0),
+                        (int)(obj.optDouble("y1", 0.0) * MPUtils.scale(getContext())),
+                        (int)(obj.optDouble("x1", 0.0) * MPUtils.scale(getContext())),
                         lastX,
                         lastY
                 );
             } else if (action.contentEquals("cubicTo")) {
-                lastX = (int) obj.optDouble("x3", 0.0);
-                lastY = (int) obj.optDouble("y3", 0.0);
+                lastX = (int) (obj.optDouble("x3", 0.0) * MPUtils.scale(getContext()));
+                lastY = (int) (obj.optDouble("y3", 0.0) * MPUtils.scale(getContext()));
                 bezierPath.cubicTo(
-                        (float) obj.optDouble("x1", 0.0),
-                        (float) obj.optDouble("y1", 0.0),
-                        (float) obj.optDouble("x2", 0.0),
-                        (float) obj.optDouble("y2", 0.0),
+                        (float) (obj.optDouble("x1", 0.0) * MPUtils.scale(getContext())),
+                        (float) (obj.optDouble("y1", 0.0) * MPUtils.scale(getContext())),
+                        (float) (obj.optDouble("x2", 0.0) * MPUtils.scale(getContext())),
+                        (float) (obj.optDouble("y2", 0.0) * MPUtils.scale(getContext())),
                         lastX,
                         lastY
                 );
             } else if (action.contentEquals("arcTo")) {
                 RectF rectF = new RectF(
-                        (float)(obj.optDouble("x", 0.0) - obj.optDouble("width", 0.0) / 2.0),
-                        (float)(obj.optDouble("y", 0.0) - obj.optDouble("height", 0.0) / 2.0),
-                        (float)(obj.optDouble("x", 0.0) + obj.optDouble("width", 0.0) / 2.0),
-                        (float)(obj.optDouble("y", 0.0) + obj.optDouble("height", 0.0) / 2.0)
+                        (float)((obj.optDouble("x", 0.0) - obj.optDouble("width", 0.0) / 2.0) * MPUtils.scale(getContext())),
+                        (float)((obj.optDouble("y", 0.0) - obj.optDouble("height", 0.0) / 2.0) * MPUtils.scale(getContext())),
+                        (float)((obj.optDouble("x", 0.0) + obj.optDouble("width", 0.0) / 2.0) * MPUtils.scale(getContext())),
+                        (float)((obj.optDouble("y", 0.0) + obj.optDouble("height", 0.0) / 2.0) * MPUtils.scale(getContext()))
                 );
                 bezierPath.arcTo(
                         rectF,
@@ -204,11 +204,11 @@ public class CustomPaint extends MPComponentView {
                         (float)(obj.optDouble("sweepAngle", 0.0) * 180 / Math.PI)
                 );
             } else if (action.contentEquals("arcToPoint")) {
-                double x1 = obj.optDouble("arcControlX", 0.0);
-                double y1 = obj.optDouble("arcControlY", 0.0);
-                double x2 = obj.optDouble("arcEndX", 0.0);
-                double y2 = obj.optDouble("arcEndY", 0.0);
-                double radius = obj.optDouble("radiusX", 0.0);
+                double x1 = (obj.optDouble("arcControlX", 0.0) * MPUtils.scale(getContext()));
+                double y1 = (obj.optDouble("arcControlY", 0.0) * MPUtils.scale(getContext()));
+                double x2 = (obj.optDouble("arcEndX", 0.0) * MPUtils.scale(getContext()));
+                double y2 = (obj.optDouble("arcEndY", 0.0) * MPUtils.scale(getContext()));
+                double radius = (obj.optDouble("radiusX", 0.0) * MPUtils.scale(getContext()));
                 if (radius == 0.0) {
                     lastX = (int) x1;
                     lastY = (int) y1;
@@ -306,6 +306,7 @@ public class CustomPaint extends MPComponentView {
             }
         }
         paint.setAlpha(Math.max(0, Math.min(255, (int) (params.optDouble("alpha", 1.0) * 255.0))));
+        paint.setAntiAlias(true);
     }
 
     @Override
@@ -313,7 +314,7 @@ public class CustomPaint extends MPComponentView {
         super.draw(canvas);
         canvas.clipRect(new Rect(0, 0, canvas.getWidth(), canvas.getHeight()));
         canvas.save();
-        canvas.scale(MPUtils.scale(getContext()), MPUtils.scale(getContext()));
+//        canvas.scale(MPUtils.scale(getContext()), MPUtils.scale(getContext()));
         if (commands != null) {
             Paint paint = new Paint();
             for (int i = 0; i < commands.length(); i++) {

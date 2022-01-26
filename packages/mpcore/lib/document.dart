@@ -264,6 +264,20 @@ class MPElement {
       }
       hasConstraints = true;
     }
+    var isRootElement = true;
+    var currentElement = flutterElement?.getParent();
+    while (currentElement != null && currentElement.renderObject == renderBox) {
+      if (fromFlutterElementMethodCache[currentElement.widget] != null ||
+          _searchTypeFromFlutterElement(currentElement) != null) {
+        isRootElement = false;
+        break;
+      }
+      currentElement = currentElement.getParent();
+    }
+    if (!isRootElement) {
+      x = 0.0;
+      y = 0.0;
+    }
     if (hasConstraints) {
       return Rect.fromLTWH(x ?? 0.0, y ?? 0.0, w ?? 0.0, h ?? 0.0);
     } else {
@@ -272,133 +286,138 @@ class MPElement {
   }
 
   static Map<Type, MPElement Function(Element)> fromFlutterElementMethodCache =
-      {};
+      {
+    ColoredBox: _encodeColoredBox,
+    RichText: _encodeRichText,
+    ListView: _encodeListView,
+    SingleChildScrollView: _encodeSingleChildScrollView,
+    GridView: _encodeGridView,
+    DecoratedBox: _encodeDecoratedBox,
+    Image: _encodeImage,
+    ClipOval: _encodeClipOval,
+    ClipRRect: _encodeClipRRect,
+    ClipRect: _encodeClipRect,
+    Opacity: _encodeOpacity,
+    SliverOpacity: _encodeSliverOpacity,
+    GestureDetector: _encodeGestureDetector,
+    Visibility: _encodeVisibility,
+    SliverVisibility: _encodeSliverVisibility,
+    Offstage: _encodeOffstage,
+    SliverOffstage: _encodeSliverOffstage,
+    Transform: _encodeTransform,
+    IgnorePointer: _encodeIgnorePointer,
+    AbsorbPointer: _encodeAbsorbPointer,
+    Icon: _encodeIcon,
+    CustomScrollView: _encodeCustomScrollView,
+    SliverList: _encodeSliverList,
+    SliverGrid: _encodeSliverGrid,
+    EditableText: _encodeEditableText,
+    SliverPersistentHeader: _encodeSliverPersistentHeader,
+    CustomPaint: _encodeCustomPaint,
+  }..addAll(MPKitEncoder.fromFlutterElementMethodCache);
+
+  static final Map<Type, Type> _searchCache = {};
+
+  static Type? _searchTypeFromFlutterElement(Element element) {
+    final widget = element.widget;
+    final runtimeType = element.widget.runtimeType;
+    if (_searchCache[runtimeType] != null) {
+      return _searchCache[runtimeType];
+    }
+    try {
+      Type? t;
+      if (widget is ColoredBox) {
+        t = ColoredBox;
+      } else if (widget is ColoredBox) {
+        t = ColoredBox;
+      } else if (widget is RichText) {
+        t = RichText;
+      } else if (widget is ListView) {
+        t = ListView;
+      } else if (widget is SingleChildScrollView) {
+        t = SingleChildScrollView;
+      } else if (widget is GridView) {
+        t = GridView;
+      } else if (widget is DecoratedBox) {
+        t = DecoratedBox;
+      } else if (widget is Image) {
+        t = Image;
+      } else if (widget is ClipOval) {
+        t = ClipOval;
+      } else if (widget is ClipRRect) {
+        t = ClipRRect;
+      } else if (widget is ClipRect) {
+        t = ClipRect;
+      } else if (widget is Opacity) {
+        t = Opacity;
+      } else if (widget is SliverOpacity) {
+        t = SliverOpacity;
+      } else if (widget is GestureDetector) {
+        t = GestureDetector;
+      } else if (widget is Visibility) {
+        t = Visibility;
+      } else if (widget is SliverVisibility) {
+        t = SliverVisibility;
+      } else if (widget is Offstage) {
+        t = Offstage;
+      } else if (widget is SliverOffstage) {
+        t = SliverOffstage;
+      } else if (widget is Transform) {
+        t = Transform;
+      } else if (widget is IgnorePointer) {
+        t = IgnorePointer;
+      } else if (widget is AbsorbPointer) {
+        t = AbsorbPointer;
+      } else if (widget is Icon) {
+        t = Icon;
+      } else if (widget is CustomScrollView) {
+        t = CustomScrollView;
+      } else if (widget is SliverList) {
+        t = SliverList;
+      } else if (widget is SliverGrid) {
+        t = SliverGrid;
+      } else if (widget is EditableText) {
+        t = EditableText;
+      } else if (widget is SliverPersistentHeader) {
+        t = SliverPersistentHeader;
+      } else if (widget is CustomPaint) {
+        t = CustomPaint;
+      } else if (widget is MPScaffold) {
+        t = MPScaffold;
+      } else if (widget is MPPageView) {
+        t = MPPageView;
+      } else if (widget is MPIcon) {
+        t = MPIcon;
+      } else if (widget is MPPlatformView) {
+        t = MPPlatformView;
+      }
+      if (t != null) {
+        _searchCache[runtimeType] = t;
+        return t;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
 
   static MPElement fromFlutterElement(Element element) {
     if (fromFlutterElementMethodCache[element.widget.runtimeType] != null) {
       return fromFlutterElementMethodCache[element.widget.runtimeType]!(
           element);
-    } else if (element.widget is ColoredBox) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeColoredBox;
-      return _encodeColoredBox(element);
-    } else if (element.widget is RichText) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeRichText;
-      return _encodeRichText(element);
-    } else if (element.widget is ListView) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeListView;
-      return _encodeListView(element);
-    } else if (element.widget is SingleChildScrollView) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeSingleChildScrollView;
-      return _encodeSingleChildScrollView(element);
-    } else if (element.widget is GridView) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeGridView;
-      return _encodeGridView(element);
-    } else if (element.widget is DecoratedBox) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeDecoratedBox;
-      return _encodeDecoratedBox(element);
-    } else if (element.widget is Image) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] = _encodeImage;
-      return _encodeImage(element);
-    } else if (element.widget is ClipOval) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeClipOval;
-      return _encodeClipOval(element);
-    } else if (element.widget is ClipRRect) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeClipRRect;
-      return _encodeClipRRect(element);
-    } else if (element.widget is ClipRect) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeClipRect;
-      return _encodeClipRect(element);
-    } else if (element.widget is Opacity) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeOpacity;
-      return _encodeOpacity(element);
-    } else if (element.widget is SliverOpacity) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeSliverOpacity;
-      return _encodeSliverOpacity(element);
-    } else if (element.widget is GestureDetector) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeGestureDetector;
-      return _encodeGestureDetector(element);
-    } else if (element.widget is Visibility) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeVisibility;
-      return _encodeVisibility(element);
-    } else if (element.widget is SliverVisibility) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeSliverVisibility;
-      return _encodeSliverVisibility(element);
-    } else if (element.widget is Offstage) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeOffstage;
-      return _encodeOffstage(element);
-    } else if (element.widget is SliverOffstage) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeSliverOffstage;
-      return _encodeSliverOffstage(element);
-    } else if (element.widget is Transform) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeTransform;
-      return _encodeTransform(element);
-    } else if (element.widget is IgnorePointer) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeIgnorePointer;
-      return _encodeIgnorePointer(element);
-    } else if (element.widget is AbsorbPointer) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeAbsorbPointer;
-      return _encodeAbsorbPointer(element);
-    } else if (element.widget is Icon) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] = _encodeIcon;
-      return _encodeIcon(element);
-    } else if (element.widget is CustomScrollView) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeCustomScrollView;
-      return _encodeCustomScrollView(element);
-    } else if (element.widget is SliverList) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeSliverList;
-      return _encodeSliverList(element);
-    } else if (element.widget is SliverGrid) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeSliverGrid;
-      return _encodeSliverGrid(element);
-    } else if (element.widget is EditableText) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeEditableText;
-      return _encodeEditableText(element);
-    } else if (element.widget is SliverPersistentHeader) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeSliverPersistentHeader;
-      return _encodeSliverPersistentHeader(element);
-    } else if (element.widget is CustomPaint) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] =
-          _encodeCustomPaint;
-      return _encodeCustomPaint(element);
+    } else if (_searchTypeFromFlutterElement(element) != null) {
+      return fromFlutterElementMethodCache[
+          _searchTypeFromFlutterElement(element)]!(element);
     } else if (_isCoordElement(element)) {
-      fromFlutterElementMethodCache[element.widget.runtimeType] = _encodeCoord;
       return _encodeCoord(element);
     } else {
-      final mpKitResult = MPKitEncoder.fromFlutterElement(element);
-      if (mpKitResult != null) {
-        return mpKitResult;
-      }
       for (final plugin in MPCore._plugins) {
         final result = plugin.encodeElement(element);
         if (result != null) {
           return result;
         }
       }
-      fromFlutterElementMethodCache[element.widget.runtimeType] = _encodeDivBox;
       return _encodeDivBox(element);
     }
   }

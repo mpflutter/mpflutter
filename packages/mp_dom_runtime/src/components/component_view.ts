@@ -21,8 +21,6 @@ export class ComponentView {
   constraints?: Constraints;
   additionalConstraints: any;
   collectionViewConstraints: any;
-  gestureViewConstraints: any;
-  platformViewConstraints: any;
   protected disposed: boolean = false;
 
   ancestors: AncestorView[] = [];
@@ -59,28 +57,8 @@ export class ComponentView {
       }
     });
     let additionalConstraints = this.additionalConstraints;
-    if (
-      this.collectionViewConstraints &&
-      this.superview &&
-      this.superview.classname === "CollectionView"
-    ) {
+    if (this.collectionViewConstraints && this.superview && this.superview.classname === "CollectionView") {
       additionalConstraints = this.collectionViewConstraints;
-    }
-    if (
-      this.gestureViewConstraints &&
-      this.superview &&
-      this.superview.classname === "GestureDetector"
-    ) {
-      x -= this.gestureViewConstraints.x;
-      y -= this.gestureViewConstraints.y;
-    }
-    if (
-      this.platformViewConstraints &&
-      this.superview &&
-      this.superview.classname === "PlatformView"
-    ) {
-      x -= this.platformViewConstraints.x;
-      y -= this.platformViewConstraints.y;
     }
 
     setDOMStyle(this.htmlElement, {
@@ -100,9 +78,7 @@ export class ComponentView {
     if (!(children instanceof Array)) {
       return;
     }
-    let makeSubviews = children
-      .map((it) => this.factory.create(it, this.document))
-      .filter((it) => it);
+    let makeSubviews = children.map((it) => this.factory.create(it, this.document)).filter((it) => it);
     let changed = false;
     let changedStartIndex = -1;
     if (makeSubviews.length !== this.subviews.length) {
@@ -124,19 +100,11 @@ export class ComponentView {
     if (changed) {
       if (changedStartIndex > 0) {
         let removingSubviews = [];
-        for (
-          let index = changedStartIndex;
-          index < this.subviews.length;
-          index++
-        ) {
+        for (let index = changedStartIndex; index < this.subviews.length; index++) {
           removingSubviews.push(this.subviews[index]);
         }
         removingSubviews.forEach((it) => it.removeFromSuperview());
-        for (
-          let index = changedStartIndex;
-          index < makeSubviews.length;
-          index++
-        ) {
+        for (let index = changedStartIndex; index < makeSubviews.length; index++) {
           this.addSubview(makeSubviews[index]!);
         }
       } else {

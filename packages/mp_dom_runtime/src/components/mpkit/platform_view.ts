@@ -1,5 +1,3 @@
-import { MPEnv } from "../..";
-import { PlatformType } from "../../env";
 import { ComponentView } from "../component_view";
 
 export class MPPlatformView extends ComponentView {
@@ -49,17 +47,6 @@ export class MPPlatformView extends ComponentView {
     }
     let clone = document.importNode(templateNode.content, true);
     return clone.children[0] as HTMLElement;
-  }
-
-  setChildren(children: any) {
-    super.setChildren(children);
-    this.subviews.forEach((it) => {
-      it.platformViewConstraints = {
-        x: this.constraints?.x ?? 0.0,
-        y: this.constraints?.y ?? 0.0,
-      };
-      it.updateLayout();
-    });
   }
 
   onMethodCall(method: string, params: any) {}

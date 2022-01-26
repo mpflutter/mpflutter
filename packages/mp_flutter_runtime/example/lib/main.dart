@@ -29,10 +29,10 @@ class _SamplePageState extends State<SamplePage> {
   void initEngine() async {
     if (engine == null) {
       final engine = MPEngine(flutterContext: context);
-      // engine.initWithDebuggerServerAddr('127.0.0.1:9898');
-      engine.initWithMpkData(
-        (await rootBundle.load('assets/app.mpk')).buffer.asUint8List(),
-      );
+      engine.initWithDebuggerServerAddr('127.0.0.1:9898');
+      // engine.initWithMpkData(
+      //   (await rootBundle.load('assets/app.mpk')).buffer.asUint8List(),
+      // );
       await engine.start();
       setState(() {
         this.engine = engine;

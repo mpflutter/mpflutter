@@ -87,15 +87,6 @@ class _MPPlatformView extends ComponentView {
   }
 
   @override
-  Widget? getWidgetFromChildren(BuildContext context, {Map? parentData}) {
-    final child = super.getWidgetFromChildren(context, parentData: parentData);
-    return Transform.translate(
-      offset: getOffset().scale(-1, -1),
-      child: child,
-    );
-  }
-
-  @override
   Widget builder(BuildContext context) {
     return const SizedBox();
   }

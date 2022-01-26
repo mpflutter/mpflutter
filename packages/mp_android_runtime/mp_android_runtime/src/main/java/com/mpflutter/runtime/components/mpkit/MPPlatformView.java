@@ -60,17 +60,6 @@ public class MPPlatformView extends MPComponentView {
         super(context);
     }
 
-    @Override
-    public void setChildren(JSProxyArray children) {
-        super.setChildren(children);
-        for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view instanceof MPComponentView) {
-                ((MPComponentView) view).setAdjustConstraints(this.constraints);
-            }
-        }
-    }
-
     public void onMethodCall(String method, Object params, MPPlatformViewCallback callback) { }
 
     public void invokeMethod(String method, Object params) {

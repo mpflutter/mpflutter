@@ -3007,6 +3007,10 @@ abstract class Element extends DiagnosticableTree implements BuildContext {
 
   Element? _parent;
 
+  Element? getParent() {
+    return _parent;
+  }
+
   // Custom implementation of `operator ==` optimized for the ".of" pattern
   // used with `InheritedWidgets`.
   @nonVirtual

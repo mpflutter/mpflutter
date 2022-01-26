@@ -94,6 +94,7 @@ class MPEngine {
   void _didReceivedMessage(String message) {
     final decodedMessage = json.decode(message) as Map;
     String type = decodedMessage['type'];
+    if (decodedMessage['message'] == null) return;
     switch (type) {
       case 'frame_data':
         _didReceivedFrameData(decodedMessage['message']);

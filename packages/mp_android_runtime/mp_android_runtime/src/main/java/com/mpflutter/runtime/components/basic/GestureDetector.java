@@ -34,17 +34,6 @@ public class GestureDetector extends MPComponentView implements android.view.Ges
     }
 
     @Override
-    public void setChildren(JSProxyArray children) {
-        super.setChildren(children);
-        for (int i = 0; i < getChildCount(); i++) {
-            View view = getChildAt(i);
-            if (view instanceof MPComponentView) {
-                ((MPComponentView) view).setAdjustConstraints(this.constraints);
-            }
-        }
-    }
-
-    @Override
     public void setAttributes(JSProxyObject attributes) {
         super.setAttributes(attributes);
         hasTap = attributes.has("onTap");

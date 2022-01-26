@@ -10,17 +10,11 @@ part './icon.dart';
 part './platform_view.dart';
 
 class MPKitEncoder {
-  static MPElement? fromFlutterElement(Element element) {
-    if (element.widget is MPScaffold) {
-      return _encodeMPScaffold(element);
-    } else if (element.widget is MPPageView) {
-      return _encodeMPPageView(element);
-    } else if (element.widget is MPIcon) {
-      return _encodeMPIcon(element);
-    } else if (element.widget is MPPlatformView) {
-      return _encodeMPPlatformView(element);
-    } else {
-      return null;
-    }
-  }
+  static Map<Type, MPElement Function(Element)> fromFlutterElementMethodCache =
+      {
+    MPScaffold: _encodeMPScaffold,
+    MPPageView: _encodeMPPageView,
+    MPIcon: _encodeMPIcon,
+    MPPlatformView: _encodeMPPlatformView,
+  };
 }

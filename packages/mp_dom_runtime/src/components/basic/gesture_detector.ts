@@ -31,17 +31,6 @@ export class GestureDetector extends ComponentView {
     return "div";
   }
 
-  setChildren(children: any) {
-    super.setChildren(children);
-    this.subviews.forEach((it) => {
-      it.gestureViewConstraints = {
-        x: this.constraints?.x ?? 0.0,
-        y: this.constraints?.y ?? 0.0,
-      };
-      it.updateLayout();
-    });
-  }
-
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
     if (attributes.onTap) {

@@ -19,14 +19,14 @@ public class MainActivity extends MPActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         MPEngine engine = new MPEngine(this);
-//        engine.initWithDebuggerServerAddr("10.0.2.2:9898");
-        try {
-            InputStream mpkInputStream = getAssets().open("app.mpk");
-            engine.initWithMpkData(mpkInputStream);
-            mpkInputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        engine.initWithDebuggerServerAddr("127.0.0.1:9898");
+//        try {
+//            InputStream mpkInputStream = getAssets().open("app.mpk");
+//            engine.initWithMpkData(mpkInputStream);
+//            mpkInputStream.close();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         engine.start();
         initializeWithEngine(engine);
         super.onCreate(savedInstanceState);

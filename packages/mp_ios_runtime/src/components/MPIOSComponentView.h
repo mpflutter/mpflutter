@@ -31,8 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) MPIOSEngine *engine;
 @property (nonatomic, strong) NSNumber *hashCode;
 @property (nonatomic, readonly) NSMutableArray<MPIOSAncestorView *> *ownAncestors;
-@property (nonatomic, assign) CGPoint gestureViewConstraints;
-@property (nonatomic, assign) CGPoint platformViewConstraints;
 @property (nonatomic, assign) CGPoint borderOffsetConstraints;
 
 - (void)setConstraints:(NSDictionary *)constraints;

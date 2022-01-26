@@ -11,6 +11,7 @@ Map<String, bool> disabledChannels = {
   'flutter/skia': true,
   'flutter/mousecursor': true,
   'flutter/restoration': true,
+  'flutter/assets': true,
 };
 
 Future<void> Function(String, ByteData?, PlatformMessageResponseCallback?)?
