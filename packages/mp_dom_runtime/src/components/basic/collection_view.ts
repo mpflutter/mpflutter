@@ -18,6 +18,8 @@ export class CollectionView extends ComponentView {
   bottomBarWithSafeArea = false;
   layout!: CollectionViewLayout;
   didAddScrollListener = false;
+  didAddRefreshListener = false;
+  refreshEndResolver?: (_: any) => void;
 
   constructor(document: Document, readonly initialAttributes?: any) {
     super(document, initialAttributes);
@@ -26,12 +28,11 @@ export class CollectionView extends ComponentView {
 
   elementType() {
     if (
-      (this.initialAttributes?.restorationId || this.initialAttributes?.onScroll) &&
+      (this.initialAttributes?.restorationId ||
+        this.initialAttributes?.onScroll ||
+        this.initialAttributes?.onRefresh) &&
       (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)
     ) {
-      if (this.initialAttributes?.isRoot) {
-        return "div";
-      }
       return "wx-scroll-view";
     } else {
       return "div";
@@ -96,6 +97,30 @@ export class CollectionView extends ComponentView {
     if (this.didAddScrollListener) return;
     this.didAddScrollListener = true;
     this.htmlElement.addEventListener("scroll", this.onScrollEvent.bind(this));
+  }
+
+  async onRefreshEvent() {
+    await (() => {
+      return new Promise((res) => {
+        this.refreshEndResolver = res;
+        this.engine.sendMessage(
+          JSON.stringify({
+            type: "scroll_view",
+            message: {
+              event: "onRefresh",
+              target: this.hashCode,
+            },
+          })
+        );
+      });
+    })();
+    this.htmlElement.setAttribute("refresher-triggered", "false");
+  }
+
+  addRefreshListener() {
+    if (this.didAddRefreshListener) return;
+    this.didAddRefreshListener = true;
+    this.htmlElement.addEventListener("refresherrefresh", this.onRefreshEvent.bind(this));
   }
 
   didMoveToWindow() {
@@ -189,7 +214,7 @@ export class CollectionView extends ComponentView {
     }
     this.htmlElement.setAttribute("scroll-x", "true");
     this.htmlElement.setAttribute("scroll-y", "true");
-    if (attributes.isRoot) {
+    if (attributes.isRoot && this.elementType() === "div") {
       let window = MPEnv.platformWindow(this.document);
       if (window) {
         window.mpCurrentScrollView = this;
@@ -197,6 +222,8 @@ export class CollectionView extends ComponentView {
       this.addWindowScrollListener();
     } else {
       this.addScrollListener();
+      this.addRefreshListener();
+      this.htmlElement.setAttribute("refresher-enabled", attributes["onRefresh"] ? "true" : "false");
     }
   }
 

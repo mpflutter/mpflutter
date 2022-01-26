@@ -540,6 +540,22 @@ class MPChannelBase {
             ),
           ).dispatch(element);
         }
+      } else if (message['event'] == 'onRefresh') {
+        final element = MPCore.findTargetHashCode(message['target']);
+        if (element != null) {
+          final refreshIndicator =
+              element.findAncestorWidgetOfExactType<MPRefreshIndicator>();
+          if (refreshIndicator != null) {
+            await refreshIndicator.onRefresh?.call(element.widget.key);
+            MPChannel.postMessage(json.encode({
+              'type': 'scroll_view',
+              'message': {
+                'event': 'onRefreshEnd',
+                'target': message['target'],
+              },
+            }));
+          }
+        }
       }
     } catch (e) {
       print(e);

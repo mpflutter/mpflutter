@@ -18,6 +18,7 @@ import { Router } from "./router";
 import { TextMeasurer } from "./text_measurer";
 import { WindowInfo } from "./window_info";
 import { wrapDartObject } from "./components/dart_object";
+import { CollectionView } from "./components/basic/collection_view";
 
 export class Engine {
   private started: boolean = false;
@@ -50,7 +51,7 @@ export class Engine {
           const ctx = await (target.htmlElement as any).$$getContext();
           return ctx;
         }
-      }
+      };
     }
   }
 
@@ -188,6 +189,8 @@ export class Engine {
       WebDialogs.receivedWebDialogsMessage(this, decodedMessage.message);
     } else if (decodedMessage.type === "scaffold") {
       this.didReceivedScaffold(decodedMessage.message);
+    } else if (decodedMessage.type === "scroll_view") {
+      this.didReceivedScrollView(decodedMessage.message);
     } else if (decodedMessage.type === "rich_text" && decodedMessage.message?.event === "doMeasure") {
       TextMeasurer.didReceivedDoMeasureData(this, decodedMessage.message);
     } else if (decodedMessage.type === "platform_view") {
@@ -240,6 +243,16 @@ export class Engine {
       if (target) {
         target.onWechatMiniProgramShareAppMessageResolver?.(message.params);
         target.onWechatMiniProgramShareAppMessageResolver = undefined;
+      }
+    }
+  }
+
+  didReceivedScrollView(message: any) {
+    if (message.event === "onRefreshEnd") {
+      let target = this.componentFactory.cachedView[message.target] as CollectionView;
+      if (target) {
+        target.refreshEndResolver?.(undefined);
+        target.refreshEndResolver = undefined;
       }
     }
   }

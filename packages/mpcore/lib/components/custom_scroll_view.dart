@@ -56,6 +56,13 @@ MPElement _encodeCustomScrollView(Element element) {
   if (hasScrollNotificationListener) {
     MPCore.addElementToHashCodeCache(element);
   }
+  final refreshIndicator =
+      element.findAncestorWidgetOfExactType<MPRefreshIndicator>();
+  final hasRefreshIndicator = refreshIndicator != null &&
+      refreshIndicator.enableChecker?.call(element.widget.key) != false;
+  if (hasRefreshIndicator) {
+    MPCore.addElementToHashCodeCache(element);
+  }
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
@@ -72,6 +79,7 @@ MPElement _encodeCustomScrollView(Element element) {
           (element.widget as CustomScrollView).scrollDirection.toString(),
       'restorationId': widget.restorationId,
       'onScroll': hasScrollNotificationListener ? element.hashCode : null,
+      'onRefresh': hasRefreshIndicator ? element.hashCode : null,
     },
   );
 }

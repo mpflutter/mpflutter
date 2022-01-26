@@ -58,6 +58,13 @@ MPElement _encodeListView(Element element) {
   if (hasScrollNotificationListener) {
     MPCore.addElementToHashCodeCache(element);
   }
+  final refreshIndicator =
+      element.findAncestorWidgetOfExactType<MPRefreshIndicator>();
+  final hasRefreshIndicator = refreshIndicator != null &&
+      refreshIndicator.enableChecker?.call(element.widget.key) != false;
+  if (hasRefreshIndicator) {
+    MPCore.addElementToHashCodeCache(element);
+  }
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
@@ -76,6 +83,7 @@ MPElement _encodeListView(Element element) {
       'scrollDirection': widget.scrollDirection.toString(),
       'restorationId': widget.restorationId,
       'onScroll': hasScrollNotificationListener ? element.hashCode : null,
+      'onRefresh': hasRefreshIndicator ? element.hashCode : null,
     },
   );
 }

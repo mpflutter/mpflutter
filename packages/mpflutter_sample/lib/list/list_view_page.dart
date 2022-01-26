@@ -42,89 +42,100 @@ class ListViewPage extends StatelessWidget {
     return MPScaffold(
       name: 'ListView',
       backgroundColor: Color.fromARGB(255, 236, 236, 236),
-      body: ListView(
-        children: [
-          _renderBlock(Column(
-            children: [
-              _renderHeader('ListView with Builder'),
-              Container(
-                height: 400,
-                child: ListView.builder(
-                  padding: EdgeInsets.only(left: 12, right: 12),
-                  itemBuilder: (context, index) {
-                    return Container(
-                      height: 44,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Index - $index',
-                        style: TextStyle(
-                          fontSize: 14,
+      body: MPRefreshIndicator(
+        onRefresh: (key) async {
+          print('start refresh');
+          await Future.delayed(Duration(seconds: 5));
+          print('end refresh');
+        },
+        enableChecker: (key) {
+          return key is ValueKey && key.value == 'main';
+        },
+        child: ListView(
+          key: Key('main'),
+          children: [
+            _renderBlock(Column(
+              children: [
+                _renderHeader('ListView with Builder'),
+                Container(
+                  height: 400,
+                  child: ListView.builder(
+                    padding: EdgeInsets.only(left: 12, right: 12),
+                    itemBuilder: (context, index) {
+                      return Container(
+                        height: 44,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Index - $index',
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  itemCount: 100,
+                      );
+                    },
+                    itemCount: 100,
+                  ),
                 ),
-              ),
-              SizedBox(height: 16),
-            ],
-          )),
-          _renderBlock(Column(
-            children: [
-              _renderHeader('ListView with Builder and Seperator'),
-              Container(
-                height: 400,
-                child: ListView.separated(
-                  padding: EdgeInsets.only(left: 12, right: 12),
-                  itemBuilder: (context, index) {
-                    return Container(
-                      height: 44,
-                      alignment: Alignment.centerLeft,
-                      child: Text(
-                        'Index - $index',
-                        style: TextStyle(
-                          fontSize: 14,
+                SizedBox(height: 16),
+              ],
+            )),
+            _renderBlock(Column(
+              children: [
+                _renderHeader('ListView with Builder and Seperator'),
+                Container(
+                  height: 400,
+                  child: ListView.separated(
+                    padding: EdgeInsets.only(left: 12, right: 12),
+                    itemBuilder: (context, index) {
+                      return Container(
+                        height: 44,
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          'Index - $index',
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  separatorBuilder: (context, index) {
-                    return Container(height: 1, color: Colors.black12);
-                  },
-                  itemCount: 100,
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Container(height: 1, color: Colors.black12);
+                    },
+                    itemCount: 100,
+                  ),
                 ),
-              ),
-              SizedBox(height: 16),
-            ],
-          )),
-          _renderBlock(Column(
-            children: [
-              _renderHeader('ListView horizontal scroll'),
-              Container(
-                height: 200,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (context, index) {
-                    return Container(
-                      width: 100,
-                      color: Color.fromARGB(255, Random().nextInt(255),
-                          Random().nextInt(255), Random().nextInt(255)),
-                      alignment: Alignment.center,
-                      child: Text(
-                        '$index',
-                        style: TextStyle(
-                          fontSize: 14,
+                SizedBox(height: 16),
+              ],
+            )),
+            _renderBlock(Column(
+              children: [
+                _renderHeader('ListView horizontal scroll'),
+                Container(
+                  height: 200,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Container(
+                        width: 100,
+                        color: Color.fromARGB(255, Random().nextInt(255),
+                            Random().nextInt(255), Random().nextInt(255)),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$index',
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
                         ),
-                      ),
-                    );
-                  },
-                  itemCount: 100,
+                      );
+                    },
+                    itemCount: 100,
+                  ),
                 ),
-              ),
-              SizedBox(height: 16),
-            ],
-          )),
-        ],
+                SizedBox(height: 16),
+              ],
+            )),
+          ],
+        ),
       ),
     );
   }
