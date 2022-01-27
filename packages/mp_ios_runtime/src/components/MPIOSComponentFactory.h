@@ -21,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSMutableDictionary<NSNumber *, NSDictionary *> *cachedElement;
 @property (nonatomic, readonly) NSMutableDictionary<NSNumber *, NSAttributedString *> *cachedAttributedString;
 
++ (void)registerPlatformView:(NSString *)name clazz:(Class)clazz;
 - (MPIOSComponentView *)create:(NSDictionary *)data;
 - (MPIOSAncestorView *)createAncestors:(NSDictionary *)data target:(MPIOSComponentView *)target;
 - (void)callbackTextMeasureResult:(NSNumber *)measureId size:(CGSize)size;

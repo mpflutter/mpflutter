@@ -55,7 +55,7 @@ class _PlatformChannelIO {
                   'message': {
                     'event': 'callbackResult',
                     'seqId': seqId,
-                    'result': json.encode(result),
+                    'result': result,
                   },
                 }));
               } catch (e) {
@@ -73,10 +73,11 @@ class _PlatformChannelIO {
         );
       } else if (message['event'] == 'callbackResult') {
         int seqId = message['seqId'];
-        String result = message['result'];
+        dynamic result = message['result'];
         final callback = _responseCallbacks[seqId];
-        if (callback != null && result is String) {
-          if (result == 'NOTIMPLEMENTED' || result.startsWith('ERROR:')) {
+        if (callback != null) {
+          if (result == 'NOTIMPLEMENTED' ||
+              (result is String && result.startsWith('ERROR:'))) {
             callback(
               StandardMethodCodec().encodeErrorEnvelope(
                 code: result,
@@ -85,20 +86,17 @@ class _PlatformChannelIO {
             );
           } else {
             callback(
-              StandardMethodCodec().encodeSuccessEnvelope(json.decode(result)),
+              StandardMethodCodec().encodeSuccessEnvelope(result),
             );
           }
           _responseCallbacks.remove(seqId);
         }
       } else if (message['event'] == 'callbackEventSink') {
         String method = message['method'];
-        String result = message['result'];
+        dynamic result = message['result'];
         final _ = ServicesBinding.instance?.defaultBinaryMessenger
-            .handlePlatformMessage(
-                method,
-                StandardMethodCodec()
-                    .encodeSuccessEnvelope(json.decode(result)),
-                (_) {});
+            .handlePlatformMessage(method,
+                StandardMethodCodec().encodeSuccessEnvelope(result), (_) {});
       }
     } catch (e) {
       print(e);

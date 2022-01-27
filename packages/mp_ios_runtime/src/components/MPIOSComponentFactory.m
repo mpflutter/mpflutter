@@ -56,6 +56,10 @@ NSDictionary *ancestors;
 @implementation MPIOSComponentFactory
 
 + (void)load {
+    [self initializeComponentsIfNeed];
+}
+
++ (void)initializeComponentsIfNeed {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         components = @{
@@ -95,6 +99,13 @@ NSDictionary *ancestors;
             @"clip_r_rect": [MPIOSClipRRectAncestor class],
         };
     });
+}
+
++ (void)registerPlatformView:(NSString *)name clazz:(Class)clazz {
+    [self initializeComponentsIfNeed];
+    NSMutableDictionary *c = [components mutableCopy];
+    [c setObject:clazz forKey:name];
+    components = [c copy];
 }
 
 - (instancetype)init

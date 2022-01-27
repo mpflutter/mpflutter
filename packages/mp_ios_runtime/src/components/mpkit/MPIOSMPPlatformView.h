@@ -17,9 +17,9 @@ typedef void(^MPIOSPlatformViewCallback)(id result);
 @interface MPIOSMPPlatformView : MPIOSComponentView
 
 + (void)didReceivedPlatformViewMessage:(NSDictionary *)message engine:(nonnull MPIOSEngine *)engine;
-- (void)onMethodCall:(NSString *)method params:(id)params resultCallback:(MPIOSPlatformViewCallback)resultCallback;
-- (void)invokeMethod:(NSString *)method params:(id)params;
-- (void)invokeMethod:(NSString *)method params:(id)params resultCallback:(MPIOSPlatformViewCallback)resultCallback;
+- (void)onMethodCall:(NSString *)method params:(NSDictionary *)params resultCallback:(MPIOSPlatformViewCallback)resultCallback;
+- (void)invokeMethod:(NSString *)method params:(NSDictionary *)params;
+- (void)invokeMethod:(NSString *)method params:(NSDictionary *)params resultCallback:(MPIOSPlatformViewCallback)resultCallback;
 
 @end
 

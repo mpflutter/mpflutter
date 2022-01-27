@@ -70,7 +70,7 @@
 }
 
 - (void)onMethodCall:(NSString *)method
-              params:(id)params
+              params:(NSDictionary *)params
       resultCallback:(MPIOSPlatformViewCallback)resultCallback {
     if ([@"setValue" isEqualToString:method] && [params isKindOfClass:[NSDictionary class]]) {
         NSNumber *value = params[@"value"];

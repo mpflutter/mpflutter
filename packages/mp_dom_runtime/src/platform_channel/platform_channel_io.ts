@@ -37,7 +37,7 @@ export class PlatformChannelIO {
               type: "platform_channel",
               message: {
                 event: "callbackResult",
-                result: JSON.stringify(result),
+                result: result,
                 seqId: seqId,
               },
             })
@@ -63,7 +63,7 @@ export class PlatformChannelIO {
                 message: {
                   event: "callbackEventSink",
                   method: method,
-                  result: JSON.stringify(data),
+                  result: data,
                   seqId: seqId,
                 },
               })
@@ -77,11 +77,11 @@ export class PlatformChannelIO {
       const seqId = message.seqId;
       const result = message.result;
       const callback = this.responseCallbacks[seqId];
-      if (callback !== undefined && typeof result === "string") {
-        if (result === "NOTIMPLEMENTED" || result.indexOf("ERROR:") === 0) {
+      if (callback !== undefined) {
+        if (result === "NOTIMPLEMENTED" || (typeof result === "string" && result.indexOf("ERROR:") === 0)) {
           callback[1](result);
         } else {
-          callback[0](JSON.parse(result));
+          callback[0](result);
         }
       }
       delete this.responseCallbacks[seqId];

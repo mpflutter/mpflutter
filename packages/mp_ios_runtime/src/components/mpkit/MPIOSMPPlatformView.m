@@ -58,12 +58,12 @@ static NSMutableDictionary<NSString *, MPIOSPlatformViewCallback> *invokeMethodC
 }
 
 - (void)onMethodCall:(NSString *)method
-              params:(id)params
+              params:(NSDictionary *)params
       resultCallback:(MPIOSPlatformViewCallback)resultCallback {
     
 }
 
-- (void)invokeMethod:(NSString *)method params:(id)params {
+- (void)invokeMethod:(NSString *)method params:(NSDictionary *)params {
     if (self.hashCode == nil || method == nil) {
         return;
     }
@@ -84,7 +84,7 @@ static NSMutableDictionary<NSString *, MPIOSPlatformViewCallback> *invokeMethodC
 }
 
 - (void)invokeMethod:(NSString *)method
-              params:(id)params
+              params:(NSDictionary *)params
       resultCallback:(MPIOSPlatformViewCallback)resultCallback {
     if (resultCallback == nil) {
         [self invokeMethod:method params:params];

@@ -12,6 +12,10 @@
 #import "MPIOSPage.h"
 #import "MPIOSApp.h"
 #import "MPIOSViewController.h"
+#import "MPIOSPluginRegister.h"
+#import "MPIOSMethodChannel.h"
+#import "MPIOSEventChannel.h"
+#import "MPIOSMPPlatformView.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

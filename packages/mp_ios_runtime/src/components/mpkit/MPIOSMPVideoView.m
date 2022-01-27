@@ -71,7 +71,7 @@
 }
 
 - (void)onMethodCall:(NSString *)method
-              params:(id)params
+              params:(NSDictionary *)params
       resultCallback:(MPIOSPlatformViewCallback)resultCallback {
     if ([@"play" isEqualToString:method]) {
         [[self.contentViewController player] play];

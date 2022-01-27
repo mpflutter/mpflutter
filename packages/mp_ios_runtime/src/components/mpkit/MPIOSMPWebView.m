@@ -44,7 +44,7 @@
     }
 }
 
-- (void)onMethodCall:(NSString *)method params:(id)params resultCallback:(nonnull MPIOSPlatformViewCallback)resultCallback {
+- (void)onMethodCall:(NSString *)method params:(NSDictionary *)params resultCallback:(nonnull MPIOSPlatformViewCallback)resultCallback {
     if ([method isEqualToString:@"reload"]) {
         [self.contentView reload];
     }

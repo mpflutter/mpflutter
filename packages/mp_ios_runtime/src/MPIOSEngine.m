@@ -30,6 +30,7 @@
 #import "MPIOSListView.h"
 #import "MPIOSGridView.h"
 #import "MPIOSCustomScrollView.h"
+#import "MPIOSPlatformChannelIO.h"
 
 @interface MPIOSEngine ()
 
@@ -46,6 +47,7 @@
 @property (nonatomic, strong) MPIOSMPJS *mpJS;
 @property (nonatomic, strong) MPIOSTextMeasurer *textMeasurer;
 @property (nonatomic, strong) MPIOSWindowInfo *windowInfo;
+@property (nonatomic, strong) MPIOSPlatformChannelIO *platformChannelIO;
 
 @end
 
@@ -101,6 +103,7 @@
     _windowInfo = [[MPIOSWindowInfo alloc] init];
     _windowInfo.engine = self;
     _provider = [[MPIOSProvider alloc] init];
+    _platformChannelIO = [[MPIOSPlatformChannelIO alloc] initWithEngine:self];
 }
 
 - (void)start {
@@ -227,6 +230,9 @@
     } else if ([decodedMessage[@"type"] isKindOfClass:[NSString class]] &&
                [decodedMessage[@"type"] isEqualToString:@"platform_view"]) {
         [MPIOSMPPlatformView didReceivedPlatformViewMessage:decodedMessage[@"message"] engine:self];
+    } else if ([decodedMessage[@"type"] isKindOfClass:[NSString class]] &&
+               [decodedMessage[@"type"] isEqualToString:@"platform_channel"]) {
+        [self.platformChannelIO didReceivedMessage:decodedMessage[@"message"]];
     } else if ([decodedMessage[@"type"] isKindOfClass:[NSString class]] &&
                [decodedMessage[@"type"] isEqualToString:@"scroll_view"]) {
         [self didReceivedScrollView:decodedMessage[@"message"]];

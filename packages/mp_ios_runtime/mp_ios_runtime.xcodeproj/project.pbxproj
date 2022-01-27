@@ -58,6 +58,12 @@
 		63A37AC9279D9F8600622327 /* MPIOSProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37AC8279D9F8600622327 /* MPIOSProvider.m */; };
 		63A37ACC279DA26E00622327 /* MPSampleProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37ACB279DA26E00622327 /* MPSampleProvider.m */; };
 		63A37ACF27A2804800622327 /* MPIOSMPCircularProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37ACE27A2804800622327 /* MPIOSMPCircularProgressIndicator.m */; };
+		63A37AD427A2C68F00622327 /* MPIOSPluginRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37AD327A2C68F00622327 /* MPIOSPluginRegister.m */; };
+		63A37AD727A2C6B900622327 /* MPIOSPlatformChannelIO.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37AD627A2C6B900622327 /* MPIOSPlatformChannelIO.m */; };
+		63A37ADA27A2C6CC00622327 /* MPIOSMethodChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37AD927A2C6CC00622327 /* MPIOSMethodChannel.m */; };
+		63A37ADD27A2C6E300622327 /* MPIOSEventChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37ADC27A2C6E300622327 /* MPIOSEventChannel.m */; };
+		63A37AE027A2D2D500622327 /* MPSampleChannels.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37ADF27A2D2D500622327 /* MPSampleChannels.m */; };
+		63A37AE427A2EAF200622327 /* MPIOSFlutterPlatform.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37AE327A2EAF200622327 /* MPIOSFlutterPlatform.m */; };
 		63C3ADBD266091170000A492 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 63C3ADBC266091170000A492 /* AppDelegate.m */; };
 		63C3ADC8266091180000A492 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 63C3ADC7266091180000A492 /* Assets.xcassets */; };
 		63C3ADCB266091180000A492 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 63C3ADC9266091180000A492 /* LaunchScreen.storyboard */; };
@@ -173,6 +179,18 @@
 		63A37ACB279DA26E00622327 /* MPSampleProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPSampleProvider.m; sourceTree = "<group>"; };
 		63A37ACD27A2804800622327 /* MPIOSMPCircularProgressIndicator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSMPCircularProgressIndicator.h; sourceTree = "<group>"; };
 		63A37ACE27A2804800622327 /* MPIOSMPCircularProgressIndicator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSMPCircularProgressIndicator.m; sourceTree = "<group>"; };
+		63A37AD227A2C68F00622327 /* MPIOSPluginRegister.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSPluginRegister.h; sourceTree = "<group>"; };
+		63A37AD327A2C68F00622327 /* MPIOSPluginRegister.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSPluginRegister.m; sourceTree = "<group>"; };
+		63A37AD527A2C6B900622327 /* MPIOSPlatformChannelIO.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSPlatformChannelIO.h; sourceTree = "<group>"; };
+		63A37AD627A2C6B900622327 /* MPIOSPlatformChannelIO.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSPlatformChannelIO.m; sourceTree = "<group>"; };
+		63A37AD827A2C6CC00622327 /* MPIOSMethodChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSMethodChannel.h; sourceTree = "<group>"; };
+		63A37AD927A2C6CC00622327 /* MPIOSMethodChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSMethodChannel.m; sourceTree = "<group>"; };
+		63A37ADB27A2C6E300622327 /* MPIOSEventChannel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSEventChannel.h; sourceTree = "<group>"; };
+		63A37ADC27A2C6E300622327 /* MPIOSEventChannel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSEventChannel.m; sourceTree = "<group>"; };
+		63A37ADE27A2D2D500622327 /* MPSampleChannels.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPSampleChannels.h; sourceTree = "<group>"; };
+		63A37ADF27A2D2D500622327 /* MPSampleChannels.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPSampleChannels.m; sourceTree = "<group>"; };
+		63A37AE227A2EAF200622327 /* MPIOSFlutterPlatform.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSFlutterPlatform.h; sourceTree = "<group>"; };
+		63A37AE327A2EAF200622327 /* MPIOSFlutterPlatform.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSFlutterPlatform.m; sourceTree = "<group>"; };
 		63C3ADB8266091170000A492 /* mp_ios_runtime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = mp_ios_runtime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		63C3ADBB266091170000A492 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		63C3ADBC266091170000A492 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -248,6 +266,30 @@
 			path = wx;
 			sourceTree = "<group>";
 		};
+		63A37AD127A2C67900622327 /* platform_channel */ = {
+			isa = PBXGroup;
+			children = (
+				63A37AD227A2C68F00622327 /* MPIOSPluginRegister.h */,
+				63A37AD327A2C68F00622327 /* MPIOSPluginRegister.m */,
+				63A37AD527A2C6B900622327 /* MPIOSPlatformChannelIO.h */,
+				63A37AD627A2C6B900622327 /* MPIOSPlatformChannelIO.m */,
+				63A37AD827A2C6CC00622327 /* MPIOSMethodChannel.h */,
+				63A37AD927A2C6CC00622327 /* MPIOSMethodChannel.m */,
+				63A37ADB27A2C6E300622327 /* MPIOSEventChannel.h */,
+				63A37ADC27A2C6E300622327 /* MPIOSEventChannel.m */,
+			);
+			path = platform_channel;
+			sourceTree = "<group>";
+		};
+		63A37AE127A2EACD00622327 /* flutter_platform */ = {
+			isa = PBXGroup;
+			children = (
+				63A37AE227A2EAF200622327 /* MPIOSFlutterPlatform.h */,
+				63A37AE327A2EAF200622327 /* MPIOSFlutterPlatform.m */,
+			);
+			path = flutter_platform;
+			sourceTree = "<group>";
+		};
 		63C3ADAF266091170000A492 = {
 			isa = PBXGroup;
 			children = (
@@ -275,6 +317,8 @@
 				63C3ADBC266091170000A492 /* AppDelegate.m */,
 				63A37ACA279DA26E00622327 /* MPSampleProvider.h */,
 				63A37ACB279DA26E00622327 /* MPSampleProvider.m */,
+				63A37ADE27A2D2D500622327 /* MPSampleChannels.h */,
+				63A37ADF27A2D2D500622327 /* MPSampleChannels.m */,
 				63C3ADC7266091180000A492 /* Assets.xcassets */,
 				63C3ADC9266091180000A492 /* LaunchScreen.storyboard */,
 				63C3ADCC266091180000A492 /* Info.plist */,
@@ -286,6 +330,7 @@
 		63C3ADD5266091FE0000A492 /* src */ = {
 			isa = PBXGroup;
 			children = (
+				63A37AD127A2C67900622327 /* platform_channel */,
 				63C3AE66266F221C0000A492 /* components */,
 				63C3ADF92660ED6A0000A492 /* debugger */,
 				63C3ADEE26609B740000A492 /* api */,
@@ -317,6 +362,7 @@
 		63C3ADEE26609B740000A492 /* api */ = {
 			isa = PBXGroup;
 			children = (
+				63A37AE127A2EACD00622327 /* flutter_platform */,
 				633E669826843D1200DF66AA /* wx */,
 				633E66942684346F00DF66AA /* network */,
 				633E66932684346F00DF66AA /* storage */,
@@ -572,6 +618,7 @@
 				6304123B266F83BF00ED3CD4 /* MPIOSOpacity.m in Sources */,
 				63041274267AEED700ED3CD4 /* MPIOSCustomPaint.m in Sources */,
 				633E668C2684295700DF66AA /* MPIOSMPWebView.m in Sources */,
+				63A37AE427A2EAF200622327 /* MPIOSFlutterPlatform.m in Sources */,
 				63C3ADDD266093CD0000A492 /* MPIOSEngine.m in Sources */,
 				630412682678BA1000ED3CD4 /* MPIOSCustomScrollViewLayout.m in Sources */,
 				63A37ACC279DA26E00622327 /* MPSampleProvider.m in Sources */,
@@ -584,15 +631,18 @@
 				63041277267C71C000ED3CD4 /* MPIOSEditableText.m in Sources */,
 				63C3AE72266F251D0000A492 /* MPIOSComponentFactory.m in Sources */,
 				630412712679F32B00ED3CD4 /* MPIOSWebDialogs.m in Sources */,
+				63A37ADD27A2C6E300622327 /* MPIOSEventChannel.m in Sources */,
 				6304127D268035AC00ED3CD4 /* MPIOSRouter.m in Sources */,
 				63C3ADF72660DF5F0000A492 /* MPIOSTimer.m in Sources */,
 				34B141982762F74A0044D633 /* MPIOSMPPlatformView.m in Sources */,
 				63C3ADD8266093010000A492 /* MPIOSRuntime.m in Sources */,
 				345D6B6D27159BA40016D0B9 /* MPIOSForegroundDecoratedBox.m in Sources */,
+				63A37AD427A2C68F00622327 /* MPIOSPluginRegister.m in Sources */,
 				630412652678B8D600ED3CD4 /* MPIOSCustomScrollView.m in Sources */,
 				63041244266FBE4200ED3CD4 /* MPIOSGestureDetector.m in Sources */,
 				63A37AC9279D9F8600622327 /* MPIOSProvider.m in Sources */,
 				63C3AE6B266F22AF0000A492 /* MPIOSMPScaffold.m in Sources */,
+				63A37AD727A2C6B900622327 /* MPIOSPlatformChannelIO.m in Sources */,
 				6304126E2679DB9500ED3CD4 /* MPIOSMPIcon.m in Sources */,
 				633E669B26843D1D00DF66AA /* MPIOSWXCompat.m in Sources */,
 				6304128326806C1900ED3CD4 /* MPIOSMPJS.m in Sources */,
@@ -609,6 +659,7 @@
 				63A37ACF27A2804800622327 /* MPIOSMPCircularProgressIndicator.m in Sources */,
 				6304123E266F86F200ED3CD4 /* MPIOSClipOval.m in Sources */,
 				633E66862683151500DF66AA /* MPIOSMpkReader.m in Sources */,
+				63A37AE027A2D2D500622327 /* MPSampleChannels.m in Sources */,
 				638D4C0927625B9600DD4558 /* MPIOSMPDatePicker.m in Sources */,
 				63C3ADCE266091180000A492 /* main.m in Sources */,
 				630412622678483C00ED3CD4 /* MPIOSWaterfallLayout.m in Sources */,
@@ -625,6 +676,7 @@
 				6304124D2670700400ED3CD4 /* MPIOSOffstage.m in Sources */,
 				63C3ADFC2660ED760000A492 /* MPIOSDebugger.m in Sources */,
 				638D4C06276258F300DD4558 /* MPIOSMPPicker.m in Sources */,
+				63A37ADA27A2C6CC00622327 /* MPIOSMethodChannel.m in Sources */,
 				630412AC2680D71700ED3CD4 /* MPIOSDeviceInfo.m in Sources */,
 				6379F83926AABC4A00891EDA /* MPIOSPage.m in Sources */,
 			);
