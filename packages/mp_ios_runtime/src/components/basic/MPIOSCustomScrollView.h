@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MPIOSCustomScrollView : MPIOSComponentView
 
+- (void)endRefresh;
+
 @end
 
 NS_ASSUME_NONNULL_END

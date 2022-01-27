@@ -38,6 +38,7 @@
 #import "MPIOSMPDatePicker.h"
 #import "MPIOSMPSlider.h"
 #import "MPIOSMPSwitch.h"
+#import "MPIOSMPCircularProgressIndicator.h"
 
 NSDictionary *components;
 NSDictionary *ancestors;
@@ -87,6 +88,7 @@ NSDictionary *ancestors;
             @"mp_date_picker": [MPIOSMPDatePicker class],
             @"mp_slider": [MPIOSMPSlider class],
             @"mp_switch": [MPIOSMPSwitch class],
+            @"mp_circular_progress_indicator": [MPIOSMPCircularProgressIndicator class],
         };
         ancestors = @{
             @"opacity": [MPIOSOpacityAncestor class],

@@ -10,13 +10,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MPIOSImageProvider, MPIOSDialogProvider, MPIOSNavigatorProvider;
+@class MPIOSImageProvider, MPIOSDialogProvider, MPIOSUIProvider, MPIOSViewController;
 
 @interface MPIOSProvider : NSObject
 
 @property (nonatomic, strong) MPIOSImageProvider *imageProvider;
 @property (nonatomic, strong) MPIOSDialogProvider *dialogProvider;
-@property (nonatomic, strong) MPIOSNavigatorProvider *navigatorProvider;
+@property (nonatomic, strong) MPIOSUIProvider *uiProvider;
 
 @end
 
@@ -55,7 +55,9 @@ typedef void(^MPIOSDialogProviderActionSheetCompletionBlock)(NSInteger);
 
 @end
 
-@interface MPIOSNavigatorProvider : NSObject
+@interface MPIOSUIProvider : NSObject
+
+- (UIView *)loadCircularProgressIndicator;
 
 @end
 

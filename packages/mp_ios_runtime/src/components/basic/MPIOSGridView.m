@@ -16,6 +16,7 @@
 @property (nonatomic, assign) BOOL cellCreating;
 @property (nonatomic, assign) BOOL isRoot;
 @property (nonatomic, assign) UIEdgeInsets padding;
+@property (nonatomic, strong) UIRefreshControl *refreshControl;
 @property (nonatomic, strong) UICollectionView *contentView;
 @property (nonatomic, strong) MPIOSWaterfallLayout *contentViewFlowLayout;
 @property (nonatomic, assign) CGFloat crossAxisSpacing;
@@ -38,9 +39,29 @@
         _contentView.dataSource = self;
         _contentView.delegate = self;
         _contentView.allowsSelection = NO;
+        _refreshControl = [[UIRefreshControl alloc] init];
+        [_refreshControl addTarget:self action:@selector(onRefresh) forControlEvents:UIControlEventValueChanged];
         [self addSubview:_contentView];
     }
     return self;
+}
+
+- (void)onRefresh {
+    __strong MPIOSEngine *engine = self.engine;
+    if (engine != nil) {
+        [engine sendMessage:@{
+            @"type": @"scroll_view",
+            @"message": @{
+                    @"event": @"onRefresh",
+                    @"target": self.hashCode ?: [NSNull null],
+                    @"isRoot": self.attributes[@"isRoot"] ?: @(NO),
+            },
+        }];
+    }
+}
+
+- (void)endRefresh {
+    [self.refreshControl endRefreshing];
 }
 
 - (void)setChildren:(NSArray *)children {
@@ -109,6 +130,12 @@
         }
     }
     self.isRoot = [attributes[@"isRoot"] isKindOfClass:[NSNumber class]] ? [attributes[@"isRoot"] boolValue] : NO;
+    if ([attributes[@"onRefresh"] isKindOfClass:[NSNumber class]]) {
+        [self.contentView addSubview:self.refreshControl];
+    }
+    else {
+        [self.refreshControl removeFromSuperview];
+    }
 }
 
 - (void)setMainAxisSpacing:(CGFloat)mainAxisSpacing {

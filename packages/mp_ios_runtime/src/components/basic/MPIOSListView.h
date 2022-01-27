@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MPIOSListView : MPIOSComponentView
 
+- (void)endRefresh;
+
 @end
 
 NS_ASSUME_NONNULL_END

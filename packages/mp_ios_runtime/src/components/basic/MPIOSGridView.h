@@ -12,6 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MPIOSGridView : MPIOSComponentView
 
+- (void)endRefresh;
+
 @end
 
 NS_ASSUME_NONNULL_END

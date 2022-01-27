@@ -8,6 +8,7 @@
 
 #import "MPIOSProvider.h"
 #import "MPIOSMPIcon.h"
+#import "MPIOSViewController.h"
 #import <MBProgressHUD/MBProgressHUD.h>
 
 @implementation MPIOSProvider
@@ -18,7 +19,7 @@
     if (self) {
         _imageProvider = [[MPIOSImageProvider alloc] init];
         _dialogProvider = [[MPIOSDialogProvider alloc] init];
-        _navigatorProvider = [[MPIOSNavigatorProvider alloc] init];
+        _uiProvider = [[MPIOSUIProvider alloc] init];
     }
     return self;
 }
@@ -218,6 +219,10 @@ static MBProgressHUD *activeHUD;
 
 @end
 
-@implementation MPIOSNavigatorProvider
+@implementation MPIOSUIProvider
+
+- (UIView *)loadCircularProgressIndicator {
+    return [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+}
 
 @end

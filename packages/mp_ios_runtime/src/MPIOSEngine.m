@@ -27,6 +27,9 @@
 #import "MPIOSMpkReader.h"
 #import "MPIOSWindowInfo.h"
 #import "MPIOSMPPlatformView.h"
+#import "MPIOSListView.h"
+#import "MPIOSGridView.h"
+#import "MPIOSCustomScrollView.h"
 
 @interface MPIOSEngine ()
 
@@ -224,6 +227,9 @@
     } else if ([decodedMessage[@"type"] isKindOfClass:[NSString class]] &&
                [decodedMessage[@"type"] isEqualToString:@"platform_view"]) {
         [MPIOSMPPlatformView didReceivedPlatformViewMessage:decodedMessage[@"message"] engine:self];
+    } else if ([decodedMessage[@"type"] isKindOfClass:[NSString class]] &&
+               [decodedMessage[@"type"] isEqualToString:@"scroll_view"]) {
+        [self didReceivedScrollView:decodedMessage[@"message"]];
     }
 }
 
@@ -263,6 +269,28 @@
             [[self.componentFactory cachedElement] removeObjectForKey:obj];
         }
     }];
+}
+
+- (void)didReceivedScrollView:(NSDictionary *)message {
+    if (![message isKindOfClass:[NSDictionary class]]) {
+        return;
+    }
+    NSString *event = message[@"event"];
+    if (event != nil && [@"onRefreshEnd" isEqualToString:event]) {
+        NSNumber *target = message[@"target"];
+        if (target != nil) {
+            MPIOSComponentView *targetView = self.componentFactory.cachedView[target];
+            if ([targetView isKindOfClass:[MPIOSListView class]]) {
+                [(MPIOSListView *)targetView endRefresh];
+            }
+            else if ([targetView isKindOfClass:[MPIOSGridView class]]) {
+                [(MPIOSGridView *)targetView endRefresh];
+            }
+            else if ([targetView isKindOfClass:[MPIOSCustomScrollView class]]) {
+                [(MPIOSCustomScrollView *)targetView endRefresh];
+            }
+        }
+    }
 }
 
 - (void)sendMessage:(NSDictionary *)message {
