@@ -7,18 +7,21 @@
 //
 
 #import "MPIOSStorage.h"
+#import "MPIOSEngine.h"
+#import "MPIOSProvider.h"
 
 @implementation MPIOSStorage
 
-+ (void)setupWithJSContext:(JSContext *)context {
++ (void)setupWithJSContext:(JSContext *)context engine:(nonnull MPIOSEngine *)engine {
+    NSUserDefaults *userDefaults = [engine.provider.dataProvider createUserDefaults];
     context.globalObject[@"wx"][@"removeStorageSync"] = ^(NSString *key){
         if ([key isKindOfClass:[NSString class]]) {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:key];
+            [userDefaults removeObjectForKey:key];
         }
     };
     context.globalObject[@"wx"][@"getStorageSync"] = ^JSValue* (NSString *key){
         if ([key isKindOfClass:[NSString class]]) {
-            return [[NSUserDefaults standardUserDefaults] valueForKey:key];
+            return [userDefaults valueForKey:key];
         }
         else {
             return nil;
@@ -28,13 +31,13 @@
         if ([key isKindOfClass:[NSString class]]) {
             id obj = value.toObject;
             if (obj != nil) {
-                [[NSUserDefaults standardUserDefaults] setObject:obj forKey:key];
+                [userDefaults setObject:obj forKey:key];
             }
         }
     };
     context.globalObject[@"wx"][@"getStorageInfoSync"] = ^NSDictionary* (){
         return @{
-            @"keys": [[[NSUserDefaults standardUserDefaults] dictionaryRepresentation] allKeys],
+            @"keys": [[userDefaults dictionaryRepresentation] allKeys],
         };
     };
 }

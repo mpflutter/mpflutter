@@ -20,6 +20,7 @@
         _imageProvider = [[MPIOSImageProvider alloc] init];
         _dialogProvider = [[MPIOSDialogProvider alloc] init];
         _uiProvider = [[MPIOSUIProvider alloc] init];
+        _dataProvider = [[MPIOSDataProvider alloc] init];
     }
     return self;
 }
@@ -223,6 +224,19 @@ static MBProgressHUD *activeHUD;
 
 - (UIView *)loadCircularProgressIndicator {
     return [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+}
+
+@end
+
+@implementation MPIOSDataProvider
+
+- (NSURLSessionTask *)createURLSessionTask:(NSURLRequest *)request
+                         completionHandler:(void (^)(NSData * _Nullable, NSURLResponse * _Nullable, NSError * _Nullable))completionHandler {
+    return [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:completionHandler];
+}
+
+- (NSUserDefaults *)createUserDefaults {
+    return [NSUserDefaults standardUserDefaults];
 }
 
 @end

@@ -121,8 +121,8 @@
     [MPIOSTimer setupWithJSContext:self.jsContext];
     [MPIOSDeviceInfo setupWithJSContext:self.jsContext size:[UIScreen mainScreen].bounds.size];
     [MPIOSWXCompat setupWithJSContext:self.jsContext];
-    [MPIOSNetworkHttp setupWithJSContext:self.jsContext];
-    [MPIOSStorage setupWithJSContext:self.jsContext];
+    [MPIOSNetworkHttp setupWithJSContext:self.jsContext engine:self];
+    [MPIOSStorage setupWithJSContext:self.jsContext engine:self];
     self.jsContext[@"self"] = self.jsContext.globalObject;
     self.mpJS = [[MPIOSMPJS alloc] initWithEngine:self];
     if (self.jsCode != nil) {

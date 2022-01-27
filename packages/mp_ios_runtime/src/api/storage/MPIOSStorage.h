@@ -11,9 +11,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class MPIOSEngine;
+
 @interface MPIOSStorage : NSObject
 
-+ (void)setupWithJSContext:(JSContext *)context;
++ (void)setupWithJSContext:(JSContext *)context engine:(MPIOSEngine *)engine;
 
 @end
 

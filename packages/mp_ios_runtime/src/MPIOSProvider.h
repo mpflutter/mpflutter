@@ -10,13 +10,14 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MPIOSImageProvider, MPIOSDialogProvider, MPIOSUIProvider, MPIOSViewController;
+@class MPIOSImageProvider, MPIOSDialogProvider, MPIOSUIProvider, MPIOSDataProvider, MPIOSViewController;
 
 @interface MPIOSProvider : NSObject
 
 @property (nonatomic, strong) MPIOSImageProvider *imageProvider;
 @property (nonatomic, strong) MPIOSDialogProvider *dialogProvider;
 @property (nonatomic, strong) MPIOSUIProvider *uiProvider;
+@property (nonatomic, strong) MPIOSDataProvider *dataProvider;
 
 @end
 
@@ -58,6 +59,15 @@ typedef void(^MPIOSDialogProviderActionSheetCompletionBlock)(NSInteger);
 @interface MPIOSUIProvider : NSObject
 
 - (UIView *)loadCircularProgressIndicator;
+
+@end
+
+@interface MPIOSDataProvider : NSObject
+
+- (NSURLSessionTask *)createURLSessionTask:(NSURLRequest *)request
+                         completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
+
+- (NSUserDefaults *)createUserDefaults;
 
 @end
 

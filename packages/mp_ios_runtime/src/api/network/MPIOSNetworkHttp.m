@@ -7,6 +7,8 @@
 //
 
 #import "MPIOSNetworkHttp.h"
+#import "MPIOSEngine.h"
+#import "MPIOSProvider.h"
 
 @protocol MPIOSNetworkHttpTaskJSExport <JSExport>
 
@@ -30,13 +32,18 @@
 
 @implementation MPIOSNetworkHttp
 
-+ (void)setupWithJSContext:(JSContext *)context {
++ (void)setupWithJSContext:(JSContext *)context engine:(nonnull MPIOSEngine *)engine {
+    __weak MPIOSEngine *weakEngine = engine;
     context.globalObject[@"wx"][@"request"] = ^(JSValue *options){
-        return [MPIOSNetworkHttp request:options];
+        return [MPIOSNetworkHttp request:options engine:weakEngine];
     };
 }
 
-+ (MPIOSNetworkHttpTask *)request:(JSValue *)options {
++ (MPIOSNetworkHttpTask *)request:(JSValue *)options engine:(nonnull MPIOSEngine *)engine {
+    __strong MPIOSEngine *strongEngine = engine;
+    if (strongEngine == nil) {
+        return nil;
+    }
     if (!options.isObject) {
         return nil;
     }
@@ -59,7 +66,7 @@
     }
     JSValue *success = [options[@"success"] isObject] ? options[@"success"] : nil;
     JSValue *fail = [options[@"fail"] isObject] ? options[@"fail"] : nil;
-    NSURLSessionTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request.copy completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+    NSURLSessionTask *task = [strongEngine.provider.dataProvider createURLSessionTask:request.copy completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
         if (data == nil || error) {
             [fail callWithArguments:@[error.localizedDescription ?: @""]];
         }
