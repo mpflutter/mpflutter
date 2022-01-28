@@ -17,8 +17,12 @@ import com.mpflutter.runtime.api.MPStorage;
 import com.mpflutter.runtime.api.MPTimer;
 import com.mpflutter.runtime.api.MPWXCompat;
 import com.mpflutter.runtime.components.MPComponentFactory;
+import com.mpflutter.runtime.components.MPComponentView;
 import com.mpflutter.runtime.components.basic.CustomPaint;
+import com.mpflutter.runtime.components.basic.CustomScrollView;
 import com.mpflutter.runtime.components.basic.DrawableStorage;
+import com.mpflutter.runtime.components.basic.GridView;
+import com.mpflutter.runtime.components.basic.ListView;
 import com.mpflutter.runtime.components.basic.WebDialogs;
 import com.mpflutter.runtime.components.mpkit.MPJS;
 import com.mpflutter.runtime.components.mpkit.MPPlatformView;
@@ -236,6 +240,8 @@ public class MPEngine {
                         textMeasurer.didReceivedDoMeasureData(decodedMessage.optObject("message"));
                     } else if (type.equalsIgnoreCase("platform_view")) {
                         MPPlatformView.didReceivedPlatformViewMessage(decodedMessage.optObject("message"), MPEngine.this);
+                    } else if (type.equalsIgnoreCase("scroll_view")) {
+                        didReceivedScrollView(decodedMessage.optObject("message"));
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
@@ -278,6 +284,25 @@ public class MPEngine {
         for (int i = 0; i < data.length(); i++) {
             componentFactory.cachedView.remove(i);
             componentFactory.cachedElement.remove(i);
+        }
+    }
+
+    private void didReceivedScrollView(JSProxyObject message) {
+        String event = message.optString("event", null);
+        if (event != null && event.contentEquals("onRefreshEnd")) {
+            int target = message.optInt("target", 0);
+            MPComponentView targetView = componentFactory.cachedView.get(target);
+            if (targetView != null) {
+                if (targetView instanceof ListView) {
+                    ((ListView) targetView).endRefresh();
+                }
+                else if (targetView instanceof GridView) {
+                    ((GridView) targetView).endRefresh();
+                }
+                else if (targetView instanceof CustomScrollView) {
+                    ((CustomScrollView) targetView).endRefresh();
+                }
+            }
         }
     }
 

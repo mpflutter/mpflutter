@@ -222,7 +222,7 @@ static MBProgressHUD *activeHUD;
 
 @implementation MPIOSUIProvider
 
-- (UIView *)loadCircularProgressIndicator {
+- (UIView *)createCircularProgressIndicator {
     return [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
 }
 

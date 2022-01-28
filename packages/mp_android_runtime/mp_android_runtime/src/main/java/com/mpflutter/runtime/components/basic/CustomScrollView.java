@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
@@ -21,12 +22,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class CustomScrollView extends MPComponentView {
 
     RecyclerView contentView;
     CustomScrollViewAdapter contentAdapter;
     CustomScrollViewLayout waterfallLayout;
     boolean isRoot = false;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public CustomScrollView(@NonNull Context context) {
         super(context);
@@ -38,6 +42,30 @@ public class CustomScrollView extends MPComponentView {
         contentAdapter = new CustomScrollViewAdapter();
         contentView.setAdapter(contentAdapter);
         contentView.setLayoutManager(waterfallLayout);
+        swipeRefreshLayout = new SwipeRefreshLayout(context);
+        swipeRefreshLayout.addView(contentView, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                CustomScrollView.this.onRefresh();
+            }
+        });
+    }
+
+    void onRefresh() {
+        engine.sendMessage(new HashMap(){{
+            put("type", "scroll_view");
+            put("message", new HashMap(){{
+                put("event", "onRefresh");
+                put("target", hashCode);
+                put("isRoot", attributes.optBoolean("isRoot", false));
+            }});
+        }});
+    }
+
+    public void endRefresh() {
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -46,8 +74,8 @@ public class CustomScrollView extends MPComponentView {
         if (constraints == null) return;
         double w = constraints.optDouble("w");
         double h = constraints.optDouble("h");
-        removeView(contentView);
-        addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
+        removeView(swipeRefreshLayout);
+        addView(swipeRefreshLayout, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
         waterfallLayout.clientWidth = (int) w;
         waterfallLayout.clientHeight = (int)h;
         waterfallLayout.prepareLayout();
@@ -135,6 +163,7 @@ public class CustomScrollView extends MPComponentView {
         }
         waterfallLayout.prepareLayout();
         isRoot = attributes.optBoolean("isRoot", false);
+        swipeRefreshLayout.setEnabled(attributes.optInt("onRefresh") > 0);
     }
 
     @Override

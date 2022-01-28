@@ -20,7 +20,7 @@
 
 - (void)setChildren:(NSArray *)children {
     if (self.contentView == nil) {
-        self.contentView = [self.engine.provider.uiProvider loadCircularProgressIndicator];
+        self.contentView = [self.engine.provider.uiProvider createCircularProgressIndicator];
         if ([self.contentView isKindOfClass:[UIActivityIndicatorView class]]) {
             [(UIActivityIndicatorView *)self.contentView startAnimating];
         }

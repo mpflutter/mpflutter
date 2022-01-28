@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
@@ -22,6 +23,8 @@ import com.mpflutter.runtime.jsproxy.JSProxyObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 public class GridView extends MPComponentView {
 
     RecyclerView contentView;
@@ -31,6 +34,7 @@ public class GridView extends MPComponentView {
     double[] edgeInsets = new double[4];
     WaterfallLayout waterfallLayout;
     boolean isRoot = false;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public GridView(@NonNull Context context) {
         super(context);
@@ -41,6 +45,30 @@ public class GridView extends MPComponentView {
         contentAdapter = new GridViewAdapter();
         contentView.setAdapter(contentAdapter);
         contentView.setLayoutManager(waterfallLayout);
+        swipeRefreshLayout = new SwipeRefreshLayout(context);
+        swipeRefreshLayout.addView(contentView, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                GridView.this.onRefresh();
+            }
+        });
+    }
+
+    void onRefresh() {
+        engine.sendMessage(new HashMap(){{
+            put("type", "scroll_view");
+            put("message", new HashMap(){{
+                put("event", "onRefresh");
+                put("target", hashCode);
+                put("isRoot", attributes.optBoolean("isRoot", false));
+            }});
+        }});
+    }
+
+    public void endRefresh() {
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -49,8 +77,8 @@ public class GridView extends MPComponentView {
         if (constraints == null) return;
         double w = constraints.optDouble("w");
         double h = constraints.optDouble("h");
-        removeView(contentView);
-        addView(contentView, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
+        removeView(swipeRefreshLayout);
+        addView(swipeRefreshLayout, MPUtils.dp2px(w, getContext()), MPUtils.dp2px(h, getContext()));
         waterfallLayout.clientWidth = (int) w;
         waterfallLayout.clientHeight = (int)h;
         waterfallLayout.prepareLayout();
@@ -119,6 +147,7 @@ public class GridView extends MPComponentView {
         }
         waterfallLayout.prepareLayout();
         isRoot = attributes.optBoolean("isRoot", false);
+        swipeRefreshLayout.setEnabled(attributes.optInt("onRefresh") > 0);
     }
 
     @Override

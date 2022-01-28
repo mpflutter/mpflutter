@@ -58,7 +58,7 @@ typedef void(^MPIOSDialogProviderActionSheetCompletionBlock)(NSInteger);
 
 @interface MPIOSUIProvider : NSObject
 
-- (UIView *)loadCircularProgressIndicator;
+- (UIView *)createCircularProgressIndicator;
 
 @end
 

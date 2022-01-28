@@ -1,6 +1,7 @@
 package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPComponentView;
@@ -17,6 +19,8 @@ import com.mpflutter.runtime.components.mpkit.MPScaffold;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
 import com.mpflutter.runtime.jsproxy.JSProxyObject;
 
+import java.util.HashMap;
+
 public class ListView extends MPComponentView {
 
     RecyclerView contentView;
@@ -24,6 +28,7 @@ public class ListView extends MPComponentView {
     double[] edgeInsets = new double[4];
     WaterfallLayout waterfallLayout;
     boolean isRoot = false;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public ListView(@NonNull Context context) {
         super(context);
@@ -35,7 +40,31 @@ public class ListView extends MPComponentView {
         contentAdapter = new ListViewAdapter();
         contentView.setAdapter(contentAdapter);
         contentView.setLayoutManager(waterfallLayout);
-        addView(contentView, new LayoutParams(0, 0));
+        swipeRefreshLayout = new SwipeRefreshLayout(context);
+        swipeRefreshLayout.addView(contentView, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        swipeRefreshLayout.setEnabled(false);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ListView.this.onRefresh();
+            }
+        });
+        addView(swipeRefreshLayout, new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+    }
+
+    void onRefresh() {
+        engine.sendMessage(new HashMap(){{
+            put("type", "scroll_view");
+            put("message", new HashMap(){{
+                put("event", "onRefresh");
+                put("target", hashCode);
+                put("isRoot", attributes.optBoolean("isRoot", false));
+            }});
+        }});
+    }
+
+    public void endRefresh() {
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -108,6 +137,7 @@ public class ListView extends MPComponentView {
         }
         waterfallLayout.prepareLayout();
         isRoot = attributes.optBoolean("isRoot", false);
+        swipeRefreshLayout.setEnabled(attributes.optInt("onRefresh") > 0);
     }
 
     @Override
