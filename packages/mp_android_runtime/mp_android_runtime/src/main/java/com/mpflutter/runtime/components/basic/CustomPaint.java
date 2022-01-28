@@ -130,10 +130,10 @@ public class CustomPaint extends MPComponentView {
         if (drawable == 0) return;
         Bitmap image = engine.drawableStorage.decodedDrawables.get(drawable);
         if (image == null) return;
-        double srcX = cmd.optDouble("srcX", 0.0) * MPUtils.scale(getContext());
-        double srcY = cmd.optDouble("srcY", 0.0) * MPUtils.scale(getContext());
-        double srcW = cmd.optDouble("srcW", 0.0) * MPUtils.scale(getContext());
-        double srcH = cmd.optDouble("srcH", 0.0) * MPUtils.scale(getContext());
+        double srcX = cmd.optDouble("srcX", 0.0);
+        double srcY = cmd.optDouble("srcY", 0.0);
+        double srcW = cmd.optDouble("srcW", 0.0);
+        double srcH = cmd.optDouble("srcH", 0.0);
         double dstX = cmd.optDouble("dstX", 0.0) * MPUtils.scale(getContext());
         double dstY = cmd.optDouble("dstY", 0.0) * MPUtils.scale(getContext());
         double dstW = cmd.optDouble("dstW", 0.0) * MPUtils.scale(getContext());

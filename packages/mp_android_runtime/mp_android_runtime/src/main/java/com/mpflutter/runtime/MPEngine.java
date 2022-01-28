@@ -25,6 +25,7 @@ import com.mpflutter.runtime.components.mpkit.MPPlatformView;
 import com.mpflutter.runtime.debugger.MPDebugger;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
 import com.mpflutter.runtime.jsproxy.JSProxyObject;
+import com.mpflutter.runtime.provider.MPProvider;
 import com.quickjs.JSArray;
 import com.quickjs.JSContext;
 import com.quickjs.JSFunction;
@@ -65,6 +66,7 @@ public class MPEngine {
     public MPComponentFactory componentFactory;
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
     public Map<Integer, List<JSProxyObject>> managedViewsQueueMessage = new HashMap();
+    public MPProvider provider;
     JSObject engineScope;
 
     public MPEngine(Context context) {
@@ -77,6 +79,7 @@ public class MPEngine {
         componentFactory = new MPComponentFactory(context, this);
         drawableStorage = new DrawableStorage(this);
         engineStore.put(this.hashCode(), new WeakReference(this));
+        provider = new MPProvider(context);
     }
 
     void initializeFresco(Context context) {
@@ -119,7 +122,7 @@ public class MPEngine {
         MPConsole.setupWithJSContext(jsContext, selfObject);
         MPDeviceInfo.setupWithJSContext(jsContext, selfObject);
         MPWXCompat.setupWithJSContext(jsContext, selfObject);
-        MPNetworkHttp.setupWithJSContext(jsContext, selfObject);
+        MPNetworkHttp.setupWithJSContext(this, jsContext, selfObject);
         MPStorage.setupWithJSContext(this, jsContext, selfObject);
         mpjs = new MPJS(this);
         if (jsCode != null) {

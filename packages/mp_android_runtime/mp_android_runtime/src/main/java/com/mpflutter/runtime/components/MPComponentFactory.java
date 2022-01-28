@@ -25,6 +25,7 @@ import com.mpflutter.runtime.components.basic.Overlay;
 import com.mpflutter.runtime.components.basic.RichText;
 import com.mpflutter.runtime.components.basic.Transform;
 import com.mpflutter.runtime.components.basic.Visibility;
+import com.mpflutter.runtime.components.mpkit.MPCircularProgressIndicator;
 import com.mpflutter.runtime.components.mpkit.MPDatePicker;
 import com.mpflutter.runtime.components.mpkit.MPIcon;
 import com.mpflutter.runtime.components.mpkit.MPPageView;
@@ -73,6 +74,7 @@ public class MPComponentFactory {
         put("mp_slider", MPSlider.class);
         put("mp_switch", MPSwitch.class);
         put("mp_web_view", MPWebView.class);
+        put("mp_circular_progress_indicator", MPCircularProgressIndicator.class);
     }};
 
     Context context;
@@ -125,6 +127,7 @@ public class MPComponentFactory {
             view.factory = this;
             view.engine = engine;
             view.hashCode = hashCode;
+            view.attached();
             JSProxyObject constraints = data.optObject("constraints");
             if (constraints != null) {
                 view.setConstraints(constraints);

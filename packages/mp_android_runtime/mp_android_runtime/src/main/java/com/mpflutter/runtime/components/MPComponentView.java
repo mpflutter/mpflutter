@@ -40,6 +40,8 @@ public class MPComponentView extends FrameLayout {
         setClipChildren(false);
     }
 
+    public void attached() {}
+
     public void addContentView(View view) {
         if (view == null) return;
         contentView = view;

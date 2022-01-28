@@ -2,6 +2,8 @@ package com.mpflutter.runtime.api;
 
 import android.util.Base64;
 
+import com.mpflutter.runtime.MPEngine;
+import com.mpflutter.runtime.provider.MPDataProvider;
 import com.quickjs.JSArray;
 import com.quickjs.JSContext;
 import com.quickjs.JSFunction;
@@ -11,6 +13,8 @@ import com.quickjs.JavaCallback;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -22,9 +26,7 @@ import okhttp3.Response;
 
 public class MPNetworkHttp {
 
-    static private OkHttpClient httpClient = new OkHttpClient();
-
-    static public void setupWithJSContext(JSContext context, JSObject selfObject) {
+    static public void setupWithJSContext(MPEngine engine, JSContext context, JSObject selfObject) {
         JSObject wx = context.getObject("wx");
         if (wx != null) {
             wx.set("request", new JSFunction(context, new JavaCallback() {
@@ -33,7 +35,7 @@ public class MPNetworkHttp {
                     if (args.length() < 1) return null;
                     JSObject options = args.getObject(0);
                     if (options != null) {
-                        return request(options);
+                        return request(engine, options);
                     }
                     return null;
                 }
@@ -41,7 +43,7 @@ public class MPNetworkHttp {
         }
     }
 
-    static public JSObject request(JSObject options) {
+    static public JSObject request(MPEngine engine, JSObject options) {
         String url = options.getString("url");
         if (url == null) return null;
         String method = options.getString("method");
@@ -51,65 +53,62 @@ public class MPNetworkHttp {
         String data = options.getString("data");
         Object success = options.get("success");
         Object fail = options.get("fail");
-        Request.Builder httpRequestBuilder = new Request.Builder();
-        httpRequestBuilder.url(url);
+
+        MPDataProvider.HttpRequestTask dataProviderTask = engine.provider.dataProvider.createHttpRequest();
+        dataProviderTask.request = new MPDataProvider.HttpRequest();
+        dataProviderTask.request.url = url;
+        dataProviderTask.request.method = method;
         if (hasHeaders) {
+            Map taskHeader = new HashMap();
             String[] keys = headers.getKeys();
             for (int i = 0; i < keys.length; i++) {
                 String value = headers.getString(keys[i]);
                 if (value != null) {
-                    httpRequestBuilder.addHeader(keys[i], value);
+                    taskHeader.put(keys[i], value);
                 }
             }
+            dataProviderTask.request.header = taskHeader;
         }
-        if (method.contentEquals("GET")) {
-            httpRequestBuilder.method("GET", null);
-        }
-        else {
-            httpRequestBuilder.method(method != null ? method : "GET", data == null ? null : RequestBody.create(data, MediaType.get(contentType)));
-        }
-        Request httpRequest = httpRequestBuilder.build();
-        Call httpCall = httpClient.newCall(httpRequest);
-        httpCall.enqueue(new Callback() {
+        dataProviderTask.request.contentType = contentType;
+        dataProviderTask.request.data = data;
+        dataProviderTask.response = new MPDataProvider.HttpResponse() {
             @Override
-            public void onFailure(@NotNull Call call, @NotNull IOException e) {
+            public void onSuccess() {
+                if (success instanceof JSFunction) {
+                    JSArray callbackArr = new JSArray(options.getContext());
+                    JSObject result = new JSObject(options.getContext());
+                    result.set("data", Base64.encodeToString(this.data, Base64.NO_WRAP));
+                    JSObject responseHeader = new JSObject(options.getContext());
+                    Object[] names = this.header.keySet().toArray();
+                    for (int i = 0; i < names.length; i++) {
+                        responseHeader.set((String)names[i], (String)this.header.get((String)names[i]));
+                    }
+                    result.set("header", responseHeader);
+                    result.set("statusCode", this.statusCode);
+                    callbackArr.push(result);
+                    ((JSFunction) success).call(null, callbackArr);
+                }
+            }
+            @Override
+            public void onFail() {
                 if (fail instanceof JSFunction) {
                     JSArray callbackArr = new JSArray(options.getContext());
-                    callbackArr.push(e.toString());
+                    if (this.error != null) {
+                        callbackArr.push(this.error);
+                    }
+                    else {
+                        callbackArr.push("");
+                    }
                     ((JSFunction) fail).call(null, callbackArr);
                 }
             }
-
-            @Override
-            public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                try {
-                    byte[] responseData = response.body().bytes();
-                    if (success instanceof JSFunction) {
-                        JSArray callbackArr = new JSArray(options.getContext());
-                        JSObject result = new JSObject(options.getContext());
-                        result.set("data", Base64.encodeToString(responseData, Base64.NO_WRAP));
-                        JSObject responseHeader = new JSObject(options.getContext());
-                        Object[] names = response.headers().names().toArray();
-                        for (int i = 0; i < names.length; i++) {
-                            responseHeader.set((String)names[i], response.header((String)names[i]));
-                        }
-                        result.set("header", responseHeader);
-                        result.set("statusCode", response.code());
-                        callbackArr.push(result);
-                        ((JSFunction) success).call(null, callbackArr);
-                    }
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+        };
+        dataProviderTask.start();
         JSObject mpTask = new JSObject(options.getContext());
         mpTask.set("abort", new JSFunction(options.getContext(), new JavaCallback() {
             @Override
             public Object invoke(JSObject receiver, JSArray args) {
-                if (!httpCall.isCanceled() && !httpCall.isExecuted()) {
-                    httpCall.cancel();
-                }
+                dataProviderTask.abort();
                 return null;
             }
         }));

@@ -12,8 +12,6 @@ import com.quickjs.JavaCallback;
 
 public class MPStorage {
 
-    static private final String fileKey = "com.mpflutter.app";
-
     static public void setupWithJSContext(MPEngine engine, JSContext context, JSObject selfObject) {
         JSObject wx = context.getObject("wx");
         if (wx != null) {
@@ -23,7 +21,7 @@ public class MPStorage {
                     if (args.length() < 1) return null;
                     String key = args.getString(0);
                     if (key != null) {
-                        SharedPreferences sharedPreferences = engine.context.getSharedPreferences(fileKey, Context.MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = engine.provider.dataProvider.createSharedPreferences();
                         sharedPreferences.edit().remove(key).apply();
                     }
                     return null;
@@ -35,7 +33,7 @@ public class MPStorage {
                     if (args.length() < 1) return null;
                     String key = args.getString(0);
                     if (key != null) {
-                        SharedPreferences sharedPreferences = engine.context.getSharedPreferences(fileKey, Context.MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = engine.provider.dataProvider.createSharedPreferences();
                         return sharedPreferences.getString(key, null);
                     }
                     return null;
@@ -48,7 +46,7 @@ public class MPStorage {
                     String key = args.getString(0);
                     Object value = args.get(1);
                     if (key != null) {
-                        SharedPreferences sharedPreferences = engine.context.getSharedPreferences(fileKey, Context.MODE_PRIVATE);
+                        SharedPreferences sharedPreferences = engine.provider.dataProvider.createSharedPreferences();
                         if (value instanceof String) {
                             sharedPreferences.edit().putString(key, (String) value).apply();
                         }
@@ -71,7 +69,7 @@ public class MPStorage {
             wx.set("getStorageInfoSync", new JSFunction(context, new JavaCallback() {
                 @Override
                 public Object invoke(JSObject receiver, JSArray args) {
-                    SharedPreferences sharedPreferences = engine.context.getSharedPreferences(fileKey, Context.MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = engine.provider.dataProvider.createSharedPreferences();
                     Object[] keys = sharedPreferences.getAll().keySet().toArray();
                     JSArray result = new JSArray(receiver.getContext());
                     for (int i = 0; i < keys.length; i++) {
