@@ -29,6 +29,7 @@ import com.mpflutter.runtime.components.mpkit.MPPlatformView;
 import com.mpflutter.runtime.debugger.MPDebugger;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
 import com.mpflutter.runtime.jsproxy.JSProxyObject;
+import com.mpflutter.runtime.platform.MPPlatformChannelIO;
 import com.mpflutter.runtime.provider.MPProvider;
 import com.quickjs.JSArray;
 import com.quickjs.JSContext;
@@ -68,6 +69,7 @@ public class MPEngine {
     public MPJS mpjs;
     public DrawableStorage drawableStorage;
     public MPComponentFactory componentFactory;
+    public MPPlatformChannelIO platformChannelIO;
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
     public Map<Integer, List<JSProxyObject>> managedViewsQueueMessage = new HashMap();
     public MPProvider provider;
@@ -81,6 +83,7 @@ public class MPEngine {
         windowInfo = new MPWindowInfo(this);
         router = new MPRouter(this);
         componentFactory = new MPComponentFactory(context, this);
+        platformChannelIO = new MPPlatformChannelIO(this);
         drawableStorage = new DrawableStorage(this);
         engineStore.put(this.hashCode(), new WeakReference(this));
         provider = new MPProvider(context);
@@ -242,6 +245,8 @@ public class MPEngine {
                         MPPlatformView.didReceivedPlatformViewMessage(decodedMessage.optObject("message"), MPEngine.this);
                     } else if (type.equalsIgnoreCase("scroll_view")) {
                         didReceivedScrollView(decodedMessage.optObject("message"));
+                    } else if (type.equalsIgnoreCase("platform_channel")) {
+                        platformChannelIO.didReceivedMessage(decodedMessage.optObject("message"));
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();

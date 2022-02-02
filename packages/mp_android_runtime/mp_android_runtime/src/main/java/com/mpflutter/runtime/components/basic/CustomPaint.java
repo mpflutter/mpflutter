@@ -264,10 +264,10 @@ public class CustomPaint extends MPComponentView {
             return;
         }
         if (!params.isNull("strokeWidth")) {
-            paint.setStrokeWidth((float) params.optDouble("strokeWidth", 0.0));
+            paint.setStrokeWidth((float) (params.optDouble("strokeWidth", 0.0) * MPUtils.scale(getContext())));
         }
         if (!params.isNull("miterLimit")) {
-            paint.setStrokeMiter((float) params.optDouble("miterLimit", 0.0));
+            paint.setStrokeMiter((float) (params.optDouble("miterLimit", 0.0) * MPUtils.scale(getContext())));
         }
         String strokeCap = params.optString("strokeCap", null);
         if (!MPUtils.isNull(strokeCap)) {
@@ -359,8 +359,8 @@ public class CustomPaint extends MPComponentView {
                     }
                     else if (action.contentEquals("translate")) {
                         canvas.translate(
-                                (int)cmd.optDouble("dx", 0.0),
-                                (int)cmd.optDouble("dy", 0.0)
+                                (int)(cmd.optDouble("dx", 0.0) * MPUtils.scale(getContext())),
+                                (int)(cmd.optDouble("dy", 0.0) * MPUtils.scale(getContext()))
                         );
                     }
                     else if (action.contentEquals("transform")) {
@@ -369,8 +369,8 @@ public class CustomPaint extends MPComponentView {
                         float b = (float) cmd.optDouble("b");
                         float c = (float) cmd.optDouble("c");
                         float d = (float) cmd.optDouble("d");
-                        float tx = (float) cmd.optDouble("tx");
-                        float ty = (float) cmd.optDouble("ty");
+                        float tx = (float) (cmd.optDouble("tx") * MPUtils.scale(getContext()));
+                        float ty = (float) (cmd.optDouble("ty") * MPUtils.scale(getContext()));
                         final float[] values = { a, c, tx, b, d, ty, 0.0f, 0.0f, 1.0f };
                         matrix.setValues(values);
                         canvas.concat(matrix);

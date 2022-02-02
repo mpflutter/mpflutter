@@ -46,7 +46,7 @@ import java.util.Map;
 
 public class MPComponentFactory {
 
-    static Map<String, Class<MPComponentView>> components = new HashMap() {{
+    static public final Map<String, Class<MPComponentView>> components = new HashMap() {{
         put("absorb_pointer", AbsorbPointer.class);
         put("colored_box", ColoredBox.class);
         put("clip_oval", ClipOval.class);
