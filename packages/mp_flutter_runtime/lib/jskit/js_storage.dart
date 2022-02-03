@@ -1,8 +1,9 @@
 part of '../mp_flutter_runtime.dart';
 
 class _JSStorage {
-  static Future install(_JSContext context) async {
-    final instance = (await shared_preferences.SharedPreferences.getInstance());
+  static Future install(_JSContext context, MPEngine engine) async {
+    final instance =
+        await engine.provider.dataProvider.createSharedPreferences();
     context.addMessageListener((message, type) {
       if (type == '\$wx.storage') {
         final data = json.decode(message);

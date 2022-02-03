@@ -1,14 +1,14 @@
 part of '../mp_flutter_runtime.dart';
 
 class _JSNetworkHttp {
-  static Future install(_JSContext context) async {
+  static Future install(_JSContext context, MPEngine engine) async {
     context.addMessageListener((message, type) {
       if (type == '\$wx.request') {
         final data = json.decode(message) as Map;
         if (data['func'] == 'request') {
-          request(data, context);
+          request(data, context, engine);
         } else if (data['func'] == 'abort') {
-          abort(data, context);
+          abort(data, context, engine);
         }
       }
     });
@@ -45,44 +45,33 @@ class _JSNetworkHttp {
     ''');
   }
 
-  static final _cancelTokens = <String, dio.CancelToken>{};
-
-  static final dioClient = dio.Dio(dio.BaseOptions(headers: {
-    'user-agent': 'dio',
-  }));
-
-  static void request(Map data, _JSContext context) async {
+  static void request(Map data, _JSContext context, MPEngine engine) async {
     final seqId = data['seqId'] as String;
     final url = data['url'] as String;
     final method = data['method'] as String?;
     final header = data['header'] as Map?;
     final postBody = data['data'];
-    final cancelToken = dio.CancelToken();
-    _cancelTokens[seqId] = cancelToken;
-    final dioOptions = dio.Options(
-      method: method,
-      headers: (() {
-        final v = <String, dynamic>{};
-        header?.forEach((key, value) {
-          if (key is String) {
-            v[key] = value;
-          }
-        });
-      })(),
-      responseType: dio.ResponseType.bytes,
-    );
     try {
-      final response = await dioClient.request(
-        url,
-        options: dioOptions,
-        cancelToken: cancelToken,
-        data: postBody,
+      final response = await engine.provider.dataProvider.makeHttpRequest(
+        MPHttpRequest(
+          requestId: seqId,
+          url: url,
+          method: method ?? 'GET',
+          header: (() {
+            final v = <String, dynamic>{};
+            header?.forEach((key, value) {
+              if (key is String) {
+                v[key] = value;
+              }
+            });
+            return v;
+          })(),
+          postBody: postBody,
+        ),
       );
       final callbackResult = {
-        "data": base64.encode(response.data),
-        "header": response.headers.map.map((key, value) {
-          return MapEntry(key, value.join(','));
-        }),
+        "data": response.body != null ? base64.encode(response.body!) : null,
+        "header": response.header,
         "statusCode": response.statusCode,
       };
       context.invokeJSFunc('onWxRequestCallback', [seqId, callbackResult]);
@@ -91,10 +80,9 @@ class _JSNetworkHttp {
     }
   }
 
-  static void abort(Map data, _JSContext context) {
+  static void abort(Map data, _JSContext context, MPEngine engine) {
     final seqId = data['seqId'] as String;
-    _cancelTokens[seqId]?.cancel();
-    _cancelTokens.remove(seqId);
+    engine.provider.dataProvider.abortHttpRequest(seqId);
     context.invokeJSFunc('onWxRequestAbort', [seqId]);
   }
 }

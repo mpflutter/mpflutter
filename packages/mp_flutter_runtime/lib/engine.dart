@@ -21,6 +21,7 @@ class MPEngine {
   late _MPRouter _router;
   late _TextMeasurer _textMeasurer;
   late _DrawableStore _drawableStore;
+  var provider = MPProvider();
 
   MPEngine({required this.flutterContext}) {
     _componentFactory = _MPComponentFactory(engine: this);
@@ -55,8 +56,8 @@ class MPEngine {
     await _MPJS.install(_jsContext);
     await _JSDeviceInfo.install(_jsContext, flutterContext);
     await _JSWXCompat.install(_jsContext);
-    await _JSNetworkHttp.install(_jsContext);
-    await _JSStorage.install(_jsContext);
+    await _JSNetworkHttp.install(_jsContext, this);
+    await _JSStorage.install(_jsContext, this);
     if (_jsCode != null) {
       await _jsContext.evaluateScript(_jsCode!);
     } else if (_debugger != null) {

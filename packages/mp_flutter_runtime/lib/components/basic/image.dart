@@ -31,10 +31,12 @@ class _Image extends ComponentView {
         },
       );
     } else {
-      return CachedNetworkImage(
-        imageUrl: src,
-        fit: getFit(context),
-      );
+      return getEngine(context)
+              ?.provider
+              .imageProvider
+              .createImageWithURLString(
+                  context: context, imageUrl: src, fit: getFit(context)) ??
+          const SizedBox();
     }
   }
 
@@ -83,6 +85,15 @@ class _Image extends ComponentView {
         final assetUrl =
             'http://${engine!._debugger!.serverAddr}/assets/$assetName';
         return buildNetworkImage(context, assetUrl);
+      } else {
+        return getEngine(context)
+                ?.provider
+                .imageProvider
+                .createImageWithAssetName(
+                    context: context,
+                    assetName: assetName,
+                    fit: getFit(context)) ??
+            const SizedBox();
       }
     }
     return const SizedBox();

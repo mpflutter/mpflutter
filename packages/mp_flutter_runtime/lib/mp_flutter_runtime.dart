@@ -60,6 +60,7 @@ part 'components/mpkit/page_view.dart';
 part 'components/mpkit/platform_view.dart';
 part 'components/mpkit/slider.dart';
 part 'components/mpkit/switch.dart';
+part 'components/mpkit/circular_progress_indicator.dart';
 part 'jskit/js_context.dart';
 part 'jskit/js_console.dart';
 part 'jskit/js_device_info.dart';
@@ -67,5 +68,10 @@ part 'jskit/js_network_http.dart';
 part 'jskit/js_storage.dart';
 part 'jskit/js_wx_compat.dart';
 part 'jskit/mpjs.dart';
+part 'provider/provider.dart';
+part 'provider/image_provider.dart';
+part 'provider/dialog_provider.dart';
+part 'provider/ui_provider.dart';
+part 'provider/data_provider.dart';
 
 class MPFlutterRuntime {}

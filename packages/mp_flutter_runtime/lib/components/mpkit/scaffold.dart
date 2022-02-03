@@ -33,6 +33,10 @@ class _MPScaffold extends ComponentView {
     }
     return Scaffold(
       backgroundColor: getColorFromAttributes(context, 'backgroundColor'),
+      appBar: getEngine(context)?.provider.uiProvider.createAppBar(
+            context: context,
+            title: getStringFromAttributes(context, 'name'),
+          ),
       body: Stack(children: children),
     );
   }

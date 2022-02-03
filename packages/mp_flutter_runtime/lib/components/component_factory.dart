@@ -108,6 +108,9 @@ class _MPComponentFactory {
           case 'mp_slider':
             return _MPSlider(
                 data: data, parentData: parentData, componentFactory: this);
+          case 'mp_circular_progress_indicator':
+            return _MPCircularProgressIndicator(
+                data: data, parentData: parentData, componentFactory: this);
           default:
             return ComponentView(
                 data: data, parentData: parentData, componentFactory: this);
