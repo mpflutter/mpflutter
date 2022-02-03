@@ -112,6 +112,14 @@ class _MPComponentFactory {
             return _MPCircularProgressIndicator(
                 data: data, parentData: parentData, componentFactory: this);
           default:
+            if (MPPluginRegister.registedViews.containsKey(name)) {
+              return MPPluginRegister.registedViews[name]!(
+                null,
+                data,
+                parentData,
+                this,
+              );
+            }
             return ComponentView(
                 data: data, parentData: parentData, componentFactory: this);
         }

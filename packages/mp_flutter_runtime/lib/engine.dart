@@ -21,6 +21,7 @@ class MPEngine {
   late _MPRouter _router;
   late _TextMeasurer _textMeasurer;
   late _DrawableStore _drawableStore;
+  late _MPPlatformChannelIO _platformChannelIO;
   var provider = MPProvider();
 
   MPEngine({required this.flutterContext}) {
@@ -30,6 +31,7 @@ class MPEngine {
     _drawableStore = _DrawableStore(engine: this);
     _jsContext = _JSContext();
     _mpjs = _MPJS(engine: this);
+    _platformChannelIO = _MPPlatformChannelIO(engine: this);
   }
 
   void initWithJSCode(String jsCode) {
@@ -63,7 +65,7 @@ class MPEngine {
     } else if (_debugger != null) {
       _debugger!.start();
     }
-    Future.delayed(Duration(seconds: 5)).then((value) {
+    Future.delayed(const Duration(seconds: 5)).then((value) {
       _jsContext.evaluateScript('console.log(wx.getStorageSync("sss"));');
     });
     _started = true;
@@ -124,11 +126,14 @@ class MPEngine {
             decodedMessage['message'], this);
         break;
       case 'platform_view':
-        _MPPlatformView._didReceivedPlatformViewMessage(
+        MPPlatformView._didReceivedPlatformViewMessage(
             decodedMessage['message'], this);
         break;
       case 'mpjs':
         _mpjs._didReceivedMessage(decodedMessage['message']);
+        break;
+      case 'platform_channel':
+        _platformChannelIO._didReceivedMessage(decodedMessage['message']);
         break;
       default:
     }

@@ -1,7 +1,7 @@
 part of '../../mp_flutter_runtime.dart';
 
 // ignore: must_be_immutable
-class _MPSlider extends _MPPlatformView {
+class _MPSlider extends MPPlatformView {
   __SliderContentState? _contentState;
 
   _MPSlider({

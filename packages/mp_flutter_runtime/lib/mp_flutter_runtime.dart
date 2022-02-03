@@ -73,5 +73,9 @@ part 'provider/image_provider.dart';
 part 'provider/dialog_provider.dart';
 part 'provider/ui_provider.dart';
 part 'provider/data_provider.dart';
+part 'platform_channel/plugin_register.dart';
+part 'platform_channel/platform_channel_io.dart';
+part 'platform_channel/method_channel.dart';
+part 'platform_channel/event_channel.dart';
 
 class MPFlutterRuntime {}

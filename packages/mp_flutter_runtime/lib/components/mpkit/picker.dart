@@ -1,6 +1,6 @@
 part of '../../mp_flutter_runtime.dart';
 
-class _MPPicker extends _MPPlatformView {
+class _MPPicker extends MPPlatformView {
   _MPPicker({
     Key? key,
     Map? data,

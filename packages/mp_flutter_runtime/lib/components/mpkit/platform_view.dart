@@ -1,6 +1,6 @@
 part of '../../mp_flutter_runtime.dart';
 
-class _MPPlatformView extends ComponentView {
+class MPPlatformView extends ComponentView {
   static final Map<String, Completer> _invokeMethodCallback = {};
 
   static void _didReceivedPlatformViewMessage(Map data, MPEngine engine) async {
@@ -9,7 +9,7 @@ class _MPPlatformView extends ComponentView {
       int? hashCode = data['hashCode'];
       if (hashCode != null) {
         final target = engine._componentFactory._cacheViews[hashCode]?.widget;
-        if (target is _MPPlatformView) {
+        if (target is MPPlatformView) {
           final result = await target.onMethodCall(
             data['method'],
             data['params'],
@@ -35,7 +35,7 @@ class _MPPlatformView extends ComponentView {
     }
   }
 
-  _MPPlatformView({
+  MPPlatformView({
     Key? key,
     Map? data,
     Map? parentData,
