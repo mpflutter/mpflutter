@@ -55,6 +55,7 @@ class MPEngine {
     if (_jsCode == null && _debugger == null) return;
     await _jsContext.createContext();
     await _setupJSContextEventChannel();
+    await _setupDeferredLibraryLoader();
     await _MPJS.install(_jsContext);
     await _JSDeviceInfo.install(_jsContext, flutterContext);
     await _JSWXCompat.install(_jsContext);
@@ -90,6 +91,36 @@ class MPEngine {
       if (type == '\$engine') {
         globalThis.engineScope.postMessage(message);
       }
+    }
+    ''');
+  }
+
+  Future _setupDeferredLibraryLoader() async {
+    _jsContext.addMessageListener((fileName, type) async {
+      if (type == '\$engine.dartDeferredLibraryLoader') {
+        if (_mpkReader != null) {
+          final data = _mpkReader!.dataWithFilePath(fileName);
+          if (data != null) {
+            final code = utf8.decode(data);
+            try {
+              await _jsContext.evaluateScript(code);
+              await _jsContext.evaluateScript('''
+              globalThis.dartDeferredLoaderPromiser['$fileName'].resolver(null);
+              ''');
+            } catch (e) {
+              await _jsContext.evaluateScript('''
+              globalThis.dartDeferredLoaderPromiser['$fileName'].rejector(null);
+              ''');
+            }
+          }
+        }
+      }
+    });
+    await _jsContext.evaluateScript('''
+    globalThis.dartDeferredLoaderPromiser = {};
+    globalThis.dartDeferredLibraryLoader = function(fileName, resolver, rejector) {
+      globalThis.dartDeferredLoaderPromiser[fileName] = {resolver: resolver, rejector: rejector};
+      globalThis.postMessage(fileName, '\$engine.dartDeferredLibraryLoader');
     }
     ''');
   }

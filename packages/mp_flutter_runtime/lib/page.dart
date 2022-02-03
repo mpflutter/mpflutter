@@ -37,9 +37,11 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
     if (!firstSetted) {
       firstSetted = true;
       route = ModalRoute.of(context);
-      widget.engine._router
-          .requestRoute(viewport: MediaQuery.of(context).size)
-          .then((viewId) {
+      final size = Size(
+          MediaQuery.of(context).size.width,
+          MediaQuery.of(context).size.height -
+              (widget.engine.provider.uiProvider.appBarHeight() ?? 0));
+      widget.engine._router.requestRoute(viewport: size).then((viewId) {
         this.viewId = viewId;
         widget.engine._addManageView(viewId, this);
       });

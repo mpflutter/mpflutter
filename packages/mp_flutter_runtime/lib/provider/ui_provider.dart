@@ -8,6 +8,10 @@ class MPUIProvider {
     return AppBar(title: title != null ? Text(title) : null);
   }
 
+  double? appBarHeight() {
+    return kToolbarHeight;
+  }
+
   Widget createCircularProgressIndicator({
     required BuildContext context,
     Color? color,
