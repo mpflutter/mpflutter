@@ -1,2 +1,2 @@
-before_install:
+install:
   - ./scripts/prepareJitpackEnvironment.sh
