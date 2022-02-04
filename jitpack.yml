@@ -1,2 +1,3 @@
 before_install:
+  - yes | sdkmanager --uninstall "ndk-bundle" | sdkmanager --install "ndk;21.0.6113669"
   - ./scripts/prepareJitpackEnvironment.sh
