@@ -61,7 +61,7 @@ afterEvaluate {
             release(MavenPublication) {
                 from components.release
                 groupId = 'com.github.mpflutter'
-                artifactId = 'mpflutter'
+                artifactId = 'mp_android_runtime'
                 version = '0.11.4'
             }
         }
