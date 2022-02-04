@@ -11,6 +11,7 @@ import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.imagepipeline.decoder.ImageDecoderConfig;
 import com.mpflutter.runtime.api.MPConsole;
 import com.mpflutter.runtime.api.MPDeviceInfo;
+import com.mpflutter.runtime.api.MPFlutterPlatform;
 import com.mpflutter.runtime.api.MPGlobalScope;
 import com.mpflutter.runtime.api.MPNetworkHttp;
 import com.mpflutter.runtime.api.MPStorage;
@@ -30,6 +31,7 @@ import com.mpflutter.runtime.debugger.MPDebugger;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
 import com.mpflutter.runtime.jsproxy.JSProxyObject;
 import com.mpflutter.runtime.platform.MPPlatformChannelIO;
+import com.mpflutter.runtime.platform.MPPluginRegister;
 import com.mpflutter.runtime.provider.MPProvider;
 import com.quickjs.JSArray;
 import com.quickjs.JSContext;
@@ -77,6 +79,7 @@ public class MPEngine {
 
     public MPEngine(Context context) {
         this.context = context;
+        initializePlatforms();
         initializeFresco(context);
         mainThreadHandler = new Handler(Looper.getMainLooper());
         textMeasurer = new MPTextMeasurer(this);
@@ -87,6 +90,10 @@ public class MPEngine {
         drawableStorage = new DrawableStorage(this);
         engineStore.put(this.hashCode(), new WeakReference(this));
         provider = new MPProvider(context);
+    }
+
+    void initializePlatforms() {
+        MPPluginRegister.registerChannel("flutter/platform", MPFlutterPlatform.class);
     }
 
     void initializeFresco(Context context) {

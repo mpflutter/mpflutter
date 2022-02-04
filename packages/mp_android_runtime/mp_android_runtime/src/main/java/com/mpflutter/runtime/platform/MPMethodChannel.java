@@ -7,8 +7,8 @@ import java.util.UUID;
 
 public class MPMethodChannel {
 
-    String channelName;
-    MPEngine engine;
+    public String channelName;
+    public MPEngine engine;
 
     public void onMethodCall(String method, Object params, MPMethodChannelCallback result) {
 
