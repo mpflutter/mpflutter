@@ -1,3 +1,3 @@
-include ':mp_android_runtime'
+include ':library'
 include ':app'
 rootProject.name = "mpflutter_sample"
