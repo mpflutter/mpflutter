@@ -15,7 +15,7 @@
 		"colors": "^1.4.0",
 		"execa": "^3.4.0",
 		"path-to-regexp": "^3.0.0",
-		"postcss": "^7.0.17",
+		"postcss": "^8.2.13",
 		"webpack": "^5.44.0",
 		"webpack-sources": "^2.2.0"
 	},
