@@ -9,6 +9,7 @@
 #import "MPIOSCustomPaint.h"
 #import "MPIOSComponentUtils.h"
 #import "MPIOSEngine.h"
+#import "MPIOSComponentFactory.h"
 
 @interface MPIOSDrawableStorage ()
 

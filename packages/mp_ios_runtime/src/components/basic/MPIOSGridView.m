@@ -10,6 +10,7 @@
 #import "MPIOSComponentUtils.h"
 #import "MPIOSWaterfallLayout.h"
 #import "MPIOSViewController.h"
+#import "MPIOSComponentFactory.h"
 
 @interface MPIOSGridView ()<UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, MPIOSComponentViewDelegate>
 

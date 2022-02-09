@@ -8,6 +8,7 @@
 
 #import "MPIOSOverlay.h"
 #import "MPIOSComponentUtils.h"
+#import "MPIOSEngine+Private.h"
 
 @interface MPIOSOverlay ()
 

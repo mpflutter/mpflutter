@@ -10,6 +10,7 @@
 #import "MPIOSDebugger.h"
 #import "MPIOSMpkReader.h"
 #import "MPIOSProvider.h"
+#import "MPIOSEngine+Private.h"
 
 @interface MPIOSImage ()
 

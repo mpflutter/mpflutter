@@ -8,6 +8,7 @@
 
 #import "MPIOSMPPlatformView.h"
 #import "MPIOSEngine.h"
+#import "MPIOSComponentFactory.h"
 
 @implementation MPIOSMPPlatformView
 

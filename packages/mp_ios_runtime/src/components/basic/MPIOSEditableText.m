@@ -8,6 +8,7 @@
 
 #import "MPIOSEditableText.h"
 #import "MPIOSComponentUtils.h"
+#import "MPIOSEngine+Private.h"
 
 @interface MPIOSEditableText ()<UITextFieldDelegate, UITextViewDelegate>
 

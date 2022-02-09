@@ -9,6 +9,7 @@
 #import "MPIOSMPScaffold.h"
 #import "MPIOSComponentUtils.h"
 #import "MPIOSViewController.h"
+#import "MPIOSComponentFactory.h"
 
 @interface MPIOSMPScaffold ()<MPIOSComponentViewDelegate>
 

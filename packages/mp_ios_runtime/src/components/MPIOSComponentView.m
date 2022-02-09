@@ -13,6 +13,7 @@
 #import "MPIOSMPPlatformView.h"
 #import "MPIOSDecoratedBox.h"
 #import "MPIOSViewController.h"
+#import "MPIOSComponentFactory.h"
 
 @interface MPIOSComponentView ()
 

@@ -7,6 +7,7 @@
 //
 
 #import "MPIOSGestureDetector.h"
+#import "MPIOSEngine+Private.h"
 
 @interface MPIOSGestureDetector ()
 

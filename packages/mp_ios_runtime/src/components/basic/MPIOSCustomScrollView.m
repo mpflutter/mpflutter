@@ -10,6 +10,7 @@
 #import "MPIOSCustomScrollViewLayout.h"
 #import "MPIOSComponentUtils.h"
 #import "MPIOSViewController.h"
+#import "MPIOSComponentFactory.h"
 
 @interface MPIOSCustomScrollView ()<UICollectionViewDataSource, UICollectionViewDelegateFlowLayout, MPIOSComponentViewDelegate>
 

@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "MPIOSEngine.h"
+#import "MPIOSEngine+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

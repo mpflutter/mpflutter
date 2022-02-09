@@ -7,6 +7,7 @@
 //
 
 #import "MPIOSMPPageView.h"
+#import "MPIOSComponentFactory.h"
 
 @interface MPIOSMPPageView ()<UIPageViewControllerDelegate, UIPageViewControllerDataSource>
 

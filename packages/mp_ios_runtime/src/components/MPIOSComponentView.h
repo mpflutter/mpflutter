@@ -7,13 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MPIOSComponentFactory.h"
 #import "MPIOSEngine.h"
-#import "MPIOSEngine+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MPIOSAncestorView, MPIOSViewController;
+@class MPIOSAncestorView, MPIOSViewController, MPIOSComponentView, MPIOSComponentFactory;
 
 @protocol MPIOSComponentViewDelegate <NSObject>
 

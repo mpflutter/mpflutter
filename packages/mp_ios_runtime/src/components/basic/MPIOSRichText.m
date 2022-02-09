@@ -8,6 +8,7 @@
 
 #import "MPIOSRichText.h"
 #import "MPIOSComponentUtils.h"
+#import "MPIOSComponentFactory.h"
 
 @interface MPIOSRichText ()
 
