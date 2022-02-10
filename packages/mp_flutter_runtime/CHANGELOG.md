@@ -1,3 +1,3 @@
-## 0.0.1
+## 0.11.4
 
-* TODO: Describe initial release.
+* Initial publish of mp_flutter_runtime.

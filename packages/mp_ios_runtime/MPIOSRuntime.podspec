@@ -2,9 +2,9 @@ Pod::Spec.new do |spec|
 
   spec.name         = "MPIOSRuntime"
   spec.version      = "0.0.1"
-  spec.summary      = "A short description of mp_ios_runtime."
+  spec.summary      = "The MPFlutter runtime of iOS."
   spec.description  = <<-DESC
-                      A short description of mp_ios_runtime.
+                      The MPFlutter runtime of iOS.
                       DESC
 
   spec.homepage     = "https://github.com/mpflutter/mpflutter"

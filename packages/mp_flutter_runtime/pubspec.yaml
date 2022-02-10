@@ -1,7 +1,7 @@
 name: mp_flutter_runtime
-description: A new flutter plugin project.
-version: 0.0.1
-homepage: /
+description: The MPFlutter runtime of Flutter.
+version: 0.11.4
+homepage: https://github.com/mpflutter/mpflutter
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -10,14 +10,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  web_socket_channel: ^2.1.0
-  waterfall_flow: ^3.0.2
-  flutter_svg: ^1.0.1
-  flutter_picker: ^2.0.2
-  cached_network_image: ^3.2.0
-  archive: ^3.1.9
-  shared_preferences: ^2.0.12
-  dio: ^4.0.4
+  web_socket_channel: "^2.0.0"
+  waterfall_flow: "^3.0.0"
+  flutter_svg: "^0.21.0"
+  flutter_picker: "^2.0.0"
+  cached_network_image: "^3.0.0"
+  archive: "^3.0.0"
+  shared_preferences: "^2.0.0"
+  dio: "^4.0.0"
+  flutter_cache_manager: "^3.0.0"
 
 dev_dependencies:
   flutter_test:
