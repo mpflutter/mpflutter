@@ -340,8 +340,27 @@ class MPChannelBase {
           (scaffoldState) =>
               scaffoldState.context.hashCode == message['target'],
         );
-        final result =
+        dynamic result =
             await target.widget.onWechatMiniProgramShareAppMessage?.call();
+        result ??= {
+          'title': target.widget.name,
+          'path':
+              '/pages/index/index?route=${(ModalRoute.of(target.context)?.settings.name ?? '/')}&${(() {
+            final params = ModalRoute.of(target.context)?.settings.arguments;
+            if (params is Map) {
+              return params
+                  .map((key, value) {
+                    return MapEntry(
+                      key,
+                      '$key=${Uri.encodeQueryComponent(value)}',
+                    );
+                  })
+                  .values
+                  .join('&');
+            }
+            return '';
+          })()}',
+        };
         MPChannel.postMessage(json.encode({
           'type': 'scaffold',
           'message': {
