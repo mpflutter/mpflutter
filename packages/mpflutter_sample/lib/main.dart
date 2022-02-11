@@ -49,6 +49,7 @@ import 'package:mpflutter_template/touches/signature_page.dart';
 import 'animations/animation_performance_test_page.dart';
 import 'home.dart';
 import 'pages/main_tab_view_page.dart';
+import 'pages/route_test_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -172,6 +173,7 @@ class MyApp extends StatelessWidget {
         '/signature': (context) => SignaturePage(),
         '/mapView': (context) => MapViewPage(),
         '/clipBoard': (context) => ClipBoardPage(),
+        '/routeTest': (context) => RouteTestPage(),
       },
       navigatorObservers: [MPCore.getNavigationObserver()],
     );

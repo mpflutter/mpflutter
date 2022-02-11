@@ -4739,12 +4739,31 @@ class NavigatorState extends State<Navigator>
   ///    restored during state restoration.
   @optionalTypeArgs
   Future<T?> pushAndRemoveUntil<T extends Object?>(
-      Route<T> newRoute, RoutePredicate predicate) {
+      Route<T> newRoute, RoutePredicate predicate) async {
     assert(newRoute != null);
     assert(newRoute._navigator == null);
     assert(newRoute.overlayEntries.isEmpty);
-    _pushEntryAndRemoveUntil(
-        _RouteEntry(newRoute, initialState: _RouteLifecycle.push), predicate);
+    // _pushEntryAndRemoveUntil(
+    //     _RouteEntry(newRoute, initialState: _RouteLifecycle.push), predicate);
+    bool replaceFirst = false;
+    popUntil((p) {
+      final result = predicate(p);
+      if (p.isFirst && !result) {
+        replaceFirst = true;
+        return true;
+      }
+      return result;
+    });
+    await Future.delayed(Duration(milliseconds: 100));
+    if (replaceFirst) {
+      pushReplacement(newRoute);
+    } else {
+      push(newRoute);
+    }
+    assert(() {
+      _debugLocked = false;
+      return true;
+    }());
     return newRoute.popped;
   }
 
@@ -4805,31 +4824,7 @@ class NavigatorState extends State<Navigator>
     return entry.restorationId!;
   }
 
-  void _pushEntryAndRemoveUntil(_RouteEntry entry, RoutePredicate predicate) {
-    assert(!_debugLocked);
-    assert(() {
-      _debugLocked = true;
-      return true;
-    }());
-    assert(entry.route != null);
-    assert(entry.route._navigator == null);
-    assert(entry.route.overlayEntries.isEmpty);
-    assert(predicate != null);
-    assert(entry.currentState == _RouteLifecycle.push);
-    int index = _history.length - 1;
-    _history.add(entry);
-    while (index >= 0 && !predicate(_history[index].route)) {
-      if (_history[index].isPresent) _history[index].remove();
-      index -= 1;
-    }
-    _flushHistoryUpdates();
-
-    assert(() {
-      _debugLocked = false;
-      return true;
-    }());
-    _afterNavigation(entry.route);
-  }
+  void _pushEntryAndRemoveUntil(_RouteEntry entry, RoutePredicate predicate) {}
 
   /// Replaces a route on the navigator with a new route.
   ///

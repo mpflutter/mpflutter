@@ -213,6 +213,8 @@ class MyHomePage extends StatelessWidget {
                 _renderItem('Forms', context: context, route: '/forms'),
                 _renderItem('MainTabView',
                     context: context, route: '/mainTabView'),
+                _renderItem('Route Test',
+                    context: context, route: '/routeTest'),
               ],
             ),
           ),
