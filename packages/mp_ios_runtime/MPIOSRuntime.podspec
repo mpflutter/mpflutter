@@ -19,5 +19,8 @@ Pod::Spec.new do |spec|
   spec.requires_arc = true
   spec.dependency "jetfire", "~> 0.1"
   spec.dependency "MBProgressHUD", "~> 1.2.0"
+  spec.dependency "SDWebImage", "~> 5.0"
+  spec.dependency "SDWebImageSVGKitPlugin"
+  spec.dependency "SVGKit", "2.1.0"
 
 end

@@ -7,7 +7,6 @@
 
 #import "AppDelegate.h"
 #import "MPIOSRuntime.h"
-#import "MPSampleProvider.h"
 #import "MPSampleChannels.h"
 
 @interface AppDelegate ()
@@ -34,7 +33,6 @@
     self.engine = [[MPIOSEngine alloc] initWithDebuggerServerAddr:@"127.0.0.1:9898"];
 //    NSString *mpkPath = [[NSBundle mainBundle] pathForResource:@"app" ofType:@"mpk"];
 //    self.engine = [[MPIOSEngine alloc] initWithMpkData:[NSData dataWithContentsOfFile:mpkPath]];
-    self.engine.provider.imageProvider = [[MPSampleImageProvider alloc] init];
     self.app = [[MPIOSApp alloc] initWithEngine:self.engine navigationController:navigationController];
     [navigationController.navigationBar setTranslucent:NO];
     [navigationController.view setBackgroundColor:[UIColor whiteColor]];

@@ -56,7 +56,6 @@
 		639C27EB270DFE1D006835E6 /* MPIOSTextMeasurer.m in Sources */ = {isa = PBXBuildFile; fileRef = 639C27EA270DFE1D006835E6 /* MPIOSTextMeasurer.m */; };
 		639C27EE2711EF4C006835E6 /* MPIOSAncestorView.m in Sources */ = {isa = PBXBuildFile; fileRef = 639C27ED2711EF4C006835E6 /* MPIOSAncestorView.m */; };
 		63A37AC9279D9F8600622327 /* MPIOSProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37AC8279D9F8600622327 /* MPIOSProvider.m */; };
-		63A37ACC279DA26E00622327 /* MPSampleProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37ACB279DA26E00622327 /* MPSampleProvider.m */; };
 		63A37ACF27A2804800622327 /* MPIOSMPCircularProgressIndicator.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37ACE27A2804800622327 /* MPIOSMPCircularProgressIndicator.m */; };
 		63A37AD427A2C68F00622327 /* MPIOSPluginRegister.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37AD327A2C68F00622327 /* MPIOSPluginRegister.m */; };
 		63A37AD727A2C6B900622327 /* MPIOSPlatformChannelIO.m in Sources */ = {isa = PBXBuildFile; fileRef = 63A37AD627A2C6B900622327 /* MPIOSPlatformChannelIO.m */; };
@@ -175,8 +174,6 @@
 		639C27ED2711EF4C006835E6 /* MPIOSAncestorView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSAncestorView.m; sourceTree = "<group>"; };
 		63A37AC7279D9F8600622327 /* MPIOSProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSProvider.h; sourceTree = "<group>"; };
 		63A37AC8279D9F8600622327 /* MPIOSProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSProvider.m; sourceTree = "<group>"; };
-		63A37ACA279DA26E00622327 /* MPSampleProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPSampleProvider.h; sourceTree = "<group>"; };
-		63A37ACB279DA26E00622327 /* MPSampleProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPSampleProvider.m; sourceTree = "<group>"; };
 		63A37ACD27A2804800622327 /* MPIOSMPCircularProgressIndicator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSMPCircularProgressIndicator.h; sourceTree = "<group>"; };
 		63A37ACE27A2804800622327 /* MPIOSMPCircularProgressIndicator.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MPIOSMPCircularProgressIndicator.m; sourceTree = "<group>"; };
 		63A37AD227A2C68F00622327 /* MPIOSPluginRegister.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MPIOSPluginRegister.h; sourceTree = "<group>"; };
@@ -315,8 +312,6 @@
 				633E6682268313E700DF66AA /* app.mpk */,
 				63C3ADBB266091170000A492 /* AppDelegate.h */,
 				63C3ADBC266091170000A492 /* AppDelegate.m */,
-				63A37ACA279DA26E00622327 /* MPSampleProvider.h */,
-				63A37ACB279DA26E00622327 /* MPSampleProvider.m */,
 				63A37ADE27A2D2D500622327 /* MPSampleChannels.h */,
 				63A37ADF27A2D2D500622327 /* MPSampleChannels.m */,
 				63C3ADC7266091180000A492 /* Assets.xcassets */,
@@ -621,7 +616,6 @@
 				63A37AE427A2EAF200622327 /* MPIOSFlutterPlatform.m in Sources */,
 				63C3ADDD266093CD0000A492 /* MPIOSEngine.m in Sources */,
 				630412682678BA1000ED3CD4 /* MPIOSCustomScrollViewLayout.m in Sources */,
-				63A37ACC279DA26E00622327 /* MPSampleProvider.m in Sources */,
 				633E66922684305E00DF66AA /* MPIOSMPPageView.m in Sources */,
 				633E668926833D3800DF66AA /* MPIOSOverlay.m in Sources */,
 				63C3ADBD266091170000A492 /* AppDelegate.m in Sources */,

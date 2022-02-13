@@ -9,6 +9,8 @@
 #import "MPIOSProvider.h"
 #import "MPIOSMPIcon.h"
 #import "MPIOSViewController.h"
+#import <SDWebImage/SDWebImage.h>
+#import <SDWebImageSVGKitPlugin/SDWebImageSVGKitPlugin.h>
 #import <MBProgressHUD/MBProgressHUD.h>
 
 @implementation MPIOSProvider
@@ -29,12 +31,24 @@
 
 @implementation MPIOSImageProvider
 
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        [[SDImageCodersManager sharedManager] addCoder:[SDImageSVGKCoder sharedCoder]];
+    }
+    return self;
+}
+
 - (void)loadImageWithURLString:(NSString *)URLString imageView:(UIImageView *)imageView {
-    
+    [imageView sd_setImageWithURL:[NSURL URLWithString:URLString]
+                 placeholderImage:nil
+                          options:0
+                          context:@{SDWebImageContextImageThumbnailPixelSize : @(imageView.bounds.size)}];
 }
 
 - (void)loadImageWithAssetName:(NSString *)assetName imageView:(UIImageView *)imageView {
-    
+    [imageView setImage:[UIImage imageNamed:assetName]];
 }
 
 @end
