@@ -23,6 +23,7 @@
         _dialogProvider = [[MPIOSDialogProvider alloc] init];
         _uiProvider = [[MPIOSUIProvider alloc] init];
         _dataProvider = [[MPIOSDataProvider alloc] init];
+        _navigatorProvider = [[MPIOSNavigatorProvider alloc] init];
     }
     return self;
 }
@@ -251,6 +252,44 @@ static MBProgressHUD *activeHUD;
 
 - (NSUserDefaults *)createUserDefaults {
     return [NSUserDefaults standardUserDefaults];
+}
+
+@end
+
+@implementation MPIOSNavigatorProvider
+
+- (void)handlePushViewController:(UIViewController *)nextViewController {
+    [self.navigationController pushViewController:nextViewController animated:YES];
+}
+
+- (void)handleReplaceViewController:(UIViewController *)nextViewController {
+    UINavigationController *navigationController = self.navigationController;
+    if (navigationController != nil) {
+        NSMutableArray *viewControllers = navigationController.viewControllers.mutableCopy;
+        [viewControllers removeLastObject];
+        [viewControllers addObject:nextViewController];
+        [navigationController setViewControllers:viewControllers.copy];
+    }
+}
+
+- (void)handlePop {
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)handleRestart {
+    if (self.navigationController != nil) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            MPIOSViewController *firstViewController = self.navigationController.viewControllers.firstObject;
+            if ([firstViewController isKindOfClass:[MPIOSViewController class]]) {
+                [self.navigationController setViewControllers:@[
+                    [firstViewController copy]
+                ]];
+            }
+        });
+    }
+    else if (self.onRestart != nil) {
+        self.onRestart();
+    }
 }
 
 @end

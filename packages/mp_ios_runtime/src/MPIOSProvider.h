@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class MPIOSImageProvider, MPIOSDialogProvider, MPIOSUIProvider, MPIOSDataProvider, MPIOSViewController;
+@class MPIOSImageProvider, MPIOSDialogProvider, MPIOSUIProvider, MPIOSDataProvider, MPIOSNavigatorProvider, MPIOSViewController;
 
 @interface MPIOSProvider : NSObject
 
@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) MPIOSDialogProvider *dialogProvider;
 @property (nonatomic, strong) MPIOSUIProvider *uiProvider;
 @property (nonatomic, strong) MPIOSDataProvider *dataProvider;
+@property (nonatomic, strong) MPIOSNavigatorProvider *navigatorProvider;
 
 @end
 
@@ -68,6 +69,23 @@ typedef void(^MPIOSDialogProviderActionSheetCompletionBlock)(NSInteger);
                          completionHandler:(void (^)(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error))completionHandler;
 
 - (NSUserDefaults *)createUserDefaults;
+
+@end
+
+typedef void(^MPIOSNavigatorOnRestart)(void);
+
+@interface MPIOSNavigatorProvider : NSObject
+
+@property (nonatomic, strong) UINavigationController *navigationController;
+@property (nonatomic, copy) MPIOSNavigatorOnRestart onRestart;
+
+- (void)handlePushViewController:(UIViewController *)nextViewController;
+
+- (void)handleReplaceViewController:(UIViewController *)nextViewController;
+
+- (void)handlePop;
+
+- (void)handleRestart;
 
 @end
 

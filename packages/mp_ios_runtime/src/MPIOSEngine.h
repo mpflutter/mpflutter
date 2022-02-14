@@ -16,11 +16,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@class MPIOSApp, MPIOSProvider;
+@class MPIOSProvider;
 
 @interface MPIOSEngine : NSObject
 
-@property (nonatomic, strong) MPIOSApp *app;
 @property (nonatomic, strong) MPIOSProvider *provider;
 
 - (instancetype)initWithJSCode:(NSString *)jsCode;

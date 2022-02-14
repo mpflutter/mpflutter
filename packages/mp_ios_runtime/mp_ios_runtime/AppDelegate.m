@@ -11,8 +11,8 @@
 
 @interface AppDelegate ()
 
-@property (nonatomic, strong) MPIOSEngine *engine;
-@property (nonatomic, strong) MPIOSApp *app;
+@property (nonatomic, strong) MPIOSApplet *applet;
+@property (nonatomic, strong) MPIOSCardlet *cardlet;
 
 @end
 
@@ -29,20 +29,41 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     UINavigationController *navigationController = [[UINavigationController alloc] init];
-    
-    self.engine = [[MPIOSEngine alloc] initWithDebuggerServerAddr:@"127.0.0.1:9898"];
-//    NSString *mpkPath = [[NSBundle mainBundle] pathForResource:@"app" ofType:@"mpk"];
-//    self.engine = [[MPIOSEngine alloc] initWithMpkData:[NSData dataWithContentsOfFile:mpkPath]];
-    self.app = [[MPIOSApp alloc] initWithEngine:self.engine navigationController:navigationController];
     [navigationController.navigationBar setTranslucent:NO];
     [navigationController.view setBackgroundColor:[UIColor whiteColor]];
-    [navigationController setViewControllers:@[[self.app createRootViewControllerWithInitialRoute:@"/" initialParams:@{}]]];
-    [self.engine start];
-    
+
+    MPIOSEngine *engine = [[MPIOSEngine alloc] initWithDebuggerServerAddr:@"127.0.0.1:9898"];
+//    NSString *mpkPath = [[NSBundle mainBundle] pathForResource:@"app" ofType:@"mpk"];
+//    self.engine = [[MPIOSEngine alloc] initWithMpkData:[NSData dataWithContentsOfFile:mpkPath]];
+    self.applet = [MPIOSApplet createAppletWithEngine:engine initialRoute:@"/" initialParams:@{}];
+    [self.applet attachToNavigationController:navigationController asRootViewController:YES];
+    [engine start];
+
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.rootViewController = navigationController;
     [self.window makeKeyAndVisible];
     return YES;
 }
+
+//- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+//    UIViewController *homeViewController = [[UIViewController alloc] init];
+//    homeViewController.view.backgroundColor = [UIColor blackColor];
+//    UIView *pView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 300, 300)];
+//    pView.clipsToBounds = YES;
+//    pView.backgroundColor = [UIColor yellowColor];
+//    [homeViewController.view addSubview:pView];
+//
+//    MPIOSEngine *engine = [[MPIOSEngine alloc] initWithDebuggerServerAddr:@"127.0.0.1:9898"];
+////    NSString *mpkPath = [[NSBundle mainBundle] pathForResource:@"app" ofType:@"mpk"];
+////    self.engine = [[MPIOSEngine alloc] initWithMpkData:[NSData dataWithContentsOfFile:mpkPath]];
+//    self.cardlet = [MPIOSCardlet createCardletWithEngine:engine initialRoute:@"/" initialParams:@{}];
+//    [self.cardlet attachToView:pView];
+//    [engine start];
+//
+//    self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+//    self.window.rootViewController = homeViewController;
+//    [self.window makeKeyAndVisible];
+//    return YES;
+//}
 
 @end

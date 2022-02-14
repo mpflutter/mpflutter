@@ -7,10 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "MPIOSApplet.h"
+#import "MPIOSCardlet.h"
 #import "MPIOSEngine.h"
 #import "MPIOSProvider.h"
 #import "MPIOSPage.h"
-#import "MPIOSApp.h"
 #import "MPIOSViewController.h"
 #import "MPIOSPluginRegister.h"
 #import "MPIOSMethodChannel.h"

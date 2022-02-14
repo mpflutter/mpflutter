@@ -9,10 +9,10 @@
 #import <WebKit/WebKit.h>
 #import <jetfire/JFRWebSocket.h>
 #import "MPIOSDebugger.h"
-#import "MPIOSApp.h"
 #import "MPIOSEngine.h"
 #import "MPIOSEngine+Private.h"
 #import "MPIOSViewController.h"
+#import "MPIOSProvider.h"
 
 @interface MPIOSDebugger ()<JFRWebSocketDelegate>
 
@@ -61,16 +61,7 @@
 
 - (void)websocketDidDisconnect:(JFRWebSocket *)socket error:(NSError *)error {
     if (self.shouldClearNavigator) {
-        if (self.engine.app.navigationController != nil) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-                MPIOSViewController *firstViewController = self.engine.app.navigationController.viewControllers.firstObject;
-                if ([firstViewController isKindOfClass:[MPIOSViewController class]]) {
-                    [self.engine.app.navigationController setViewControllers:@[
-                        [firstViewController copy]
-                    ]];
-                }
-            });
-        }
+        [self.engine.provider.navigatorProvider handleRestart];
         self.shouldClearNavigator = NO;
     }
     [self.engine clear];

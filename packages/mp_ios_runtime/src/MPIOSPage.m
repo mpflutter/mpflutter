@@ -31,6 +31,7 @@
 
 - (instancetype)initWithRootView:(UIView *)rootView
                           engine:(MPIOSEngine *)engine
+                     isFirstPage:(BOOL)isFirstPage
                     initialRoute:(NSString *)initialRoute
                    initialParams:(NSDictionary *)initialParams
 {
@@ -38,6 +39,7 @@
     if (self) {
         _rootView = rootView;
         _engine = engine;
+        _isFirstPage = isFirstPage;
         _initialRoute = initialRoute;
         _initialParams = initialParams;
         [self requestRoute:^(NSNumber *viewId) {
@@ -53,7 +55,7 @@
     if (router != nil) {
         [router requestRoute:self.initialRoute
                  routeParams:self.initialParams
-                      isRoot:self.engine.app == nil
+                      isRoot:self.isFirstPage
                     viewport:self.rootView.bounds.size
              completionBlock:completionBlock];
     }

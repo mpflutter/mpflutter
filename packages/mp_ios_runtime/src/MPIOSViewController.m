@@ -30,9 +30,13 @@
     [super viewDidLoad];
     self.edgesForExtendedLayout = UIRectEdgeNone;
     self.view.backgroundColor = [UIColor whiteColor];
+    if (!CGRectIsEmpty(self.initialViewBounds)) {
+        self.view.frame = self.initialViewBounds;
+    }
     self.lastViewBounds = self.view.bounds;
     self.page = [[MPIOSPage alloc] initWithRootView:self.view
                                              engine:self.engine
+                                        isFirstPage:self.isFirstPage
                                        initialRoute:self.initialRouteName
                                       initialParams:self.initialRouteParams];
 }

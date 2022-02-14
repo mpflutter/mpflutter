@@ -15,7 +15,6 @@
 
 @interface MPIOSEngine (Private)
 
-@property (nonatomic, readonly) MPIOSApp *app;
 @property (nonatomic, readonly) BOOL started;
 @property (nonatomic, readonly) JSContext *jsContext;
 @property (nonatomic, strong) NSMutableDictionary<NSNumber *, id<MPIOSDataReceiver>> *managedViews;

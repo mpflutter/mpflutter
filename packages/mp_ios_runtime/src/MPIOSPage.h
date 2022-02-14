@@ -13,10 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MPIOSPage : NSObject
 
+@property (nonatomic, assign) BOOL isFirstPage;
 @property (nonatomic, readonly) NSNumber *viewId;
 
 - (instancetype)initWithRootView:(UIView *)rootView
                           engine:(MPIOSEngine *)engine
+                     isFirstPage:(BOOL)isFirstPage
                     initialRoute:(NSString *)initialRoute
                    initialParams:(NSDictionary *)initialParams;
 

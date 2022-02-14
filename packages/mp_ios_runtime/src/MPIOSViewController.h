@@ -14,7 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface MPIOSViewController : UIViewController
 
+@property (nonatomic, assign) BOOL isFirstPage;
 @property (nonatomic, strong) MPIOSEngine *engine;
+@property (nonatomic, assign) CGRect initialViewBounds;
 @property (nonatomic, copy) NSString *initialRouteName;
 @property (nonatomic, copy) NSDictionary *initialRouteParams;
 

@@ -7,9 +7,9 @@
 //
 
 #import "MPIOSRouter.h"
-#import "MPIOSApp.h"
 #import "MPIOSViewController.h"
 #import "MPIOSEngine+Private.h"
+#import "MPIOSProvider.h"
 
 @interface MPIOSRouter ()
 
@@ -165,11 +165,9 @@
     MPIOSEngine *engine = self.engine;
     self.thePushingRouteId = message[@"routeId"];
     if (engine != nil) {
-        UINavigationController *navigationController = engine.app.navigationController;
-        if (navigationController != nil) {
-            UIViewController *nextViewContrroller = [engine.app createPushingViewController];
-            [navigationController pushViewController:nextViewContrroller animated:YES];
-        }
+        MPIOSViewController *nextViewController = [[MPIOSViewController alloc] init];
+        nextViewController.engine = engine;
+        [engine.provider.navigatorProvider handlePushViewController:nextViewController];
     }
 }
 
@@ -180,14 +178,9 @@
     MPIOSEngine *engine = self.engine;
     self.thePushingRouteId = message[@"routeId"];
     if (engine != nil) {
-        UINavigationController *navigationController = engine.app.navigationController;
-        if (navigationController != nil) {
-            UIViewController *nextViewContrroller = [engine.app createPushingViewController];
-            NSMutableArray *viewControllers = navigationController.viewControllers.mutableCopy;
-            [viewControllers removeLastObject];
-            [viewControllers addObject:nextViewContrroller];
-            [navigationController setViewControllers:viewControllers.copy];
-        }
+        MPIOSViewController *nextViewController = [[MPIOSViewController alloc] init];
+        nextViewController.engine = engine;
+        [engine.provider.navigatorProvider handleReplaceViewController:nextViewController];
     }
 }
 
@@ -195,10 +188,7 @@
     self.doBacking = YES;
     MPIOSEngine *engine = self.engine;
     if (engine != nil) {
-        UINavigationController *navigationController = engine.app.navigationController;
-        if (navigationController != nil) {
-            [navigationController popViewControllerAnimated:YES];
-        }
+        [engine.provider.navigatorProvider handlePop];
     }
     self.doBacking = NO;
 }

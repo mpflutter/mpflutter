@@ -22,7 +22,6 @@
 #import "MPIOSCustomPaint.h"
 #import "MPIOSRouter.h"
 #import "MPIOSMPJS.h"
-#import "MPIOSApp.h"
 #import "MPIOSTextMeasurer.h"
 #import "MPIOSMpkReader.h"
 #import "MPIOSWindowInfo.h"
