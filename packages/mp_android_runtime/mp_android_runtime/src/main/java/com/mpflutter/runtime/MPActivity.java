@@ -19,16 +19,6 @@ public class MPActivity extends AppCompatActivity {
     String initialRoute;
     Map initialParams;
 
-    public void initializeWithEngine(MPEngine engine) {
-        this.engine = engine;
-    }
-
-    public void initializeWithEngine(MPEngine engine, String initialRoute, Map initialParams) {
-        this.engine = engine;
-        this.initialRoute = initialRoute;
-        this.initialParams = initialParams;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +31,10 @@ public class MPActivity extends AppCompatActivity {
             engine = MPEngine.engineStore.get(engineId).get();
             if (engine == null) {
                 return;
+            }
+            if (getIntent().getBooleanExtra("isFirstPage", false)) {
+                initialRoute = engine.initialRoute;
+                initialParams = engine.initialParams;
             }
         }
         rootView = new FrameLayout(this);

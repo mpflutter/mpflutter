@@ -76,6 +76,8 @@ public class MPEngine {
     public Map<Integer, List<JSProxyObject>> managedViewsQueueMessage = new HashMap();
     public MPProvider provider;
     JSObject engineScope;
+    String initialRoute;
+    Map initialParams;
 
     public MPEngine(Context context) {
         this.context = context;

@@ -1,37 +1,47 @@
 package com.mpflutter.sample;
 
+import android.app.Activity;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.FrameLayout;
 
-import com.mpflutter.runtime.MPActivity;
+import com.mpflutter.runtime.MPCardlet;
 import com.mpflutter.runtime.MPEngine;
-import com.mpflutter.runtime.platform.MPPluginRegister;
 
-public class MainActivity extends MPActivity {
+import java.util.HashMap;
 
-    MPEngine engine;
+public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        installPlugins();
-        MPEngine engine = new MPEngine(this);
-        this.engine = engine;
-        engine.initWithDebuggerServerAddr("127.0.0.1:9898");
-//        try {
-//            InputStream mpkInputStream = getAssets().open("app.mpk");
-//            engine.initWithMpkData(mpkInputStream);
-//            mpkInputStream.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        engine.start();
-        initializeWithEngine(engine);
         super.onCreate(savedInstanceState);
+        ((MainApplication)getApplication()).startApplet(this);
+        finish();
     }
 
-    void installPlugins() {
-        MPPluginRegister.registerChannel("com.mpflutter.templateMethodChannel", MPTemplateMethodChannel.class);
-        MPPluginRegister.registerChannel("com.mpflutter.templateEventChannel", MPTemplateEventChannel.class);
-        MPPluginRegister.registerPlatformView("com.mpflutter.templateFooView", TemplateFooView.class);
-    }
+//    MPCardlet cardlet;
+//    FrameLayout cardView;
+//
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        FrameLayout contentView = new FrameLayout(this);
+//        contentView.setBackgroundColor(Color.BLACK);
+//        cardView = new FrameLayout(this);
+//        contentView.addView(cardView, new FrameLayout.LayoutParams(
+//                (int) (300 * getResources().getDisplayMetrics().density),
+//                (int) (300 * getResources().getDisplayMetrics().density)
+//        ));
+//        setContentView(contentView);
+//        startCardlet();
+//    }
+//
+//    void startCardlet() {
+//        MPEngine engine = new MPEngine(this);
+//        engine.initWithDebuggerServerAddr("127.0.0.1:9898");
+//        cardlet = MPCardlet.createCardletWithEngine(engine, "/", new HashMap());
+//        cardlet.attachToView(cardView);
+//        engine.start();
+//    }
 
 }
