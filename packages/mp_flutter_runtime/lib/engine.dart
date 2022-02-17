@@ -53,6 +53,7 @@ class MPEngine {
   Future start() async {
     if (_started) return;
     if (_jsCode == null && _debugger == null) return;
+    _updateWindowInfo();
     await _jsContext.createContext();
     await _setupJSContextEventChannel();
     await _setupDeferredLibraryLoader();
@@ -66,13 +67,31 @@ class MPEngine {
     } else if (_debugger != null) {
       _debugger!.start();
     }
-    Future.delayed(const Duration(seconds: 5)).then((value) {
-      _jsContext.evaluateScript('console.log(wx.getStorageSync("sss"));');
-    });
+    for (final it in _messageQueue) {
+      _jsContext.postMessage(it, '\$engine');
+    }
+    _messageQueue.clear();
     _started = true;
   }
 
   void stop() {}
+
+  void _updateWindowInfo() {
+    _sendMessage({
+      "type": "window_info",
+      "message": {
+        "window": {
+          "width": MediaQuery.of(flutterContext).size.width,
+          "height": MediaQuery.of(flutterContext).size.height,
+          "padding": {
+            "top": MediaQuery.of(flutterContext).padding.top,
+            "bottom": MediaQuery.of(flutterContext).padding.bottom,
+          }
+        },
+        "devicePixelRatio": MediaQuery.of(flutterContext).devicePixelRatio,
+      },
+    });
+  }
 
   Future _setupJSContextEventChannel() async {
     _jsContext.addMessageListener((message, type) {
@@ -207,6 +226,10 @@ class MPEngine {
     if (_debugger != null) {
       _debugger!.sendMessage(message);
     } else {
+      if (_jsContext._contextRef == null) {
+        _messageQueue.add(message);
+        return;
+      }
       _jsContext.postMessage(message, '\$engine');
     }
   }
