@@ -25,5 +25,11 @@ terser --compress --mangle -- ./dist/mpdom.js.__MP_TARGET_SWANAPP__ > ./dist/mpd
 cp ./dist/mpdom.min.js ../mpflutter_sample/swanapp/mpdom.min.js
 cp ./dist/mpdom.min.js dist_swan/mpdom.min.js
 
+# Build tt
+node scripts/change_env.js __MP_TARGET_TT__
+terser --compress --mangle -- ./dist/mpdom.js.__MP_TARGET_TT__ > ./dist/mpdom.min.js
+cp ./dist/mpdom.min.js ../mpflutter_sample/tt/mpdom.min.js
+cp ./dist/mpdom.min.js dist_tt/mpdom.min.js
+
 ## Clean
 rm -rf dist

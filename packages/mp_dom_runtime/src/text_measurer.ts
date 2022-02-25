@@ -22,10 +22,10 @@ export class TextMeasurer {
     const textSize = (view as any).textCacheSize;
     const calcSize = this.zhMeasureCache[textSize]
       ? {
-          measureId: view.attributes.measureId,
-          width: Math.ceil(this.zhMeasureCache[textSize].width * text.length) + 1.0,
-          height: Math.ceil(this.zhMeasureCache[textSize].height) + 1.0,
-        }
+        measureId: view.attributes.measureId,
+        width: Math.ceil(this.zhMeasureCache[textSize].width * text.length) + 1.0,
+        height: Math.ceil(this.zhMeasureCache[textSize].height) + 1.0,
+      }
       : undefined;
     if (view.constraints) {
       if (calcSize && (calcSize.width < view.constraints.w || view.constraints.w === 0)) {
@@ -49,6 +49,9 @@ export class TextMeasurer {
       this.activeTextMeasureDocument = document;
     }
     while (Router.beingPush) {
+      await this.delay();
+    }
+    while (!this.activeTextMeasureDocument) {
       await this.delay();
     }
     if (data.items) {
@@ -84,7 +87,7 @@ export class TextMeasurer {
                 : "999999px",
           });
           this.activeTextMeasureDocument.body.appendChild(it.htmlElement);
-          if (!isTiny && (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)) {
+          if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__ || __MP_TARGET_TT__) {
             await this.delay();
           }
           const rect = await (it.htmlElement as any).getBoundingClientRect();

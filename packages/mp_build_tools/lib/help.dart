@@ -8,6 +8,7 @@ import 'init_local_plugin.dart' as init_local_plugin;
 import 'build_web.dart' as build_web;
 import 'build_weapp.dart' as build_weapp;
 import 'build_swanapp.dart' as build_swanapp;
+import 'build_tt.dart' as build_tt;
 import 'package:cli_dialog/cli_dialog.dart';
 
 final features = <Map>[
@@ -58,6 +59,13 @@ final features = <Map>[
     'title.zh': '构建百度小程序应用',
     'action': () {
       build_swanapp.main([]);
+    },
+  },
+  {
+    'title.en': 'Build TT-MiniProgram Application',
+    'title.zh': '构建字节小程序应用',
+    'action': () {
+      build_tt.main([]);
     },
   },
 ];

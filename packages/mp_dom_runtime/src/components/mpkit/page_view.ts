@@ -147,8 +147,8 @@ class PageViewWeapp extends MPPlatformView {
 }
 
 export const MPPageView = (() => {
-  if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
-    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+  if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__ || __MP_TARGET_TT__) {
+    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__ || __MP_TARGET_TT__) {
       return PageViewWeapp;
     }
   } else if (__MP_TARGET_BROWSER__) {

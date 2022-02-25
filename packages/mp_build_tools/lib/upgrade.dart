@@ -136,5 +136,39 @@ main(List<String> args) async {
         print(I18n.successfulUpgrade('百度小程序' + item));
       }
     }
+    final ttFile = File(p.join('tt', 'app.js'));
+    if (ttFile.existsSync()) {
+      final fileList = [
+        'mpdom.min.js',
+        'kbone/miniprogram-element/index-vhost.js',
+        'kbone/miniprogram-element/index.ttml',
+        'kbone/miniprogram-element/template/subtree.ttml',
+        'kbone/miniprogram-element/template/inner-component.ttml',
+        'kbone/miniprogram-element/template/subtree-cover.ttml',
+        'kbone/miniprogram-element/index.js',
+        'kbone/miniprogram-element/index.ttss',
+        'kbone/miniprogram-element/index-vhost.json',
+        'kbone/miniprogram-element/base.js',
+        'kbone/miniprogram-element/custom-component/index.ttml',
+        'kbone/miniprogram-element/custom-component/index.js',
+        'kbone/miniprogram-element/custom-component/index.ttss',
+        'kbone/miniprogram-element/custom-component/index.json',
+        'kbone/miniprogram-element/index-vhost.ttss',
+        'kbone/miniprogram-element/base.js.map',
+        'kbone/miniprogram-element/index.json',
+        'kbone/miniprogram-element/index-vhost.ttml',
+        'kbone/miniprogram-render/index.js',
+        'kbone/miniprogram-render/index.js.map'
+      ];
+      for (var item in fileList) {
+        final response = await get(
+          Uri.parse(
+              'https://cdn.jsdelivr.net/gh/mpflutter/dist/$versionCode/dist_tt/' +
+                  item),
+        );
+        File(p.join('tt', item)).writeAsStringSync(response.body);
+        print(I18n.successfulUpgrade('字节小程序' + item));
+      }
+    }
   }
 }

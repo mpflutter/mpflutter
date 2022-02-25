@@ -1,5 +1,6 @@
 declare var wx: any;
 declare var swan: any;
+declare var tt: any;
 declare var getApp: any;
 declare var global: any;
 
@@ -8,6 +9,7 @@ export enum PlatformType {
   browser,
   wxMiniProgram,
   swanMiniProgram,
+  ttMiniProgram,
 }
 
 let mpGlobal = {};
@@ -18,6 +20,8 @@ export const MPEnv = {
       return PlatformType.wxMiniProgram;
     } else if (typeof swan !== "undefined" && typeof swan.getSystemInfoSync === "function") {
       return PlatformType.swanMiniProgram;
+    } else if (typeof tt !== "undefined" && typeof tt.getSystemInfoSync === "function") {
+      return PlatformType.ttMiniProgram;
     } else {
       return PlatformType.browser;
     }
@@ -27,6 +31,8 @@ export const MPEnv = {
       return wx;
     } else if (typeof swan !== "undefined" && typeof swan.getSystemInfoSync === "function") {
       return swan;
+    } else if (typeof tt !== "undefined" && typeof tt.getSystemInfoSync === "function") {
+      return tt;
     }
   })(),
   platformAppInstance: undefined,

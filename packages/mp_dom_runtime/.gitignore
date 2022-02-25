@@ -121,6 +121,8 @@ dist_swan/kbone
 dist_swan/mpdom.min.js
 dist_weapp/kbone
 dist_weapp/mpdom.min.js
+dist_tt/kbone
+dist_tt/mpdom.min.js
 dist_web/mpdom.min.js
 dist_web/*.css
 dist_web/*.js

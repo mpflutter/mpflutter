@@ -1,5 +1,6 @@
 declare var require: any;
 declare var wx: any;
+declare var tt: any;
 declare var swan: any;
 
 import { BrowserApp } from "./browser_app";
@@ -99,8 +100,14 @@ export class Engine {
       MPEnv.platformGlobal().engineScope = this.mpJS.engineScope;
     } else {
       MPEnv.platformGlobal().JSON = JSON;
-      MPEnv.platformGlobal().setTimeout = setTimeout;
-      MPEnv.platformGlobal().setInterval = setInterval;
+      MPEnv.platformGlobal().setTimeout = function(a: any, b: any) {
+        var ret = setTimeout(a, b);
+        return parseInt(ret as any);
+      };
+      MPEnv.platformGlobal().setInterval = function(a: any, b: any) {
+        var ret = setInterval(a, b);
+        return parseInt(ret as any);
+      };
       MPEnv.platformGlobal().clearTimeout = function (v: any) {
         clearTimeout(v);
       };
@@ -116,6 +123,10 @@ export class Engine {
       if (typeof swan !== "undefined") {
         MPEnv.platformGlobal().swan = swan;
         MPEnv.platformGlobal().uni = swan;
+      }
+      if (typeof tt !== "undefined") {
+        MPEnv.platformGlobal().tt = tt;
+        MPEnv.platformGlobal().uni = tt;
       }
     }
     if (this.debugger) {

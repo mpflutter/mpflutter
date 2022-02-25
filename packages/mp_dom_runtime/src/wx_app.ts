@@ -1,5 +1,6 @@
 declare var getCurrentPages: any;
 declare var require: any;
+declare var tt: any;
 
 import { PluginRegister } from "./platform_channel/plugin_register";
 import { MPMethodChannel } from "./platform_channel/mp_method_channel";
@@ -54,7 +55,7 @@ export const WXPage = function (
   selector: string = "#vdom",
   app: WXApp = MPEnv.platformGlobal().app
 ) {
-  if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)) return;
+  if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__ || __MP_TARGET_TT__)) return;
   return {
     data: {
       pageMeta: {
@@ -70,6 +71,7 @@ export const WXPage = function (
       const window = mpRes.window;
       this.kboneDocument = mpRes.document;
       this.kboneDocument.window = window;
+      
       window.$$createSelectorQuery = () => MPEnv.platformScope.createSelectorQuery().in(this);
       window.$$createIntersectionObserver = (options: any) =>
         MPEnv.platformScope.createIntersectionObserver(this, options);
@@ -97,7 +99,7 @@ export const WXPage = function (
           finalOptions = { route: pageOptions.route, params: params };
         } else {
           finalOptions = {
-            route: (this as any).route.replace(basePath, ""),
+            route: (this as any).route?.replace(basePath, "") ?? "/",
             params: params,
           };
           if (finalOptions.route === "/index") {

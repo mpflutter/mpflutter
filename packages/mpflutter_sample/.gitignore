@@ -9,6 +9,9 @@ weapp/plugins.min.js
 swanapp/kbone
 swanapp/mpdom.min.js
 swanapp/plugins.min.js
+tt/kbone
+tt/mpdom.min.js
+tt/plugins.min.js
 web/mpdom.min.js
 web/mp_web_features.css
 web/mp_web_features.min.js
