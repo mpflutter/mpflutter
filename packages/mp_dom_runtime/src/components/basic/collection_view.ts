@@ -93,6 +93,9 @@ export class CollectionView extends ComponentView {
         })
       );
     }
+    if (this.htmlElement.scrollTop + this.htmlElement.clientHeight >= this.htmlElement.scrollHeight) {
+      this.onScrollToLowerEvent();
+    }
   }
 
   addScrollListener() {
@@ -127,18 +130,16 @@ export class CollectionView extends ComponentView {
   }
 
   onScrollToLowerEvent() {
-    if (this.attributes.isRoot) {
-      this.engine.sendMessage(
-        JSON.stringify({
-          type: "scroll_view",
-          message: {
-            event: "onScrollToLower",
-            target: this.hashCode,
-            isRoot: this.attributes.isRoot,
-          },
-        })
-      );
-    }
+    this.engine.sendMessage(
+      JSON.stringify({
+        type: "scroll_view",
+        message: {
+          event: "onScrollToLower",
+          target: this.hashCode,
+          isRoot: this.attributes.isRoot,
+        },
+      })
+    );
   }
 
   addScrollToLowerListener() {

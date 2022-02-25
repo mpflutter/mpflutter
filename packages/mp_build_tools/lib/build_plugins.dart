@@ -27,6 +27,7 @@ main(List<String> args) {
 }
 
 void buildWebPlugin() {
+  if (!Directory('web').existsSync()) return;
   final stringBuffer = StringBuffer();
   final lines = File('.packages').readAsLinesSync();
   for (final line in lines) {
@@ -51,6 +52,7 @@ void buildWebPlugin() {
 }
 
 void buildWeappPlugin() {
+  if (!Directory('weapp').existsSync()) return;
   final stringBuffer = StringBuffer();
   final lines = File('./.packages').readAsLinesSync();
   final components = <File>[];
@@ -160,6 +162,7 @@ module.exports = {
 }
 
 void buildSwanappPlugin() {
+  if (!Directory('swanapp').existsSync()) return;
   final stringBuffer = StringBuffer();
   final lines = File('.packages').readAsLinesSync();
   for (final line in lines) {

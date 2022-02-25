@@ -603,6 +603,11 @@ class MPChannelBase {
                 .findAncestorWidgetOfExactType<MPScaffold>()
                 ?.onReachBottom
                 ?.call();
+          } else {
+            element
+                .findAncestorWidgetOfExactType<MPReachBottomListener>()
+                ?.onReachBottom
+                ?.call(element.widget.key);
           }
         }
       }
