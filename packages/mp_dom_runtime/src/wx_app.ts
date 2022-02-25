@@ -55,7 +55,7 @@ export const WXPage = function (
   selector: string = "#vdom",
   app: WXApp = MPEnv.platformGlobal().app
 ) {
-  if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__ || __MP_TARGET_TT__)) return;
+  if (!(__MP_MINI_PROGRAM__)) return;
   return {
     data: {
       pageMeta: {

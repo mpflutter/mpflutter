@@ -6,7 +6,7 @@ import { MPEnv, PlatformType } from "../../env";
 
 export class WebDialogs {
   static receivedWebDialogsMessage(engine: Engine, message: any) {
-    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       this.wxMiniProgramReceivedWebDialogsMessage(engine, message);
     } else {
       this.browserMiniProgramReceivedWebDialogsMessage(engine, message);
@@ -14,7 +14,7 @@ export class WebDialogs {
   }
 
   static wxMiniProgramReceivedWebDialogsMessage(engine: Engine, message: any) {
-    if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)) return;
+    if (!(__MP_MINI_PROGRAM__)) return;
     if (message["params"]["dialogType"] === "alert") {
       MPEnv.platformScope.showModal({
         content: message["params"]["message"],

@@ -2,8 +2,8 @@ import { Engine } from "../engine";
 import { MPEnv, PlatformType } from "../env";
 
 export function createDebugger(serverAddr: string, engine: Engine): Debugger {
-  if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__ || __MP_TARGET_TT__) {
-    if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__ || __MP_TARGET_TT__)) return null!;
+  if (__MP_MINI_PROGRAM__) {
+    if (!(__MP_MINI_PROGRAM__)) return null!;
     return new WXDebugger(serverAddr, engine);
   } else {
     if (!__MP_TARGET_BROWSER__) return null!;

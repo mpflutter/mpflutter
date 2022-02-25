@@ -76,18 +76,18 @@ export class Page {
       return {
         width: MPEnv.platformScope.getSystemInfoSync().windowWidth,
         height: MPEnv.platformScope.getSystemInfoSync().windowHeight,
-      }
+      };
     }
     let viewport = { ...(await (this.element as any).getBoundingClientRect()) };
     if (!viewport.width || viewport.width <= 0.1) {
-      if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+      if (__MP_MINI_PROGRAM__) {
         viewport.width = MPEnv.platformScope.getSystemInfoSync().windowWidth;
       } else {
         viewport.width = window.innerWidth;
       }
     }
     if (!viewport.height || viewport.height <= 0.1) {
-      if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+      if (__MP_MINI_PROGRAM__) {
         viewport.height = MPEnv.platformScope.getSystemInfoSync().windowHeight;
       } else {
         viewport.height = window.innerHeight;
@@ -130,12 +130,8 @@ export class Page {
         }
         this.scaffoldView = scaffoldView;
         if (scaffoldView instanceof MPScaffold && !scaffoldView.delegate) {
-          if (
-            __MP_TARGET_WEAPP__ ||
-            __MP_TARGET_SWANAPP__ ||
-            __MP_TARGET_TT__
-          ) {
-            if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__ || __MP_TARGET_TT__) {
+          if (__MP_MINI_PROGRAM__) {
+            if (__MP_MINI_PROGRAM__) {
               scaffoldView.setDelegate(new WXPageScaffoldDelegate(this.document, this.miniProgramPage));
               scaffoldView.setAttributes(message.scaffold.attributes);
             }

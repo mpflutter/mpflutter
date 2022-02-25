@@ -87,7 +87,7 @@ export class TextMeasurer {
                 : "999999px",
           });
           this.activeTextMeasureDocument.body.appendChild(it.htmlElement);
-          if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__ || __MP_TARGET_TT__) {
+          if (__MP_MINI_PROGRAM__) {
             await this.delay();
           }
           const rect = await (it.htmlElement as any).getBoundingClientRect();

@@ -29,7 +29,7 @@ export class RichText extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       this.htmlElement.classList.add("mp_text");
     }
     const maxWidth = attributes.maxWidth;
@@ -147,7 +147,7 @@ export class TextSpan extends ComponentView {
     }
     if (attributes.text) {
       (this.htmlElement as HTMLSpanElement).innerText = attributes.text;
-      if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+      if (__MP_MINI_PROGRAM__) {
         setDOMAttribute(this.htmlElement, "innerText", attributes.text);
       }
     }

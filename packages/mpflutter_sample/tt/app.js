@@ -3,9 +3,9 @@ App({
     // this.mpDEBUG = true;
     const { MPEnv, Engine, WXApp } = require('./mpdom.min');
     MPEnv.platformAppInstance = this;
-    // try {
-    //   require('./plugins.min');
-    // } catch (error) { }
+    try {
+      require('./plugins.min');
+    } catch (error) { }
     const engine = new Engine();
     var dev = true;
     if (dev) {

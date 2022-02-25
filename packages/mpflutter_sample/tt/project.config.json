@@ -6,6 +6,6 @@
     "minified": true,
     "newFeature": true
   },
-  "appid": "",
+  "appid": "testAppId",
   "projectname": "template"
 }

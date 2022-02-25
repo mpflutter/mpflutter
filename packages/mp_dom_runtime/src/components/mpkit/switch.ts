@@ -9,7 +9,7 @@ export class MPSwitch extends MPPlatformView {
 
   constructor(document: Document, readonly initialAttributes?: any) {
     super(document, initialAttributes);
-    if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       this.htmlElement.addEventListener("change", (e: any) => {
         this.invokeMethod("onValueChanged", { value: e.detail.value });
       });
@@ -40,7 +40,7 @@ export class MPSwitch extends MPPlatformView {
   }
 
   elementType() {
-    if (__MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       return "wx-switch";
     } else {
       return "div";
@@ -49,7 +49,7 @@ export class MPSwitch extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (__MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       if (!this.firstSetted) {
         this.firstSetted = true;
         setDOMAttribute(this.htmlElement, "checked", attributes.defaultValue);
@@ -62,7 +62,7 @@ export class MPSwitch extends MPPlatformView {
 
   onMethodCall(method: string, args: any) {
     if (method === "setValue") {
-      if (__MP_TARGET_WEAPP__) {
+      if (__MP_MINI_PROGRAM__) {
         setDOMAttribute(this.htmlElement, "checked", args.value);
       } else if (__MP_TARGET_BROWSER__) {
         (this.inputElement as HTMLInputElement).checked = args.value;

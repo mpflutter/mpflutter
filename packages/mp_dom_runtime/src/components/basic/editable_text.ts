@@ -86,7 +86,7 @@ export class EditableText extends ComponentView {
       }
     }
     if (typeof attributes.value === "string") {
-      if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+      if (__MP_MINI_PROGRAM__) {
         setDOMAttribute(this.contentElement, "value", attributes.value);
       } else {
         this.contentElement.value = attributes.value;
@@ -104,7 +104,7 @@ export class EditableText extends ComponentView {
     if (attributes.maxLength) {
       setDOMAttribute(this.contentElement, "maxlength", attributes.maxLength);
     }
-    if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       setDOMAttribute(this.contentElement, "disabled", attributes.readOnly ? "true" : undefined);
     } else {
       setDOMAttribute(this.contentElement, "read-only", attributes.readOnly ? "true" : undefined);

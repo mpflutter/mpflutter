@@ -5,11 +5,7 @@ export class WindowInfo {
   constructor(readonly engine: Engine) {}
 
   updateWindowInfo() {
-    if (
-      __MP_TARGET_WEAPP__ ||
-      __MP_TARGET_SWANAPP__ || 
-      __MP_TARGET_TT__
-    ) {
+    if (__MP_MINI_PROGRAM__) {
       this.engine.sendMessage(
         JSON.stringify({
           type: "window_info",
@@ -24,8 +20,7 @@ export class WindowInfo {
                   MPEnv.platformScope.getSystemInfoSync().safeArea?.bottom,
               },
             },
-            devicePixelRatio:
-              MPEnv.platformScope.getSystemInfoSync().pixelRatio,
+            devicePixelRatio: MPEnv.platformScope.getSystemInfoSync().pixelRatio,
           },
         })
       );

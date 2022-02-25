@@ -5,7 +5,7 @@
   "window":{
     "backgroundTextStyle":"light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "Gadget",
+    "navigationBarTitleText": "",
     "navigationBarTextStyle":"black"
   }
 }

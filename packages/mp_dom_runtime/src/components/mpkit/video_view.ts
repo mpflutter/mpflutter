@@ -12,7 +12,7 @@ export class MPVideoView extends MPPlatformView {
   async onMethodCall(method: string, params: any) {
     if (__MP_TARGET_BROWSER__) {
       this.onBrowserMethodCall(method, params);
-    } else if (__MP_TARGET_WEAPP__) {
+    } else if (__MP_MINI_PROGRAM__) {
       if (!this.videoContext) {
         this.videoContext = await (this.htmlElement as any).$$getContext();
       }
@@ -53,7 +53,7 @@ export class MPVideoView extends MPPlatformView {
   }
 
   onMiniProgramMethodCall(method: string, params: any) {
-    if (!(__MP_TARGET_WEAPP__ || __MP_TARGET_WEAPP__)) return;
+    if (!(__MP_MINI_PROGRAM__)) return;
     if (method === "play") {
       this.videoContext.play();
     } else if (method === "pause") {

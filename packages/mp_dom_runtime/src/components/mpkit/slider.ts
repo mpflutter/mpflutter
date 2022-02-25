@@ -10,7 +10,7 @@ export class MPSlider extends MPPlatformView {
     this.htmlElement.addEventListener("change", (value: any) => {
       this.invokeMethod("onValueChanged", { value: value.detail.value });
     });
-    if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       this.htmlElement.addEventListener("changing", (value: any) => {
         this.invokeMethod("onValueChanged", { value: value.detail.value });
       });
@@ -30,7 +30,7 @@ export class MPSlider extends MPPlatformView {
   }
 
   elementType() {
-    if (__MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       return "wx-slider";
     }
     return "div";
@@ -38,7 +38,7 @@ export class MPSlider extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       setDOMAttribute(this.htmlElement, "min", attributes.min);
       setDOMAttribute(this.htmlElement, "max", attributes.max);
       setDOMAttribute(this.htmlElement, "step", attributes.step);
@@ -109,7 +109,7 @@ export class MPSlider extends MPPlatformView {
     if (method === "setValue") {
       const value = params?.value;
       if (typeof value === "number") {
-        if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
+        if (__MP_MINI_PROGRAM__) {
           this.htmlElement.setAttribute("value", value as any);
         } else if (__MP_TARGET_BROWSER__ && __MP_TARGET_BROWSER__) {
           this.resetSliderValue(params.value);

@@ -14,16 +14,21 @@ main(List<String> args) {
           .replaceFirst('file://', '')
           .replaceFirst('/lib/', '');
       if (File(path.join(pkgPath, 'package.json')).existsSync() &&
-          (Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
-              Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
-              Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync())) {
+          (
+            Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
+            Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
+            Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync() ||
+            Directory(path.join(pkgPath, 'lib', 'tt')).existsSync()
+          )
+        ) {
         runNpmBuild(pkgPath);
       }
     } catch (e) {}
   }
   buildWebPlugin();
-  buildWeappPlugin();
-  buildSwanappPlugin();
+  buildMPPlugin('weapp');
+  buildMPPlugin('swanapp');
+  buildMPPlugin('tt');
 }
 
 void buildWebPlugin() {
@@ -51,8 +56,8 @@ void buildWebPlugin() {
   } catch (e) {}
 }
 
-void buildWeappPlugin() {
-  if (!Directory('weapp').existsSync()) return;
+void buildMPPlugin(String appType) {
+  if (!Directory(appType).existsSync()) return;
   final stringBuffer = StringBuffer();
   final lines = File('./.packages').readAsLinesSync();
   final components = <File>[];
@@ -62,16 +67,16 @@ void buildWeappPlugin() {
           .replaceFirst(RegExp('.*?:'), '')
           .replaceFirst('file://', '')
           .replaceFirst('/lib/', '');
-      if (File(path.join(pkgPath, 'dist', 'weapp', 'bundle.min.js'))
+      if (File(path.join(pkgPath, 'dist', appType, 'bundle.min.js'))
           .existsSync()) {
         stringBuffer.writeln(
-            File(path.join(pkgPath, 'dist', 'weapp', 'bundle.min.js'))
+            File(path.join(pkgPath, 'dist', appType, 'bundle.min.js'))
                 .readAsStringSync());
       }
-      if (Directory(path.join(pkgPath, 'lib', 'weapp', 'components'))
+      if (Directory(path.join(pkgPath, 'lib', appType, 'components'))
           .existsSync()) {
         // contains wechat components
-        Directory(path.join(pkgPath, 'lib', 'weapp', 'components'))
+        Directory(path.join(pkgPath, 'lib', appType, 'components'))
             .listSync()
             .forEach((element) {
           if (element.path.endsWith(".json")) {
@@ -82,7 +87,7 @@ void buildWeappPlugin() {
     } catch (e) {}
   }
   try {
-    File('weapp/plugins.min.js').writeAsStringSync(
+    File('${appType}/plugins.min.js').writeAsStringSync(
         '''var MPEnv = require("./mpdom.min").MPEnv;var MPMethodChannel = require("./mpdom.min").MPMethodChannel;var MPEventChannel = require("./mpdom.min").MPEventChannel;var MPPlatformView = require("./mpdom.min").MPPlatformView;var MPComponentFactory = require("./mpdom.min").ComponentFactory;var pluginRegisterer = require("./mpdom.min").PluginRegister;''' +
             stringBuffer.toString());
   } catch (e) {}
@@ -94,10 +99,10 @@ void buildWeappPlugin() {
   final componentDefines = {};
   final componentWXML = StringBuffer();
   components.forEach((element) {
-    if (!Directory(path.join('weapp', 'kbone', 'miniprogram-element',
+    if (!Directory(path.join(appType, 'kbone', 'miniprogram-element',
             'custom-component', 'components'))
         .existsSync()) {
-      Directory(path.join('weapp', 'kbone', 'miniprogram-element',
+      Directory(path.join(appType, 'kbone', 'miniprogram-element',
               'custom-component', 'components'))
           .createSync();
     }
@@ -110,7 +115,7 @@ void buildWeappPlugin() {
     File wxmlFile = File(path.join(basepath, basename + '.wxml'));
     File wxssFile = File(path.join(basepath, basename + '.wxss'));
     if (jsFile.existsSync()) {
-      jsFile.copySync(path.join('weapp', 'kbone', 'miniprogram-element',
+      jsFile.copySync(path.join(appType, 'kbone', 'miniprogram-element',
           'custom-component', 'components', basename + '.js'));
     }
     if (jsonFile.existsSync()) {
@@ -122,15 +127,15 @@ void buildWeappPlugin() {
       if (jsonData['events'] is List) {
         events.addAll(jsonData['events'] as List);
       }
-      jsonFile.copySync(path.join('weapp', 'kbone', 'miniprogram-element',
+      jsonFile.copySync(path.join(appType, 'kbone', 'miniprogram-element',
           'custom-component', 'components', basename + '.json'));
     }
     if (wxmlFile.existsSync()) {
-      wxmlFile.copySync(path.join('weapp', 'kbone', 'miniprogram-element',
+      wxmlFile.copySync(path.join(appType, 'kbone', 'miniprogram-element',
           'custom-component', 'components', basename + '.wxml'));
     }
     if (wxssFile.existsSync()) {
-      wxssFile.copySync(path.join('weapp', 'kbone', 'miniprogram-element',
+      wxssFile.copySync(path.join(appType, 'kbone', 'miniprogram-element',
           'custom-component', 'components', basename + '.wxss'));
     }
     (componentJSON['usingComponents'] as Map)[basename] =
@@ -148,42 +153,17 @@ void buildWeappPlugin() {
 </${basename}>
     ''');
   });
-  File(path.join('weapp', 'mp-custom-components.js')).writeAsStringSync('''
+  File(path.join(appType, 'mp-custom-components.js')).writeAsStringSync('''
 module.exports = {
   "usingComponents": ${json.encode(componentDefines)}
 };
   ''');
-  File(path.join('weapp', 'kbone', 'miniprogram-element', 'custom-component',
+  File(path.join(appType, 'kbone', 'miniprogram-element', 'custom-component',
           'index.json'))
       .writeAsStringSync(json.encode(componentJSON));
-  File(path.join('weapp', 'kbone', 'miniprogram-element', 'custom-component',
+  File(path.join(appType, 'kbone', 'miniprogram-element', 'custom-component',
           'index.wxml'))
       .writeAsStringSync(componentWXML.toString());
-}
-
-void buildSwanappPlugin() {
-  if (!Directory('swanapp').existsSync()) return;
-  final stringBuffer = StringBuffer();
-  final lines = File('.packages').readAsLinesSync();
-  for (final line in lines) {
-    try {
-      final pkgPath = line
-          .replaceFirst(RegExp('.*?:'), '')
-          .replaceFirst('file://', '')
-          .replaceFirst('/lib/', '');
-      if (File(path.join(pkgPath, 'dist', 'swanapp', 'bundle.min.js'))
-          .existsSync()) {
-        stringBuffer.writeln(
-            File(path.join(pkgPath, 'dist', 'swanapp', 'bundle.min.js'))
-                .readAsStringSync());
-      }
-    } catch (e) {}
-  }
-  try {
-    File(path.join('swanapp', 'plugins.min.js')).writeAsStringSync(
-        '''var MPEnv = window.MPDOM.MPEnv;var MPMethodChannel = window.MPDOM.MPMethodChannel;var MPEventChannel = window.MPDOM.MPEventChannel;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = window.MPDOM.PluginRegister;''' +
-            stringBuffer.toString());
-  } catch (e) {}
 }
 
 void runNpmBuild(String pkgPath) {

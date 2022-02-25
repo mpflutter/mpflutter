@@ -39,10 +39,7 @@ export class SliverPersistentHeader extends ComponentView {
             window.addEventListener("scroll", eventListener);
           }
         }, 32);
-      } else if (
-        __MP_TARGET_WEAPP__ ||
-        __MP_TARGET_SWANAPP__
-      ) {
+      } else if (__MP_MINI_PROGRAM__) {
         var eventListener: any;
         eventListener = (e: any) => {
           this.updateLazyState((this.document as any).window.scrollY);

@@ -45,7 +45,7 @@ export class MPPicker extends MPPlatformView {
   }
 
   elementType() {
-    if (__MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       return "wx-picker";
     }
     return "div";
@@ -53,7 +53,7 @@ export class MPPicker extends MPPlatformView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    if (__MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       setDOMAttribute(this.htmlElement, "header-text", attributes.headerText);
       setDOMAttribute(this.htmlElement, "mode", attributes.column > 1 ? "multiSelector" : "selector");
       setDOMAttribute(this.htmlElement, "disabled", attributes.disabled);
@@ -63,7 +63,7 @@ export class MPPicker extends MPPlatformView {
   }
 
   getPickerItem(): any {
-    if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       const originItems = this.attributes.items as PickerItem[];
       let items: any[] = [];
       if (this.attributes.column === 1) {
@@ -90,7 +90,7 @@ export class MPPicker extends MPPlatformView {
   }
 
   updatePickerItem(column: number, value: number): any {
-    if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       this.multiIndex[column] = value;
     }
   }

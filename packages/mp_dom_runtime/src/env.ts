@@ -16,24 +16,24 @@ let mpGlobal = {};
 
 export const MPEnv = {
   platformType: (() => {
-    if (typeof wx !== "undefined" && typeof wx.getSystemInfoSync === "function") {
-      return PlatformType.wxMiniProgram;
-    } else if (typeof swan !== "undefined" && typeof swan.getSystemInfoSync === "function") {
+    if (typeof swan !== "undefined" && typeof swan.getSystemInfoSync === "function") {
       return PlatformType.swanMiniProgram;
     } else if (typeof tt !== "undefined" && typeof tt.getSystemInfoSync === "function") {
       return PlatformType.ttMiniProgram;
-    } else {
+    } else if (typeof wx !== "undefined" && typeof wx.getSystemInfoSync === "function") {
+      return PlatformType.wxMiniProgram;
+    }  else {
       return PlatformType.browser;
     }
   })(),
   platformScope: (() => {
-    if (typeof wx !== "undefined" && typeof wx.getSystemInfoSync === "function") {
-      return wx;
-    } else if (typeof swan !== "undefined" && typeof swan.getSystemInfoSync === "function") {
+    if (typeof swan !== "undefined" && typeof swan.getSystemInfoSync === "function") {
       return swan;
     } else if (typeof tt !== "undefined" && typeof tt.getSystemInfoSync === "function") {
       return tt;
-    }
+    } else if (typeof wx !== "undefined" && typeof wx.getSystemInfoSync === "function") {
+      return wx;
+    } 
   })(),
   platformAppInstance: undefined,
   platformGlobal: (): any => {

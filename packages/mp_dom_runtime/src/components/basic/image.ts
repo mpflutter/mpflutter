@@ -45,10 +45,7 @@ export class Image extends ComponentView {
         }
       })(),
     });
-    if (
-      attributes.fit &&
-      (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)
-    ) {
+    if (attributes.fit && __MP_MINI_PROGRAM__) {
       setDOMAttribute(
         this.htmlElement,
         "mode",
@@ -77,10 +74,7 @@ export class Image extends ComponentView {
           this.htmlElement.classList.add("lazyload");
           setDOMAttribute(this.htmlElement, "data-src", attributes.src);
           lazyload([this.htmlElement]);
-        } else if (
-          __MP_TARGET_WEAPP__ ||
-          __MP_TARGET_SWANAPP__
-        ) {
+        } else if (__MP_MINI_PROGRAM__) {
           setDOMAttribute(this.htmlElement, "lazyLoad", "true");
           setDOMAttribute(this.htmlElement, "src", attributes.src);
         } else {
@@ -109,7 +103,7 @@ export class Image extends ComponentView {
             return `assets/${attributes.assetName}`;
           }
         })();
-        if (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__) {
+        if (__MP_MINI_PROGRAM__) {
           assetUrl = "/" + assetUrl;
         }
         setDOMAttribute(this.htmlElement, "src", assetUrl);

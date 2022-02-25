@@ -11,6 +11,10 @@ let currentTarget = process.argv[2];
 
 let code = fs.readFileSync("./dist/" + targetFile[currentTarget], { encoding: "utf8" });
 targets.forEach((it) => {
+  let isMiniProgram = it === '__MP_TARGET_SWANAPP__' || it === '__MP_TARGET_WEAPP__' || it === '__MP_TARGET_TT__';
   code = code.replace(RegExp(it, "g"), it === currentTarget ? "true" : "false");
+  if (isMiniProgram) {
+    code = code.replace(RegExp('__MP_MINI_PROGRAM__', "g"), "true");
+  }
 });
 fs.writeFileSync("./dist/mpdom.js." + currentTarget, code);

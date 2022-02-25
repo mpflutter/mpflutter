@@ -28,7 +28,7 @@ export class MPDatePicker extends MPPlatformView {
         this.weuiShadowRoot.appendChild(div);
         this.showDatePicker(div);
       });
-    } else if (__MP_TARGET_WEAPP__ && __MP_TARGET_WEAPP__) {
+    } else if (__MP_MINI_PROGRAM__) {
       this.htmlElement.addEventListener("change", (e: any) => {
         this.invokeMethod("callbackResult", { value: e.detail.value.split("-").map((it: string) => parseInt(it)) });
       });
@@ -36,7 +36,7 @@ export class MPDatePicker extends MPPlatformView {
   }
 
   elementType() {
-    if (__MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       return "wx-picker";
     }
     return "div";

@@ -32,7 +32,7 @@ export class CollectionView extends ComponentView {
       (this.initialAttributes?.restorationId ||
         this.initialAttributes?.onScroll ||
         this.initialAttributes?.onRefresh) &&
-      (__MP_TARGET_WEAPP__ || __MP_TARGET_SWANAPP__)
+      (__MP_MINI_PROGRAM__)
     ) {
       return "wx-scroll-view";
     } else {
