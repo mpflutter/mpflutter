@@ -1,43 +1,15 @@
 package com.mpflutter.runtime.components.basic;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.res.ColorStateList;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Path;
-import android.graphics.RectF;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Handler;
-import android.view.Gravity;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.widget.AppCompatButton;
-import androidx.core.view.ViewCompat;
-
-import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.button.MaterialButton;
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.components.MPUtils;
-import com.mpflutter.runtime.components.mpkit.MPIcon;
 import com.mpflutter.runtime.jsproxy.JSProxyArray;
 import com.mpflutter.runtime.jsproxy.JSProxyObject;
 import com.mpflutter.runtime.provider.MPIOSDialogProviderActionSheetCompletionBlock;
 import com.mpflutter.runtime.provider.MPIOSDialogProviderAlertCompletionBlock;
 import com.mpflutter.runtime.provider.MPIOSDialogProviderConfirmCompletionBlock;
 import com.mpflutter.runtime.provider.MPIOSDialogProviderPromptCompletionBlock;
-import com.quickjs.JSObject;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;

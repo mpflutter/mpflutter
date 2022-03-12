@@ -1,50 +1,48 @@
 package com.mpflutter.runtime.api;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.eclipsesource.v8.JavaCallback;
+import com.eclipsesource.v8.V8;
+import com.eclipsesource.v8.V8Array;
+import com.eclipsesource.v8.V8Object;
 import com.mpflutter.runtime.MPEngine;
-import com.quickjs.JSArray;
-import com.quickjs.JSContext;
-import com.quickjs.JSFunction;
-import com.quickjs.JSObject;
-import com.quickjs.JavaCallback;
 
 public class MPStorage {
 
-    static public void setupWithJSContext(MPEngine engine, JSContext context, JSObject selfObject) {
-        JSObject wx = context.getObject("wx");
+    static public void setupWithJSContext(MPEngine engine, V8 context) {
+        V8Object wx = context.getObject("wx");
         if (wx != null) {
-            wx.set("removeStorageSync", new JSFunction(context, new JavaCallback() {
+            wx.registerJavaMethod(new JavaCallback() {
                 @Override
-                public Object invoke(JSObject receiver, JSArray args) {
-                    if (args.length() < 1) return null;
-                    String key = args.getString(0);
+                public Object invoke(V8Object v8Object, V8Array v8Array) {
+                    if (v8Array.length() < 1) return null;
+                    String key = v8Array.getString(0);
                     if (key != null) {
                         SharedPreferences sharedPreferences = engine.provider.dataProvider.createSharedPreferences();
                         sharedPreferences.edit().remove(key).apply();
                     }
                     return null;
                 }
-            }));
-            wx.set("getStorageSync", new JSFunction(context, new JavaCallback() {
+            }, "removeStorageSync");
+            wx.registerJavaMethod(new JavaCallback() {
                 @Override
-                public Object invoke(JSObject receiver, JSArray args) {
-                    if (args.length() < 1) return null;
-                    String key = args.getString(0);
+                public Object invoke(V8Object v8Object, V8Array v8Array) {
+                    if (v8Array.length() < 1) return null;
+                    String key = v8Array.getString(0);
                     if (key != null) {
                         SharedPreferences sharedPreferences = engine.provider.dataProvider.createSharedPreferences();
                         return sharedPreferences.getString(key, null);
                     }
                     return null;
                 }
-            }));
-            wx.set("setStorageSync", new JSFunction(context, new JavaCallback() {
+            }, "getStorageSync");
+            wx.registerJavaMethod(new JavaCallback() {
                 @Override
-                public Object invoke(JSObject receiver, JSArray args) {
-                    if (args.length() < 2) return null;
-                    String key = args.getString(0);
-                    Object value = args.get(1);
+                public Object invoke(V8Object v8Object, V8Array v8Array) {
+                    if (v8Array.length() < 2) return null;
+                    String key = v8Array.getString(0);
+                    Object value = v8Array.get(1);
                     if (key != null) {
                         SharedPreferences sharedPreferences = engine.provider.dataProvider.createSharedPreferences();
                         if (value instanceof String) {
@@ -65,24 +63,24 @@ public class MPStorage {
                     }
                     return null;
                 }
-            }));
-            wx.set("getStorageInfoSync", new JSFunction(context, new JavaCallback() {
+            }, "setStorageSync");
+            wx.registerJavaMethod(new JavaCallback() {
                 @Override
-                public Object invoke(JSObject receiver, JSArray args) {
+                public Object invoke(V8Object v8Object, V8Array v8Array) {
                     SharedPreferences sharedPreferences = engine.provider.dataProvider.createSharedPreferences();
                     Object[] keys = sharedPreferences.getAll().keySet().toArray();
-                    JSArray result = new JSArray(receiver.getContext());
+                    V8Array result = new V8Array(v8Object.getRuntime());
                     for (int i = 0; i < keys.length; i++) {
                         Object element = keys[i];
                         if (element instanceof String) {
                             result.push((String) element);
                         }
                     }
-                    JSObject info = new JSObject(receiver.getContext());
-                    info.set("keys", result);
+                    V8Object info = new V8Object(v8Object.getRuntime());
+                    info.add("keys", result);
                     return info;
                 }
-            }));
+            }, "getStorageInfoSync");
         }
     }
 }

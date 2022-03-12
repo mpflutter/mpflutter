@@ -1,25 +1,22 @@
 package com.mpflutter.runtime.api;
 
-import com.quickjs.JSContext;
-import com.quickjs.JSObject;
+import com.eclipsesource.v8.V8;
+import com.eclipsesource.v8.V8Object;
 
 public class MPDeviceInfo {
 
-    static public void setupWithJSContext(JSContext context, JSObject selfObject) {
-        JSObject document = new JSObject(context);
-        document.set("currentScript", "");
-        JSObject body = new JSObject(context);
-        body.set("clientWidth", 375);
-        body.set("clientHeight", 667);
-        body.set("windowPaddingTop", 0);
-        body.set("windowPaddingBottom", 0);
-        document.set("body", body);
-        context.set("document", document);
-        context.set("enableMPProxy", true);
+    static public void setupWithJSContext(V8 context) {
+        V8Object document = new V8Object(context);
+        document.add("currentScript", "");
+        V8Object body = new V8Object(context);
+        body.add("clientWidth", 375);
+        body.add("clientHeight", 667);
+        body.add("windowPaddingTop", 0);
+        body.add("windowPaddingBottom", 0);
+        document.add("body", body);
+        context.add("document", document);
+        context.add("enableMPProxy", true);
 //        context.set("disableMPProxy", true);
-        selfObject.set("document", document);
-        selfObject.set("enableMPProxy", true);
-//        selfObject.set("disableMPProxy", true);
 
     }
 

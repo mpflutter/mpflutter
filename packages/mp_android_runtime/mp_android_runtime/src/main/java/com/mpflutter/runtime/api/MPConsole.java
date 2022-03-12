@@ -2,91 +2,83 @@ package com.mpflutter.runtime.api;
 
 import android.util.Log;
 
-import com.quickjs.JSArray;
-import com.quickjs.JSContext;
+import com.eclipsesource.v8.JavaCallback;
+import com.eclipsesource.v8.V8;
+import com.eclipsesource.v8.V8Array;
+import com.eclipsesource.v8.V8Object;
 import com.mpflutter.runtime.MPRuntime;
-import com.quickjs.JSFunction;
-import com.quickjs.JSObject;
-import com.quickjs.JSValue;
-import com.quickjs.JavaCallback;
 
 public class MPConsole {
 
-    static JSObject obj;
-
-    static public void setupWithJSContext(JSContext context, JSObject selfObject) {
-        JSObject jsConsole = new JSObject(context);
-        jsConsole.set("log", new JSFunction(context, new JavaCallback() {
+    static public void setupWithJSContext(V8 context) {
+        V8Object jsConsole = new V8Object(context);
+        jsConsole.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                printConsole(Log.VERBOSE, args);
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                printConsole(Log.VERBOSE, v8Array);
                 return null;
             }
-        }));
-        jsConsole.set("error", new JSFunction(context, new JavaCallback() {
+        }, "log");
+        jsConsole.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                printConsole(Log.ERROR, args);
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                printConsole(Log.ERROR, v8Array);
                 return null;
             }
-        }));
-        jsConsole.set("info", new JSFunction(context, new JavaCallback() {
+        }, "error");
+        jsConsole.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                printConsole(Log.INFO, args);
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                printConsole(Log.INFO, v8Array);
                 return null;
             }
-        }));
-        jsConsole.set("warn", new JSFunction(context, new JavaCallback() {
+        }, "info");
+        jsConsole.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                printConsole(Log.WARN, args);
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                printConsole(Log.VERBOSE, v8Array);
                 return null;
             }
-        }));
-        jsConsole.set("debug", new JSFunction(context, new JavaCallback() {
+        }, "warn");
+        jsConsole.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                printConsole(Log.DEBUG, args);
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                printConsole(Log.DEBUG, v8Array);
                 return null;
             }
-        }));
-        context.set("console", jsConsole);
-        selfObject.set("console", jsConsole);
+        }, "debug");
+        context.add("console", jsConsole);
     }
 
-    static void printConsole(int priority, JSArray args) {
+    static void printConsole(int priority, V8Array args) {
         for (int i = 0; i < args.length(); i++) {
-            JSValue.TYPE type = args.getType(i);
+            int type = args.getType(i);
             switch (type) {
-                case DOUBLE:
+                case V8.DOUBLE:
                     Log.println(priority, MPRuntime.TAG, String.valueOf(args.getDouble(i)));
                     break;
-                case STRING:
+                case V8.STRING:
                     Log.println(priority, MPRuntime.TAG, args.getString(i));
                     break;
-                case INTEGER:
+                case V8.INTEGER:
                     Log.println(priority, MPRuntime.TAG, String.valueOf(args.getInteger(i)));
                     break;
-                case BOOLEAN:
+                case V8.BOOLEAN:
                     Log.println(priority, MPRuntime.TAG, String.valueOf(args.getBoolean(i)));
                     break;
-                case UNDEFINED:
+                case V8.UNDEFINED:
                     Log.println(priority, MPRuntime.TAG, "undefined");
                     break;
-                case JS_FUNCTION:
+                case V8.V8_FUNCTION:
                     Log.println(priority, MPRuntime.TAG, "[JSFunction]");
                     break;
-                case JS_ARRAY:
+                case V8.V8_ARRAY:
                     Log.println(priority, MPRuntime.TAG, "[JSArray]");
                     break;
-                case JS_OBJECT:
-                    Log.println(priority, MPRuntime.TAG, "[JSObject]");
+                case V8.V8_OBJECT:
+                    Log.println(priority, MPRuntime.TAG, "[V8Object]");
                     break;
-                case UNKNOWN:
-                    Log.println(priority, MPRuntime.TAG, "[JSUnknown]");
-                    break;
-                case NULL:
+                case V8.NULL:
                     Log.println(priority, MPRuntime.TAG, "[JSNull]");
                     break;
             }

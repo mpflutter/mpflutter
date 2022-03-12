@@ -1,11 +1,11 @@
 package com.mpflutter.runtime.components.mpkit;
 
+import com.eclipsesource.v8.JavaCallback;
+import com.eclipsesource.v8.V8Array;
+import com.eclipsesource.v8.V8Function;
+import com.eclipsesource.v8.V8Object;
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.jsproxy.JSProxyObject;
-import com.quickjs.JSArray;
-import com.quickjs.JSFunction;
-import com.quickjs.JSObject;
-import com.quickjs.JavaCallback;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,19 +38,22 @@ public class MPJS {
 
     public void didReceivedMessage(JSProxyObject message) {
         if (message == null) return;
-        JSObject value = engine.jsContext.getObject("MPJS").getObject("instance").getObject("handleMessage");
+        V8Object value = engine.jsContext.getObject("MPJS").getObject("instance").getObject("handleMessage");
         Object requestId = message.opt("requestId");
-        if (value != null && value instanceof JSFunction) {
-            JSArray callbackArr = new JSArray(value.getContext());
+        if (value != null && value instanceof V8Function) {
+            V8Array callbackArr = new V8Array(value.getRuntime());
             if (message.jsonObject != null) {
-                callbackArr.push(new JSObject(value.getContext(), message.jsonObject));
+                V8Object v8JSON = (V8Object) value.getRuntime().get("JSON");
+                V8Array v8Array = new V8Array(value.getRuntime());
+                v8Array.push(message.jsonObject.toString());
+                callbackArr.push(v8JSON.executeObjectFunction("parse", v8Array));
             }
-            else if (message.qjsObject != null) {
-                callbackArr.push(message.qjsObject);
+            else if (message.qV8Object != null) {
+                callbackArr.push(message.qV8Object);
             }
-            callbackArr.push(new JSFunction(value.getContext(), new JavaCallback() {
+            callbackArr.push(new V8Function(value.getRuntime(), new JavaCallback() {
                 @Override
-                public Object invoke(JSObject receiver, JSArray args) {
+                public Object invoke(V8Object receiver, V8Array args) {
                     if (args.length() <= 0) return null;
                     String result = args.getString(0);
                     JSONObject map = null;
@@ -71,9 +74,9 @@ public class MPJS {
                     return null;
                 }
             }));
-            callbackArr.push(new JSFunction(value.getContext(), new JavaCallback() {
+            callbackArr.push(new V8Function(value.getRuntime(), new JavaCallback() {
                 @Override
-                public Object invoke(JSObject receiver, JSArray args) {
+                public Object invoke(V8Object receiver, V8Array args) {
                     if (args.length() <= 0) return null;
                     String result = args.getString(0);
                     JSONObject map = null;
@@ -91,7 +94,7 @@ public class MPJS {
                     return null;
                 }
             }));
-            ((JSFunction) value).call(null, callbackArr);
+            ((V8Function) value).call(null, callbackArr);
         }
     }
 

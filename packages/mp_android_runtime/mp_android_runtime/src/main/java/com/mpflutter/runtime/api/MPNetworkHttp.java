@@ -2,52 +2,41 @@ package com.mpflutter.runtime.api;
 
 import android.util.Base64;
 
+import com.eclipsesource.v8.JavaCallback;
+import com.eclipsesource.v8.V8;
+import com.eclipsesource.v8.V8Array;
+import com.eclipsesource.v8.V8Function;
+import com.eclipsesource.v8.V8Object;
 import com.mpflutter.runtime.MPEngine;
 import com.mpflutter.runtime.provider.MPDataProvider;
-import com.quickjs.JSArray;
-import com.quickjs.JSContext;
-import com.quickjs.JSFunction;
-import com.quickjs.JSObject;
-import com.quickjs.JavaCallback;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 public class MPNetworkHttp {
 
-    static public void setupWithJSContext(MPEngine engine, JSContext context, JSObject selfObject) {
-        JSObject wx = context.getObject("wx");
+    static public void setupWithJSContext(MPEngine engine, V8 context) {
+        V8Object wx = context.getObject("wx");
         if (wx != null) {
-            wx.set("request", new JSFunction(context, new JavaCallback() {
+            wx.registerJavaMethod(new JavaCallback() {
                 @Override
-                public Object invoke(JSObject receiver, JSArray args) {
-                    if (args.length() < 1) return null;
-                    JSObject options = args.getObject(0);
+                public Object invoke(V8Object v8Object, V8Array v8Array) {
+                    if (v8Array.length() < 1) return null;
+                    V8Object options = v8Array.getObject(0);
                     if (options != null) {
                         return request(engine, options);
                     }
                     return null;
                 }
-            }));
+            }, "request");
         }
     }
 
-    static public JSObject request(MPEngine engine, JSObject options) {
+    static public V8Object request(MPEngine engine, V8Object options) {
         String url = options.getString("url");
         if (url == null) return null;
         String method = options.getString("method");
-        JSObject headers = options.getObject("headers");
+        V8Object headers = options.getObject("headers");
         boolean hasHeaders = headers != null && !headers.isUndefined();
         String contentType = hasHeaders ? headers.getString("content-type") : "application/oc-stream";
         String data = options.getString("data");
@@ -74,44 +63,44 @@ public class MPNetworkHttp {
         dataProviderTask.response = new MPDataProvider.HttpResponse() {
             @Override
             public void onSuccess() {
-                if (success instanceof JSFunction) {
-                    JSArray callbackArr = new JSArray(options.getContext());
-                    JSObject result = new JSObject(options.getContext());
-                    result.set("data", Base64.encodeToString(this.data, Base64.NO_WRAP));
-                    JSObject responseHeader = new JSObject(options.getContext());
+                if (success instanceof V8Function) {
+                    V8Array callbackArr = new V8Array(options.getRuntime());
+                    V8Object result = new V8Object(options.getRuntime());
+                    result.add("data", Base64.encodeToString(this.data, Base64.NO_WRAP));
+                    V8Object responseHeader = new V8Object(options.getRuntime());
                     Object[] names = this.header.keySet().toArray();
                     for (int i = 0; i < names.length; i++) {
-                        responseHeader.set((String)names[i], (String)this.header.get((String)names[i]));
+                        responseHeader.add((String)names[i], (String)this.header.get((String)names[i]));
                     }
-                    result.set("header", responseHeader);
-                    result.set("statusCode", this.statusCode);
+                    result.add("header", responseHeader);
+                    result.add("statusCode", this.statusCode);
                     callbackArr.push(result);
-                    ((JSFunction) success).call(null, callbackArr);
+                    ((V8Function) success).call(null, callbackArr);
                 }
             }
             @Override
             public void onFail() {
-                if (fail instanceof JSFunction) {
-                    JSArray callbackArr = new JSArray(options.getContext());
+                if (fail instanceof V8Function) {
+                    V8Array callbackArr = new V8Array(options.getRuntime());
                     if (this.error != null) {
                         callbackArr.push(this.error);
                     }
                     else {
                         callbackArr.push("");
                     }
-                    ((JSFunction) fail).call(null, callbackArr);
+                    ((V8Function) fail).call(null, callbackArr);
                 }
             }
         };
         dataProviderTask.start();
-        JSObject mpTask = new JSObject(options.getContext());
-        mpTask.set("abort", new JSFunction(options.getContext(), new JavaCallback() {
+        V8Object mpTask = new V8Object(options.getRuntime());
+        mpTask.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
                 dataProviderTask.abort();
                 return null;
             }
-        }));
+        }, "abort");
         return mpTask;
     }
 

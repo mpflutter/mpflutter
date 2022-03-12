@@ -5,6 +5,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import com.eclipsesource.v8.JavaCallback;
+import com.eclipsesource.v8.V8;
+import com.eclipsesource.v8.V8Array;
+import com.eclipsesource.v8.V8Function;
+import com.eclipsesource.v8.V8Object;
 import com.facebook.drawee.backends.pipeline.DraweeConfig;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
@@ -12,7 +17,6 @@ import com.facebook.imagepipeline.decoder.ImageDecoderConfig;
 import com.mpflutter.runtime.api.MPConsole;
 import com.mpflutter.runtime.api.MPDeviceInfo;
 import com.mpflutter.runtime.api.MPFlutterPlatform;
-import com.mpflutter.runtime.api.MPGlobalScope;
 import com.mpflutter.runtime.api.MPNetworkHttp;
 import com.mpflutter.runtime.api.MPStorage;
 import com.mpflutter.runtime.api.MPTimer;
@@ -33,15 +37,7 @@ import com.mpflutter.runtime.jsproxy.JSProxyObject;
 import com.mpflutter.runtime.platform.MPPlatformChannelIO;
 import com.mpflutter.runtime.platform.MPPluginRegister;
 import com.mpflutter.runtime.provider.MPProvider;
-import com.quickjs.JSArray;
-import com.quickjs.JSContext;
-import com.quickjs.JSFunction;
-import com.quickjs.JSObject;
-import com.quickjs.JavaCallback;
-import com.quickjs.QuickJS;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -59,8 +55,7 @@ public class MPEngine {
 
     private boolean started = false;
     private String jsCode;
-    private QuickJS quickJS;
-    public JSContext jsContext;
+    public V8 jsContext;
     public Context context;
     public MPDebugger debugger;
     public MPMPKReader mpkReader;
@@ -75,7 +70,7 @@ public class MPEngine {
     public Map<Integer, MPDataReceiver> managedViews = new HashMap();
     public Map<Integer, List<JSProxyObject>> managedViewsQueueMessage = new HashMap();
     public MPProvider provider;
-    JSObject engineScope;
+    V8Object engineScope;
     String initialRoute;
     Map initialParams;
 
@@ -127,24 +122,20 @@ public class MPEngine {
         if (started) {
             return;
         }
-        quickJS = QuickJS.createRuntime();
-        jsContext = quickJS.createContext();
-        JSObject selfObject = new JSObject(jsContext);
-        jsContext.set("self", selfObject);
-        setupJSContextEventChannel(selfObject);
-        setupDeferredLibraryLoader(selfObject);
-        MPGlobalScope.setupWithJSContext(jsContext, selfObject);
-        MPTimer.setupWithJSContext(jsContext, selfObject);
-        MPConsole.setupWithJSContext(jsContext, selfObject);
-        MPDeviceInfo.setupWithJSContext(jsContext, selfObject);
-        MPWXCompat.setupWithJSContext(jsContext, selfObject);
-        MPNetworkHttp.setupWithJSContext(this, jsContext, selfObject);
-        MPStorage.setupWithJSContext(this, jsContext, selfObject);
+        jsContext = V8.createV8Runtime("self");
+        setupJSContextEventChannel();
+        setupDeferredLibraryLoader();
+        MPTimer.setupWithJSContext(jsContext);
+        MPConsole.setupWithJSContext(jsContext);
+        MPDeviceInfo.setupWithJSContext(jsContext);
+        MPWXCompat.setupWithJSContext(jsContext);
+        MPNetworkHttp.setupWithJSContext(this, jsContext);
+        MPStorage.setupWithJSContext(this, jsContext);
         mpjs = new MPJS(this);
         if (jsCode != null) {
             try {
                 Log.d("MPRuntime", "start execcode: ");
-                jsContext.executeVoidScript(jsCode, "");
+                jsContext.executeVoidScript(jsCode);
                 Log.d("MPRuntime", "end execcode: ");
             } catch (Throwable e) {
                 Log.e(MPRuntime.TAG, "error: ", e);
@@ -163,13 +154,13 @@ public class MPEngine {
         componentFactory.clear();
     }
 
-    void setupJSContextEventChannel(JSObject selfObject) {
-        this.engineScope = new JSObject(jsContext);
-        engineScope.set("onMessage", new JSFunction(jsContext, new JavaCallback() {
+    void setupJSContextEventChannel() {
+        this.engineScope = new V8Object(jsContext);
+        engineScope.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
                 try {
-                    String message = args.getString(0);
+                    String message = v8Array.getString(0);
                     JSProxyObject obj = new JSProxyObject(new JSONObject(message));
                     didReceivedMessage(obj);
                 } catch (Throwable e) {
@@ -177,32 +168,50 @@ public class MPEngine {
                 }
                 return null;
             }
-        }));
-        engineScope.set("onMapMessage", new JSFunction(jsContext, new JavaCallback() {
+        }, "onMessage");
+        engineScope.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
                 try {
-                    JSProxyObject obj = new JSProxyObject(args.getObject(0));
+                    JSProxyObject obj = new JSProxyObject(v8Array.getObject(0));
                     didReceivedMessage(obj);
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }
                 return null;
             }
-        }));
-        jsContext.set("engineScope", engineScope);
-        selfObject.set("engineScope", engineScope);
+        }, "onMapMessage");
+        jsContext.add("engineScope", engineScope);
     }
 
-    void setupDeferredLibraryLoader(JSObject selfObject) {
-        JSFunction func = new JSFunction(jsContext, new JavaCallback() {
+    void setupDeferredLibraryLoader() {
+        jsContext.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                if (mpkReader == null) return null;
+                if (v8Array.length() < 3) return null;
+                String fileName = v8Array.getString(0);
+                V8Function resFunc = (V8Function) v8Array.get(1);
+                V8Function rejFunc = (V8Function) v8Array.get(2);
+                byte[] codeData = mpkReader.dataWithFilePath(fileName);
+                if (codeData == null) {
+                    rejFunc.call(null, new V8Array(v8Object.getRuntime()));
+                    return null;
+                }
+                String code = new String(codeData);
+                if (code == null) {
+                    rejFunc.call(null, new V8Array(v8Object.getRuntime()));
+                    return null;
+                }
+                try {
+                    jsContext.executeVoidScript(code);
+                    resFunc.call(null, new V8Array(v8Object.getRuntime()));
+                } catch (Throwable e) {
+                    rejFunc.call(null, new V8Array(v8Object.getRuntime()));
+                }
                 return null;
             }
-        });
-        jsContext.set("dartDeferredLibraryLoader", func);
-        selfObject.set("dartDeferredLibraryLoader", func);
+        }, "dartDeferredLibraryLoader");
     }
 
     public void sendMessage(Map message) {
@@ -214,10 +223,7 @@ public class MPEngine {
         else {
              try {
                  if (this.engineScope != null) {
-                     JSArray args = new JSArray(jsContext);
-                     args.push(data);
-                     JSFunction func = (JSFunction) this.engineScope.getObject("postMessage");
-                     func.call(func, args);
+                     this.engineScope.executeJSFunction("postMessage", data);
                  }
              } catch (Throwable e) {
                  Log.e(MPRuntime.TAG, "sendMessage: ", e);

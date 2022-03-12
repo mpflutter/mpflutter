@@ -1,8 +1,8 @@
 package com.mpflutter.runtime.jsproxy;
 
-import com.quickjs.JSArray;
-import com.quickjs.JSObject;
-import com.quickjs.JSValue;
+import com.eclipsesource.v8.V8;
+import com.eclipsesource.v8.V8Array;
+import com.eclipsesource.v8.V8Object;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -10,14 +10,14 @@ import org.json.JSONObject;
 public class JSProxyObject {
 
     public JSONObject jsonObject;
-    public JSObject qjsObject;
+    public V8Object qV8Object;
 
     public JSProxyObject(JSONObject jsonObject) {
         this.jsonObject = jsonObject;
     }
 
-    public JSProxyObject(JSObject qjsObject) {
-        this.qjsObject = qjsObject;
+    public JSProxyObject(V8Object qV8Object) {
+        this.qV8Object = qV8Object;
     }
 
     public String optString(String key, String fallback) {
@@ -27,8 +27,8 @@ public class JSProxyObject {
             }
             return jsonObject.optString(key, fallback);
         }
-        else if (qjsObject != null) {
-            Object v = valueFromQjsObject(key);
+        else if (qV8Object != null) {
+            Object v = valueFromQV8Object(key);
             if (v instanceof String) {
                 return (String) v;
             }
@@ -47,8 +47,8 @@ public class JSProxyObject {
             }
             return jsonObject.optInt(key, fallback);
         }
-        else if (qjsObject != null) {
-            Object v = valueFromQjsObject(key);
+        else if (qV8Object != null) {
+            Object v = valueFromQV8Object(key);
             if (v instanceof Number) {
                 return ((Number) v).intValue();
             }
@@ -67,8 +67,8 @@ public class JSProxyObject {
             }
             return jsonObject.optDouble(key, fallback);
         }
-        else if (qjsObject != null) {
-            Object v = valueFromQjsObject(key);
+        else if (qV8Object != null) {
+            Object v = valueFromQV8Object(key);
             if (v instanceof Number) {
                 return ((Number) v).doubleValue();
             }
@@ -87,8 +87,8 @@ public class JSProxyObject {
             }
             return jsonObject.optBoolean(key, fallback);
         }
-        else if (qjsObject != null) {
-            Object v = valueFromQjsObject(key);
+        else if (qV8Object != null) {
+            Object v = valueFromQV8Object(key);
             if (v instanceof Boolean) {
                 return (boolean) v;
             }
@@ -106,10 +106,10 @@ public class JSProxyObject {
                 return (JSProxyObject) obj;
             }
         }
-        else if (qjsObject != null) {
-            Object v = valueFromQjsObject(key);
-            if (v instanceof JSObject) {
-                return new JSProxyObject((JSObject) v);
+        else if (qV8Object != null) {
+            Object v = valueFromQV8Object(key);
+            if (v instanceof V8Object) {
+                return new JSProxyObject((V8Object) v);
             }
         }
         return null;
@@ -125,53 +125,53 @@ public class JSProxyObject {
                 return (JSProxyArray) obj;
             }
         }
-        else if (qjsObject != null) {
-            Object v = valueFromQjsObject(key);
-            if (v instanceof JSArray) {
-                return new JSProxyArray((JSArray) v);
+        else if (qV8Object != null) {
+            Object v = valueFromQV8Object(key);
+            if (v instanceof V8Array) {
+                return new JSProxyArray((V8Array) v);
             }
         }
         return null;
     }
 
-    Object valueFromQjsObject(String key) {
-        JSObject o = qjsObject;
-        if (qjsObject.contains("o") && qjsObject.getType("o") == JSValue.TYPE.JS_OBJECT) {
-            o = qjsObject.getObject("o");
+    Object valueFromQV8Object(String key) {
+        V8Object o = qV8Object;
+        if (qV8Object.contains("o") && qV8Object.getType("o") == V8.V8_OBJECT) {
+            o = qV8Object.getObject("o");
         }
-        if (o != null && o.getType() == JSValue.TYPE.JS_OBJECT) {
+        if (o != null && o.getV8Type() == V8.V8_OBJECT) {
             if (o.contains("b")) {
-                JSObject b = o.getObject("b");
-                if (b != null && b.getType() == JSValue.TYPE.JS_OBJECT) {
-                    JSObject obj = b.getObject(key);
-                    if (obj != null && obj.getType() == JSValue.TYPE.JS_OBJECT) {
+                V8Object b = o.getObject("b");
+                if (b != null && b.getV8Type() == V8.V8_OBJECT) {
+                    V8Object obj = b.getObject(key);
+                    if (obj != null && obj.getV8Type() == V8.V8_OBJECT) {
                         return obj.get("b");
                     }
                 }
             }
             else if (o.contains("c")) {
-                JSObject c = o.getObject("c");
-                if (c != null && c.getType() == JSValue.TYPE.JS_OBJECT) {
-                    JSObject obj = c.getObject(key);
-                    if (obj != null && obj.getType() == JSValue.TYPE.JS_OBJECT) {
+                V8Object c = o.getObject("c");
+                if (c != null && c.getV8Type() == V8.V8_OBJECT) {
+                    V8Object obj = c.getObject(key);
+                    if (obj != null && obj.getV8Type() == V8.V8_OBJECT) {
                         return obj.get("b");
                     }
                 }
             }
             else if (o.contains("_nums")) {
-                JSObject _nums = o.getObject("_nums");
-                if (_nums != null && _nums.getType() == JSValue.TYPE.JS_OBJECT) {
-                    JSObject obj = _nums.getObject(key);
-                    if (obj != null && obj.getType() == JSValue.TYPE.JS_OBJECT) {
+                V8Object _nums = o.getObject("_nums");
+                if (_nums != null && _nums.getV8Type() == V8.V8_OBJECT) {
+                    V8Object obj = _nums.getObject(key);
+                    if (obj != null && obj.getV8Type() == V8.V8_OBJECT) {
                         return obj.get("hashMapCellValue");
                     }
                 }
             }
             else if (o.contains("_strings")) {
-                JSObject _strings = o.getObject("_strings");
-                if (_strings != null && _strings.getType() == JSValue.TYPE.JS_OBJECT) {
-                    JSObject obj = _strings.getObject(key);
-                    if (obj != null && obj.getType() == JSValue.TYPE.JS_OBJECT) {
+                V8Object _strings = o.getObject("_strings");
+                if (_strings != null && _strings.getV8Type() == V8.V8_OBJECT) {
+                    V8Object obj = _strings.getObject(key);
+                    if (obj != null && obj.getV8Type() == V8.V8_OBJECT) {
                         return obj.get("hashMapCellValue");
                     }
                 }
@@ -187,7 +187,7 @@ public class JSProxyObject {
         if (jsonObject != null) {
             return jsonObject.has(key) && !jsonObject.isNull(key);
         }
-        else if (qjsObject != null) {
+        else if (qV8Object != null) {
             return !isNull(key);
         }
         else {
@@ -199,8 +199,8 @@ public class JSProxyObject {
         if (jsonObject != null) {
             return jsonObject.isNull(key);
         }
-        else if (qjsObject != null) {
-            Object v = valueFromQjsObject(key);
+        else if (qV8Object != null) {
+            Object v = valueFromQV8Object(key);
             return v == null;
         }
         else {
@@ -213,20 +213,20 @@ public class JSProxyObject {
         if (jsonObject != null) {
             v = jsonObject.opt(key);
         }
-        else if (qjsObject != null) {
-            v = valueFromQjsObject(key);
+        else if (qV8Object != null) {
+            v = valueFromQV8Object(key);
         }
         if (v instanceof JSONObject) {
             return new JSProxyObject((JSONObject) v);
         }
-        else if (v instanceof JSObject) {
-            return new JSProxyObject((JSObject) v);
+        else if (v instanceof V8Object) {
+            return new JSProxyObject((V8Object) v);
         }
         else if (v instanceof JSONArray) {
             return new JSProxyArray((JSONArray) v);
         }
-        else if (v instanceof JSArray) {
-            return new JSProxyArray((JSArray) v);
+        else if (v instanceof V8Array) {
+            return new JSProxyArray((V8Array) v);
         }
         return v;
     }

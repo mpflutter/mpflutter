@@ -2,11 +2,11 @@ package com.mpflutter.runtime.api;
 
 import android.os.Handler;
 
-import com.quickjs.JSArray;
-import com.quickjs.JSContext;
-import com.quickjs.JSFunction;
-import com.quickjs.JSObject;
-import com.quickjs.JavaCallback;
+import com.eclipsesource.v8.JavaCallback;
+import com.eclipsesource.v8.V8;
+import com.eclipsesource.v8.V8Array;
+import com.eclipsesource.v8.V8Function;
+import com.eclipsesource.v8.V8Object;
 
 import java.util.HashMap;
 import java.util.Timer;
@@ -18,16 +18,16 @@ public class MPTimer {
     static private int taskSeqId = 0;
     static private HashMap<Integer, TimerTask> timerTaskHandler = new HashMap<Integer, TimerTask>();
 
-    static public void setupWithJSContext(JSContext context, JSObject selfObject) {
-        context.set("setTimeout", new JSFunction(context, new JavaCallback() {
+    static public void setupWithJSContext(V8 context) {
+        context.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                if (args.length() < 2) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                if (v8Array.length() < 2) {
                     return null;
                 }
                 Handler handler = new Handler();
-                JSFunction callback = (JSFunction) args.getObject(0);
-                int time = args.getInteger(1);
+                V8Function callback = (V8Function) v8Array.getObject(0);
+                int time = v8Array.getInteger(1);
                 taskSeqId++;
                 int currentTaskSeqId = taskSeqId;
                 TimerTask timerTask = new TimerTask() {
@@ -50,15 +50,14 @@ public class MPTimer {
                 sharedTimer.schedule(timerTask, time);
                 return currentTaskSeqId;
             }
-        }));
-        selfObject.set("setTimeout", context.getObject("setTimeout"));
-        context.set("clearTimeout", new JSFunction(context, new JavaCallback() {
+        }, "setTimeout");
+        context.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                if (args.length() < 1) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                if (v8Array.length() < 1) {
                     return null;
                 }
-                int handler = args.getInteger(0);
+                int handler = v8Array.getInteger(0);
                 TimerTask timerTask = timerTaskHandler.get(handler);
                 if (timerTask != null) {
                     timerTask.cancel();
@@ -66,17 +65,16 @@ public class MPTimer {
                 }
                 return null;
             }
-        }));
-        selfObject.set("clearTimeout", context.getObject("clearTimeout"));
-        context.set("setInterval", new JSFunction(context, new JavaCallback() {
+        }, "clearTimeout");
+        context.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                if (args.length() < 2) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                if (v8Array.length() < 2) {
                     return null;
                 }
                 Handler handler = new Handler();
-                JSFunction callback = (JSFunction) args.getObject(0);
-                int time = args.getInteger(1);
+                V8Function callback = (V8Function) v8Array.getObject(0);
+                int time = v8Array.getInteger(1);
                 taskSeqId++;
                 int currentTaskSeqId = taskSeqId;
                 TimerTask timerTask = new TimerTask() {
@@ -99,15 +97,14 @@ public class MPTimer {
                 sharedTimer.schedule(timerTask, time, time);
                 return currentTaskSeqId;
             }
-        }));
-        selfObject.set("setInterval", context.getObject("setInterval"));
-        context.set("clearInterval", new JSFunction(context, new JavaCallback() {
+        }, "setInterval");
+        context.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                if (args.length() < 1) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                if (v8Array.length() < 1) {
                     return null;
                 }
-                int handler = args.getInteger(0);
+                int handler = v8Array.getInteger(0);
                 TimerTask timerTask = timerTaskHandler.get(handler);
                 if (timerTask != null) {
                     timerTask.cancel();
@@ -115,16 +112,15 @@ public class MPTimer {
                 }
                 return null;
             }
-        }));
-        selfObject.set("clearInterval", context.getObject("clearInterval"));
-        context.set("requestAnimationFrame", new JSFunction(context, new JavaCallback() {
+        }, "clearInterval");
+        context.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                if (args.length() < 1) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                if (v8Array.length() < 1) {
                     return null;
                 }
                 Handler handler = new Handler();
-                JSFunction callback = (JSFunction) args.getObject(0);
+                V8Function callback = (V8Function) v8Array.getObject(0);
                 taskSeqId++;
                 int currentTaskSeqId = taskSeqId;
                 TimerTask timerTask = new TimerTask() {
@@ -136,7 +132,7 @@ public class MPTimer {
                                 timerTaskHandler.remove(currentTaskSeqId);
                                 try {
                                     long time = System.currentTimeMillis();
-                                    JSArray args = new JSArray(context);
+                                    V8Array args = new V8Array(context);
                                     args.push(time);
                                     callback.call(null, args);
                                 } catch (Throwable e) {
@@ -150,15 +146,14 @@ public class MPTimer {
                 sharedTimer.schedule(timerTask, 16);
                 return currentTaskSeqId;
             }
-        }));
-        selfObject.set("requestAnimationFrame", context.getObject("requestAnimationFrame"));
-        context.set("cancelAnimationFrame", new JSFunction(context, new JavaCallback() {
+        }, "requestAnimationFrame");
+        context.registerJavaMethod(new JavaCallback() {
             @Override
-            public Object invoke(JSObject receiver, JSArray args) {
-                if (args.length() < 1) {
+            public Object invoke(V8Object v8Object, V8Array v8Array) {
+                if (v8Array.length() < 1) {
                     return null;
                 }
-                int handler = args.getInteger(0);
+                int handler = v8Array.getInteger(0);
                 TimerTask timerTask = timerTaskHandler.get(handler);
                 if (timerTask != null) {
                     timerTask.cancel();
@@ -166,8 +161,7 @@ public class MPTimer {
                 }
                 return null;
             }
-        }));
-        selfObject.set("cancelAnimationFrame", context.getObject("cancelAnimationFrame"));
+        }, "cancelAnimationFrame");
     }
 
 }

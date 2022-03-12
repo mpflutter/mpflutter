@@ -1,7 +1,7 @@
 package com.mpflutter.runtime.jsproxy;
 
-import com.quickjs.JSArray;
-import com.quickjs.JSObject;
+import com.eclipsesource.v8.V8Array;
+import com.eclipsesource.v8.V8Object;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -9,22 +9,22 @@ import org.json.JSONObject;
 public class JSProxyArray {
 
     private JSONArray jsonArray;
-    private JSArray qjsArray;
+    private V8Array qV8Array;
 
     public JSProxyArray(JSONArray jsonArray) {
         this.jsonArray = jsonArray;
     }
 
-    public JSProxyArray(JSArray qjsArray) {
-        this.qjsArray = qjsArray;
+    public JSProxyArray(V8Array qV8Array) {
+        this.qV8Array = qV8Array;
     }
 
     public int length() {
         if (jsonArray != null) {
             return jsonArray.length();
         }
-        else if (qjsArray != null) {
-            return qjsArray.length();
+        else if (qV8Array != null) {
+            return qV8Array.length();
         }
         else {
             return 0;
@@ -35,8 +35,8 @@ public class JSProxyArray {
         if (jsonArray != null) {
             return jsonArray.optString(key, fallback);
         }
-        else if (qjsArray != null) {
-            Object v = valueFromQjsObject(key);
+        else if (qV8Array != null) {
+            Object v = valueFromQV8Object(key);
             if (v instanceof String) {
                 return (String) v;
             }
@@ -52,8 +52,8 @@ public class JSProxyArray {
         if (jsonArray != null) {
             return jsonArray.optInt(key, fallback);
         }
-        else if (qjsArray != null) {
-            Object v = valueFromQjsObject(key);
+        else if (qV8Array != null) {
+            Object v = valueFromQV8Object(key);
             if (v instanceof Number) {
                 return ((Number) v).intValue();
             }
@@ -69,8 +69,8 @@ public class JSProxyArray {
         if (jsonArray != null) {
             return jsonArray.optDouble(key, fallback);
         }
-        else if (qjsArray != null) {
-            Object v = valueFromQjsObject(key);
+        else if (qV8Array != null) {
+            Object v = valueFromQV8Object(key);
             if (v instanceof Number) {
                 return ((Number) v).doubleValue();
             }
@@ -86,8 +86,8 @@ public class JSProxyArray {
         if (jsonArray != null) {
             return jsonArray.optBoolean(key, fallback);
         }
-        else if (qjsArray != null) {
-            Object v = valueFromQjsObject(key);
+        else if (qV8Array != null) {
+            Object v = valueFromQV8Object(key);
             if (v instanceof Boolean) {
                 return (boolean) v;
             }
@@ -105,10 +105,10 @@ public class JSProxyArray {
                 return (JSProxyObject) obj;
             }
         }
-        else if (qjsArray != null) {
-            Object v = valueFromQjsObject(key);
-            if (v instanceof JSObject) {
-                return new JSProxyObject((JSObject) v);
+        else if (qV8Array != null) {
+            Object v = valueFromQV8Object(key);
+            if (v instanceof V8Object) {
+                return new JSProxyObject((V8Object) v);
             }
         }
         return null;
@@ -124,16 +124,16 @@ public class JSProxyArray {
                 return (JSProxyArray) obj;
             }
         }
-        else if (qjsArray != null) {
-            Object v = valueFromQjsObject(key);
-            if (v instanceof JSArray) {
-                return new JSProxyArray((JSArray) v);
+        else if (qV8Array != null) {
+            Object v = valueFromQV8Object(key);
+            if (v instanceof V8Array) {
+                return new JSProxyArray((V8Array) v);
             }
         }
         return null;
     }
 
-    Object valueFromQjsObject(int key) {
-        return qjsArray.get(key);
+    Object valueFromQV8Object(int key) {
+        return qV8Array.get(key);
     }
 }

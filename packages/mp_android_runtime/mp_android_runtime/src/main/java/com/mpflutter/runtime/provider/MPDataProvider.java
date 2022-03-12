@@ -2,11 +2,8 @@ package com.mpflutter.runtime.provider;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Base64;
-
-import com.quickjs.JSArray;
-import com.quickjs.JSFunction;
-import com.quickjs.JSObject;
+import android.os.Handler;
+import android.os.Looper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -111,27 +108,37 @@ public class MPDataProvider {
             httpCall.enqueue(new Callback() {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    response.error = e.toString();
-                    response.onFail();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            response.error = e.toString();
+                            response.onFail();
+                        }
+                    });
                 }
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response r) throws IOException {
-                    try {
-                        byte[] responseData = r.body().bytes();
-                        response.data = responseData;
-                        response.statusCode = r.code();
-                        Map header = new HashMap();
-                        Object[] names = r.headers().names().toArray();
-                        for (int i = 0; i < names.length; i++) {
-                            header.put((String)names[i], r.header((String)names[i]));
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                byte[] responseData = r.body().bytes();
+                                response.data = responseData;
+                                response.statusCode = r.code();
+                                Map header = new HashMap();
+                                Object[] names = r.headers().names().toArray();
+                                for (int i = 0; i < names.length; i++) {
+                                    header.put((String)names[i], r.header((String)names[i]));
+                                }
+                                response.header = header;
+                                response.onSuccess();
+                            } catch (Throwable e) {
+                                response.error = e.toString();
+                                response.onFail();
+                            }
                         }
-                        response.header = header;
-                        response.onSuccess();
-                    } catch (Throwable e) {
-                        response.error = e.toString();
-                        response.onFail();
-                    }
+                    });
                 }
             });
         }
