@@ -16,5 +16,8 @@ targets.forEach((it) => {
   if (isMiniProgram) {
     code = code.replace(RegExp('__MP_MINI_PROGRAM__', "g"), "true");
   }
+  else {
+    code = code.replace(RegExp('__MP_MINI_PROGRAM__', "g"), "false");
+  }
 });
 fs.writeFileSync("./dist/mpdom.js." + currentTarget, code);
