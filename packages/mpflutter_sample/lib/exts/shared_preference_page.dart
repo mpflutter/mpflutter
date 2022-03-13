@@ -51,6 +51,7 @@ class SharedPreferencePage extends StatelessWidget {
                 onTap: () async {
                   final result = await MPWebDialogs.prompt(
                     message: 'Input the value',
+                    context: context,
                   );
                   if (result != null) {
                     (await SharedPreferences.getInstance()).setString(

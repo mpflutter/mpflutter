@@ -172,6 +172,7 @@ class _PromptSampleState extends State<PromptSample> {
           final result = await MPWebDialogs.prompt(
             message: 'Input the text.',
             defaultValue: 'Default value',
+            context: context,
           );
           if (result != null) {
             setState(() {

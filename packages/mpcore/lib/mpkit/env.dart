@@ -6,6 +6,7 @@ enum MPEnvHostType {
   unknown,
   browser,
   wechatMiniProgram,
+  ttMiniProgram,
 }
 
 class MPEnv {
@@ -17,6 +18,8 @@ class MPEnv {
     }
     if (hostType == 'wechatMiniProgram') {
       return MPEnvHostType.wechatMiniProgram;
+    } else if (hostType == 'ttMiniProgram') {
+      return MPEnvHostType.ttMiniProgram;
     } else if (hostType == 'browser') {
       return MPEnvHostType.browser;
     } else {

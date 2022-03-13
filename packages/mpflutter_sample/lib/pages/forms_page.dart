@@ -115,7 +115,10 @@ class _SliderSampleState extends State<_SliderSample> {
           ),
           GestureDetector(
             onTap: () async {
-              final nValue = await MPWebDialogs.prompt(message: 'Input value');
+              final nValue = await MPWebDialogs.prompt(
+                message: 'Input value',
+                context: context,
+              );
               if (nValue != null) {
                 sliderController.setValue(double.tryParse(nValue) ?? 120.0);
                 setState(() {});

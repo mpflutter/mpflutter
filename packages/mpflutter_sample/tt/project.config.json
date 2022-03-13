@@ -1,11 +1,20 @@
 {
-  "setting": {
-    "urlCheck": true,
-    "es6": true,
-    "postcss": true,
-    "minified": true,
-    "newFeature": true
-  },
-  "appid": "testAppId",
-  "projectname": "template"
+    "setting": {
+        "urlCheck": false,
+        "es6": true,
+        "newFeature": false,
+        "postcss": false,
+        "mockUpdate": false,
+        "minified": false,
+        "autoPush": false,
+        "scripts": false,
+        "mockLogin": false
+    },
+    "appid": "testAppId",
+    "projectname": "template",
+    "condition": {
+        "miniprogram": {
+            "current": -1
+        }
+    }
 }
