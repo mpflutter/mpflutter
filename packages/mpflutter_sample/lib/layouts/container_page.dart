@@ -45,10 +45,32 @@ class ContainerPage extends StatelessWidget {
           _renderBlock(Column(
             children: [
               _renderHeader('Container with color and size.'),
-              Container(
-                width: 100,
-                height: 100,
-                color: Colors.pink,
+              Table(
+                border: TableBorder.all(width: 1.0, color: Colors.orange),
+                children: [
+                  TableRow(
+                    decoration: BoxDecoration(color: Colors.blue),
+                    children: [
+                      TableCell(
+                        child: Text(
+                          'OE号',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      TableCell(
+                          child: Text(
+                        '型号',
+                        textAlign: TextAlign.center,
+                      )),
+                      TableCell(
+                        child: Text(
+                          '说明',
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               SizedBox(height: 16),
             ],
