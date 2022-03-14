@@ -150,7 +150,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: eeeadc736852ceac8a6bb11443c73244cd17aff2
+      resolved-ref: "0aee2d41ae487e38761fb4a22bfa4cb4f7f19d1c"
       url: "https://github.com/mpflutter/mpflutter_plugin_template"
     source: git
     version: "0.0.1"
