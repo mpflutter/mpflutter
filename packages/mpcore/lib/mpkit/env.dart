@@ -26,4 +26,8 @@ class MPEnv {
       return MPEnvHostType.unknown;
     }
   }
+
+  static Future<String> envUserAgent() async {
+    return await mpjs.context['navigator'].getPropertyValue('userAgent');
+  }
 }
