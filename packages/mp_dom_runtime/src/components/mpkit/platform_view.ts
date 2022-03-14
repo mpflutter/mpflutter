@@ -17,6 +17,8 @@ export class MPPlatformView extends ComponentView {
     super(document, initialAttributes);
     if (this.elementType().indexOf(".") > 0 && __MP_TARGET_BROWSER__) {
       this.htmlElement = this.createFromWebTemplate();
+    } else if (initialAttributes.tag && __MP_TARGET_BROWSER__) {
+      this.htmlElement = document.createElement(initialAttributes.tag);
     }
   }
 
@@ -47,6 +49,15 @@ export class MPPlatformView extends ComponentView {
     }
     let clone = document.importNode(templateNode.content, true);
     return clone.children[0] as HTMLElement;
+  }
+
+  setAttributes(attributes: any): void {
+    super.setAttributes(attributes);
+    if (__MP_TARGET_BROWSER__) {
+      for (const key in attributes) {
+        this.htmlElement.setAttribute(key, attributes[key]);
+      }
+    }
   }
 
   onMethodCall(method: string, params: any) {}
