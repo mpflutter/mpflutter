@@ -12,6 +12,10 @@ class MPUIProvider {
     return kToolbarHeight;
   }
 
+  bool isFullScreen() {
+    return false;
+  }
+
   Widget createCircularProgressIndicator({
     required BuildContext context,
     Color? color,

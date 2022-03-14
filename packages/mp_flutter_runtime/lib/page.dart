@@ -22,6 +22,7 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   int? viewId;
   Map? scaffoldData;
   List? overlaysData;
+  final containerKey = GlobalKey();
 
   @override
   void dispose() {
@@ -37,13 +38,31 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
     if (!firstSetted) {
       firstSetted = true;
       route = ModalRoute.of(context);
-      final size = Size(
-          MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.height -
-              (widget.engine.provider.uiProvider.appBarHeight() ?? 0));
-      widget.engine._router.requestRoute(viewport: size).then((viewId) {
-        this.viewId = viewId;
-        widget.engine._addManageView(viewId, this);
+      Future.delayed(const Duration(milliseconds: 32)).then((_) {
+        final renderBox = containerKey.currentContext?.findRenderObject();
+        if (renderBox is RenderBox) {
+          final size = renderBox.size;
+          widget.engine._router.requestRoute(viewport: size).then((viewId) {
+            this.viewId = viewId;
+            widget.engine._addManageView(viewId, this);
+          });
+        } else {
+          final size = Size(
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height -
+                (widget.engine.provider.uiProvider.appBarHeight() ?? 0) -
+                (!widget.engine.provider.uiProvider.isFullScreen()
+                    ? MediaQuery.of(context).padding.top
+                    : 0) -
+                (!widget.engine.provider.uiProvider.isFullScreen()
+                    ? MediaQuery.of(context).padding.bottom
+                    : 0),
+          );
+          widget.engine._router.requestRoute(viewport: size).then((viewId) {
+            this.viewId = viewId;
+            widget.engine._addManageView(viewId, this);
+          });
+        }
       });
     }
   }
@@ -96,6 +115,13 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
 
   @override
   Widget build(BuildContext context) {
+    if (viewId == null) {
+      return Scaffold(
+        appBar:
+            widget.engine.provider.uiProvider.createAppBar(context: context),
+        body: Container(key: containerKey, color: Colors.white),
+      );
+    }
     final widgets = <Widget>[];
     if (scaffoldData != null) {
       widgets.add(widget.engine._componentFactory.create(scaffoldData));
