@@ -410,6 +410,13 @@ class _TableElement extends RenderObjectElement {
     final List<_TableElementRow> newChildren = <_TableElementRow>[];
     final Set<List<Element>> taken = <List<Element>>{};
     for (final TableRow row in newWidget.children) {
+      if (row.children != null) {
+        for (var item in row.children!) {
+          if (item is TableCell) {
+            item.decoration = row.decoration;
+          }
+        }
+      }
       List<Element> oldChildren;
       if (row.key != null && oldKeyedRows.containsKey(row.key)) {
         oldChildren = oldKeyedRows[row.key]!;
@@ -488,10 +495,10 @@ class TableCell extends ParentDataWidget<TableCellParentData> {
             key: key,
             child: Builder(builder: (context) {
               final cell = context.findAncestorWidgetOfExactType<TableCell>();
-              if (cell != null && cell.decoration != null) {
-                return DecoratedBox(decoration: cell.decoration!, child: child);
-              }
-              return child;
+              return DecoratedBox(
+                  decoration: cell?.decoration ?? BoxDecoration(),
+                  child: child);
+              // return child;
             }));
 
   /// How this cell is aligned vertically.
