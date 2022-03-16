@@ -32,7 +32,7 @@ export class CollectionView extends ComponentView {
       (this.initialAttributes?.restorationId ||
         this.initialAttributes?.onScroll ||
         this.initialAttributes?.onRefresh) &&
-      (__MP_MINI_PROGRAM__)
+      __MP_MINI_PROGRAM__
     ) {
       return "wx-scroll-view";
     } else {
@@ -229,8 +229,14 @@ export class CollectionView extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
+    let overflow = "scroll";
+    if (attributes.scrollDisabled) {
+      overflow = "hidden";
+    } else if (attributes.isRoot) {
+      overflow = "unset";
+    }
     setDOMStyle(this.htmlElement, {
-      overflow: attributes.isRoot ? "unset" : "scroll",
+      overflow,
     });
     this.bottomBarHeight = attributes.bottomBarHeight ?? 0.0;
     this.bottomBarWithSafeArea = attributes.bottomBarWithSafeArea ?? false;
