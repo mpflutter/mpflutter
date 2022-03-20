@@ -42,6 +42,9 @@
     else if ([type isEqualToString:@"memoryImage"]) {
         [self decodeMemoryImage:params];
     }
+    else if ([type isEqualToString:@"dispose"]) {
+        [self dispose:params];
+    }
 }
 
 - (void)decodeNetworkImage:(NSDictionary *)params {
@@ -100,6 +103,14 @@
                           height:@(image.size.height)];
         });
     });
+}
+
+- (void)dispose:(NSDictionary *)params {
+    NSNumber *target = params[@"target"];
+    if (![target isKindOfClass:[NSNumber class]]) {
+        return;
+    }
+    [self.decodedDrawables removeObjectForKey:target];
 }
 
 - (void)onDecodeResult:(NSNumber *)target width:(NSNumber *)width height:(NSNumber *)height {

@@ -43,6 +43,8 @@ export class MPDrawable {
             },
           })
         );
+      } else if (params.type === "dispose") {
+        delete this.decodedDrawables[params.target];
       } else {
         throw new Error("Unknown drawable type.");
       }

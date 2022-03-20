@@ -38,6 +38,9 @@ public class DrawableStorage {
         else if (type.contentEquals("memoryImage")) {
             decodeMemoryImage(params);
         }
+        else if (type.contentEquals("dispose")) {
+            dispose(params);
+        }
     }
 
     void decodeNetworkImage(JSProxyObject params) {
@@ -117,6 +120,11 @@ public class DrawableStorage {
                 }
             }
         }).start();
+    }
+
+    void dispose(JSProxyObject params) {
+        int target = params.optInt("target", 0);
+        decodedDrawables.remove(target);
     }
 
     void onDecodeResult(int target, int width, int height) {

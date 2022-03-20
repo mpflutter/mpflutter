@@ -75,7 +75,19 @@ class MPDrawable implements ui.Image {
   int _height = 0;
 
   @override
-  void dispose() {}
+  void dispose() {
+    MPChannel.postMessage(
+      json.encode({
+        'type': 'decode_drawable',
+        'flow': 'request',
+        'message': {
+          'type': 'dispose',
+          'target': hashCode,
+        },
+      }),
+      forLastConnection: true,
+    );
+  }
 
   @override
   int get height => _height;

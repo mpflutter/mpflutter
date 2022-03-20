@@ -12,6 +12,8 @@ class _DrawableStore {
       decodeNetworkImage(params);
     } else if (type == 'memoryImage') {
       decodeMemoryImage(params);
+    } else if (type == 'dispose') {
+      dispose(params);
     }
   }
 
@@ -40,6 +42,12 @@ class _DrawableStore {
     } catch (e) {
       _onDecodedError(target, e.toString());
     }
+  }
+
+  void dispose(Map params) async {
+    int? target = params['target'];
+    if (target == null) return;
+    decodedDrawables.remove(target);
   }
 
   void _onDecodedResult(int target, int width, int height) {
