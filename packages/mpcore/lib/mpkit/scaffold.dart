@@ -68,6 +68,14 @@ class MPScaffoldState extends State<MPScaffold> {
     }
   }
 
+  bool isInInactiveTab() {
+    if (context.findAncestorWidgetOfExactType<_IsTabActive>()?.actived ==
+        false) {
+      return true;
+    }
+    return false;
+  }
+
   void refreshState() {
     setState(() {});
   }

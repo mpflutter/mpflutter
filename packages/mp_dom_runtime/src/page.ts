@@ -125,6 +125,7 @@ export class Page {
       if (!(scaffoldView instanceof MPScaffold)) return;
       if (this.scaffoldView !== scaffoldView) {
         if (this.scaffoldView) {
+          this.scaffoldView.attached = false;
           this.scaffoldView.htmlElement.remove();
           this.scaffoldView.removeFromSuperview();
         }

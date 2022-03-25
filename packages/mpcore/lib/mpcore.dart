@@ -305,7 +305,9 @@ class MPCore {
     final overlays = <MPElement>[];
     ModalRoute? activeOverlayParentRoute;
     scaffoldStates.forEach((state) {
-      if (state.mounted && ModalRoute.of(state.context)?.isCurrent == true) {
+      if (state.mounted &&
+          !state.isInInactiveTab() &&
+          ModalRoute.of(state.context)?.isCurrent == true) {
         if (state.widget is MPOverlayScaffold) {
           activeOverlayParentRoute =
               (state.widget as MPOverlayScaffold).parentRoute;

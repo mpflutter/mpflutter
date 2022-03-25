@@ -50,6 +50,7 @@ class MPMainTabView extends StatefulWidget {
   final Color tabBarColor;
   final Widget Function(BuildContext, int)? tabBarBuilder;
   final MPMainTabController? controller;
+  final bool keepAlive;
 
   MPMainTabView({
     required this.tabs,
@@ -59,6 +60,7 @@ class MPMainTabView extends StatefulWidget {
     this.tabBarColor = Colors.white,
     this.tabBarBuilder,
     this.controller,
+    this.keepAlive = true,
   }) {
     assert(tabs.isNotEmpty);
   }
@@ -125,10 +127,28 @@ class MPMainTabViewState extends State<MPMainTabView> {
 
   @override
   Widget build(BuildContext context) {
-    if (loading) {
+    if (!widget.keepAlive && loading) {
       return MPScaffold(body: widget.loadingBuilder?.call(context));
     }
-    return widget.tabs[currentPage].builder(context);
+    if (widget.keepAlive) {
+      return Stack(
+          children: widget.tabs
+              .asMap()
+              .map((key, value) {
+                return MapEntry(
+                    key,
+                    _IsTabActive(
+                      actived: key == currentPage,
+                      child: Positioned.fill(
+                        child: value.builder(context),
+                      ),
+                    ));
+              })
+              .values
+              .toList());
+    } else {
+      return widget.tabs[currentPage].builder(context);
+    }
   }
 }
 
@@ -150,4 +170,16 @@ class _TabBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(height);
+}
+
+class _IsTabActive extends StatelessWidget {
+  final Widget child;
+  final bool actived;
+
+  _IsTabActive({required this.actived, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return child;
+  }
 }
