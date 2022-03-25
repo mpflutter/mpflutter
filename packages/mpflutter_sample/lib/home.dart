@@ -113,6 +113,7 @@ class MyHomePage extends StatelessWidget {
                     context: context, route: '/aspectRatio'),
                 _renderItem('Wrap', context: context, route: '/wrap'),
                 _renderItem('Transform', context: context, route: '/transform'),
+                _renderItem('Table', context: context, route: '/table'),
               ],
             ),
           ),

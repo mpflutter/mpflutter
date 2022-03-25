@@ -48,6 +48,7 @@ import 'package:mpflutter_template/touches/signature_page.dart';
 
 import 'animations/animation_performance_test_page.dart';
 import 'home.dart';
+import 'layouts/table_page.dart';
 import 'pages/main_tab_view_page.dart';
 import 'pages/route_test_page.dart';
 
@@ -130,6 +131,7 @@ class MyApp extends StatelessWidget {
         '/stack': (context) => StackPage(),
         '/transform': (context) => TransformPage(),
         '/wrap': (context) => WrapPage(),
+        '/table': (context) => TablePage(),
         '/customScrollView': (context) => CustomScrollViewPage(),
         '/gridView': (context) => GridViewPage(),
         '/gridViewWaterfall': (context) => GridViewWaterfallPage(),

@@ -34,7 +34,16 @@ export 'package:flutter/rendering.dart'
 @immutable
 class TableRow {
   /// Creates a row in a [Table].
-  const TableRow({this.key, this.decoration, this.children});
+  TableRow({this.key, this.decoration, List<Widget>? children})
+      : this.children = children?.map((e) {
+          if (e is TableCell) {
+            return e;
+          } else {
+            return TableCell(
+              child: e,
+            );
+          }
+        }).toList();
 
   /// An identifier for the row.
   final LocalKey? key;
