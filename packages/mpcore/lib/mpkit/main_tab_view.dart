@@ -60,7 +60,7 @@ class MPMainTabView extends StatefulWidget {
     this.tabBarColor = Colors.white,
     this.tabBarBuilder,
     this.controller,
-    this.keepAlive = true,
+    this.keepAlive = false,
   }) {
     assert(tabs.isNotEmpty);
   }
