@@ -23,6 +23,7 @@ MPElement _encodeImage(Element element) {
         }
         return false;
       })(),
+      'imageType': widget.imageType,
       'assetName': (() {
         if (widget.image is AssetImage) {
           return (widget.image as AssetImage).assetName;

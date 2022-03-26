@@ -341,6 +341,7 @@ class Image extends StatefulWidget {
     this.isAntiAlias = false,
     this.filterQuality = FilterQuality.low,
     this.lazyLoad = false,
+    this.imageType,
   })  : assert(image != null),
         assert(alignment != null),
         assert(repeat != null),
@@ -407,6 +408,7 @@ class Image extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.lazyLoad = false,
+    this.imageType,
   })  : image = ResizeImage.resizeIfNeeded(cacheWidth, cacheHeight,
             NetworkImage(src, scale: scale, headers: headers)),
         assert(alignment != null),
@@ -473,6 +475,7 @@ class Image extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.lazyLoad = false,
+    this.imageType,
   })  : image = ResizeImage.resizeIfNeeded(
             cacheWidth, cacheHeight, FileImage(file, scale: scale)),
         loadingBuilder = null,
@@ -640,6 +643,7 @@ class Image extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.lazyLoad = false,
+    this.imageType,
   })  : image = ResizeImage.resizeIfNeeded(
             cacheWidth,
             cacheHeight,
@@ -712,6 +716,7 @@ class Image extends StatefulWidget {
     int? cacheWidth,
     int? cacheHeight,
     this.lazyLoad = false,
+    this.imageType,
   })  : image = ResizeImage.resizeIfNeeded(
             cacheWidth, cacheHeight, MemoryImage(bytes, scale: scale)),
         loadingBuilder = null,
@@ -724,6 +729,8 @@ class Image extends StatefulWidget {
         super(key: key);
 
   final bool? lazyLoad;
+
+  final String? imageType;
 
   /// The image to display.
   final ImageProvider image;
