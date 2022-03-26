@@ -100,11 +100,11 @@ export class Engine {
       MPEnv.platformGlobal().engineScope = this.mpJS.engineScope;
     } else {
       MPEnv.platformGlobal().JSON = JSON;
-      MPEnv.platformGlobal().setTimeout = function(a: any, b: any) {
+      MPEnv.platformGlobal().setTimeout = function (a: any, b: any) {
         var ret = setTimeout(a, b);
         return parseInt(ret as any);
       };
-      MPEnv.platformGlobal().setInterval = function(a: any, b: any) {
+      MPEnv.platformGlobal().setInterval = function (a: any, b: any) {
         var ret = setInterval(a, b);
         return parseInt(ret as any);
       };
@@ -204,6 +204,8 @@ export class Engine {
       this.didReceivedScrollView(decodedMessage.message);
     } else if (decodedMessage.type === "rich_text" && decodedMessage.message?.event === "doMeasure") {
       TextMeasurer.didReceivedDoMeasureData(this, decodedMessage.message);
+    } else if (decodedMessage.type === "rich_text" && decodedMessage.message?.event === "doMeasureTextPainter") {
+      TextMeasurer.didReceivedDoMeasureTextPainter(this, decodedMessage.message);
     } else if (decodedMessage.type === "platform_view") {
       this.didReceivedPlatformView(decodedMessage.message);
     } else if (decodedMessage.type === "platform_channel") {

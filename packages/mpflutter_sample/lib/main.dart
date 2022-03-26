@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
 import 'package:mpflutter_template/animations/animated_container_page.dart';
@@ -47,6 +45,7 @@ import 'package:mpflutter_template/touches/ignore_pointer_page.dart';
 import 'package:mpflutter_template/touches/signature_page.dart';
 
 import 'animations/animation_performance_test_page.dart';
+import 'customs/custom_paint_async_page.dart';
 import 'home.dart';
 import 'layouts/table_page.dart';
 import 'pages/main_tab_view_page.dart';
@@ -171,6 +170,7 @@ class MyApp extends StatelessWidget {
         '/plugin': (context) => PluginPage(),
         '/miniprogramApi': (context) => MiniProgramApiPage(),
         '/customPaint': (context) => CustomPaintPage(),
+        '/customPaintAsync': (context) => CustomPaintAsyncPage(),
         '/forms': (context) => FormsPage(),
         '/signature': (context) => SignaturePage(),
         '/mapView': (context) => MapViewPage(),

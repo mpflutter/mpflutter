@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'dart:math' show min, max;
+import 'package:flutter/painting.dart';
 import 'package:flutter/ui/ui.dart' as ui
     show
         Paragraph,
@@ -533,6 +534,7 @@ class TextPainter {
       case TextBaseline.ideographic:
         return _paragraph!.ideographicBaseline;
     }
+    return 0.0;
   }
 
   /// Whether any text was truncated or ellipsized.
@@ -562,50 +564,8 @@ class TextPainter {
   ///
   /// The [text] and [textDirection] properties must be non-null before this is
   /// called.
-  void layout({double minWidth = 0.0, double maxWidth = double.infinity}) {
-    assert(text != null,
-        'TextPainter.text must be set to a non-null value before using the TextPainter.');
-    assert(textDirection != null,
-        'TextPainter.textDirection must be set to a non-null value before using the TextPainter.');
-    if (!_needsLayout && minWidth == _lastMinWidth && maxWidth == _lastMaxWidth)
-      return;
-    _needsLayout = false;
-    if (_paragraph == null) {
-      final ui.ParagraphBuilder builder =
-          ui.ParagraphBuilder(_createParagraphStyle());
-      _text!.build(builder,
-          textScaleFactor: textScaleFactor, dimensions: _placeholderDimensions);
-      _inlinePlaceholderScales = builder.placeholderScales;
-      _paragraph = builder.build();
-    }
-    _lastMinWidth = minWidth;
-    _lastMaxWidth = maxWidth;
-    // A change in layout invalidates the cached caret metrics as well.
-    _previousCaretPosition = null;
-    _previousCaretPrototype = null;
-    _paragraph!.layout(ui.ParagraphConstraints(width: maxWidth));
-    if (minWidth != maxWidth) {
-      double newWidth;
-      switch (textWidthBasis) {
-        case TextWidthBasis.longestLine:
-          // The parent widget expects the paragraph to be exactly
-          // `TextPainter.width` wide, if that value satisfies the constraints
-          // it gave to the TextPainter. So when `textWidthBasis` is longestLine,
-          // the paragraph's width needs to be as close to the width of its
-          // longest line as possible.
-          newWidth = _applyFloatingPointHack(_paragraph!.longestLine);
-          break;
-        case TextWidthBasis.parent:
-          newWidth = maxIntrinsicWidth;
-          break;
-      }
-      newWidth = newWidth.clamp(minWidth, maxWidth);
-      if (newWidth != _applyFloatingPointHack(_paragraph!.width)) {
-        _paragraph!.layout(ui.ParagraphConstraints(width: newWidth));
-      }
-    }
-    _inlinePlaceholderBoxes = _paragraph!.getBoxesForPlaceholders();
-  }
+  Future layout(
+      {double minWidth = 0.0, double maxWidth = double.infinity}) async {}
 
   /// Paints the text onto the given canvas at the given offset.
   ///
@@ -621,14 +581,26 @@ class TextPainter {
   /// that you pass to the [TextPainter] constructor or to the [text] property.
   void paint(Canvas canvas, Offset offset) {
     assert(() {
-      if (_needsLayout) {
+      if (size.isEmpty) {
         throw FlutterError(
             'TextPainter.paint called when text geometry was not yet calculated.\n'
             'Please call layout() before paint() to position the text before painting it.');
       }
       return true;
     }());
-    canvas.drawParagraph(_paragraph!, offset);
+    final theText = text;
+    if (theText is TextSpan &&
+        theText.text is String &&
+        theText.style is TextStyle) {
+      canvas.drawText(
+        theText.text!,
+        theText.style!,
+        offset,
+        Paint()
+          ..color = (theText.style as TextStyle).color ?? Color(0xff000000)
+          ..style = PaintingStyle.fill,
+      );
+    }
   }
 
   // Returns true iff the given value is a valid UTF-16 surrogate. The value

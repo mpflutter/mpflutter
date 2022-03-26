@@ -175,6 +175,11 @@ class _MulticastCanvas implements Canvas {
     _screenshot.drawParagraph(paragraph, offset);
   }
 
+  void drawText(String text, dynamic style, Offset offset, Paint paint) {
+    _main.drawText(text, style, offset, paint);
+    _screenshot.drawText(text, style, offset, paint);
+  }
+
   @override
   void drawPath(Path path, Paint paint) {
     _main.drawPath(path, paint);
@@ -2206,7 +2211,10 @@ class _ElementLocationStatsTracker {
           location.file,
           () => <int>[],
         );
-        jsonForFile..add(entry.id)..add(location.line)..add(location.column);
+        jsonForFile
+          ..add(entry.id)
+          ..add(location.line)
+          ..add(location.column);
       }
       json['newLocations'] = locationsJson;
     }
@@ -2971,7 +2979,9 @@ class _Location {
       parts.add(name!);
     }
     parts.add(file);
-    parts..add('$line')..add('$column');
+    parts
+      ..add('$line')
+      ..add('$column');
     return parts.join(':');
   }
 }

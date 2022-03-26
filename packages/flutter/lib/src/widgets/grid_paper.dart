@@ -7,7 +7,7 @@ import 'container.dart';
 import 'framework.dart';
 
 class _GridPaperPainter extends CustomPainter {
-  const _GridPaperPainter({
+  _GridPaperPainter({
     required this.color,
     required this.interval,
     required this.divisions,

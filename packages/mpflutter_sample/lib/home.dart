@@ -167,6 +167,11 @@ class MyHomePage extends StatelessWidget {
                   context: context,
                   route: '/customPaint',
                 ),
+                _renderItem(
+                  'CustomPaint(Async) / Canvas',
+                  context: context,
+                  route: '/customPaintAsync',
+                ),
               ],
             ),
           ),

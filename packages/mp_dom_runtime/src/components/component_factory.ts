@@ -225,6 +225,15 @@ export class ComponentFactory {
     }
   }
 
+  callbackTextPainterMeasureResult(seqId: number, size: { width: number; height: number }) {
+    this.engine.sendMessage(
+      JSON.stringify({
+        type: "rich_text",
+        message: { event: "onTextPainterMeasured", data: { seqId, size } },
+      })
+    );
+  }
+
   flushTextMeasureResult() {
     if (this.textMeasureResults.length > 0) {
       this.engine.sendMessage(

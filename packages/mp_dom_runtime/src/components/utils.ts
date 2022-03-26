@@ -176,25 +176,31 @@ export const cssTextAlign = (value: any) => {
   }
 };
 
-function getFontWeightStyle(data: any) {
+export function getFontWeightStyle(data: any) {
   if (data.fontWeight) {
     return data.fontWeight.replace("FontWeight.w", "");
   }
   return undefined;
 }
 
-function getFontStyleStyle(data: any) {
+export function getFontStyleStyle(data: any) {
   if (data.fontStyle === "FontStyle.italic") {
     return "italic";
   }
   return undefined;
 }
 
-function getBaselineStyle(data: any) {
+export function getBaselineStyle(data: any) {
   if (data.textBaseline === "TextBaseline.alphabetic") {
     return "alphabetic";
   } else if (data.textBaseline === "TextBaseline.ideographic") {
     return "ideographic";
+  } else if (data.textBaseline === "TextBaseline.top") {
+    return "top";
+  } else if (data.textBaseline === "TextBaseline.middle") {
+    return "middle";
+  } else if (data.textBaseline === "TextBaseline.bottom") {
+    return "bottom";
   }
   return undefined;
 }

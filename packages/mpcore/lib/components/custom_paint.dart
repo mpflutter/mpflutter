@@ -248,6 +248,24 @@ class _RecordingCanvas implements Canvas {
   void drawParagraph(ui.Paragraph paragraph, Offset offset) {}
 
   @override
+  void drawText(String text, dynamic style, Offset offset, ui.Paint paint) {
+    if (style is TextStyle) {
+      _commands.add(
+        {
+          'action': 'drawText',
+          'text': text,
+          'style': MPTextPainter.encodeTextStyle(style),
+          'offset': {
+            'x': offset.dx,
+            'y': offset.dy,
+          },
+          'paint': encodePaint(paint),
+        },
+      );
+    }
+  }
+
+  @override
   void drawPath(ui.Path path, ui.Paint paint) {
     _commands.add({
       'action': 'drawPath',
@@ -378,7 +396,33 @@ MPElement _encodeCustomPaint(Element element) {
   final widget = element.widget as CustomPaint;
   final recordingCanvas = _RecordingCanvas();
   recordingCanvas.drawColor(Colors.transparent, ui.BlendMode.clear);
-  widget.painter?.paint(recordingCanvas, widget.size);
+  final painter = widget.painter;
+  if (painter != null) {
+    if (painter.isAsyncPainter()) {
+      painter.asyncPaintSequenceId++;
+      final currentSeqId = painter.asyncPaintSequenceId;
+      painter.paintAsync(recordingCanvas, widget.size).then((_) {
+        if (currentSeqId != painter.asyncPaintSequenceId) return;
+        if ((element.widget as CustomPaint).painter != painter) return;
+        MPChannel.postMessage(
+          json.encode({
+            'type': 'custom_paint',
+            'flow': 'request',
+            'message': {
+              'event': 'asyncPaint',
+              'target': element.hashCode,
+              'width': widget.size.width,
+              'height': widget.size.height,
+              'commands': recordingCanvas._commands,
+            },
+          }),
+          forLastConnection: true,
+        );
+      });
+    } else {
+      painter.paint(recordingCanvas, widget.size);
+    }
+  }
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,

@@ -7,7 +7,7 @@ import 'container.dart';
 import 'framework.dart';
 
 class _PlaceholderPainter extends CustomPainter {
-  const _PlaceholderPainter({
+  _PlaceholderPainter({
     required this.color,
     required this.strokeWidth,
   });

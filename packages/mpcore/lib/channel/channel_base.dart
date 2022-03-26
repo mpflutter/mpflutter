@@ -282,6 +282,8 @@ class MPChannelBase {
         }
       } else if (message['event'] == 'onMeasured') {
         _onMeasuredText(message['data']);
+      } else if (message['event'] == 'onTextPainterMeasured') {
+        MPTextPainter.onTextPainterMeasuredText(message['data']);
       }
     } catch (e) {
       print(e);

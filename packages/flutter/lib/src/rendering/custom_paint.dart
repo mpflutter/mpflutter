@@ -115,7 +115,13 @@ abstract class CustomPainter extends Listenable {
   /// Creates a custom painter.
   ///
   /// The painter will repaint whenever `repaint` notifies its listeners.
-  const CustomPainter({Listenable? repaint}) : _repaint = repaint;
+  CustomPainter({Listenable? repaint}) : _repaint = repaint;
+
+  int asyncPaintSequenceId = 0;
+
+  bool isAsyncPainter() {
+    return false;
+  }
 
   final Listenable? _repaint;
 
@@ -170,6 +176,10 @@ abstract class CustomPainter extends Listenable {
   ///    [ImageInfo.image] object, applying the [ImageInfo.scale] value to
   ///    obtain the correct rendering size.
   void paint(Canvas canvas, Size size);
+
+  Future paintAsync(Canvas canvas, Size size) async {
+    paint(canvas, size);
+  }
 
   /// Called whenever a new instance of the custom painter delegate class is
   /// provided to the [RenderCustomPaint] object, or any time that a new

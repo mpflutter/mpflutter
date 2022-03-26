@@ -93,6 +93,7 @@ abstract class Canvas {
   void drawImageNine(Image image, Rect center, Rect dst, Paint paint);
   void drawPicture(Picture picture);
   void drawParagraph(Paragraph paragraph, Offset offset);
+  void drawText(String text, dynamic style, Offset offset, Paint paint);
   void drawPoints(PointMode pointMode, List<Offset> points, Paint paint);
   void drawRawPoints(PointMode pointMode, Float32List points, Paint paint);
 

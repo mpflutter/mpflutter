@@ -134,6 +134,9 @@ enum TextAlign {
 enum TextBaseline {
   alphabetic,
   ideographic,
+  top,
+  middle,
+  bottom,
 }
 
 class TextDecoration {
@@ -377,7 +380,7 @@ class TextRange {
   const TextRange({
     required this.start,
     required this.end,
-  })   : assert(start != null &&
+  })  : assert(start != null &&
             start >= -1), // ignore: unnecessary_null_comparison
         assert(end != null && end >= -1); // ignore: unnecessary_null_comparison
   const TextRange.collapsed(int offset)
