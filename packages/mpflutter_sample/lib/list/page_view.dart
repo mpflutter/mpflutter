@@ -109,6 +109,7 @@ class _PageViewSampleState extends State<_PageViewSample> {
               Container(color: Colors.yellow),
             ],
             loop: true,
+            autoplay: true,
             controller: pageController,
           ),
         ),

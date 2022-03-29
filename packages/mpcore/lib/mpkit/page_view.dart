@@ -53,11 +53,13 @@ class MPPageView extends MPPlatformView {
   final List<Widget> children;
   final Axis scrollDirection;
   final bool loop;
+  final bool autoplay;
 
   MPPageView({
     required this.children,
     this.scrollDirection = Axis.horizontal,
     this.loop = false,
+    this.autoplay = false,
     this.controller,
   }) : super(
           viewType: 'mp_page_view',

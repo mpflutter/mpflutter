@@ -7,6 +7,7 @@ class PageViewWeb extends MPPlatformView {
   wrapperHtmlElement = this.document.createElement("div");
   direction = "horizontal";
   loop = false;
+  autoplay = false;
 
   constructor(document: Document, readonly initialAttributes?: any) {
     super(document, initialAttributes);
@@ -29,6 +30,7 @@ class PageViewWeb extends MPPlatformView {
     super.setAttributes(attributes);
     this.direction = attributes.scrollDirection === "Axis.vertical" ? "vertical" : "horizontal";
     this.loop = attributes.loop;
+    this.autoplay = attributes.autoplay;
     this.wrapperHtmlElement.style.flexDirection = attributes.scrollDirection === "Axis.vertical" ? "column" : "row";
     this.setupSwiperInstance();
   }
@@ -39,6 +41,7 @@ class PageViewWeb extends MPPlatformView {
         this.swiperInstance = new (window as any).Swiper("#d_" + this.hashCode, {
           direction: this.direction,
           loop: this.loop,
+          autoplay: this.autoplay,
           initialSlide: this.attributes.initialPage,
         });
         this.swiperInstance.on("activeIndexChange", () => {
@@ -107,6 +110,7 @@ class PageViewWeapp extends MPPlatformView {
       attributes.scrollDirection === "Axis.vertical" ? (true as any) : (false as any)
     );
     setDOMAttribute(this.htmlElement, "circular", attributes.loop ? (true as any) : (false as any));
+    setDOMAttribute(this.htmlElement, "autoplay", attributes.autoplay ? (true as any) : (false as any))
   }
 
   addSubview(view: ComponentView) {

@@ -18,6 +18,7 @@ MPElement _encodeMPPageView(Element element) {
     attributes: {
       'scrollDirection': widget.scrollDirection.toString(),
       'loop': widget.loop,
+      'autoplay': widget.autoplay,
       'initialPage': widget.controller?.initialPage ?? 0,
     },
   );
