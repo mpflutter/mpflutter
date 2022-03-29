@@ -3,12 +3,12 @@ part of '../mpcore.dart';
 Map _encodeScroller(Element element) {
   final widget = element.widget as ScrollView;
   final isRoot = (() {
-    if (element.size != MediaQuery.of(element).size) {
-      return false;
-    } else if (widget.primary == false) {
+    if (widget.primary == false) {
       return false;
     } else if (widget.scrollDirection == Axis.vertical &&
-        element.findAncestorWidgetOfExactType<Scrollable>() == null) {
+        element.findAncestorWidgetOfExactType<Scrollable>() == null &&
+        element.findAncestorWidgetOfExactType<MultiChildRenderObjectWidget>() ==
+            null) {
       return true;
     } else {
       return false;
