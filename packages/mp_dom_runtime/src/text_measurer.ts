@@ -135,7 +135,7 @@ export class TextMeasurer {
           }
           return {
             measureId: it.attributes.measureId,
-            width: Math.ceil(rect?.width ?? 0.0) + 1.0,
+            width: Math.ceil(rect?.width ?? 0.0) + 2.0,
             height: Math.ceil(rect?.height ?? 0.0) + 1.0,
           };
         })
