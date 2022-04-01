@@ -2,6 +2,21 @@ part of '../mpcore.dart';
 
 Map _encodeScroller(Element element) {
   final widget = element.widget as ScrollView;
+  if (widget.controller != null) {
+    widget.controller?.eventEmitter = (event, eventParams) {
+      MPChannel.postMessage(
+        json.encode({
+          'type': 'scroll_view',
+          'message': {
+            'target': element.hashCode,
+            'event': event,
+            ...eventParams,
+          },
+        }),
+        forLastConnection: true,
+      );
+    };
+  }
   final isRoot = (() {
     if (widget.primary == false) {
       return false;
@@ -34,12 +49,17 @@ Map _encodeScroller(Element element) {
   }
   final hasScrollNotificationListener = (() {
     var hasResult = false;
-    element.visitAncestorElements((element) {
-      if (element.widget is NotificationListener<ScrollNotification>) {
-        hasResult = true;
-      }
-      return false;
-    });
+    if (widget.controller != null) {
+      hasResult = true;
+    }
+    if (!hasResult) {
+      element.visitAncestorElements((element) {
+        if (element.widget is NotificationListener<ScrollNotification>) {
+          hasResult = true;
+        }
+        return false;
+      });
+    }
     if (!hasResult) {
       if (isRoot) {
         return element

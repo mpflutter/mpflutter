@@ -91,13 +91,11 @@ abstract class ScrollPosition extends ViewportOffset with ScrollMetrics {
   /// The [physics], [context], and [keepScrollOffset] parameters must not be null.
   ScrollPosition({
     required this.physics,
-    required this.context,
+    this.context,
     this.keepScrollOffset = true,
     ScrollPosition? oldPosition,
     this.debugLabel,
   })  : assert(physics != null),
-        assert(context != null),
-        assert(context.vsync != null),
         assert(keepScrollOffset != null) {
     if (oldPosition != null) absorb(oldPosition);
     if (keepScrollOffset) restoreScrollOffset();
@@ -112,7 +110,7 @@ abstract class ScrollPosition extends ViewportOffset with ScrollMetrics {
   /// Where the scrolling is taking place.
   ///
   /// Typically implemented by [ScrollableState].
-  final ScrollContext context;
+  final ScrollContext? context;
 
   /// Save the current scroll offset with [PageStorage] and restore it if
   /// this scroll position's scrollable is recreated.

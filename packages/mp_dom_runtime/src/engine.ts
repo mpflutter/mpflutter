@@ -267,6 +267,11 @@ export class Engine {
         target.refreshEndResolver?.(undefined);
         target.refreshEndResolver = undefined;
       }
+    } else if (message.event === "jumpTo") {
+      let target = this.componentFactory.cachedView[message.target] as CollectionView;
+      if (target) {
+        target.jumpTo(message.value);
+      }
     }
   }
 

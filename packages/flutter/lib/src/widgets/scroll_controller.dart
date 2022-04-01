@@ -4,11 +4,76 @@
 
 import 'package:flutter/animation.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/src/rendering/viewport_offset.dart';
+import 'package:flutter/src/gestures/drag.dart';
 
 import 'scroll_context.dart';
 import 'scroll_physics.dart';
 import 'scroll_position.dart';
 import 'scroll_position_with_single_context.dart';
+
+class MPScrollPosition extends ScrollPosition {
+  ScrollController scrollController;
+
+  MPScrollPosition(this.scrollController)
+      : super(physics: AlwaysScrollableScrollPhysics());
+
+  @override
+  double get pixels => mpPixels;
+
+  double mpPixels = 0.0;
+
+  @override
+  double get viewportDimension => mpViewportDimension;
+
+  double mpViewportDimension = 0.0;
+
+  @override
+  double get minScrollExtent => mpMinScrollExtent;
+
+  double mpMinScrollExtent = 0.0;
+
+  @override
+  double get maxScrollExtent => mpMaxScrollExtent;
+
+  double mpMaxScrollExtent = 0.0;
+
+  @override
+  Future<void> animateTo(double to,
+      {required Duration duration, required Curve curve}) async {
+    scrollController.animateTo(to, duration: duration, curve: curve);
+  }
+
+  @override
+  AxisDirection get axisDirection => AxisDirection.down;
+
+  @override
+  Drag drag(DragStartDetails details, VoidCallback dragCancelCallback) {
+    throw UnimplementedError();
+  }
+
+  @override
+  ScrollHoldController hold(VoidCallback holdCancelCallback) {
+    throw UnimplementedError();
+  }
+
+  @override
+  void jumpTo(double value) {
+    scrollController.jumpTo(value);
+  }
+
+  @override
+  void jumpToWithoutSettling(double value) {
+    scrollController.jumpTo(value);
+  }
+
+  @override
+  void pointerScroll(double delta) {}
+
+  @override
+  ScrollDirection get userScrollDirection => ScrollDirection.forward;
+}
 
 /// Controls a scrollable widget.
 ///
@@ -51,7 +116,12 @@ class ScrollController extends ChangeNotifier {
     this.debugLabel,
   })  : assert(initialScrollOffset != null),
         assert(keepScrollOffset != null),
-        _initialScrollOffset = initialScrollOffset;
+        _initialScrollOffset = initialScrollOffset {
+    _positions.add(MPScrollPosition(this));
+  }
+
+  ScrollableState? scrollableState;
+  void Function(String event, Map eventParams)? eventEmitter;
 
   /// The initial value to use for [offset].
   ///
@@ -90,6 +160,7 @@ class ScrollController extends ChangeNotifier {
   /// and removed using [attach] and [detach].
   @protected
   Iterable<ScrollPosition> get positions => _positions;
+
   final List<ScrollPosition> _positions = <ScrollPosition>[];
 
   /// Whether any [ScrollPosition] objects have attached themselves to the
@@ -151,12 +222,7 @@ class ScrollController extends ChangeNotifier {
     required Duration duration,
     required Curve curve,
   }) async {
-    assert(_positions.isNotEmpty,
-        'ScrollController not attached to any scroll views.');
-    await Future.wait<void>(<Future<void>>[
-      for (int i = 0; i < _positions.length; i += 1)
-        _positions[i].animateTo(offset, duration: duration, curve: curve),
-    ]);
+    eventEmitter?.call('jumpTo', {'value': offset});
   }
 
   /// Jumps the scroll position from its current value to the given value,
@@ -172,10 +238,7 @@ class ScrollController extends ChangeNotifier {
   /// Immediately after the jump, a ballistic activity is started, in case the
   /// value was out of range.
   void jumpTo(double value) {
-    assert(_positions.isNotEmpty,
-        'ScrollController not attached to any scroll views.');
-    for (final ScrollPosition position in List<ScrollPosition>.from(_positions))
-      position.jumpTo(value);
+    eventEmitter?.call('jumpTo', {'value': value});
   }
 
   /// Register the given position with this controller.

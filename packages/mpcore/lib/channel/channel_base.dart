@@ -566,6 +566,30 @@ class MPChannelBase {
                 ?.onPageScroll
                 ?.call((message['scrollTop'] as num).toDouble());
           }
+
+          final scrollController = (() {
+            if (element.widget is ScrollView) {
+              return (element.widget as ScrollView).controller;
+            } else if (element.widget is SingleChildScrollView) {
+              return (element.widget as SingleChildScrollView).controller;
+            }
+            return null;
+          })();
+          if (scrollController != null) {
+            final position = scrollController.position;
+            if (position is MPScrollPosition) {
+              position.mpPixels = renderBox.axis == Axis.horizontal
+                  ? (message['scrollLeft'] as num).toDouble()
+                  : (message['scrollTop'] as num).toDouble();
+              position.mpViewportDimension =
+                  (message['viewportDimension'] as num).toDouble();
+              position.mpMaxScrollExtent =
+                  (message['scrollHeight'] as num).toDouble() -
+                      (message['viewportDimension'] as num).toDouble();
+              // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+              scrollController.notifyListeners();
+            }
+          }
         }
       } else if (message['event'] == 'onRefresh') {
         final element = MPCore.findTargetHashCode(message['target']);

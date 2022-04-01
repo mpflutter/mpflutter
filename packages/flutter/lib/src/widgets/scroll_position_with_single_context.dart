@@ -67,7 +67,8 @@ class ScrollPositionWithSingleContext extends ScrollPosition
   double _heldPreviousVelocity = 0.0;
 
   @override
-  AxisDirection get axisDirection => context.axisDirection;
+  AxisDirection get axisDirection =>
+      context?.axisDirection ?? AxisDirection.down;
 
   @override
   void beginActivity(ScrollActivity? newActivity) {}

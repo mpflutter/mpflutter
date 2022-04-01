@@ -407,38 +407,32 @@ class ScrollableState extends State<Scrollable>
     super.didUpdateWidget(oldWidget);
 
     if (widget.controller != oldWidget.controller) {
-      oldWidget.controller?.detach(position);
-      widget.controller?.attach(position);
+      oldWidget.controller?.scrollableState = null;
+      widget.controller?.scrollableState = null;
     }
 
     if (_shouldUpdatePosition(oldWidget)) _updatePosition();
   }
 
   @override
+  void initState() {
+    super.initState();
+    widget.controller?.scrollableState = null;
+  }
+
+  @override
   void dispose() {
+    widget.controller?.eventEmitter = null;
     widget.controller?.detach(position);
     position.dispose();
     _persistedScrollOffset.dispose();
     super.dispose();
   }
 
-  // SEMANTICS
-
-  final GlobalKey _scrollSemanticsKey = GlobalKey();
-
   // GESTURE RECOGNITION AND POINTER IGNORING
 
   final GlobalKey<RawGestureDetectorState> _gestureDetectorKey =
       GlobalKey<RawGestureDetectorState>();
-  final GlobalKey _ignorePointerKey = GlobalKey();
-
-  // This field is set during layout, and then reused until the next time it is set.
-  Map<Type, GestureRecognizerFactory> _gestureRecognizers =
-      const <Type, GestureRecognizerFactory>{};
-  bool _shouldIgnorePointer = false;
-
-  bool? _lastCanDrag;
-  Axis? _lastAxisDirection;
 
   @override
   @protected
@@ -456,106 +450,6 @@ class ScrollableState extends State<Scrollable>
 
   @override
   BuildContext get storageContext => context;
-
-  // TOUCH HANDLERS
-
-  Drag? _drag;
-  ScrollHoldController? _hold;
-
-  void _handleDragDown(DragDownDetails details) {
-    assert(_drag == null);
-    assert(_hold == null);
-    _hold = position.hold(_disposeHold);
-  }
-
-  void _handleDragStart(DragStartDetails details) {
-    // It's possible for _hold to become null between _handleDragDown and
-    // _handleDragStart, for example if some user code calls jumpTo or otherwise
-    // triggers a new activity to begin.
-    assert(_drag == null);
-    _drag = position.drag(details, _disposeDrag);
-    assert(_drag != null);
-    assert(_hold == null);
-  }
-
-  void _handleDragUpdate(DragUpdateDetails details) {
-    // _drag might be null if the drag activity ended and called _disposeDrag.
-    assert(_hold == null || _drag == null);
-    _drag?.update(details);
-  }
-
-  void _handleDragEnd(DragEndDetails details) {
-    // _drag might be null if the drag activity ended and called _disposeDrag.
-    assert(_hold == null || _drag == null);
-    _drag?.end(details);
-    assert(_drag == null);
-  }
-
-  void _handleDragCancel() {
-    // _hold might be null if the drag started.
-    // _drag might be null if the drag activity ended and called _disposeDrag.
-    assert(_hold == null || _drag == null);
-    _hold?.cancel();
-    _drag?.cancel();
-    assert(_hold == null);
-    assert(_drag == null);
-  }
-
-  void _disposeHold() {
-    _hold = null;
-  }
-
-  void _disposeDrag() {
-    _drag = null;
-  }
-
-  // SCROLL WHEEL
-
-  // Returns the offset that should result from applying [event] to the current
-  // position, taking min/max scroll extent into account.
-  double _targetScrollOffsetForPointerScroll(double delta) {
-    return math.min(math.max(position.pixels + delta, position.minScrollExtent),
-        position.maxScrollExtent);
-  }
-
-  // Returns the delta that should result from applying [event] with axis and
-  // direction taken into account.
-  double _pointerSignalEventDelta(PointerScrollEvent event) {
-    double delta = widget.axis == Axis.horizontal
-        ? event.scrollDelta.dx
-        : event.scrollDelta.dy;
-
-    if (axisDirectionIsReversed(widget.axisDirection)) {
-      delta *= -1;
-    }
-    return delta;
-  }
-
-  void _receivedPointerSignal(PointerSignalEvent event) {
-    if (event is PointerScrollEvent && _position != null) {
-      if (_physics != null && !_physics!.shouldAcceptUserOffset(position)) {
-        return;
-      }
-      final double delta = _pointerSignalEventDelta(event);
-      final double targetScrollOffset =
-          _targetScrollOffsetForPointerScroll(delta);
-      // Only express interest in the event if it would actually result in a scroll.
-      if (delta != 0.0 && targetScrollOffset != position.pixels) {
-        GestureBinding.instance!.pointerSignalResolver
-            .register(event, _handlePointerScroll);
-      }
-    }
-  }
-
-  void _handlePointerScroll(PointerEvent event) {
-    assert(event is PointerScrollEvent);
-    final double delta = _pointerSignalEventDelta(event as PointerScrollEvent);
-    final double targetScrollOffset =
-        _targetScrollOffsetForPointerScroll(delta);
-    if (delta != 0.0 && targetScrollOffset != position.pixels) {
-      position.pointerScroll(delta);
-    }
-  }
 
   // DESCRIPTION
 

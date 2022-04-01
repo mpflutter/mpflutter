@@ -63,6 +63,8 @@ export class CollectionView extends ComponentView {
             target: this.attributes.onScroll,
             scrollLeft: window.scrollX,
             scrollTop: window.scrollY,
+            viewportDimension: window.innerHeight,
+            scrollHeight: this.document.body.scrollHeight,
           },
         })
       );
@@ -89,6 +91,8 @@ export class CollectionView extends ComponentView {
             isRoot: this.attributes.isRoot,
             scrollLeft: this.htmlElement.scrollLeft,
             scrollTop: this.htmlElement.scrollTop,
+            viewportDimension: this.htmlElement.clientHeight,
+            scrollHeight: this.htmlElement.scrollHeight,
           },
         })
       );
@@ -140,6 +144,19 @@ export class CollectionView extends ComponentView {
         },
       })
     );
+  }
+
+  jumpTo(value: number) {
+    if (__MP_TARGET_BROWSER__) {
+      if (this.htmlElement.isConnected && this.attributes.isRoot) {
+        window.scrollTo({ top: value });
+      } else {
+        this.htmlElement.scrollTo({
+          left: this.attributes.scrollDirection === "Axis.horizontal" ? value : undefined,
+          top: this.attributes.scrollDirection !== "Axis.horizontal" ? value : undefined,
+        });
+      }
+    }
   }
 
   addScrollToLowerListener() {
