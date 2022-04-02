@@ -4000,6 +4000,15 @@ abstract class Element extends DiagnosticableTree implements BuildContext {
   }
 
   @override
+  T? findAncestorWidgetOfKindType<T extends Widget>() {
+    assert(_debugCheckStateIsActiveForAncestorLookup());
+    Element? ancestor = _parent;
+    while (ancestor != null && !(ancestor.widget is T))
+      ancestor = ancestor._parent;
+    return ancestor?.widget as T?;
+  }
+
+  @override
   T? findAncestorStateOfType<T extends State<StatefulWidget>>() {
     assert(_debugCheckStateIsActiveForAncestorLookup());
     Element? ancestor = _parent;

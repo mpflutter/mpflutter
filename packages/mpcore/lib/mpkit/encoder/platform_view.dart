@@ -19,7 +19,15 @@ MPElement _encodeMPPlatformView(Element element) {
     hashCode: element.hashCode,
     flutterElement: element,
     name: widget.viewType,
-    children: MPElement.childrenFromFlutterElement(element),
+    children: widget.children != null
+        ? (() {
+            final firstChild =
+                MPElement.childrenFromFlutterElement(element)[0].flutterElement;
+            if (firstChild != null) {
+              return MPElement.childrenFromFlutterElement(firstChild);
+            }
+          })()
+        : MPElement.childrenFromFlutterElement(element),
     attributes: widget.viewAttributes
       ..addAll({'layoutConstraints': layoutConstraints}),
   );

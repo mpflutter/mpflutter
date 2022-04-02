@@ -76,6 +76,7 @@ class MPPlatformView extends StatelessWidget {
   final String viewType;
   final Map<String, dynamic> viewAttributes;
   final Widget? child;
+  final List<Widget>? children;
   final Future? Function(String method, Map? params)? onMethodCall;
 
   MPPlatformView({
@@ -83,6 +84,7 @@ class MPPlatformView extends StatelessWidget {
     this.viewAttributes = const {},
     this.controller,
     this.child,
+    this.children,
     this.onMethodCall,
   });
 
@@ -95,7 +97,7 @@ class MPPlatformView extends StatelessWidget {
       return Container(
         width: sizeFromIntrinsicContentSize.size!.width,
         height: sizeFromIntrinsicContentSize.size!.height,
-        child: child,
+        child: children != null ? Stack(children: children!) : child,
       );
     } else {
       return child ?? Container();

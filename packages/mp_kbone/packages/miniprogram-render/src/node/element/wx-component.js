@@ -57,6 +57,14 @@ class WxComponent extends Element {
         this.$_attrs.set('value', value)
     }
 
+    get scrollWidth() {
+        return this.$_attrs.get('scroll-width') || 0
+    }
+
+    get scrollHeight() {
+        return this.$_attrs.get('scroll-height') || 0
+    }
+
     get scrollTop() {
         return this.$_attrs.get('scroll-top') || 0
     }

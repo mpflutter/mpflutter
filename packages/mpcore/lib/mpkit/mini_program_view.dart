@@ -39,6 +39,7 @@ class MPMiniProgramView extends MPPlatformView {
     this.eventListeners,
     this.controller,
     Widget? child,
+    List<Widget>? children,
   }) : super(
           viewType: 'mp_mini_program_view',
           viewAttributes: {
@@ -52,6 +53,7 @@ class MPMiniProgramView extends MPPlatformView {
                 {})
           }..removeWhere((key, value) => value == null),
           child: child,
+          children: children,
           onMethodCall: (method, arguments) {
             if (method.startsWith('on.')) {
               eventListeners?.forEach((element) {

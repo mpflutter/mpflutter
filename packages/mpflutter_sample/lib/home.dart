@@ -122,6 +122,8 @@ class MyHomePage extends StatelessWidget {
               children: [
                 _renderHeader('列表类组件', MaterialIcons.list_outlined),
                 _renderItem('ListView', context: context, route: '/listView'),
+                _renderItem('DoubleColumnListView',
+                    context: context, route: '/doubleColumnListView'),
                 _renderItem('ListView + LoadMore',
                     context: context, route: '/listViewLoadMore'),
                 _renderItem('GridView', context: context, route: '/gridView'),

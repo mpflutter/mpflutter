@@ -21,8 +21,8 @@ Map _encodeScroller(Element element) {
     if (widget.primary == false) {
       return false;
     } else if (widget.scrollDirection == Axis.vertical &&
-        element.findAncestorWidgetOfExactType<Scrollable>() == null &&
-        element.findAncestorWidgetOfExactType<MultiChildRenderObjectWidget>() ==
+        element.findAncestorWidgetOfKindType<Scrollable>() == null &&
+        element.findAncestorWidgetOfKindType<MultiChildRenderObjectWidget>() ==
             null) {
       return true;
     } else {

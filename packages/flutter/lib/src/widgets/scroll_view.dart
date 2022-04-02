@@ -713,7 +713,7 @@ abstract class BoxScrollView extends ScrollView {
   List<Widget> buildSlivers(BuildContext context) {
     Widget sliver = buildChildLayout(context);
     EdgeInsetsGeometry? effectivePadding = padding;
-    if (padding == null) {
+    if (padding == null && primary == true) {
       final MediaQueryData? mediaQuery = MediaQuery.maybeOf(context);
       if (mediaQuery != null) {
         // Automatically pad sliver with padding from MediaQuery.

@@ -341,12 +341,16 @@ const wxComponentMap = {
                 domNode.$$setAttributeWithoutUpdate('scroll-into-view', '')
                 domNode.$$setAttributeWithoutUpdate('scroll-top', evt.detail.scrollTop)
                 domNode.$$setAttributeWithoutUpdate('scroll-left', evt.detail.scrollLeft)
+                domNode.$$setAttributeWithoutUpdate('scroll-width', evt.detail.scrollWidth)
+                domNode.$$setAttributeWithoutUpdate('scroll-height', evt.detail.scrollHeight)
 
                 // 可被用户行为改变的值，需要记录
                 domNode._oldValues = domNode._oldValues || {}
                 domNode._oldValues.scrollIntoView = ''
                 domNode._oldValues.scrollTop = evt.detail.scrollTop || ''
                 domNode._oldValues.scrollLeft = evt.detail.scrollLeft || ''
+                domNode._oldValues.scrollWidth = evt.detail.scrollWidth || ''
+                domNode._oldValues.scrollHeight = evt.detail.scrollHeight || ''
 
                 this.callSimpleEvent('scroll', evt)
             },

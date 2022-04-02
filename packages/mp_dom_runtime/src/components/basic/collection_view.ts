@@ -91,7 +91,7 @@ export class CollectionView extends ComponentView {
             isRoot: this.attributes.isRoot,
             scrollLeft: this.htmlElement.scrollLeft,
             scrollTop: this.htmlElement.scrollTop,
-            viewportDimension: this.htmlElement.clientHeight,
+            viewportDimension: this.constraints?.h ?? 0,
             scrollHeight: this.htmlElement.scrollHeight,
           },
         })
@@ -155,6 +155,16 @@ export class CollectionView extends ComponentView {
           left: this.attributes.scrollDirection === "Axis.horizontal" ? value : undefined,
           top: this.attributes.scrollDirection !== "Axis.horizontal" ? value : undefined,
         });
+      }
+    } else if (__MP_MINI_PROGRAM__) {
+      if (this.attributes.isRoot) {
+        MPEnv.platformGlobal().pageScrollTo({ scrollTop: value });
+      } else {
+        if (this.attributes.scrollDirection === "Axis.horizontal") {
+          this.htmlElement.setAttribute("scroll-left", value.toString());
+        } else {
+          this.htmlElement.setAttribute("scroll-top", value.toString());
+        }
       }
     }
   }
