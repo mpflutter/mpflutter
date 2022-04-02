@@ -50,6 +50,7 @@ class MPPageController extends MPPlatformViewController with ChangeNotifier {
 class MPPageView extends MPPlatformView {
   @override
   final MPPageController? controller;
+  @override
   final List<Widget> children;
   final Axis scrollDirection;
   final bool loop;

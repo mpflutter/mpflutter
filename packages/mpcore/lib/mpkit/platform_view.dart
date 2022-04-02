@@ -97,7 +97,15 @@ class MPPlatformView extends StatelessWidget {
       return Container(
         width: sizeFromIntrinsicContentSize.size!.width,
         height: sizeFromIntrinsicContentSize.size!.height,
-        child: children != null ? Stack(children: children!) : child,
+        child: children != null
+            ? Stack(
+                children:
+                    children!.map((e) => Positioned.fill(child: e)).toList())
+            : child,
+      );
+    } else if (children != null) {
+      return Stack(
+        children: children!.map((e) => Positioned.fill(child: e)).toList(),
       );
     } else {
       return child ?? Container();
