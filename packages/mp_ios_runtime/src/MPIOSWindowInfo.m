@@ -20,8 +20,8 @@
                         @"width": @([UIScreen mainScreen].bounds.size.width),
                         @"height": @([UIScreen mainScreen].bounds.size.height),
                         @"padding": @{
-                                @"top": @([UIApplication sharedApplication].windows.firstObject.safeAreaInsets.top * [UIScreen mainScreen].scale),
-                                @"bottom": @([UIApplication sharedApplication].windows.firstObject.safeAreaInsets.bottom * [UIScreen mainScreen].scale),
+                                @"top": @([UIApplication sharedApplication].windows.firstObject.safeAreaInsets.top),
+                                @"bottom": @([UIApplication sharedApplication].windows.firstObject.safeAreaInsets.bottom),
                         },
                 },
                 @"devicePixelRatio": @([UIScreen mainScreen].scale),
