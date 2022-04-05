@@ -28,13 +28,7 @@ export class CollectionView extends ComponentView {
   }
 
   elementType() {
-    if (
-      (this.initialAttributes?.restorationId ||
-        this.initialAttributes?.onScroll ||
-        this.initialAttributes?.onRefresh ||
-        this.initialAttributes?.onReachBottom) &&
-      __MP_MINI_PROGRAM__
-    ) {
+    if (__MP_MINI_PROGRAM__ && this.initialAttributes?.isRoot !== true) {
       return "wx-scroll-view";
     } else {
       return "div";
