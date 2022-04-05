@@ -31,7 +31,8 @@ export class CollectionView extends ComponentView {
     if (
       (this.initialAttributes?.restorationId ||
         this.initialAttributes?.onScroll ||
-        this.initialAttributes?.onRefresh) &&
+        this.initialAttributes?.onRefresh ||
+        this.initialAttributes?.onReachBottom) &&
       __MP_MINI_PROGRAM__
     ) {
       return "wx-scroll-view";

@@ -77,13 +77,15 @@ Map _encodeScroller(Element element) {
       element.findAncestorWidgetOfExactType<MPRefreshIndicator>();
   var hasRefreshIndicator = refreshIndicator != null &&
       refreshIndicator.enableChecker?.call(element.widget.key) != false;
+  var hasReachBottom =
+      element.findAncestorWidgetOfExactType<MPReachBottomListener>() != null;
   if (!hasRefreshIndicator && isRoot) {
     if (element.findAncestorWidgetOfExactType<MPScaffold>()?.onRefresh !=
         null) {
       hasRefreshIndicator = true;
     }
   }
-  if (hasRefreshIndicator) {
+  if (hasRefreshIndicator || hasReachBottom) {
     MPCore.addElementToHashCodeCache(element);
   }
   return {
@@ -98,5 +100,6 @@ Map _encodeScroller(Element element) {
     'restorationId': widget.restorationId,
     'onScroll': hasScrollNotificationListener ? element.hashCode : null,
     'onRefresh': hasRefreshIndicator ? element.hashCode : null,
+    'onReachBottom': hasReachBottom ? element.hashCode : null,
   };
 }
