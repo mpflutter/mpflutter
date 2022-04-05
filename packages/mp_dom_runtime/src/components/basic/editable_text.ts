@@ -56,6 +56,9 @@ export class EditableText extends ComponentView {
       this.contentElement.addEventListener("submit", (event: any) => {
         this._onSubmitted(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
       });
+      this.contentElement.addEventListener("confirm", (event: any) => {
+        this._onSubmitted(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
+      });
       this.contentElement.addEventListener("input", (event: any) => {
         this._onChanged(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
       });

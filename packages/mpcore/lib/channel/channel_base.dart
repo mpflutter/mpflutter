@@ -296,6 +296,7 @@ class MPChannelBase {
       if (!(widget is EditableText)) return;
       if (message['event'] == 'onSubmitted') {
         widget.onSubmitted?.call(message['data']);
+        widget.onEditingComplete?.call();
       } else if (message['event'] == 'onChanged' && message['data'] is String) {
         widget.controller.changeCauseByEvent = true;
         widget.controller.text = message['data'];
