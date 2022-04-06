@@ -4,17 +4,17 @@ MPElement _encodeMPPageView(Element element) {
   MPCore.addElementToHashCodeCache(element);
   final widget = element.widget as MPPageView;
   widget.controller?.targetHashCode = element.hashCode;
-  final children = <Element>[];
-  MPCore.findTargets<MPPageItem>(
-    element,
-    out: children,
-  );
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
     name: 'mp_page_view',
-    children:
-        children.map((child) => MPElement.fromFlutterElement(child)).toList(),
+    children: (() {
+      final firstChild =
+          MPElement.childrenFromFlutterElement(element)[0].flutterElement;
+      if (firstChild != null) {
+        return MPElement.childrenFromFlutterElement(firstChild);
+      }
+    })(),
     attributes: {
       'scrollDirection': widget.scrollDirection.toString(),
       'loop': widget.loop,

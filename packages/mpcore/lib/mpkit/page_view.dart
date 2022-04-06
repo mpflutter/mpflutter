@@ -64,22 +64,7 @@ class MPPageView extends MPPlatformView {
     this.controller,
   }) : super(
           viewType: 'mp_page_view',
-          child: Stack(
-            children: children
-                .map((e) => Positioned.fill(child: MPPageItem(e)))
-                .toList(),
-          ),
           controller: controller,
+          children: children,
         );
-}
-
-class MPPageItem extends StatelessWidget {
-  final Widget child;
-
-  MPPageItem(this.child);
-
-  @override
-  Widget build(BuildContext context) {
-    return child;
-  }
 }
