@@ -20,6 +20,7 @@ MPElement _encodeMPScaffold(Element element) {
   }
   final appBarPreferredSize =
       (appBarElement?.widget as MPScaffoldAppBar?)?.child?.preferredSize;
+  final mainTabView = element.findAncestorWidgetOfExactType<MPMainTabView>();
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,
@@ -52,8 +53,14 @@ MPElement _encodeMPScaffold(Element element) {
       'bottomBar': bottomBarElement != null
           ? MPElement.fromFlutterElement(bottomBarElement)
           : null,
-      'bottomBarWithSafeArea': widget.bottomBarWithSafeArea,
-      'bottomBarSafeAreaColor': widget.bottomBarSafeAreaColor?.value.toString(),
+      'bottomBarWithSafeArea': mainTabView != null &&
+              mainTabView.tabLocation == MPMainTabLocation.bottom
+          ? true
+          : widget.bottomBarWithSafeArea,
+      'bottomBarSafeAreaColor': mainTabView != null &&
+              mainTabView.tabLocation == MPMainTabLocation.bottom
+          ? mainTabView.tabBarColor.value.toString()
+          : widget.bottomBarSafeAreaColor?.value.toString(),
       'backgroundColor': bodyBackgroundColor != null
           ? bodyBackgroundColor.value.toString()
           : null,
