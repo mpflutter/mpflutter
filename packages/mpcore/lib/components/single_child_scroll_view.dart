@@ -21,13 +21,28 @@ MPElement _encodeSingleChildScrollView(Element element) {
       return false;
     } else if (widget.scrollDirection == Axis.vertical &&
         element.findAncestorWidgetOfExactType<Scrollable>() == null &&
-        element.findAncestorWidgetOfExactType<MultiChildRenderObjectWidget>() ==
-            null) {
+        (() {
+          final multiChildWidget = element
+              .findAncestorWidgetOfKindType<MultiChildRenderObjectWidget>();
+          if (multiChildWidget != null) {
+            if ((multiChildWidget.key is ValueKey &&
+                (multiChildWidget.key as ValueKey).value ==
+                    '__ScaffoldStack')) {
+              return true;
+            }
+            return false;
+          } else {
+            return true;
+          }
+        })()) {
       return true;
     } else {
       return false;
     }
   })();
+  if (isRoot) {
+    element.findAncestorStateOfType<MPScaffoldState>()?.hasRootScroller = true;
+  }
   final hasScrollNotificationListener = (() {
     var hasResult = false;
     if (widget.controller != null) {

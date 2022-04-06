@@ -45,6 +45,7 @@ class MPScaffoldState extends State<MPScaffold> {
   final appBarKey = GlobalKey();
   final bottomBarKey = GlobalKey();
   final floatingBodyKey = GlobalKey();
+  bool hasRootScroller = false;
 
   @override
   void dispose() {
@@ -95,6 +96,7 @@ class MPScaffoldState extends State<MPScaffold> {
       children: [
         Positioned.fill(
           child: Column(
+            key: Key('__ScaffoldStack'),
             children: [
               (() {
                 if (mainTabBar != null &&

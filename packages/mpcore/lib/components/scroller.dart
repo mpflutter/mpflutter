@@ -21,14 +21,29 @@ Map _encodeScroller(Element element) {
     if (widget.primary == false) {
       return false;
     } else if (widget.scrollDirection == Axis.vertical &&
-        element.findAncestorWidgetOfKindType<Scrollable>() == null &&
-        element.findAncestorWidgetOfKindType<MultiChildRenderObjectWidget>() ==
-            null) {
+        element.findAncestorWidgetOfExactType<Scrollable>() == null &&
+        (() {
+          final multiChildWidget = element
+              .findAncestorWidgetOfKindType<MultiChildRenderObjectWidget>();
+          if (multiChildWidget != null) {
+            if ((multiChildWidget.key is ValueKey &&
+                (multiChildWidget.key as ValueKey).value ==
+                    '__ScaffoldStack')) {
+              return true;
+            }
+            return false;
+          } else {
+            return true;
+          }
+        })()) {
       return true;
     } else {
       return false;
     }
   })();
+  if (isRoot) {
+    element.findAncestorStateOfType<MPScaffoldState>()?.hasRootScroller = true;
+  }
   Element? appBarPinnedElement;
   var bottomBarHeight = 0.0;
   var bottomBarWithSafeArea = false;

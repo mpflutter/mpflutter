@@ -20,8 +20,7 @@ export class MPScaffold extends ComponentView {
   onWechatMiniProgramShareAppMessageResolver?: (_: any) => void;
 
   setAppBar(appBar?: ComponentView) {
-    if (this.appBar === appBar && (appBar as any)?.collectionViewFixed !== true)
-      return;
+    if (this.appBar === appBar && (appBar as any)?.collectionViewFixed !== true) return;
     this.removeAllSubviews();
     this.appBar = appBar;
     if (appBar) {
@@ -51,11 +50,7 @@ export class MPScaffold extends ComponentView {
     this.readdSubviews();
   }
 
-  setBottomBar(
-    bottomBar?: ComponentView,
-    bottomBarWithSafeArea?: boolean,
-    bottomBarSafeAreaColor?: string
-  ) {
+  setBottomBar(bottomBar?: ComponentView, bottomBarWithSafeArea?: boolean, bottomBarSafeAreaColor?: string) {
     if (this.bottomBar === bottomBar) return;
     this.removeAllSubviews();
     this.bottomBar = bottomBar;
@@ -69,11 +64,8 @@ export class MPScaffold extends ComponentView {
         top: "unset",
         bottom: "0px",
         zIndex: "9999",
-        paddingBottom:
-          bottomBarWithSafeArea === true ? "env(safe-area-inset-bottom)" : "",
-        backgroundColor: bottomBarSafeAreaColor
-          ? cssColor(bottomBarSafeAreaColor)
-          : undefined,
+        paddingBottom: bottomBarWithSafeArea === true ? "env(safe-area-inset-bottom)" : "",
+        backgroundColor: bottomBarSafeAreaColor ? cssColor(bottomBarSafeAreaColor) : undefined,
       });
     }
     this.readdSubviews();
@@ -113,27 +105,15 @@ export class MPScaffold extends ComponentView {
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
-    this.setAppBar(
-      attributes.appBar
-        ? this.factory.create(attributes.appBar, this.document)
-        : undefined
-    );
-    this.setBody(
-      attributes.body
-        ? this.factory.create(attributes.body, this.document)
-        : undefined
-    );
+    this.setAppBar(attributes.appBar ? this.factory.create(attributes.appBar, this.document) : undefined);
+    this.setBody(attributes.body ? this.factory.create(attributes.body, this.document) : undefined);
     this.setBottomBar(
-      attributes.bottomBar
-        ? this.factory.create(attributes.bottomBar, this.document)
-        : undefined,
+      attributes.bottomBar ? this.factory.create(attributes.bottomBar, this.document) : undefined,
       attributes.bottomBarWithSafeArea,
       attributes.bottomBarSafeAreaColor
     );
     this.setFloatingBody(
-      attributes.floatingBody
-        ? this.factory.create(attributes.floatingBody, this.document)
-        : undefined
+      attributes.floatingBody ? this.factory.create(attributes.floatingBody, this.document) : undefined
     );
     if (attributes.name) {
       this.delegate?.setPageTitle(attributes.name);
@@ -142,26 +122,23 @@ export class MPScaffold extends ComponentView {
     }
     if (this.delegate) {
       if (attributes.backgroundColor) {
-        this.delegate?.setPageBackgroundColor(
-          cssColorHex(attributes.backgroundColor)
-        );
+        this.delegate?.setPageBackgroundColor(cssColorHex(attributes.backgroundColor));
       } else {
         this.delegate?.setPageBackgroundColor("transparent");
       }
     } else {
       setDOMStyle(this.htmlElement, {
-        backgroundColor: attributes.backgroundColor
-          ? cssColor(attributes.backgroundColor)
-          : "unset",
+        backgroundColor: attributes.backgroundColor ? cssColor(attributes.backgroundColor) : "unset",
       });
     }
     if (attributes.appBarColor) {
       this.delegate?.setAppBarColor(
         cssColorHex(attributes.appBarColor),
-        attributes.appBarTintColor
-          ? cssColorHex(attributes.appBarTintColor)
-          : "#000000"
+        attributes.appBarTintColor ? cssColorHex(attributes.appBarTintColor) : "#000000"
       );
+    }
+    if (this.body) {
+      this.body.htmlElement.style.touchAction = attributes.hasRootScroller ? "unset" : "none";
     }
   }
 

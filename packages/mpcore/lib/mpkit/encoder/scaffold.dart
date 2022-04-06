@@ -5,6 +5,7 @@ MPElement _encodeMPScaffold(Element element) {
       element.findAncestorWidgetOfExactType<MPScaffold>() != null;
   final widget = element.widget as MPScaffold;
   final widgetState = (element as StatefulElement).state as MPScaffoldState;
+  widgetState.hasRootScroller = false;
   final name = widget.name;
   Element? headerElement;
   Element? tabBarElement;
@@ -56,6 +57,7 @@ MPElement _encodeMPScaffold(Element element) {
       'backgroundColor': bodyBackgroundColor != null
           ? bodyBackgroundColor.value.toString()
           : null,
+      'hasRootScroller': widgetState.hasRootScroller,
     },
   );
 }
