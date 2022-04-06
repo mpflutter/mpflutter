@@ -96,7 +96,6 @@ class MPScaffoldState extends State<MPScaffold> {
       children: [
         Positioned.fill(
           child: Column(
-            key: Key('__ScaffoldStack'),
             children: [
               (() {
                 if (mainTabBar != null &&
@@ -166,19 +165,11 @@ class MPScaffoldState extends State<MPScaffold> {
             (routeArguments['\$viewportHeight'] as num).toDouble(),
           ),
         );
-        child = MediaQuery(
-          data: mediaQuery,
-          child: child,
-        );
       } else {
         final routeViewport =
             MPNavigatorObserver.instance.routeViewport[route.hashCode];
         if (routeViewport != null) {
           mediaQuery = mediaQuery.copyWith(size: routeViewport);
-          child = MediaQuery(
-            data: mediaQuery,
-            child: child,
-          );
         }
       }
     }
@@ -187,12 +178,12 @@ class MPScaffoldState extends State<MPScaffold> {
         mediaQuery = mediaQuery.copyWith(
           size: Size(app.maxWidth!, mediaQuery.size.height),
         );
-        child = MediaQuery(
-          data: mediaQuery,
-          child: child,
-        );
       }
     }
+    child = MediaQuery(
+      data: mediaQuery,
+      child: child,
+    );
     child = Align(
       alignment: Alignment.topLeft,
       child: Container(
