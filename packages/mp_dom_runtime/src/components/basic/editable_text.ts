@@ -112,6 +112,9 @@ export class EditableText extends ComponentView {
     } else {
       setDOMAttribute(this.contentElement, "read-only", attributes.readOnly ? "true" : undefined);
     }
+    if (__MP_MINI_PROGRAM__) {
+      setDOMAttribute(this.contentElement, "confirm-type", this._textInputAction(attributes.textInputAction));
+    }
   }
 
   setChildren() {}
@@ -150,6 +153,10 @@ export class EditableText extends ComponentView {
       }
     }
     return "";
+  }
+
+  _textInputAction(value: string) {
+    return value.replace("TextInputAction.", "");
   }
 
   _onSubmitted(target: HTMLInputElement, value: string) {

@@ -24,6 +24,7 @@ MPElement _encodeEditableText(Element element) {
       'autocorrect': widget.autocorrect,
       'enableSuggestions': widget.enableSuggestions,
       'keyboardType': widget.keyboardType.toString(),
+      'textInputAction': widget.textInputAction.toString(),
       'onSubmitted': widget.onSubmitted != null ? element.hashCode : null,
       'onChanged': element.hashCode,
     },
