@@ -96,6 +96,7 @@ class MPScaffoldState extends State<MPScaffold> {
       children: [
         Positioned.fill(
           child: Column(
+            key: Key('__ScaffoldStack'),
             children: [
               (() {
                 if (mainTabBar != null &&

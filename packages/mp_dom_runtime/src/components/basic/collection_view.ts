@@ -267,8 +267,8 @@ export class CollectionView extends ComponentView {
     } else if (attributes.restorationId && __MP_TARGET_BROWSER__) {
       this.enabledRestoration = true;
     }
-    this.htmlElement.setAttribute("scroll-x", "true");
-    this.htmlElement.setAttribute("scroll-y", "true");
+    this.htmlElement.setAttribute("scroll-x", this.attributes.scrollDirection === "Axis.horizontal" ? "true" : "false");
+    this.htmlElement.setAttribute("scroll-y", this.attributes.scrollDirection !== "Axis.horizontal" ? "true" : "false");
     if (attributes.isRoot && this.elementType() === "div") {
       let window = MPEnv.platformWindow(this.document);
       if (window) {
