@@ -29,7 +29,7 @@ class MPApp extends StatelessWidget {
     return WidgetsApp(
       key: key,
       title: title ?? '',
-      color: color ?? Color(0),
+      color: color ?? Colors.blue,
       navigatorKey: navigatorKey,
       builder: (context, widget) {
         return widget ?? Container();
