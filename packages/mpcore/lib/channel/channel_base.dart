@@ -303,6 +303,10 @@ class MPChannelBase {
         widget.controller.textDirty = false;
         widget.controller.changeCauseByEvent = false;
         widget.onChanged?.call(message['data']);
+      } else if (message['event'] == 'onFocus') {
+        widget.focusNode.hasPrimaryFocus = true;
+      } else if (message['event'] == 'onBlur') {
+        widget.focusNode.hasPrimaryFocus = false;
       }
     } catch (e) {
       print(e);

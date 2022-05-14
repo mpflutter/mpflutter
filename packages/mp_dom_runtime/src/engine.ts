@@ -20,6 +20,7 @@ import { TextMeasurer } from "./text_measurer";
 import { WindowInfo } from "./window_info";
 import { wrapDartObject } from "./components/dart_object";
 import { CollectionView } from "./components/basic/collection_view";
+import { EditableText } from "./components/basic/editable_text";
 
 export class Engine {
   private started: boolean = false;
@@ -202,6 +203,8 @@ export class Engine {
       this.didReceivedScaffold(decodedMessage.message);
     } else if (decodedMessage.type === "scroll_view") {
       this.didReceivedScrollView(decodedMessage.message);
+    } else if (decodedMessage.type === "editable_text") {
+      this.didReceivedEditableText(decodedMessage.message);
     } else if (decodedMessage.type === "rich_text" && decodedMessage.message?.event === "doMeasure") {
       TextMeasurer.didReceivedDoMeasureData(this, decodedMessage.message);
     } else if (decodedMessage.type === "rich_text" && decodedMessage.message?.event === "doMeasureTextPainter") {
@@ -271,6 +274,20 @@ export class Engine {
       let target = this.componentFactory.cachedView[message.target] as CollectionView;
       if (target) {
         target.jumpTo(message.value);
+      }
+    }
+  }
+
+  didReceivedEditableText(message: any) {
+    if (message.event === "unfocus") {
+      let target = this.componentFactory.cachedView[message.target] as EditableText;
+      if (target) {
+        target.contentElement?.blur();
+      }
+    } else if (message.event === "focus") {
+      let target = this.componentFactory.cachedView[message.target] as EditableText;
+      if (target) {
+        target.contentElement?.focus();
       }
     }
   }

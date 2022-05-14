@@ -214,12 +214,20 @@ class _SingleLineEditableTextState extends State<_SingleLineEditableText> {
   FocusNode focusNode = FocusNode();
 
   @override
+  void initState() {
+    super.initState();
+    focusNode.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: 200,
       height: 44,
       decoration: BoxDecoration(
-        color: Colors.black12,
+        color: focusNode.hasFocus ? Colors.black26 : Colors.black12,
         borderRadius: BorderRadius.circular(22),
       ),
       child: Padding(

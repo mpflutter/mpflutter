@@ -3,6 +3,24 @@ part of '../mpcore.dart';
 MPElement _encodeEditableText(Element element) {
   final widget = element.widget as EditableText;
   var mpWidget = widget is MPEditableText ? widget : null;
+  if (mpWidget != null) {
+    final focusNode = mpWidget.focusNode;
+    focusNode.lastEventListener = () {
+      if (focusNode.lastEvent != null) {
+        MPChannel.postMessage(
+          json.encode({
+            'type': 'editable_text',
+            'message': {
+              'target': element.hashCode,
+              'event': focusNode.lastEvent,
+            },
+          }),
+          forLastConnection: true,
+        );
+        focusNode.lastEvent = null;
+      }
+    };
+  }
   return MPElement(
     hashCode: element.hashCode,
     flutterElement: element,

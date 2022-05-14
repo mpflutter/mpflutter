@@ -455,6 +455,9 @@ class FocusNode with DiagnosticableTreeMixin, ChangeNotifier {
     this.debugLabel = debugLabel;
   }
 
+  String? lastEvent;
+  Function? lastEventListener;
+
   /// If true, tells the focus traversal policy to skip over this node for
   /// purposes of the traversal algorithm.
   ///
@@ -702,7 +705,42 @@ class FocusNode with DiagnosticableTreeMixin, ChangeNotifier {
   /// receive key events through its [onKey] handler.
   ///
   /// This object notifies its listeners whenever this value changes.
-  bool get hasPrimaryFocus => _manager?.primaryFocus == this;
+  bool _hasPrimaryFocus = false;
+
+  /// Returns true if this node currently has the application-wide input focus.
+  ///
+  /// A [FocusNode] has the primary focus when the node is focused in its
+  /// nearest ancestor [FocusScopeNode] and [hasFocus] is true for all its
+  /// ancestor nodes, but none of its descendants.
+  ///
+  /// This is different from [hasFocus] in that [hasFocus] is true if the node
+  /// is anywhere in the focus chain, but here the node has to be at the end of
+  /// the chain to return true.
+  ///
+  /// A node that returns true for [hasPrimaryFocus] will be the first node to
+  /// receive key events through its [onKey] handler.
+  ///
+  /// This object notifies its listeners whenever this value changes.
+  bool get hasPrimaryFocus => _hasPrimaryFocus;
+
+  /// Returns true if this node currently has the application-wide input focus.
+  ///
+  /// A [FocusNode] has the primary focus when the node is focused in its
+  /// nearest ancestor [FocusScopeNode] and [hasFocus] is true for all its
+  /// ancestor nodes, but none of its descendants.
+  ///
+  /// This is different from [hasFocus] in that [hasFocus] is true if the node
+  /// is anywhere in the focus chain, but here the node has to be at the end of
+  /// the chain to return true.
+  ///
+  /// A node that returns true for [hasPrimaryFocus] will be the first node to
+  /// receive key events through its [onKey] handler.
+  ///
+  /// This object notifies its listeners whenever this value changes.
+  set hasPrimaryFocus(bool hasPrimaryFocus) {
+    _hasPrimaryFocus = hasPrimaryFocus;
+    notifyListeners();
+  }
 
   /// Returns the [FocusHighlightMode] that is currently in effect for this node.
   FocusHighlightMode get highlightMode => FocusManager.instance.highlightMode;
@@ -882,49 +920,8 @@ class FocusNode with DiagnosticableTreeMixin, ChangeNotifier {
   void unfocus({
     UnfocusDisposition disposition = UnfocusDisposition.scope,
   }) {
-    assert(disposition != null);
-    if (!hasFocus && (_manager == null || _manager!._markedForFocus != this)) {
-      return;
-    }
-    FocusScopeNode? scope = enclosingScope;
-    if (scope == null) {
-      // If the scope is null, then this is either the root node, or a node that
-      // is not yet in the tree, neither of which do anything when unfocused.
-      return;
-    }
-    switch (disposition) {
-      case UnfocusDisposition.scope:
-        // If it can't request focus, then don't modify its focused children.
-        if (scope.canRequestFocus) {
-          // Clearing the focused children here prevents re-focusing the node
-          // that we just unfocused if we immediately hit "next" after
-          // unfocusing, and also prevents choosing to refocus the next-to-last
-          // focused child if unfocus is called more than once.
-          scope._focusedChildren.clear();
-        }
-
-        while (!scope!.canRequestFocus) {
-          scope = scope.enclosingScope ?? _manager?.rootScope;
-        }
-        scope._doRequestFocus(findFirstFocus: false);
-        break;
-      case UnfocusDisposition.previouslyFocusedChild:
-        // Select the most recent focused child from the nearest focusable scope
-        // and focus that. If there isn't one, focus the scope itself.
-        if (scope.canRequestFocus) {
-          scope._focusedChildren.remove(this);
-        }
-        while (!scope!.canRequestFocus) {
-          scope.enclosingScope?._focusedChildren.remove(scope);
-          scope = scope.enclosingScope ?? _manager?.rootScope;
-        }
-        scope._doRequestFocus(findFirstFocus: true);
-        break;
-    }
-    assert(_focusDebug('Unfocused node:', <String>[
-      'primary focus was $this',
-      'next focus will be ${_manager?._markedForFocus}'
-    ]));
+    lastEvent = "unfocus";
+    lastEventListener?.call();
   }
 
   /// Removes the keyboard token from this focus node if it has one.
@@ -1091,16 +1088,8 @@ class FocusNode with DiagnosticableTreeMixin, ChangeNotifier {
   /// The node is notified that it has received the primary focus in a
   /// microtask, so notification may lag the request by up to one frame.
   void requestFocus([FocusNode? node]) {
-    if (node != null) {
-      if (node._parent == null) {
-        _reparent(node);
-      }
-      assert(node.ancestors.contains(this),
-          'Focus was requested for a node that is not a descendant of the scope from which it was requested.');
-      node._doRequestFocus(findFirstFocus: true);
-      return;
-    }
-    _doRequestFocus(findFirstFocus: true);
+    lastEvent = 'focus';
+    lastEventListener?.call();
   }
 
   // Note that this is overridden in FocusScopeNode.

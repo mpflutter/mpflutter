@@ -62,6 +62,28 @@ export class EditableText extends ComponentView {
       this.contentElement.addEventListener("input", (event: any) => {
         this._onChanged(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
       });
+      this.contentElement.addEventListener("focus", () => {
+        this.engine.sendMessage(
+          JSON.stringify({
+            type: "editable_text",
+            message: {
+              event: "onFocus",
+              target: this.hashCode,
+            },
+          })
+        );
+      });
+      this.contentElement.addEventListener("blur", () => {
+        this.engine.sendMessage(
+          JSON.stringify({
+            type: "editable_text",
+            message: {
+              event: "onBlur",
+              target: this.hashCode,
+            },
+          })
+        );
+      });
     }
     this.contentElement.onchange = (event: any) => {
       this._onChanged(event.target, event.detail?.value ?? (event.target as HTMLInputElement).value);
