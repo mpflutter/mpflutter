@@ -49,7 +49,7 @@ class ImagePage extends StatelessWidget {
             children: [
               _renderHeader('Image with remote url.'),
               Container(
-                width: 100,
+                color: Colors.yellow,
                 height: 100,
                 child: Image.network(
                   'https://www-jsdelivr-com.onrender.com/img/landing/built-for-production-icon@2x.png',

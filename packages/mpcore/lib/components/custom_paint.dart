@@ -24,7 +24,10 @@ class MPDrawable implements ui.Image {
     return completer.future;
   }
 
-  static Future<MPDrawable> fromMemoryImage(Uint8List data) async {
+  static Future<MPDrawable> fromMemoryImage(
+    Uint8List data, {
+    String imageType = 'png',
+  }) async {
     final completer = Completer<MPDrawable>();
     final drawable = MPDrawable();
     _decodeHandlers[drawable.hashCode] = completer;
@@ -36,6 +39,31 @@ class MPDrawable implements ui.Image {
         'message': {
           'type': 'memoryImage',
           'data': base64.encode(data),
+          'imageType': imageType,
+          'target': drawable.hashCode,
+        },
+      }),
+      forLastConnection: true,
+    );
+    return completer.future;
+  }
+
+  static Future<MPDrawable> fromAssetImage(
+    String assetName, {
+    String? assetPkg,
+  }) async {
+    final completer = Completer<MPDrawable>();
+    final drawable = MPDrawable();
+    _decodeHandlers[drawable.hashCode] = completer;
+    _decodeDrawables[drawable.hashCode] = drawable;
+    MPChannel.postMessage(
+      json.encode({
+        'type': 'decode_drawable',
+        'flow': 'request',
+        'message': {
+          'type': 'assetImage',
+          'assetName': assetName,
+          'assetPkg': assetPkg,
           'target': drawable.hashCode,
         },
       }),

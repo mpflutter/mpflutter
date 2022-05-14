@@ -597,7 +597,7 @@ class AssetBundleImageKey {
     required this.bundle,
     required this.name,
     required this.scale,
-  })   : assert(bundle != null),
+  })  : assert(bundle != null),
         assert(name != null),
         assert(scale != null);
 
@@ -939,12 +939,14 @@ class MemoryImage extends ImageProvider<MemoryImage> {
   /// Creates an object that decodes a [Uint8List] buffer as an image.
   ///
   /// The arguments must not be null.
-  const MemoryImage(this.bytes, {this.scale = 1.0})
+  const MemoryImage(this.bytes, {this.imageType, this.scale = 1.0})
       : assert(bytes != null),
         assert(scale != null);
 
   /// The bytes to decode into an image.
   final Uint8List bytes;
+
+  final String? imageType;
 
   /// The scale to place in the [ImageInfo] object of the image.
   final double scale;

@@ -301,6 +301,8 @@ typedef ImageErrorWidgetBuilder = Widget Function(
 ///  * Cookbook: [Work with cached images](https://flutter.dev/docs/cookbook/images/cached-images)
 ///  * Cookbook: [Fade in images with a placeholder](https://flutter.dev/docs/cookbook/images/fading-in-images)
 class Image extends StatefulWidget {
+  static Future<Size> Function(ImageProvider imageProvider)? imageSizeLoader;
+
   /// Creates a widget that displays an image.
   ///
   /// To show an image from the network or from an asset bundle, consider using
@@ -717,8 +719,8 @@ class Image extends StatefulWidget {
     int? cacheHeight,
     this.lazyLoad = false,
     this.imageType,
-  })  : image = ResizeImage.resizeIfNeeded(
-            cacheWidth, cacheHeight, MemoryImage(bytes, scale: scale)),
+  })  : image = ResizeImage.resizeIfNeeded(cacheWidth, cacheHeight,
+            MemoryImage(bytes, imageType: imageType, scale: scale)),
         loadingBuilder = null,
         assert(alignment != null),
         assert(repeat != null),
@@ -1111,187 +1113,46 @@ class Image extends StatefulWidget {
 }
 
 class _ImageState extends State<Image> with WidgetsBindingObserver {
-  ImageStream? _imageStream;
+  static Map<String, Size> _imageSizeCache = {};
+
   ImageInfo? _imageInfo;
-  ImageChunkEvent? _loadingProgress;
-  bool _isListeningToStream = false;
-  late bool _invertColors;
-  int? _frameNumber;
-  bool _wasSynchronouslyLoaded = false;
-  late DisposableBuildContext<State<Image>> _scrollAwareContext;
-  Object? _lastException;
-  StackTrace? _lastStack;
-  // ImageStreamCompleterHandle? _completerHandle;
+  double? srcImageWidth;
+  double? srcImageHeight;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance!.addObserver(this);
-    _scrollAwareContext = DisposableBuildContext<State<Image>>(this);
-  }
-
-  @override
-  void dispose() {
-    assert(_imageStream != null);
-    WidgetsBinding.instance!.removeObserver(this);
-    _stopListeningToStream();
-    _scrollAwareContext.dispose();
-    _replaceImage(info: null);
-    super.dispose();
-  }
-
-  @override
-  void didChangeDependencies() {
-    _updateInvertColors();
-    _resolveImage();
-
-    if (TickerMode.of(context))
-      _listenToStream();
-    else
-      _stopListeningToStream(keepStreamAlive: true);
-
-    super.didChangeDependencies();
-  }
-
-  @override
-  void didUpdateWidget(Image oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (_isListeningToStream &&
-        (widget.loadingBuilder == null) != (oldWidget.loadingBuilder == null)) {
-      final ImageStreamListener oldListener = _getListener();
-      _imageStream!.addListener(_getListener(recreateListener: true));
-      _imageStream!.removeListener(oldListener);
+    if (widget.width == null || widget.height == null) {
+      loadImageInfo();
     }
-    if (widget.image != oldWidget.image) _resolveImage();
   }
 
-  @override
-  void didChangeAccessibilityFeatures() {
-    super.didChangeAccessibilityFeatures();
-    setState(() {
-      _updateInvertColors();
-    });
-  }
-
-  @override
-  void reassemble() {
-    _resolveImage(); // in case the image cache was flushed
-    super.reassemble();
-  }
-
-  void _updateInvertColors() {
-    _invertColors = MediaQuery.maybeOf(context)?.invertColors ?? false;
-  }
-
-  void _resolveImage() {
-    final ScrollAwareImageProvider provider = ScrollAwareImageProvider<Object>(
-      context: _scrollAwareContext,
-      imageProvider: widget.image,
-    );
-    final ImageStream newStream =
-        provider.resolve(createLocalImageConfiguration(
-      context,
-      size: widget.width != null && widget.height != null
-          ? Size(widget.width!, widget.height!)
-          : null,
-    ));
-    assert(newStream != null);
-    _updateSourceStream(newStream);
-  }
-
-  ImageStreamListener? _imageStreamListener;
-  ImageStreamListener _getListener({bool recreateListener = false}) {
-    if (_imageStreamListener == null || recreateListener) {
-      _lastException = null;
-      _lastStack = null;
-      _imageStreamListener = ImageStreamListener(
-        _handleImageFrame,
-        onChunk: widget.loadingBuilder == null ? null : _handleImageChunk,
-        onError: widget.errorBuilder != null
-            ? (dynamic error, StackTrace? stackTrace) {
-                setState(() {
-                  _lastException = error;
-                  _lastStack = stackTrace;
-                });
-              }
-            : null,
-      );
+  void loadImageInfo() async {
+    if (widget.image != null) {
+      try {
+        Size? size;
+        if (widget.image is NetworkImage &&
+            _imageSizeCache[(widget.image as NetworkImage).url] != null) {
+          size = _imageSizeCache[(widget.image as NetworkImage).url];
+        }
+        if (size == null) {
+          size = await Image.imageSizeLoader?.call(widget.image);
+          if (size != null) {
+            if (widget.image is NetworkImage) {
+              _imageSizeCache[(widget.image as NetworkImage).url] = size;
+            }
+          }
+        }
+        setState(() {
+          srcImageWidth = size?.width;
+          srcImageHeight = size?.height;
+        });
+      } catch (e) {}
     }
-    return _imageStreamListener!;
-  }
-
-  void _handleImageFrame(ImageInfo imageInfo, bool synchronousCall) {
-    setState(() {
-      _replaceImage(info: imageInfo);
-      _loadingProgress = null;
-      _lastException = null;
-      _lastStack = null;
-      _frameNumber = _frameNumber == null ? 0 : _frameNumber! + 1;
-      _wasSynchronouslyLoaded = _wasSynchronouslyLoaded | synchronousCall;
-    });
-  }
-
-  void _handleImageChunk(ImageChunkEvent event) {
-    assert(widget.loadingBuilder != null);
-    setState(() {
-      _loadingProgress = event;
-      _lastException = null;
-      _lastStack = null;
-    });
-  }
-
-  void _replaceImage({required ImageInfo? info}) {
-    _imageInfo = info;
-  }
-
-  // Updates _imageStream to newStream, and moves the stream listener
-  // registration from the old stream to the new stream (if a listener was
-  // registered).
-  void _updateSourceStream(ImageStream newStream) {
-    if (_imageStream?.key == newStream.key) return;
-
-    if (_isListeningToStream) _imageStream!.removeListener(_getListener());
-
-    if (!widget.gaplessPlayback)
-      setState(() {
-        _replaceImage(info: null);
-      });
-
-    setState(() {
-      _loadingProgress = null;
-      _frameNumber = null;
-      _wasSynchronouslyLoaded = false;
-    });
-
-    _imageStream = newStream;
-    if (_isListeningToStream) _imageStream!.addListener(_getListener());
-  }
-
-  void _listenToStream() {
-    if (_isListeningToStream) return;
-
-    _imageStream!.addListener(_getListener());
-    _isListeningToStream = true;
-  }
-
-  /// Stops listening to the image stream, if this state object has attached a
-  /// listener.
-  ///
-  /// If the listener from this state is the last listener on the stream, the
-  /// stream will be disposed. To keep the stream alive, set `keepStreamAlive`
-  /// to true, which create [ImageStreamCompleterHandle] to keep the completer
-  /// alive and is compatible with the [TickerMode] being off.
-  void _stopListeningToStream({bool keepStreamAlive = false}) {
-    if (!_isListeningToStream) return;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_lastException != null) {
-      assert(widget.errorBuilder != null);
-      return widget.errorBuilder!(context, _lastException!, _lastStack);
-    }
-
     Widget result = RawImage(
       // Do not clone the image, because RawImage is a stateless wrapper.
       // The image will be disposed by this state object when it is not needed
@@ -1309,39 +1170,33 @@ class _ImageState extends State<Image> with WidgetsBindingObserver {
       repeat: widget.repeat,
       centerSlice: widget.centerSlice,
       matchTextDirection: widget.matchTextDirection,
-      invertColors: _invertColors,
+      invertColors: false,
       isAntiAlias: widget.isAntiAlias,
       filterQuality: widget.filterQuality,
     );
-
-    if (!widget.excludeFromSemantics) {
-      result = Semantics(
-        container: widget.semanticLabel != null,
-        image: true,
-        label: widget.semanticLabel ?? '',
-        child: result,
-      );
+    if (widget.width == null || widget.height == null) {
+      if (widget.width != null) {
+        result = ConstrainedBox(
+          constraints: BoxConstraints(minWidth: widget.width!),
+        );
+      }
+      if (widget.height != null) {
+        result = ConstrainedBox(
+          constraints: BoxConstraints(minHeight: widget.height!),
+        );
+      }
+      if (srcImageWidth != null && srcImageHeight != null) {
+        result = AspectRatio(
+          aspectRatio: srcImageWidth! / srcImageHeight!,
+          child: result,
+        );
+      }
     }
-
-    if (widget.frameBuilder != null)
-      result = widget.frameBuilder!(
-          context, result, _frameNumber, _wasSynchronouslyLoaded);
-
-    if (widget.loadingBuilder != null)
-      result = widget.loadingBuilder!(context, result, _loadingProgress);
-
     return result;
   }
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder description) {
     super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<ImageStream>('stream', _imageStream));
-    description.add(DiagnosticsProperty<ImageInfo>('pixels', _imageInfo));
-    description.add(DiagnosticsProperty<ImageChunkEvent>(
-        'loadingProgress', _loadingProgress));
-    description.add(DiagnosticsProperty<int>('frameNumber', _frameNumber));
-    description.add(DiagnosticsProperty<bool>(
-        'wasSynchronouslyLoaded', _wasSynchronouslyLoaded));
   }
 }

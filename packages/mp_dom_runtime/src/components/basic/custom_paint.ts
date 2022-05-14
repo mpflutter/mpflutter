@@ -31,7 +31,20 @@ export class MPDrawable {
           })
         );
       } else if (params.type === "memoryImage") {
-        const result = await this.decodeMemoryImage(params.data, params.target);
+        const result = await this.decodeMemoryImage(params.data, params.imageType, params.target);
+        this.engine.sendMessage(
+          JSON.stringify({
+            type: "decode_drawable",
+            message: {
+              event: "onDecode",
+              target: params.target,
+              width: result.width,
+              height: result.height,
+            },
+          })
+        );
+      } else if (params.type === "assetImage") {
+        const result = await this.decodeAssetImage(params.assetName, params.assetPkg, params.target);
         this.engine.sendMessage(
           JSON.stringify({
             type: "decode_drawable",
@@ -81,7 +94,11 @@ export class MPDrawable {
     });
   }
 
-  async decodeMemoryImage(data: string, hashCode: number): Promise<{ width: number; height: number }> {
+  async decodeMemoryImage(
+    data: string,
+    imageType: string,
+    hashCode: number
+  ): Promise<{ width: number; height: number }> {
     return new Promise((res, rej) => {
       const img = (() => {
         if (__MP_MINI_PROGRAM__) {
@@ -96,7 +113,51 @@ export class MPDrawable {
       img.onerror = function () {
         rej("");
       };
-      img.src = `data:text/plain;base64,${data}`;
+      img.src = `data:image/${imageType ?? "png"};base64,${data}`;
+    });
+  }
+
+  async decodeAssetImage(
+    assetName: string,
+    assetPkg: string,
+    hashCode: number
+  ): Promise<{ width: number; height: number }> {
+    return new Promise((res, rej) => {
+      const img = (() => {
+        if (__MP_MINI_PROGRAM__) {
+          return MPDrawable.offscreenCanvas.createImage();
+        }
+        return document.createElement("img");
+      })();
+      img.onload = () => {
+        this.decodedDrawables[hashCode] = img;
+        res({ width: img.width, height: img.height });
+      };
+      img.onerror = function () {
+        rej("");
+      };
+      if (this.engine.debugger) {
+        const assetUrl = (() => {
+          if (assetPkg) {
+            return `http://${this.engine.debugger.serverAddr}/assets/packages/${assetPkg}/${assetName}`;
+          } else {
+            return `http://${this.engine.debugger.serverAddr}/assets/${assetName}`;
+          }
+        })();
+        img.src = assetUrl;
+      } else {
+        let assetUrl = (() => {
+          if (assetPkg) {
+            return `assets/packages/${assetPkg}/${assetName}`;
+          } else {
+            return `assets/${assetName}`;
+          }
+        })();
+        if (__MP_MINI_PROGRAM__) {
+          assetUrl = "/" + assetUrl;
+        }
+        img.src = assetUrl;
+      }
     });
   }
 }
@@ -196,7 +257,9 @@ export class CustomPaint extends ComponentView {
         if (__MP_TARGET_BROWSER__) {
           setDOMAttribute(this.htmlElement, "width", (this.canvasWidth * window.devicePixelRatio).toString());
           setDOMAttribute(this.htmlElement, "height", (this.canvasHeight * window.devicePixelRatio).toString());
-          (this.htmlElement as HTMLCanvasElement).getContext("2d")?.scale(window.devicePixelRatio, window.devicePixelRatio);
+          (this.htmlElement as HTMLCanvasElement)
+            .getContext("2d")
+            ?.scale(window.devicePixelRatio, window.devicePixelRatio);
         }
       }
     }
