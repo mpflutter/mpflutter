@@ -7,7 +7,7 @@ packages:
       name: async
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.8.2"
+    version: "2.9.0"
   characters:
     dependency: transitive
     description:
@@ -42,7 +42,7 @@ packages:
       name: crypto
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.2"
   dart_console:
     dependency: transitive
     description:
@@ -55,17 +55,17 @@ packages:
     description:
       path: dio
       ref: HEAD
-      resolved-ref: "5c9cd36eebc848e5e31199a253123d849732ebf6"
+      resolved-ref: "59347ee1757fdcddfa5618209fec1995da33fc3e"
       url: "https://github.com/mpflutter-plugins/dio"
     source: git
-    version: "4.0.1"
+    version: "4.0.1+1"
   ffi:
     dependency: transitive
     description:
       name: ffi
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.1.2"
+    version: "1.2.1"
   file:
     dependency: transitive
     description:
@@ -183,14 +183,14 @@ packages:
       name: source_span
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.8.2"
+    version: "1.9.0"
   string_scanner:
     dependency: transitive
     description:
       name: string_scanner
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.1.0"
+    version: "1.1.1"
   term_glyph:
     dependency: transitive
     description:
@@ -248,6 +248,6 @@ packages:
       name: win32
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.3.6"
+    version: "2.5.2"
 sdks:
-  dart: ">=2.14.0 <3.0.0"
+  dart: ">=2.15.0 <3.0.0"
