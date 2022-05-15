@@ -314,6 +314,7 @@ class MPElement {
     EditableText: _encodeEditableText,
     SliverPersistentHeader: _encodeSliverPersistentHeader,
     CustomPaint: _encodeCustomPaint,
+    MouseRegion: _encodeMouseRegion,
   }..addAll(MPKitEncoder.fromFlutterElementMethodCache);
 
   static final Map<Type, Type> _searchCache = {};
@@ -354,6 +355,8 @@ class MPElement {
         t = SliverOpacity;
       } else if (widget is GestureDetector) {
         t = GestureDetector;
+      } else if (widget is MouseRegion) {
+        t = MouseRegion;
       } else if (widget is Visibility) {
         t = Visibility;
       } else if (widget is SliverVisibility) {

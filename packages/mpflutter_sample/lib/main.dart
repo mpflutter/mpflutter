@@ -43,6 +43,7 @@ import 'package:mpflutter_template/touches/absorb_pointer_page.dart';
 import 'package:mpflutter_template/touches/editable_text_page.dart';
 import 'package:mpflutter_template/touches/gesture_detector_page.dart';
 import 'package:mpflutter_template/touches/ignore_pointer_page.dart';
+import 'package:mpflutter_template/touches/mouse_region_page.dart';
 import 'package:mpflutter_template/touches/signature_page.dart';
 
 import 'animations/animation_performance_test_page.dart';
@@ -149,6 +150,7 @@ class MyApp extends StatelessWidget {
         '/offstage': (context) => OffstagePage(),
         '/opacity': (context) => OpacityPage(),
         '/absorbPointer': (context) => AbsorbPointerPage(),
+        '/mouseRegion': (context) => MouseRegionPage(),
         '/gestureDetector': (context) => GestureDetectorPage(),
         '/ignorePointer': (context) => IgnorePointerPage(),
         '/editableText': (context) => EditableTextPage(),

@@ -190,6 +190,8 @@ class MyHomePage extends StatelessWidget {
                 _renderItem('EditableText',
                     context: context, route: '/editableText'),
                 _renderItem('Signature', context: context, route: '/signature'),
+                _renderItem('MouseRegion',
+                    context: context, route: '/mouseRegion'),
               ],
             ),
           ),

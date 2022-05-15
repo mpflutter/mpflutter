@@ -152,6 +152,8 @@ class MPChannelBase {
         _PlatformChannelIO.onPlatformChannelTrigger(obj['message']);
       } else if (obj['type'] == 'scroll_view') {
         MPChannelBase.onScrollViewTrigger(obj['message']);
+      } else if (obj['type'] == 'mouse_region') {
+        MPChannelBase.onMouseRegionTrigger(obj['message']);
       } else {
         MPChannelBase.onPluginMessage(obj);
       }
@@ -640,6 +642,24 @@ class MPChannelBase {
                 ?.onReachBottom
                 ?.call(element.widget.key);
           }
+        }
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  static void onMouseRegionTrigger(Map message) async {
+    try {
+      if (message['event'] == 'onEnter') {
+        final element = MPCore.findTargetHashCode(message['target']);
+        if (element != null) {
+          (element.widget as MouseRegion).onEnter?.call(PointerEnterEvent());
+        }
+      } else if (message['event'] == 'onExit') {
+        final element = MPCore.findTargetHashCode(message['target']);
+        if (element != null) {
+          (element.widget as MouseRegion).onExit?.call(PointerExitEvent());
         }
       }
     } catch (e) {

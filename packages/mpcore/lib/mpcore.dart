@@ -53,6 +53,7 @@ part './components/sliver_persistent_header.dart';
 part './components/web_dialogs.dart';
 part './components/custom_paint.dart';
 part './components/scroller.dart';
+part './components/mouse_region.dart';
 part './channel/channel_base.dart';
 
 class MPCore {

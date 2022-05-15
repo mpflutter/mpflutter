@@ -34,6 +34,7 @@ import { MPSlider } from "./mpkit/slider";
 import { MPPicker } from "./mpkit/picker";
 import { MPDatePicker } from "./mpkit/date_picker";
 import { MPCircularProgressIndicator } from "./mpkit/circular_progress_indicator";
+import { MouseRegion } from "./basic/mouse_region";
 
 export class ComponentFactory {
   static components: { [key: string]: typeof ComponentView } = {
@@ -51,6 +52,7 @@ export class ComponentFactory {
     ignore_pointer: IgnorePointer,
     image: Image,
     list_view: ListView,
+    mouse_region: MouseRegion,
     offstage: Offstage,
     opacity: Opacity,
     overlay: Overlay,
