@@ -62,8 +62,8 @@ main(List<String> args) async {
     if (webFile.existsSync()) {
       var webIndexHtml = File(p.join('web', 'index.html')).readAsStringSync();
       webIndexHtml = webIndexHtml.replaceAll(
-        RegExp(r'mpflutter/dist/.*?/'),
-        'mpflutter/dist/${versionCode}/',
+        RegExp(r'mpflutter\.com/dist/.*?/'),
+        'mpflutter\.com/dist/${versionCode}/',
       );
       File(p.join('web', 'index.html')).writeAsStringSync(webIndexHtml);
       print(I18n.successfulUpgrade('web'));
