@@ -48,3 +48,4 @@ jobs:
         npm install
         node ./release.js
         node ./release_pod.js
+        echo "finish"

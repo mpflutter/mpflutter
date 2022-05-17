@@ -12,6 +12,7 @@ const {
 const cosInstance = new COS({
   SecretId: env["COS_SECRET_ID"],
   SecretKey: env["COS_SECRET_KEY"],
+  UseAccelerate: true,
 });
 const cosBucket = "mpflutter-dist-1253771526";
 const cosRegion = "ap-guangzhou";
