@@ -51,7 +51,7 @@ jobs:
     - name: Upload COS
       uses: zkqiang/tencent-cos-action@v0.1.0
       with:
-        args: upload -r ./mpflutter_dist/${{ github.ref }} /dist/${{ github.ref }}
+        args: upload -r ./mpflutter_dist/$(echo ${{ github.ref }} | sed -e "s/refs\/tags\///") /dist/$(echo ${{ github.ref }} | sed -e "s/refs\/tags\///")
         secret_id: ${{ secrets.COS_SECRET_ID }}
         secret_key: ${{ secrets.COS_SECRET_KEY }}
         bucket: mpflutter-dist-1253771526
