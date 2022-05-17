@@ -2,7 +2,7 @@ import { ComponentView } from "../component_view";
 import { setDOMStyle } from "../dom_utils";
 import { cssColor } from "../utils";
 
-const iconUrl = "https://cdn.jsdelivr.net/gh/mpflutter-plugins/icons/spinner.svg";
+const iconUrl = "http://dist.mpflutter.com/res/spinner.svg";
 
 export class MPCircularProgressIndicator extends ComponentView {
   setChildren() {}

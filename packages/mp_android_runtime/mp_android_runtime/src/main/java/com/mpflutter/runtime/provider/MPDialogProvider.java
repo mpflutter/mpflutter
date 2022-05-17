@@ -255,10 +255,10 @@ class MPToast {
             JSONObject attributes = new JSONObject();
             try {
                 if (icon.contentEquals("ToastIcon.success")) {
-                    attributes.putOpt("iconUrl", "https://cdn.jsdelivr.net/gh/google/material-design-icons@master/src/action/check_circle/materialicons/24px.svg");
+                    attributes.putOpt("iconUrl", "https://dist.mpflutter.com/material-design-icons/src/action/check_circle/materialicons/24px.svg");
                 }
                 else if (icon.contentEquals("ToastIcon.error")) {
-                    attributes.putOpt("iconUrl", "https://cdn.jsdelivr.net/gh/google/material-design-icons@master/src/alert/error/materialicons/24px.svg");
+                    attributes.putOpt("iconUrl", "https://dist.mpflutter.com/material-design-icons/src/alert/error/materialicons/24px.svg");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

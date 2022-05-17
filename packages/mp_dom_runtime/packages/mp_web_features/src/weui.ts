@@ -9,7 +9,7 @@ export const installWeui = () => {
   document.body.appendChild(script);
   const cssStyle = document.createElement("link");
   cssStyle.rel = "stylesheet";
-  cssStyle.href = "https://cdn.jsdelivr.net/npm/weui@2.4.4/dist/style/weui.min.css";
+  cssStyle.href = "https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/weui/2.4.4/style/weui.min.css";
   MPWebDialog.weuiShadowRoot.appendChild(cssStyle);
   (window as any).mpAttachWeuiSlider = attachWeuiSlider;
 };
@@ -18,7 +18,7 @@ const attachWeuiSlider = (target: HTMLDivElement) => {
   const weuiShadowRoot = target.attachShadow ? target.attachShadow({ mode: "closed" }) : target;
   const cssStyle = document.createElement("link");
   cssStyle.rel = "stylesheet";
-  cssStyle.href = "https://cdn.jsdelivr.net/npm/weui@2.4.4/dist/style/weui.min.css";
+  cssStyle.href = "https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/weui/2.4.4/style/weui.min.css";
   weuiShadowRoot.appendChild(cssStyle);
   const sliderElement = document.createElement("body");
   sliderElement.setAttribute("data-weui-theme", "light");

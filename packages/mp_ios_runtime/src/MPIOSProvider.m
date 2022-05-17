@@ -210,7 +210,7 @@ static MBProgressHUD *activeHUD;
     [view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0 constant:44]];
     [view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0 constant:44]];
     [view setAttributes:@{
-        @"iconUrl": @"https://cdn.jsdelivr.net/gh/google/material-design-icons@master/src/action/done/materialicons/24px.svg",
+        @"iconUrl": @"https://dist.mpflutter.com/material-design-icons/src/action/done/materialicons/24px.svg",
         @"color": @"4294967295",
     }];
     return view;
@@ -221,7 +221,7 @@ static MBProgressHUD *activeHUD;
     [view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeWidth multiplier:1.0 constant:44]];
     [view addConstraint:[NSLayoutConstraint constraintWithItem:view attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeHeight multiplier:1.0 constant:44]];
     [view setAttributes:@{
-        @"iconUrl": @"https://cdn.jsdelivr.net/gh/google/material-design-icons@master/src/alert/error/materialicons/24px.svg",
+        @"iconUrl": @"https://dist.mpflutter.com/material-design-icons/src/alert/error/materialicons/24px.svg",
         @"color": @"4294967295",
     }];
     return view;

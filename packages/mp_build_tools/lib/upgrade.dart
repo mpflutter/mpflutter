@@ -94,9 +94,8 @@ main(List<String> args) async {
       ];
       for (var item in fileList) {
         final response = await get(
-          Uri.parse(
-              'https://cdn.jsdelivr.net/gh/mpflutter/dist/$versionCode/dist_weapp/' +
-                  item),
+          Uri.parse('https://dist.mpflutter.com/dist/$versionCode/dist_weapp/' +
+              item),
         );
         File(p.join('weapp', item)).writeAsStringSync(response.body);
         print(I18n.successfulUpgrade('微信小程序' + item));
@@ -129,8 +128,7 @@ main(List<String> args) async {
       for (var item in fileList) {
         final response = await get(
           Uri.parse(
-              'https://cdn.jsdelivr.net/gh/mpflutter/dist/$versionCode/dist_swan/' +
-                  item),
+              'https://dist.mpflutter.com/dist/$versionCode/dist_swan/' + item),
         );
         File(p.join('swanapp', item)).writeAsStringSync(response.body);
         print(I18n.successfulUpgrade('百度小程序' + item));
@@ -163,8 +161,7 @@ main(List<String> args) async {
       for (var item in fileList) {
         final response = await get(
           Uri.parse(
-              'https://cdn.jsdelivr.net/gh/mpflutter/dist/$versionCode/dist_tt/' +
-                  item),
+              'https://dist.mpflutter.com/dist/$versionCode/dist_tt/' + item),
         );
         File(p.join('tt', item)).writeAsStringSync(response.body);
         print(I18n.successfulUpgrade('字节小程序' + item));

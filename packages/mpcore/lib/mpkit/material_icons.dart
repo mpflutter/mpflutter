@@ -1,7 +1,6 @@
 part of 'mpkit.dart';
 
-const iconBasePath =
-    'https://cdn.jsdelivr.net/gh/google/material-design-icons@master/src';
+const iconBasePath = 'https://dist.mpflutter.com/material-design-icons/src';
 
 class MaterialIcons {
   static final three_d_rotation =

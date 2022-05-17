@@ -18,7 +18,7 @@ export class MPDatePicker extends MPPlatformView {
         document.body.appendChild(script);
         const cssStyle = document.createElement("link");
         cssStyle.rel = "stylesheet";
-        cssStyle.href = "https://cdn.jsdelivr.net/npm/weui@2.4.4/dist/style/weui.min.css";
+        cssStyle.href = "https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/weui/2.4.4/style/weui.min.css";
         this.weuiShadowRoot.appendChild(cssStyle);
         const div = document.createElement("body");
         div.setAttribute("data-weui-theme", "light");

@@ -95,7 +95,7 @@ class MPAppBar extends StatelessWidget implements PreferredSizeWidget {
           width: 18,
           height: 18,
           child: Image.network(
-            'https://cdn.jsdelivr.net/gh/mpflutter-plugins/icons@master/arrow_back_ios_new_black_24dp.svg',
+            'https://dist.mpflutter.com/res/arrow_back_ios_new_black_24dp.svg',
             width: 18,
             height: 18,
           ),
