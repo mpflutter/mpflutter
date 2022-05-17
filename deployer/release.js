@@ -24,6 +24,7 @@ class DartPackageDeployer {
   }
 
   async deploy() {
+    console.log("deploying package" + this.name);
     this.replaceVersion();
     this.makeArchive();
     const archiveUrl = await this.uploadArchive();

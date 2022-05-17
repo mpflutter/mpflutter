@@ -24,6 +24,7 @@ class PodPackageDeployer {
   }
 
   async deploy() {
+    console.log("deploying pod");
     this.replaceVersion();
     this.makeArchive();
     const archiveUrl = await this.uploadArchive();
