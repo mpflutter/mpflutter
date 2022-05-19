@@ -61,7 +61,7 @@ class DartPackageDeployer {
 
   uploadArchive() {
     return new Promise((res, rej) => {
-      cosInstance.uploadFile(
+      cosInstance.putObject(
         {
           Bucket: cosBucket,
           Region: cosRegion,
@@ -75,7 +75,7 @@ class DartPackageDeployer {
               `https://dist.mpflutter.com/${this.name}/versions/${currentVersion}.tar.gz`
             );
           } else {
-            res(rej);
+            rej(err)
           }
         }
       );

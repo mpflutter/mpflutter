@@ -50,7 +50,7 @@ class PodPackageDeployer {
 
   uploadArchive() {
     return new Promise((res, rej) => {
-      cosInstance.uploadFile(
+      cosInstance.putObject(
         {
           Bucket: cosBucket,
           Region: cosRegion,
@@ -64,7 +64,7 @@ class PodPackageDeployer {
               `https://dist.mpflutter.com/ios/versions/${currentVersion}.tar`
             );
           } else {
-            res(rej);
+            rej(err)
           }
         }
       );
