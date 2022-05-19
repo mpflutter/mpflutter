@@ -712,6 +712,9 @@ abstract class BoxScrollView extends ScrollView {
   @override
   List<Widget> buildSlivers(BuildContext context) {
     Widget sliver = buildChildLayout(context);
+    EdgeInsetsGeometry? effectivePadding = padding;
+    if (effectivePadding != null)
+      sliver = SliverPadding(padding: effectivePadding, sliver: sliver);
     return <Widget>[sliver];
   }
 
