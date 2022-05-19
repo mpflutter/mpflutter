@@ -8,10 +8,7 @@ export class DecoratedBox extends ComponentView {
     let style: any = childStyle ?? {};
     if (attributes.color) {
       style.backgroundColor = cssColor(attributes.color);
-    } else {
-      style.backgroundColor = "transparent";
-    }
-    if (attributes.image) {
+    } else if (attributes.image) {
       style.backgroundImage = `url("${(() => {
         if (attributes.image.src) {
           return attributes.image.src;
@@ -46,13 +43,15 @@ export class DecoratedBox extends ComponentView {
         style.backgroundSize = "contain";
       }
       style.backgroundRepeat = "no-repeat";
-    }
-    if (attributes.decoration?.gradient) {
+    } else if (attributes.decoration?.gradient) {
       if (style.backgroundImage) {
         style.backgroundImage = cssGradient(attributes.decoration.gradient) + "," + style.backgroundImage;
       } else {
         style.background = cssGradient(attributes.decoration.gradient);
       }
+    } else {
+      style.backgroundImage = "unset";
+      style.background = "unset";
     }
     if (attributes.decoration?.boxShadow?.[0]) {
       const shadow = attributes.decoration?.boxShadow?.[0];
@@ -65,6 +64,8 @@ export class DecoratedBox extends ComponentView {
       for (const key in s) {
         (style as any)[key] = s[key];
       }
+    } else {
+      style["borderRadius"] = "0px";
     }
     if (attributes.decoration?.border) {
       let s = cssBorder(attributes.decoration.border) as any;
@@ -72,6 +73,8 @@ export class DecoratedBox extends ComponentView {
       for (const key in s) {
         (style as any)[key] = s[key];
       }
+    } else {
+      style["border"] = "none";
     }
     setDOMStyle(target, style);
   }

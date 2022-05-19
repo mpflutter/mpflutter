@@ -43,7 +43,7 @@ export const cssColorHex = (value: string) => {
   return `#${r}${g}${b}`;
 };
 
-export const cssBorderRadius = (value: string) => {
+export const cssBorderRadius = (value: string): any => {
   if (value.indexOf("BorderRadius.circular(") === 0) {
     const trimedValue = value
       .replace("BorderRadius.circular(", "")
@@ -68,7 +68,7 @@ export const cssBorderRadius = (value: string) => {
       borderBottomRightRadius: `${bottomRight}px`,
     };
   } else {
-    return {};
+    return { borderRadius: "0px" };
   }
 };
 
