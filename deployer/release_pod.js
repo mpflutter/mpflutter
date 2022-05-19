@@ -12,6 +12,7 @@ const {
 const cosInstance = new COS({
   SecretId: env["COS_SECRET_ID"],
   SecretKey: env["COS_SECRET_KEY"],
+  UseAccelerate: true,
 });
 const cosBucket = "mpflutter-dist-1253771526";
 const cosRegion = "ap-guangzhou";
@@ -24,10 +25,11 @@ class PodPackageDeployer {
   }
 
   async deploy() {
-    console.log("deploying pod");
+    console.log("[start]deploying pod" + this.name, new Date().toString());
     this.replaceVersion();
     this.makeArchive();
     const archiveUrl = await this.uploadArchive();
+    console.log("[end]deploying package" + this.name, new Date().toString());
     console.log(archiveUrl);
   }
 
@@ -48,7 +50,7 @@ class PodPackageDeployer {
 
   uploadArchive() {
     return new Promise((res, rej) => {
-      cosInstance.putObject(
+      cosInstance.uploadFile(
         {
           Bucket: cosBucket,
           Region: cosRegion,

@@ -12,11 +12,12 @@ const {
 const cosInstance = new COS({
   SecretId: env["COS_SECRET_ID"],
   SecretKey: env["COS_SECRET_KEY"],
+  UseAccelerate: true,
 });
 const cosBucket = "mpflutter-dist-1253771526";
 const cosRegion = "ap-guangzhou";
 
-const currentVersion = env['GITHUB_REF_NAME'];
+const currentVersion = env["GITHUB_REF_NAME"];
 
 class DartPackageDeployer {
   constructor(name) {
@@ -24,12 +25,13 @@ class DartPackageDeployer {
   }
 
   async deploy() {
-    console.log("deploying package" + this.name);
+    console.log("[start]deploying package" + this.name, new Date().toString());
     this.replaceVersion();
     this.makeArchive();
     const archiveUrl = await this.uploadArchive();
     const pubspec = this.makePubspec(archiveUrl);
     await this.updatePackage(pubspec);
+    console.log("[end]deploying package" + this.name, new Date().toString());
   }
 
   replaceVersion() {
@@ -39,21 +41,27 @@ class DartPackageDeployer {
       })
     );
     originYaml.version = currentVersion;
-    writeFileSync(`../packages/${this.name}/pubspec.yaml`, YAML.stringify(originYaml))
+    writeFileSync(
+      `../packages/${this.name}/pubspec.yaml`,
+      YAML.stringify(originYaml)
+    );
   }
 
   makeArchive() {
     execSync(`tar -czf ${currentVersion}.tar.gz *`, {
       cwd: `../packages/${this.name}`,
     });
-    execSync(`mv ${currentVersion}.tar.gz /tmp/${this.name}${currentVersion}.tar.gz`, {
-      cwd: `../packages/${this.name}`,
-    });
+    execSync(
+      `mv ${currentVersion}.tar.gz /tmp/${this.name}${currentVersion}.tar.gz`,
+      {
+        cwd: `../packages/${this.name}`,
+      }
+    );
   }
 
   uploadArchive() {
     return new Promise((res, rej) => {
-      cosInstance.putObject(
+      cosInstance.uploadFile(
         {
           Bucket: cosBucket,
           Region: cosRegion,
@@ -128,7 +136,7 @@ class DartPackageDeployer {
             }
           })();
           pkgJSON["name"] = this.name;
-          if (currentVersion !== '0.0.1-master') {
+          if (currentVersion !== "0.0.1-master") {
             pkgJSON["latest"] = pubspec;
           }
           if (!pkgJSON["versions"]) {
@@ -171,7 +179,9 @@ class DartPackageDeployer {
   }
 }
 
-new DartPackageDeployer("flutter").deploy();
-new DartPackageDeployer("flutter_web_plugins").deploy();
-new DartPackageDeployer("mpcore").deploy();
-new DartPackageDeployer("mp_build_tools").deploy();
+(async () => {
+  await new DartPackageDeployer("flutter").deploy();
+  await new DartPackageDeployer("flutter_web_plugins").deploy();
+  await new DartPackageDeployer("mpcore").deploy();
+  await new DartPackageDeployer("mp_build_tools").deploy();
+})();
