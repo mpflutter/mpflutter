@@ -50,7 +50,7 @@ jobs:
         node ./release_pod.js
         echo "finish"
     - name: Upload COS
-      uses: TencentCloud/cos-action@v1
+      uses: mpflutter/cos-action@master
       with:
         secret_id: ${{ secrets.COS_SECRET_ID }}
         secret_key: ${{ secrets.COS_SECRET_KEY }}
