@@ -49,13 +49,13 @@ jobs:
         node ./release.js
         node ./release_pod.js
         echo "finish"
-      - name: Upload COS
-        uses: TencentCloud/cos-action@v1
-          with:
-            secret_id: ${{ secrets.COS_SECRET_ID }}
-            secret_key: ${{ secrets.COS_SECRET_KEY }}
-            cos_bucket: mpflutter-dist-1253771526
-            cos_region: ap-guangzhou
-            local_path: packages/mp_dom_runtime/mpflutter_dist/0.0.1-master
-            remote_path: dist/0.0.1-master
-            clean: true
+    - name: Upload COS
+      uses: TencentCloud/cos-action@v1
+        with:
+          secret_id: ${{ secrets.COS_SECRET_ID }}
+          secret_key: ${{ secrets.COS_SECRET_KEY }}
+          cos_bucket: mpflutter-dist-1253771526
+          cos_region: ap-guangzhou
+          local_path: packages/mp_dom_runtime/mpflutter_dist/0.0.1-master
+          remote_path: dist/0.0.1-master
+          clean: true
