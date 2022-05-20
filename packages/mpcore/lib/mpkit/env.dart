@@ -27,6 +27,17 @@ class MPEnv {
     }
   }
 
+  static Future<bool> isWechatMiniProgramOnPC() async {
+    if (envHost() != MPEnvHostType.wechatMiniProgram) return false;
+    try {
+      final value = await mpjs.context['wx'].callMethod('getSystemInfoSync');
+      final platform = await value.getPropertyValue('platform');
+      return platform == 'mac' || platform == 'windows';
+    } catch (e) {
+      return false;
+    }
+  }
+
   static Future<String> envUserAgent() async {
     return await mpjs.context['navigator'].getPropertyValue('userAgent');
   }

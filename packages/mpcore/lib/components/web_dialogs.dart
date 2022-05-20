@@ -45,6 +45,19 @@ class MPWebDialogs {
         return result;
       }
     } else {
+      if (await MPEnv.isWechatMiniProgramOnPC() == true && context != null) {
+        final result = await showMPDialog(
+          context: context,
+          barrierColor: Colors.black.withOpacity(0.5),
+          barrierDismissible: true,
+          builder: (context) {
+            return MockPrompt(title: message, defaultValue: defaultValue);
+          },
+        );
+        if (result is String) {
+          return result;
+        }
+      }
       final result = await MPAction(
         type: 'web_dialogs',
         params: {
