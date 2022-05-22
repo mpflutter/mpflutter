@@ -21,6 +21,7 @@ export class WindowInfo {
               },
             },
             devicePixelRatio: MPEnv.platformScope.getSystemInfoSync().pixelRatio,
+            darkMode: MPEnv.platformScope.getSystemInfoSync().theme === "dark",
           },
         })
       );
@@ -38,6 +39,9 @@ export class WindowInfo {
               },
             },
             devicePixelRatio: devicePixelRatio,
+            darkMode:
+              window.matchMedia("(prefers-color-scheme)").media !== "not all" &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches,
           },
         })
       );

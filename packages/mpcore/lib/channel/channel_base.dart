@@ -182,7 +182,9 @@ class MPChannelBase {
                 devicePixelRatio.toDouble())
             : 0.0,
       );
-      DeviceInfo.deviceSizeChangeCallback?.call();
+      DeviceInfo.platformBrightness =
+          message['darkMode'] == true ? Brightness.dark : Brightness.light;
+      DeviceInfo.deviceInfoChangeCallback?.call();
     } catch (e) {
       print(e);
     }

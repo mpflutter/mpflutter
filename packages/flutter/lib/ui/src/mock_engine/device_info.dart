@@ -5,8 +5,9 @@ class DeviceInfo {
   static double physicalSizeHeight = 667.0 * 2.0;
   static double devicePixelRatio = 2.0;
   static WindowPadding windowPadding = WindowPadding.zero;
-  static Function? deviceSizeChangeCallback;
-  static void listenDeviceSizeChanged(Function callback) {
-    deviceSizeChangeCallback = callback;
+  static Brightness platformBrightness = Brightness.light;
+  static Function? deviceInfoChangeCallback;
+  static void listenDeviceInfoChanged(Function callback) {
+    deviceInfoChangeCallback = callback;
   }
 }

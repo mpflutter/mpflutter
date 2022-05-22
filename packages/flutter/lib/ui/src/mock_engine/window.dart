@@ -52,8 +52,9 @@ VoidCallback? scheduleFrameCallback = () {
 /// The Web implementation of [ui.Window].
 class MockWindow extends Window {
   MockWindow() {
-    DeviceInfo.listenDeviceSizeChanged(() {
+    DeviceInfo.listenDeviceInfoChanged(() {
       onMetricsChanged?.call();
+      onPlatformBrightnessChanged?.call();
     });
   }
 
@@ -77,11 +78,15 @@ class MockWindow extends Window {
   VoidCallback? get onTextScaleFactorChanged => null;
   set onTextScaleFactorChanged(VoidCallback? callback) {}
 
-  Brightness get platformBrightness => Brightness.light;
+  Brightness get platformBrightness => DeviceInfo.platformBrightness;
 
-  VoidCallback? get onPlatformBrightnessChanged => null;
+  VoidCallback? _onPlatformBrightnessChanged;
 
-  set onPlatformBrightnessChanged(VoidCallback? callback) {}
+  VoidCallback? get onPlatformBrightnessChanged => _onPlatformBrightnessChanged;
+
+  set onPlatformBrightnessChanged(VoidCallback? callback) {
+    _onPlatformBrightnessChanged = callback;
+  }
 
   VoidCallback? _onMetricsChanged;
 

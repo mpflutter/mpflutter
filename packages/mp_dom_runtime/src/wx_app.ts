@@ -55,7 +55,7 @@ export const WXPage = function (
   selector: string = "#vdom",
   app: WXApp = MPEnv.platformGlobal().app
 ) {
-  if (!(__MP_MINI_PROGRAM__)) return;
+  if (!__MP_MINI_PROGRAM__) return;
   return {
     data: {
       pageMeta: {
@@ -65,18 +65,30 @@ export const WXPage = function (
     kboneRender: undefined as any,
     kboneDocument: undefined as any,
     kbonePageId: undefined as any,
+    lightModeStyle: {
+      naviBarBackgroundColor: "#ffffff",
+      naviBarFrontColor: "#000000",
+    },
+    darkModeStyle: {
+      naviBarBackgroundColor: "#000000",
+      naviBarFrontColor: "#ffffff",
+    },
     prepare() {
       const mpRes = this.kboneRender.createPage((this as any).route, kboneConfig);
       this.kbonePageId = mpRes.pageId;
       const window = mpRes.window;
       this.kboneDocument = mpRes.document;
       this.kboneDocument.window = window;
-      
+
       window.$$createSelectorQuery = () => MPEnv.platformScope.createSelectorQuery().in(this);
       window.$$createIntersectionObserver = (options: any) =>
         MPEnv.platformScope.createIntersectionObserver(this, options);
+      const themeStyle =
+        MPEnv.platformScope.getSystemInfoSync().theme === "dark" ? this.darkModeStyle : this.lightModeStyle;
       (this as any).setData({
         pageId: this.kbonePageId,
+        "pageMeta.naviBar.backgroundColor": themeStyle.naviBarBackgroundColor,
+        "pageMeta.naviBar.naviBarFrontColor": themeStyle.naviBarFrontColor,
       });
     },
     onLoad(pageOptions: any) {

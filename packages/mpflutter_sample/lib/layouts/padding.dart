@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpkit/mpkit.dart';
 
+import '../theme.dart';
+
 class PaddingPage extends StatelessWidget {
   Widget _renderBlock(Widget child) {
     return Padding(
@@ -40,6 +42,8 @@ class PaddingPage extends StatelessWidget {
     return MPScaffold(
       name: 'Padding',
       backgroundColor: Color.fromARGB(255, 236, 236, 236),
+      appBarColor: Theme.of(context).appBarColor,
+      appBarTintColor: Theme.of(context).textColor,
       body: ListView(
         children: [
           _renderBlock(Column(
