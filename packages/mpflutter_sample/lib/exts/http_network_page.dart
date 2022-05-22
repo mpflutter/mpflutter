@@ -61,6 +61,13 @@ class HTTPNetworkPage extends StatelessWidget {
               SizedBox(height: 16),
             ],
           )),
+          _renderBlock(Column(
+            children: [
+              _renderHeader('Post something to httpbin.'),
+              _PostUsingLibDio(),
+              SizedBox(height: 16),
+            ],
+          )),
         ],
       ),
     );
@@ -87,7 +94,7 @@ class __FetchUsingLibDioState extends State<_FetchUsingLibDio> {
         });
         try {
           final response = await dio.Dio()
-              .getUri(Uri.parse('https://api.github.com/users/ponycui'))
+              .getUri(Uri.parse('https://pub.mpflutter.com/test/ponycui'))
               .timeout(Duration(seconds: 15));
           print(response.data);
           MPWebDialogs.alert(
@@ -138,11 +145,63 @@ class __FetchUsingLibHTTPState extends State<_FetchUsingLibHTTP> {
           fetching = true;
         });
         try {
-          final response =
-              await http.get(Uri.parse('https://api.github.com/users/ponycui'));
+          final response = await http
+              .get(Uri.parse('https://pub.mpflutter.com/test/ponycui'));
           final result = json.decode(response.body);
           MPWebDialogs.alert(
             message: 'PonyCui\'s location is = ${result['location']}',
+          );
+        } catch (e) {
+        } finally {
+          setState(() {
+            fetching = false;
+          });
+        }
+      },
+      child: Container(
+        width: 100,
+        height: 100,
+        color: Colors.pink,
+        child: Center(
+          child: Text(
+            fetching ? 'Fetching' : 'Tap here',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _PostUsingLibDio extends StatefulWidget {
+  const _PostUsingLibDio({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  __PostUsingLibDioState createState() => __PostUsingLibDioState();
+}
+
+class __PostUsingLibDioState extends State<_PostUsingLibDio> {
+  bool fetching = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () async {
+        setState(() {
+          fetching = true;
+        });
+        try {
+          final response = await http.post(
+            Uri.parse('https://pub.mpflutter.com/test/post'),
+            body: "Hello, World!",
+          );
+          MPWebDialogs.alert(
+            message: 'PostBody is = ${response.body}',
           );
         } catch (e) {
         } finally {

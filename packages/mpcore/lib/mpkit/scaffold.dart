@@ -3,6 +3,29 @@ part of 'mpkit.dart';
 final List<MPScaffoldState> scaffoldStates = [];
 final Map<int, MPScaffoldState> routeScaffoldStateMap = {};
 
+class MPWechatMiniProgramShareInfo {
+  final String? title;
+  final String? routeName;
+  final Map? routeParams;
+  final String? customPath;
+  final String? imageUrl;
+
+  MPWechatMiniProgramShareInfo({
+    this.title,
+    this.routeName,
+    this.routeParams,
+    this.customPath,
+    this.imageUrl,
+  });
+}
+
+class MPWechatMiniProgramShareRequest {
+  final String? from;
+  final String? webViewUrl;
+
+  MPWechatMiniProgramShareRequest({this.from, this.webViewUrl});
+}
+
 class MPScaffold extends StatefulWidget {
   final String? name;
   final Color? appBarColor;
@@ -10,7 +33,9 @@ class MPScaffold extends StatefulWidget {
   final Widget? body;
   final Function? onRefresh;
   final Function(double)? onPageScroll;
-  final Future<Map> Function()? onWechatMiniProgramShareAppMessage;
+  final Future<MPWechatMiniProgramShareInfo> Function(
+    MPWechatMiniProgramShareRequest request,
+  )? onWechatMiniProgramShareAppMessage;
   final Function? onReachBottom;
   final PreferredSizeWidget? appBar;
   final Widget? bottomBar;

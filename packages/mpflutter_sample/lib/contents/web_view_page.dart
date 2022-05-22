@@ -91,6 +91,9 @@ class _WebViewPageState extends State<WebViewPage> {
     return MPScaffold(
       name: 'WebView',
       backgroundColor: Color.fromARGB(255, 236, 236, 236),
+      onWechatMiniProgramShareAppMessage: (request) async {
+        return MPWechatMiniProgramShareInfo(title: request.webViewUrl);
+      },
       body: _renderBlock(Column(
         children: [
           _renderHeader('WebView'),

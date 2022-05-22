@@ -40,6 +40,13 @@ class ContainerPage extends StatelessWidget {
     return MPScaffold(
       name: 'Container',
       backgroundColor: Color.fromARGB(255, 236, 236, 236),
+      onWechatMiniProgramShareAppMessage: (request) async {
+        return MPWechatMiniProgramShareInfo(
+          title: 'Container 容器标题(${request.from ?? ''})',
+          imageUrl:
+              'https://www-jsdelivr-com.onrender.com/img/landing/built-for-production-icon@2x.png',
+        );
+      },
       body: ListView(
         children: [
           _renderBlock(Column(

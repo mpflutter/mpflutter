@@ -161,7 +161,7 @@ export class MPScaffold extends ComponentView {
     });
   }
 
-  onWechatMiniProgramShareAppMessage(): Promise<any> {
+  onWechatMiniProgramShareAppMessage(info: any): Promise<any> {
     return new Promise((res) => {
       this.onWechatMiniProgramShareAppMessageResolver = res;
       this.engine.sendMessage(
@@ -170,6 +170,8 @@ export class MPScaffold extends ComponentView {
           message: {
             event: "onWechatMiniProgramShareAppMessage",
             target: this.hashCode,
+            from: info?.from,
+            webViewUrl: info?.webViewUrl,
           },
         })
       );

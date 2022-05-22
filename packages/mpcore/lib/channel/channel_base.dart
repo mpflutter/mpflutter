@@ -349,26 +349,40 @@ class MPChannelBase {
           (scaffoldState) =>
               scaffoldState.context.hashCode == message['target'],
         );
-        dynamic result =
-            await target.widget.onWechatMiniProgramShareAppMessage?.call();
-        result ??= {
-          'title': target.widget.name,
-          'path':
-              '/pages/index/index?route=${(ModalRoute.of(target.context)?.settings.name ?? '/')}&${(() {
-            final params = ModalRoute.of(target.context)?.settings.arguments;
-            if (params is Map) {
-              return params
-                  .map((key, value) {
-                    return MapEntry(
-                      key,
-                      '$key=${Uri.encodeQueryComponent(value)}',
-                    );
-                  })
-                  .values
-                  .join('&');
+        final shareRequest = MPWechatMiniProgramShareRequest(
+          from: message['from'],
+          webViewUrl: message['webViewUrl'],
+        );
+        final shareInfo = await target.widget.onWechatMiniProgramShareAppMessage
+            ?.call(shareRequest);
+        final routeName = shareInfo?.routeName ??
+            ModalRoute.of(target.context)?.settings.name ??
+            '/';
+        final routeParams = shareInfo?.routeParams ??
+            ModalRoute.of(target.context)?.settings.arguments;
+        final result = <String, dynamic>{
+          'title': shareInfo?.title ?? target.widget.name,
+          'path': (() {
+            if (shareInfo?.customPath != null) {
+              return shareInfo?.customPath;
+            } else {
+              return '/pages/index/${routeName == '/' ? 'index' : 'share'}?route=${routeName}&${(() {
+                if (routeParams is Map) {
+                  return routeParams
+                      .map((key, value) {
+                        return MapEntry(
+                          key,
+                          '$key=${Uri.encodeQueryComponent(value)}',
+                        );
+                      })
+                      .values
+                      .join('&');
+                }
+                return '';
+              })()}';
             }
-            return '';
-          })()}',
+          })(),
+          'imageUrl': shareInfo?.imageUrl,
         };
         MPChannel.postMessage(json.encode({
           'type': 'scaffold',

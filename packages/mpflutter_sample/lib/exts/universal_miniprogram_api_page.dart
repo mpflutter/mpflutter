@@ -99,10 +99,8 @@ class MiniProgramApiPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return MPScaffold(
       name: '微信小程序 API',
-      onWechatMiniProgramShareAppMessage: () async {
-        return {
-          'title': '微信小程序 API',
-        };
+      onWechatMiniProgramShareAppMessage: (request) async {
+        return MPWechatMiniProgramShareInfo(title: '微信小程序 API');
       },
       body: ListView(
         children: [

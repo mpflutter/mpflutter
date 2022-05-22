@@ -161,9 +161,9 @@ export class Page {
     }
   }
 
-  async onWechatMiniProgramShareAppMessage() {
+  async onWechatMiniProgramShareAppMessage(info: any) {
     if (this.scaffoldView instanceof MPScaffold) {
-      return await this.scaffoldView.onWechatMiniProgramShareAppMessage();
+      return await this.scaffoldView.onWechatMiniProgramShareAppMessage(info);
     }
   }
 

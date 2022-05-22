@@ -132,9 +132,9 @@ export const WXPage = function (
         MPEnv.platformScope.stopPullDownRefresh();
       });
     },
-    onShareAppMessage() {
+    onShareAppMessage(info: any) {
       return {
-        promise: (this as any).mpPage.onWechatMiniProgramShareAppMessage(),
+        promise: (this as any).mpPage.onWechatMiniProgramShareAppMessage(info),
       };
     },
     onReachBottom() {
