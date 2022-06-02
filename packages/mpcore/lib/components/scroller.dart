@@ -59,8 +59,7 @@ Map _encodeScroller(Element element) {
     }
     bottomBarHeight =
         scaffoldState?.bottomBarKey.currentContext?.size?.height ?? 0.0;
-    bottomBarWithSafeArea =
-        scaffoldState?.widget.bottomBarWithSafeArea ?? false;
+    bottomBarWithSafeArea = scaffoldState?.isBottomBarWithSafeArea() ?? false;
   }
   final hasScrollNotificationListener = (() {
     var hasResult = false;

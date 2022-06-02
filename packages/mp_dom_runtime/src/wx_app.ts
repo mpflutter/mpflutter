@@ -138,6 +138,26 @@ export const WXPage = function (
         this.kboneDocument ?? (this as any).selectComponent(selector + "_tm").miniDom.document;
       Router.clearBeingPushTimeout();
       Router.beingPush = false;
+      if (__MP_TARGET_WEAPP__) {
+        MPEnv.platformScope.onAppShow(this.onAppShow.bind(this));
+        const title = (this as any).data?.pageMeta?.naviBar?.title;
+        if (title) {
+          MPEnv.platformScope.setNavigationBarTitle({ title: title });
+        }
+      }
+    },
+    onHide() {
+      if (__MP_TARGET_WEAPP__) {
+        MPEnv.platformScope.offAppShow(this.onAppShow);
+      }
+    },
+    onAppShow() {
+      if (__MP_TARGET_WEAPP__) {
+        const title = (this as any).data?.pageMeta?.naviBar?.title;
+        if (title) {
+          MPEnv.platformScope.setNavigationBarTitle({ title: title });
+        }
+      }
     },
     onPullDownRefresh() {
       (this as any).mpPage.onRefresh().then((it: any) => {

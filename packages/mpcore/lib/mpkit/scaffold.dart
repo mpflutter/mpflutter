@@ -106,6 +106,16 @@ class MPScaffoldState extends State<MPScaffold> {
     setState(() {});
   }
 
+  bool isBottomBarWithSafeArea() {
+    final mainTabBar = context
+        .findAncestorStateOfType<MPMainTabViewState>()
+        ?.renderTabBar(context);
+    if (mainTabBar != null) {
+      return true;
+    }
+    return widget.bottomBarWithSafeArea ?? false;
+  }
+
   @override
   Widget build(BuildContext context) {
     if (MediaQuery.of(context).size.width < 10 ||
