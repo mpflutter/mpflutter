@@ -131,6 +131,15 @@ packages:
       relative: true
     source: path
     version: "1.0.0+1"
+  mp_file:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: "4969080d2a214782127df20680cc4c07c22f4d6a"
+      url: "https://github.com/mpflutter-plugins/mp_file"
+    source: git
+    version: "0.0.1"
   mpcore:
     dependency: "direct main"
     description:
