@@ -261,6 +261,7 @@ _writeSubpackageLoader() {
     subpackages.forEach((pkgIndex, value) {
       value.forEach((fileName) {
         fileMapping[fileName] = pkgIndex;
+        fileMapping['/' + fileName] = pkgIndex;
       });
     });
     final loaderCode = """
@@ -313,6 +314,9 @@ _fixDefererLoader() {
   });
   code = code.replaceFirst(
       "\$.\$get\$thisScript();", "\$.\$get\$thisScript() || '';");
+  code = code.replaceFirst("k=self.encodeURIComponent(a)", "k=a");
+  code = code.replaceFirst("v.currentScript=a",
+      "v.currentScript={src:'/',getAttribute:function(){return '';}};");
   File(p.join('build', 'main.dart.js')).writeAsStringSync(code);
 }
 

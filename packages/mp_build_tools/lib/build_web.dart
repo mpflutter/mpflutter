@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:mp_build_tools/i18n.dart';
@@ -6,11 +7,11 @@ import 'package:crypto/crypto.dart';
 
 import 'build_plugins.dart' as plugin_builder;
 
-main(List<String> args) {
+main(List<String> args) async {
   print(I18n.building());
   _checkPubspec();
   _createBuildDir();
-  _buildDartJS(args);
+  await _buildDartJS(args);
   plugin_builder.main(args);
   _copyWebSource();
   print(I18n.buildSuccess('build'));
@@ -31,7 +32,7 @@ _createBuildDir() {
   }
 }
 
-void _buildDartJS(List<String> args) {
+Future _buildDartJS(List<String> args) async {
   final dart2JSParams = args.toList();
   if (!dart2JSParams.any((element) => element.startsWith('-O'))) {
     dart2JSParams.add('-O4');
@@ -53,6 +54,7 @@ void _buildDartJS(List<String> args) {
     throw I18n.executeFail('dart2js');
   }
   _fixDefererLoader();
+  await _addHashToDeferredParts();
   final buildBundleResult = Process.runSync(
     'flutter',
     [
@@ -87,6 +89,39 @@ _fixDefererLoader() {
   });
   code = code.replaceFirst(
       "\$.\$get\$thisScript();", "\$.\$get\$thisScript() || '';");
+  code = code.replaceFirst("k=self.encodeURIComponent(a)", "k=a");
+  code = code.replaceFirst("v.currentScript=a",
+      "v.currentScript=document.createElement('script');v.currentScript.src='./main.dart.js';");
+  File(p.join('build', 'main.dart.js')).writeAsStringSync(code);
+}
+
+_addHashToDeferredParts() async {
+  var code = File(p.join('build', 'main.dart.js')).readAsStringSync();
+  var allFileHash = <String, String>{};
+  await Future.wait(Directory('build').listSync().map((e) async {
+    final ee = e.path.split(p.separator).last;
+    final hashCode = File(p.join('build', ee)).existsSync()
+        ? (await md5.bind(File(p.join('build', ee)).openRead()).first)
+            .toString()
+            .substring(0, 8)
+        : "";
+    allFileHash[ee] = hashCode;
+  }));
+  code = code.replaceAllMapped(RegExp(r"deferredPartUris:(.*?),"), (match) {
+    final data = match.group(1);
+    if (data != null) {
+      final parts = json.decode(data) as List;
+      final newParts = <String>[];
+      parts.forEach((element) {
+        if (element is String) {
+          newParts.add('$element?${allFileHash[element]}');
+        }
+      });
+      return "deferredPartUris:${json.encode(newParts)},";
+    } else {
+      return "deferredPartUris:[],";
+    }
+  });
   File(p.join('build', 'main.dart.js')).writeAsStringSync(code);
 }
 
