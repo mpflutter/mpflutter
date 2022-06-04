@@ -107,7 +107,7 @@ _addHashToDeferredParts() async {
         : "";
     allFileHash[ee] = hashCode;
   }));
-  code = code.replaceAllMapped(RegExp(r"deferredPartUris:(.*?),"), (match) {
+  code = code.replaceAllMapped(RegExp(r"deferredPartUris:(.*?),\n"), (match) {
     final data = match.group(1);
     if (data != null) {
       final parts = json.decode(data) as List;
@@ -117,9 +117,9 @@ _addHashToDeferredParts() async {
           newParts.add('$element?${allFileHash[element]}');
         }
       });
-      return "deferredPartUris:${json.encode(newParts)},";
+      return "deferredPartUris:${json.encode(newParts)},\n";
     } else {
-      return "deferredPartUris:[],";
+      return "deferredPartUris:[],\n";
     }
   });
   File(p.join('build', 'main.dart.js')).writeAsStringSync(code);
