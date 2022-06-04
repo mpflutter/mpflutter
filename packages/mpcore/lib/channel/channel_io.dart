@@ -88,6 +88,8 @@ class MPChannel {
           handlePackageAssetsRequest(req);
         } else if (req.uri.path.startsWith('/assets/')) {
           handleAssetsRequest(req);
+        } else if (req.uri.path.startsWith('/pubspec.yaml')) {
+          handlePubspecRequest(req);
         } else if (req.uri.path.startsWith('/app.mpk')) {
           handleAppMpkRequest(req);
         } else {
@@ -180,6 +182,13 @@ class MPChannel {
         ..statusCode = 404
         ..close();
     }
+  }
+
+  static void handlePubspecRequest(HttpRequest request) {
+    request.response
+      ..statusCode = 200
+      ..add(File('./pubspec.yaml').readAsBytesSync())
+      ..close();
   }
 
   static void handleAppMpkRequest(HttpRequest request) async {
