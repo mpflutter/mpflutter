@@ -88,6 +88,8 @@ class MPChannel {
           handlePackageAssetsRequest(req);
         } else if (req.uri.path.startsWith('/assets/')) {
           handleAssetsRequest(req);
+        } else if (req.uri.path.startsWith('/app.mpk')) {
+          handleAppMpkRequest(req);
         } else {
           handleScaffoldRequest(req);
         }
@@ -176,6 +178,26 @@ class MPChannel {
     } else {
       request.response
         ..statusCode = 404
+        ..close();
+    }
+  }
+
+  static void handleAppMpkRequest(HttpRequest request) async {
+    print('Now is building app.mpk ...');
+    try {
+      await Process.run('dart', ['scripts/build_mpk.dart']);
+      print('app.mpk build success');
+      request.response
+        ..statusCode = 200
+        ..add(File('./build/app.mpk').readAsBytesSync())
+        // ignore: unawaited_futures
+        ..close();
+    } catch (e) {
+      print('app.mpk build fail');
+      print(e);
+      request.response
+        ..statusCode = 500
+        // ignore: unawaited_futures
         ..close();
     }
   }
