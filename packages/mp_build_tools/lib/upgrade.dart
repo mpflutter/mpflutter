@@ -11,13 +11,15 @@ main(List<String> args) async {
   print(I18n.fetchingVersionInfoFromRemote());
 
   final tags = json.decode((await get(
-          Uri.parse('https://api.github.com/repos/mpflutter/mpflutter/tags')))
+    Uri.parse('https://pub.mpflutter.com/mpflutter/tags'),
+  ))
       .body) as List;
-  final masterBranch = json.decode((await get(Uri.parse(
-          'https://api.github.com/repos/mpflutter/mpflutter/branches/master')))
+  final masterBranch = json.decode((await get(
+    Uri.parse('https://pub.mpflutter.com/mpflutter/master'),
+  ))
       .body) as Map;
   final versions = <String>[];
-  versions.addAll(tags.sublist(0, min(10, tags.length)).map((e) => e['name']));
+  versions.addAll(tags.sublist(0, min(5, tags.length)).map((e) => e['name']));
   versions.add((masterBranch['commit']['sha'] as String).substring(0, 7));
   final versionDialog = CLI_Dialog(listQuestions: [
     [
