@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:mp_build_tools/i18n.dart';
 import 'package:path/path.dart' as p;
 import 'package:crypto/crypto.dart';
+import 'package:http/http.dart';
 
 import 'build_plugins.dart' as plugin_builder;
 
@@ -12,8 +13,9 @@ main(List<String> args) async {
   _checkPubspec();
   _createBuildDir();
   await _buildDartJS(args);
-  plugin_builder.main(args);
-  _copyWebSource();
+  await plugin_builder.main(args);
+  await _copyWebSource();
+  await _copyDistSource();
   print(I18n.buildSuccess('build'));
 }
 
@@ -146,6 +148,23 @@ _copyWebSource() async {
   indexFileContent = indexFileContent
       .replaceAll("main.dart.js", "main.dart.js?$mainDartJSHashCode")
       .replaceAll("plugins.min.js", "plugins.min.js?$pluginMinJSHashCode");
+  File(p.join('build', 'index.html')).writeAsStringSync(indexFileContent);
+}
+
+_copyDistSource() async {
+  var indexFileContent = File(p.join('build', 'index.html')).readAsStringSync();
+  final matches =
+      RegExp("\"(https://dist\.mpflutter\.com/dist/.*?/dist_web/)(.*?)\"")
+          .allMatches(indexFileContent);
+  for (var element in matches) {
+    final prefix = element.group(1) as String;
+    final filename = element.group(2) as String;
+    final url = "$prefix$filename";
+    final urlRes = await get(Uri.parse(url));
+    File(p.join('build', filename)).writeAsStringSync(urlRes.body);
+  }
+  indexFileContent = indexFileContent.replaceAll(
+      'https://dist.mpflutter.com/dist/0.16.2/dist_web/', '');
   File(p.join('build', 'index.html')).writeAsStringSync(indexFileContent);
 }
 
