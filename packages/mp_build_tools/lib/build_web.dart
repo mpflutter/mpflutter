@@ -163,8 +163,11 @@ _copyDistSource() async {
     final urlRes = await get(Uri.parse(url));
     File(p.join('build', filename)).writeAsStringSync(urlRes.body);
   }
-  indexFileContent = indexFileContent.replaceAll(
-      'https://dist.mpflutter.com/dist/0.16.2/dist_web/', '');
+  indexFileContent = indexFileContent.replaceAllMapped(
+      RegExp("\"https://dist\.mpflutter\.com/dist/(.*?)/dist_web/(.*?)\""),
+      (match) {
+    return '"${match.group(2)}?${match.group(1)}"';
+  });
   File(p.join('build', 'index.html')).writeAsStringSync(indexFileContent);
 }
 
