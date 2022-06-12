@@ -19,8 +19,16 @@ void main() {
     (key, data, parentData, componentFactory) =>
         TemplateFooView(key, data, parentData, componentFactory),
   );
-  runApp(const MaterialApp(
-    home: SamplePage(),
+  runApp(MaterialApp(
+    home: Builder(builder: (context) {
+      // return MediaQuery(
+      //   data: MediaQuery.of(context).copyWith(
+      //     platformBrightness: Brightness.dark,
+      //   ),
+      //   child: SamplePage(),
+      // );
+      return SamplePage();
+    }),
   ));
 }
 
@@ -43,10 +51,10 @@ class _SamplePageState extends State<SamplePage> {
   void initEngine() async {
     if (engine == null) {
       final engine = MPEngine(flutterContext: context);
-      // engine.initWithDebuggerServerAddr('127.0.0.1:9898');
-      engine.initWithMpkData(
-        (await rootBundle.load('assets/app.mpk')).buffer.asUint8List(),
-      );
+      engine.initWithDebuggerServerAddr('127.0.0.1:9898');
+      // engine.initWithMpkData(
+      //   (await rootBundle.load('assets/app.mpk')).buffer.asUint8List(),
+      // );
       await engine.start();
       setState(() {
         this.engine = engine;

@@ -80,24 +80,38 @@ class _CustomPaint extends ComponentView {
       Map message, MPEngine engine) async {
     String? event = message['event'];
     if (event == 'fetchImage') {
-      int? target = message['target'];
-      if (target != null) {
-        ComponentView? targetView =
-            engine._componentFactory._cacheViews[target]?.widget;
-        if (targetView is _CustomPaint && targetView.context != null) {
-          String base64EncodedData =
-              await targetView._fetchEncodedImage(targetView.context!);
-          engine._sendMessage({
-            "type": "custom_paint",
-            "message": {
-              "event": "onFetchImageResult",
-              "seqId": message["seqId"],
-              "data": base64EncodedData,
-            },
-          });
-        }
+      _fetchImage(message, engine);
+    } else if (event == 'asyncPaint') {
+      _asyncPaint(message, engine);
+    }
+  }
+
+  static void _fetchImage(Map message, MPEngine engine) async {
+    int? target = message['target'];
+    if (target != null) {
+      ComponentView? targetView =
+          engine._componentFactory._cacheViews[target]?.widget;
+      if (targetView is _CustomPaint && targetView.context != null) {
+        String base64EncodedData =
+            await targetView._fetchEncodedImage(targetView.context!);
+        engine._sendMessage({
+          "type": "custom_paint",
+          "message": {
+            "event": "onFetchImageResult",
+            "seqId": message["seqId"],
+            "data": base64EncodedData,
+          },
+        });
       }
     }
+  }
+
+  static void _asyncPaint(Map message, MPEngine engine) async {
+    final hashCode = message['target'];
+    final data = {'commands': message['commands']};
+    await Future.delayed(const Duration(milliseconds: 32));
+    engine._componentFactory._cacheViews[hashCode]
+        ?.updateSubData('attributes', data);
   }
 
   BuildContext? context;
@@ -243,6 +257,38 @@ class _CustomPainter extends CustomPainter {
                 sharedPaint,
               );
             }
+            break;
+          case 'drawText':
+            final text = command['text'] as String;
+            final offset = command['offset'] as Map;
+            resetPaint(command['paint']);
+            // if (command['paint']['style'] == 'PaintingStyle.fill') {}
+            final builder = ui.ParagraphBuilder(ui.ParagraphStyle());
+            builder.pushStyle((() {
+              final o = _RichText.textStyleFromData(command['style']);
+              final s = ui.TextStyle(
+                color: o.color,
+                fontSize: o.fontSize,
+                fontFamily: o.fontFamily,
+                fontWeight: o.fontWeight,
+                fontStyle: o.fontStyle,
+                letterSpacing: o.letterSpacing,
+                wordSpacing: o.wordSpacing,
+                height: o.height,
+                decoration: o.decoration,
+              );
+              return s;
+            })());
+            builder.addText(text);
+            final paragraph = builder.build();
+            paragraph.layout(const ui.ParagraphConstraints(width: 99999));
+            canvas.drawParagraph(
+              paragraph,
+              Offset(
+                doubleFromMap(offset, 'x'),
+                doubleFromMap(offset, 'y') - paragraph.height / 2.0,
+              ),
+            );
             break;
           case 'save':
             canvas.save();

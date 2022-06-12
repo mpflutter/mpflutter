@@ -89,6 +89,8 @@ class MPEngine {
           }
         },
         "devicePixelRatio": MediaQuery.of(flutterContext).devicePixelRatio,
+        "darkMode": MediaQuery.of(flutterContext).platformBrightness ==
+            ui.Brightness.dark,
       },
     });
   }
@@ -169,7 +171,13 @@ class MPEngine {
             decodedMessage['message'], this);
         break;
       case 'rich_text':
-        _textMeasurer._didReceivedDoMeasureData(decodedMessage['message']);
+        if (decodedMessage['message']['event'] == 'doMeasure') {
+          _textMeasurer._didReceivedDoMeasureData(decodedMessage['message']);
+        } else if (decodedMessage['message']['event'] ==
+            'doMeasureTextPainter') {
+          _textMeasurer
+              ._didReceivedDoMeasureTextPainer(decodedMessage['message']);
+        }
         break;
       case 'action:web_dialogs':
         _WebDialogs.didReceivedWebDialogsMessage(

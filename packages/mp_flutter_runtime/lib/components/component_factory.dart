@@ -128,10 +128,23 @@ class _MPComponentFactory {
     return Container();
   }
 
-  void _callbackTextMeasureResult(int measureId, Size size) {
+  void _callbackTextMeasureResult(dynamic measureId, Size size) {
     _textMeasureResults.add({
       'measureId': measureId,
       'size': {'width': size.width, 'height': size.height},
+    });
+  }
+
+  void _callbackTextPainterMeasureResult(dynamic measureId, Size size) {
+    engine._sendMessage({
+      'type': 'rich_text',
+      'message': {
+        'event': 'onTextPainterMeasured',
+        'data': {
+          'seqId': measureId,
+          'size': {'width': size.width, 'height': size.height},
+        },
+      },
     });
   }
 

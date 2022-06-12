@@ -420,6 +420,8 @@ class _RecordingCanvas implements Canvas {
   }
 }
 
+final Map<int, dynamic> _lastAsyncPaintCommands = {};
+
 MPElement _encodeCustomPaint(Element element) {
   final widget = element.widget as CustomPaint;
   final recordingCanvas = _RecordingCanvas();
@@ -432,6 +434,7 @@ MPElement _encodeCustomPaint(Element element) {
       painter.paintAsync(recordingCanvas, widget.size).then((_) {
         if (currentSeqId != painter.asyncPaintSequenceId) return;
         if ((element.widget as CustomPaint).painter != painter) return;
+        _lastAsyncPaintCommands[element.hashCode] = recordingCanvas._commands;
         MPChannel.postMessage(
           json.encode({
             'type': 'custom_paint',
@@ -459,7 +462,8 @@ MPElement _encodeCustomPaint(Element element) {
     attributes: {
       'width': widget.size.width,
       'height': widget.size.height,
-      'commands': recordingCanvas._commands,
+      'commands': _lastAsyncPaintCommands[element.hashCode] ??
+          recordingCanvas._commands,
     },
   );
 }

@@ -15,6 +15,10 @@ class _TextMeasurer {
     });
   }
 
+  void _didReceivedDoMeasureTextPainer(Map data) {
+    _measureTextPainter(data);
+  }
+
   void _measureText(Map item) {
     if (item['name'] == 'rich_text') {
       int hashCode = item['hashCode'];
@@ -40,6 +44,27 @@ class _TextMeasurer {
         measureResult,
       );
     }
+  }
+
+  void _measureTextPainter(Map item) {
+    double maxWidth = 0.0;
+    double maxHeight = 0.0;
+    final textPainter = TextPainter();
+    final textSpan = _RichText.spanFromData([item['text']], engine);
+    textPainter.text = textSpan;
+    textPainter.textDirection = ui.TextDirection.ltr;
+    maxWidth = _Utils.toDouble(item['maxWidth'], 0.0);
+    maxHeight = _Utils.toDouble(item['maxHeight'], 0.0);
+    textPainter.maxLines = _Utils.toInt(item['maxLines'], 99999);
+    final dimensions = <PlaceholderDimensions>[];
+    _addPlaceholderDimensions(textSpan, dimensions);
+    textPainter.setPlaceholderDimensions(dimensions);
+    textPainter.layout(maxWidth: maxWidth);
+    Size measureResult = textPainter.size;
+    engine._componentFactory._callbackTextPainterMeasureResult(
+      item['seqId'],
+      measureResult,
+    );
   }
 
   void _addPlaceholderDimensions(

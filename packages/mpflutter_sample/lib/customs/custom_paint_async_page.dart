@@ -56,7 +56,7 @@ class MyPainter extends CustomPainter {
     textPainter.text = TextSpan(
       text: 'Hello, World!',
       style: TextStyle(
-        fontSize: 16,
+        fontSize: 32,
         color: Colors.white,
       ),
     );

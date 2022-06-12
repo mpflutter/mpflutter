@@ -329,6 +329,18 @@ class ComponentViewState extends State<ComponentView> {
     });
   }
 
+  void updateSubData(String subKey, Map? newData) {
+    setState(() {
+      if (!mounted) return;
+      if (newData != null) {
+        final subData = data?[subKey];
+        if (subData is Map) {
+          subData.addAll(newData);
+        }
+      }
+    });
+  }
+
   Widget buildLayoutWidget(Widget widget) {
     if (this.widget.noLayout == true) {
       return widget;
