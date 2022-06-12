@@ -79,8 +79,8 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
 
   @override
   void didReceivedFrameData(Map message) {
+    if (!mounted) return;
     setState(() {
-      if (!mounted) return;
       if (message['ignoreScaffold'] != true) {
         scaffoldData = message['scaffold'];
       }

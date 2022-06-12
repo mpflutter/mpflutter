@@ -128,6 +128,11 @@ class _MPComponentFactory {
     return Container();
   }
 
+  clear() {
+    _textMeasureResults.clear();
+    _cacheViews.clear();
+  }
+
   void _callbackTextMeasureResult(dynamic measureId, Size size) {
     _textMeasureResults.add({
       'measureId': measureId,

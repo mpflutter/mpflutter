@@ -13,7 +13,7 @@ class MPEngine {
   final Map<int, MPDataReceiver> _managedViews = {};
   String? _jsCode;
   final List<String> _messageQueue = [];
-  _MPDebugger? _debugger;
+  _MPDebugger? debugger;
   _MPKReader? _mpkReader;
   late _JSContext _jsContext;
   late _MPJS _mpjs;
@@ -39,7 +39,7 @@ class MPEngine {
   }
 
   void initWithDebuggerServerAddr(String debuggerServerAddr) {
-    _debugger = _MPDebugger(engine: this, serverAddr: debuggerServerAddr);
+    debugger = _MPDebugger(engine: this, serverAddr: debuggerServerAddr);
   }
 
   void initWithMpkData(Uint8List mpkData) {
@@ -52,8 +52,8 @@ class MPEngine {
 
   Future start() async {
     if (_started) return;
-    if (_jsCode == null && _debugger == null) return;
-    _updateWindowInfo();
+    if (_jsCode == null && debugger == null) return;
+    updateWindowInfo();
     await _jsContext.createContext();
     await _setupJSContextEventChannel();
     await _setupDeferredLibraryLoader();
@@ -64,8 +64,8 @@ class MPEngine {
     await _JSStorage.install(_jsContext, this);
     if (_jsCode != null) {
       await _jsContext.evaluateScript(_jsCode!);
-    } else if (_debugger != null) {
-      _debugger!.start();
+    } else if (debugger != null) {
+      debugger!.start();
     }
     for (final it in _messageQueue) {
       _jsContext.postMessage(it, '\$engine');
@@ -74,9 +74,15 @@ class MPEngine {
     _started = true;
   }
 
-  void stop() {}
+  void stop() {
+    debugger?.stop();
+  }
 
-  void _updateWindowInfo() {
+  void clear() {
+    _componentFactory.clear();
+  }
+
+  void updateWindowInfo() {
     _sendMessage({
       "type": "window_info",
       "message": {
@@ -231,8 +237,8 @@ class MPEngine {
 
   void _sendMessage(Map mapMessage) {
     String message = json.encode(mapMessage);
-    if (_debugger != null) {
-      _debugger!.sendMessage(message);
+    if (debugger != null) {
+      debugger!.sendMessage(message);
     } else {
       if (_jsContext._contextRef == null) {
         _messageQueue.add(message);

@@ -81,9 +81,9 @@ class _Image extends ComponentView {
             fit: getFit(context),
           );
         }
-      } else if (engine?._debugger != null) {
+      } else if (engine?.debugger != null) {
         final assetUrl =
-            'http://${engine!._debugger!.serverAddr}/assets/$assetName';
+            'http://${engine!.debugger!.serverAddr}/assets/$assetName';
         return buildNetworkImage(context, assetUrl);
       } else {
         return getEngine(context)
