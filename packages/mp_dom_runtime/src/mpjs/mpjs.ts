@@ -30,6 +30,7 @@ interface MPJSSetValueParams {
 export class MPJS {
   engineScope: { [key: string]: any } = {};
   objectRefs: { [key: string]: any } = {};
+  funcRefs: { [key: string]: any } = {};
 
   constructor(readonly engine: Engine) {}
 
@@ -127,17 +128,22 @@ export class MPJS {
   }
 
   wrapArgument(arg: any, funcCallback: (funcId: string, args: any[]) => void): any {
+    console.log(arg);  
     if (typeof arg === "string" && arg.indexOf("func:") === 0) {
       const funcId = arg;
       const self = this;
-      return function () {
-        let cbArgs = [];
-        for (let index = 0; index < arguments.length; index++) {
-          const element = arguments[index];
-          cbArgs.push(self.wrapResult(element));
-        }
-        funcCallback(funcId, cbArgs);
-      };
+      const func =
+        this.funcRefs[arg] ??
+        function () {
+          let cbArgs = [];
+          for (let index = 0; index < arguments.length; index++) {
+            const element = arguments[index];
+            cbArgs.push(self.wrapResult(element));
+          }
+          funcCallback(funcId, cbArgs);
+        };
+      this.funcRefs[arg] = func;
+      return func;
     } else if (typeof arg === "string" && arg.indexOf("obj:") === 0) {
       return this.objectRefs[arg.replace("obj:", "")];
     } else if (typeof arg === "object" && arg instanceof Array) {
