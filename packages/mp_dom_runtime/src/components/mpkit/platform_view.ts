@@ -54,9 +54,19 @@ export class MPPlatformView extends ComponentView {
   setAttributes(attributes: any): void {
     super.setAttributes(attributes);
     if (__MP_TARGET_BROWSER__) {
-      for (const key in attributes) {
-        this.htmlElement.setAttribute(key, attributes[key]);
+      let keys: string[] = [];
+      try {
+        keys = attributes.__keys__ ?? Object.keys(attributes);
+      } catch (error) {
+        keys = Object.keys(attributes);
       }
+      keys.forEach((key) => {
+        try {
+          this.htmlElement.setAttribute(key, attributes[key]);
+        } catch (error) {
+          console.error(error);
+        }
+      });
     }
   }
 
