@@ -153,6 +153,15 @@ class I18n {
     }
   }
 
+  static reserveTTProject() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '该工程需要输出到字节（抖音）小程序吗？(如果选择否，将删除 tt 目录。)';
+      default:
+        return 'Will this project build to bytedance miniprogram?(If choose false, will remove tt dir.)';
+    }
+  }
+
   static reserveFlutterappProject() {
     switch (currentLang) {
       case Lang.zh:

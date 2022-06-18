@@ -58,6 +58,15 @@ void main(List<String> args) {
       Directory('swanapp').deleteSync(recursive: true);
     }
   }
+  if (Directory('tt').existsSync()) {
+    final reserveTTProjectDialog = CLI_Dialog(booleanQuestions: [
+      [I18n.reserveTTProject(), 'Yes']
+    ]);
+    final reserveTTProjectAnswer = reserveTTProjectDialog.ask()['Yes'];
+    if (!reserveTTProjectAnswer) {
+      Directory('tt').deleteSync(recursive: true);
+    }
+  }
   if (Directory('flutterapp').existsSync()) {
     final reserveFlutterappProjectDialog = CLI_Dialog(booleanQuestions: [
       [I18n.reserveFlutterappProject(), 'Yes']
