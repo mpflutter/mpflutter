@@ -90,6 +90,8 @@ class MPChannel {
           handleAssetsRequest(req);
         } else if (req.uri.path.startsWith('/pubspec.yaml')) {
           handlePubspecRequest(req);
+        } else if (req.uri.path.startsWith('/playbox-app.json')) {
+          handlePlayboxAppJSONRequest(req);
         } else if (req.uri.path.startsWith('/app.mpk')) {
           handleAppMpkRequest(req);
         } else {
@@ -189,6 +191,29 @@ class MPChannel {
       ..statusCode = 200
       ..add(File('./pubspec.yaml').readAsBytesSync())
       ..close();
+  }
+
+  static void handlePlayboxAppJSONRequest(HttpRequest request) async {
+    if (File(path.join('lib', 'playbox.config.dart')).existsSync()) {
+      try {
+        final result = await Process.run('dart', ['./lib/playbox.config.dart']);
+        request.response
+          ..statusCode = 200
+          ..add(utf8.encode((result.stdout as String)))
+          // ignore: unawaited_futures
+          ..close();
+      } catch (e) {
+        request.response
+          ..statusCode = 500
+          // ignore: unawaited_futures
+          ..close();
+      }
+    } else {
+      request.response
+        ..statusCode = 404
+        // ignore: unawaited_futures
+        ..close();
+    }
   }
 
   static void handleAppMpkRequest(HttpRequest request) async {

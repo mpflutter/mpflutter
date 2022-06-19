@@ -20,6 +20,7 @@ import './mpjs/mpjs.dart' as mpjs;
 
 export './mpkit/mpkit.dart';
 export './wechat_miniprogram/wechat_miniprogram.dart';
+export './playbox_program/playbox_app_config.dart';
 
 part 'document.dart';
 part 'plugin.dart';
