@@ -28,8 +28,8 @@ class _MPDebugger extends ChangeNotifier {
   void start() {
     if (_stopped) return;
     socket = IOWebSocketChannel.connect(
-      Uri.parse('ws://$serverAddr/ws'),
-      pingInterval: const Duration(seconds: 5),
+      Uri.parse('ws://$serverAddr/ws?clientType=playboxProgram'),
+      pingInterval: const Duration(seconds: 600),
     );
     socket!.stream.listen((event) {
       setConnected(true);

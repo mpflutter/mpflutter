@@ -68,6 +68,9 @@ class MPChannel {
             MPEnv.debugEnvHost = MPEnvHostType.wechatMiniProgram;
           } else if (req.uri.queryParameters['clientType'] == 'ttMiniProgram') {
             MPEnv.debugEnvHost = MPEnvHostType.ttMiniProgram;
+          } else if (req.uri.queryParameters['clientType'] ==
+              'playboxProgram') {
+            MPEnv.debugEnvHost = MPEnvHostType.playboxProgram;
           } else {
             MPEnv.debugEnvHost = null;
           }

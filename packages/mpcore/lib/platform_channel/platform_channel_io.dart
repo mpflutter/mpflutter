@@ -9,13 +9,12 @@ class _PlatformChannelIO {
     ui.PlatformMessageResponseCallback? callback,
   ) {
     MethodCall? methodMessage;
-    try {
-      methodMessage = StandardMethodCodec().decodeMethodCall(data);
-    } catch (e) {
-      methodMessage = JSONMethodCodec().decodeMethodCall(data);
-    }
-    if (methodMessage == null) {
-      throw 'FormatException: Message corrupted';
+    if (data != null) {
+      try {
+        methodMessage = StandardMethodCodec().decodeMethodCall(data);
+      } catch (e) {
+        methodMessage = JSONMethodCodec().decodeMethodCall(data);
+      }
     }
     final seqId = _generateSeqId();
     if (callback != null) {
@@ -26,8 +25,8 @@ class _PlatformChannelIO {
       'message': {
         'event': 'invokeMethod',
         'method': method,
-        'beInvokeMethod': methodMessage.method,
-        'beInvokeParams': methodMessage.arguments,
+        'beInvokeMethod': methodMessage?.method,
+        'beInvokeParams': methodMessage?.arguments,
         'seqId': seqId,
       },
     }));

@@ -38,6 +38,7 @@ void _buildDartJS(List<String> args) {
         p.join('lib', 'main.dart'),
         ...dart2JSParams,
         '-Ddart.vm.product=true',
+        '-Dmpflutter.hostType=playboxProgram',
         '-o',
         p.join('build', 'main.dart.js'),
       ],

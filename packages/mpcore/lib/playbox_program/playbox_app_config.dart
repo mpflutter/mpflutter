@@ -11,6 +11,21 @@ class PlayboxAppConfig {
     required this.coverInfo,
   });
 
+  static PlayboxAppConfig fromJSON(Map json) {
+    return PlayboxAppConfig(
+      appId: json['appId'],
+      appType: (() {
+        switch (json['appType']) {
+          case 'applet':
+            return PlayboxAppType.applet;
+          default:
+            return PlayboxAppType.applet;
+        }
+      })(),
+      coverInfo: PlayboxCoverInfo.fromJSON(json['coverInfo']),
+    );
+  }
+
   Map toJson() {
     return {
       'appId': appId,
@@ -36,6 +51,15 @@ class PlayboxCoverInfo {
     this.icon,
     required this.color,
   });
+
+  static PlayboxCoverInfo fromJSON(Map json) {
+    return PlayboxCoverInfo(
+      name: json['name'],
+      description: json['description'],
+      icon: json['icon'],
+      color: Color(int.tryParse(json['color']) ?? 0),
+    );
+  }
 
   Map toJson() {
     return {

@@ -2,6 +2,7 @@ part of '../mp_flutter_runtime.dart';
 
 class _MPPlatformChannelIO {
   static final responseCallbacks = <String, Completer>{};
+  static final eventChannelStreamSubscriptions = <String, StreamSubscription>{};
 
   final MPEngine engine;
   final pluginInstances = <String, dynamic>{};
@@ -28,11 +29,12 @@ class _MPPlatformChannelIO {
     switch (event) {
       case 'invokeMethod':
         String method = data["method"];
-        String beInvokeMethod = data["beInvokeMethod"];
+        String? beInvokeMethod = data["beInvokeMethod"];
         dynamic beInvokeParams = data["beInvokeParams"];
+        dynamic beInvokeData = data["beInvokeData"];
         dynamic seqId = data["seqId"];
         dynamic instance = pluginInstances[method];
-        if (instance is MPMethodChannel) {
+        if (instance is MPMethodChannel && beInvokeMethod != null) {
           try {
             final result = await instance.onMethodCall(
               beInvokeMethod,
@@ -82,10 +84,37 @@ class _MPPlatformChannelIO {
               }
               return const StandardMethodCodec();
             })();
-            final result = await MethodChannel(method, codec).invokeMethod(
-              beInvokeMethod,
-              beInvokeParams,
-            );
+            dynamic result;
+            if (beInvokeMethod != null) {
+              if (beInvokeMethod == "listen") {
+                eventChannelStreamSubscriptions[method] =
+                    EventChannel(method, codec)
+                        .receiveBroadcastStream()
+                        .listen((data) {
+                  engine._sendMessage({
+                    'type': 'platform_channel',
+                    'message': {
+                      'event': 'callbackEventSink',
+                      'method': method,
+                      'result': data,
+                      'seqId': seqId,
+                    },
+                  });
+                });
+              } else if (beInvokeMethod == "cancel") {
+                eventChannelStreamSubscriptions[method]?.cancel();
+              }
+              result = await MethodChannel(method, codec).invokeMethod(
+                beInvokeMethod,
+                beInvokeParams,
+              );
+            } else {
+              result = await BasicMessageChannel(
+                      method, const StandardMessageCodec())
+                  .send(
+                beInvokeData,
+              );
+            }
             engine._sendMessage({
               'type': 'platform_channel',
               'message': {

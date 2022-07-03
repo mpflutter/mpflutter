@@ -9,6 +9,7 @@ Future<Widget?>? main(List<String> args) async {
     coverInfo: PlayboxCoverInfo(
       name: '模板工程',
       color: Colors.blue,
+      icon: MaterialIcons.school,
     ),
   );
   print(json.encode(appConfig));
