@@ -1,28 +1,30 @@
 import 'package:flutter/material.dart';
 
-class PlayboxAppConfig {
+class PlayBoxAppConfig {
   String appId;
-  PlayboxAppType appType;
-  PlayboxCoverInfo coverInfo;
+  PlayBoxAppType appType;
+  PlayBoxCoverInfo coverInfo;
+  PlayBoxCategoryInfo? categoryInfo;
 
-  PlayboxAppConfig({
+  PlayBoxAppConfig({
     required this.appId,
-    this.appType = PlayboxAppType.applet,
+    this.appType = PlayBoxAppType.applet,
     required this.coverInfo,
+    this.categoryInfo,
   });
 
-  static PlayboxAppConfig fromJSON(Map json) {
-    return PlayboxAppConfig(
+  static PlayBoxAppConfig fromJSON(Map json) {
+    return PlayBoxAppConfig(
       appId: json['appId'],
       appType: (() {
         switch (json['appType']) {
           case 'applet':
-            return PlayboxAppType.applet;
+            return PlayBoxAppType.applet;
           default:
-            return PlayboxAppType.applet;
+            return PlayBoxAppType.applet;
         }
       })(),
-      coverInfo: PlayboxCoverInfo.fromJSON(json['coverInfo']),
+      coverInfo: PlayBoxCoverInfo.fromJSON(json['coverInfo']),
     );
   }
 
@@ -31,29 +33,30 @@ class PlayboxAppConfig {
       'appId': appId,
       'appType': appType.name,
       'coverInfo': coverInfo,
+      'categoryInfo': categoryInfo,
     }..removeWhere((key, value) => value == null);
   }
 }
 
-enum PlayboxAppType {
+enum PlayBoxAppType {
   applet,
 }
 
-class PlayboxCoverInfo {
+class PlayBoxCoverInfo {
   String name;
   String? description;
   String? icon;
   Color color;
 
-  PlayboxCoverInfo({
+  PlayBoxCoverInfo({
     required this.name,
     this.description,
     this.icon,
     required this.color,
   });
 
-  static PlayboxCoverInfo fromJSON(Map json) {
-    return PlayboxCoverInfo(
+  static PlayBoxCoverInfo fromJSON(Map json) {
+    return PlayBoxCoverInfo(
       name: json['name'],
       description: json['description'],
       icon: json['icon'],
@@ -67,6 +70,18 @@ class PlayboxCoverInfo {
       'description': description,
       'icon': icon,
       'color': color.value.toString(),
+    }..removeWhere((key, value) => value == null);
+  }
+}
+
+class PlayBoxCategoryInfo {
+  String name;
+
+  PlayBoxCategoryInfo({required this.name});
+
+  Map toJson() {
+    return {
+      'name': name,
     }..removeWhere((key, value) => value == null);
   }
 }

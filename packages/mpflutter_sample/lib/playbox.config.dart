@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:mpcore/mpcore.dart';
 
 Future<Widget?>? main(List<String> args) async {
-  final appConfig = PlayboxAppConfig(
+  final appConfig = PlayBoxAppConfig(
     appId: 'mpflutter_template',
-    coverInfo: PlayboxCoverInfo(
+    coverInfo: PlayBoxCoverInfo(
       name: '模板工程',
       color: Colors.blue,
       icon: MaterialIcons.school,

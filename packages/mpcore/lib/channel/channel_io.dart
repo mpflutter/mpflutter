@@ -94,7 +94,7 @@ class MPChannel {
         } else if (req.uri.path.startsWith('/pubspec.yaml')) {
           handlePubspecRequest(req);
         } else if (req.uri.path.startsWith('/playbox-app.json')) {
-          handlePlayboxAppJSONRequest(req);
+          handlePlayBoxAppJSONRequest(req);
         } else if (req.uri.path.startsWith('/app.mpk')) {
           handleAppMpkRequest(req);
         } else {
@@ -196,7 +196,7 @@ class MPChannel {
       ..close();
   }
 
-  static void handlePlayboxAppJSONRequest(HttpRequest request) async {
+  static void handlePlayBoxAppJSONRequest(HttpRequest request) async {
     if (File(path.join('lib', 'playbox.config.dart')).existsSync()) {
       try {
         final result = await Process.run('dart', ['./lib/playbox.config.dart']);
