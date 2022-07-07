@@ -33,8 +33,10 @@ void _buildDartJS(List<String> args) {
     dart2JSParams.add('-O4');
   }
   final dart2JsResult = Process.runSync(
-      'dart2js',
+      'dart',
       [
+        'compile',
+        'js',
         p.join('lib', 'main.dart'),
         ...dart2JSParams,
         '-Ddart.vm.product=true',

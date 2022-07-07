@@ -44,8 +44,7 @@ _createBuildDir() {
 Map? _fetchMiniProgramConfig() {
   if (File(p.join('lib', 'tt.config.dart')).existsSync()) {
     try {
-      final result =
-          Process.runSync('dart', [p.join('lib', 'tt.config.dart')]);
+      final result = Process.runSync('dart', [p.join('lib', 'tt.config.dart')]);
       return json.decode(result.stdout);
     } catch (e) {}
   }
@@ -57,8 +56,10 @@ void _buildDartJS(List<String> args) {
     dart2JSParams.add('-O4');
   }
   final dart2JsResult = Process.runSync(
-      'dart2js',
+      'dart',
       [
+        'compile',
+        'js',
         p.join('lib', 'main.dart'),
         ...dart2JSParams,
         '-Ddart.vm.product=true',
