@@ -31,7 +31,7 @@ class PlayBoxAppConfig {
   Map toJson() {
     return {
       'appId': appId,
-      'appType': appType.name,
+      'appType': appType.toString().replaceAll('PlayBoxAppType.', ''),
       'coverInfo': coverInfo,
       'categoryInfo': categoryInfo,
     }..removeWhere((key, value) => value == null);
