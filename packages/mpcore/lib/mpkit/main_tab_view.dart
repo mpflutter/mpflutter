@@ -14,11 +14,19 @@ class MPMainTabItem {
 
 class MPMainTabController extends ChangeNotifier {
   MPMainTabViewState? _state;
+  Future<bool> Function(int)? _canJump;
+
+  MPMainTabController({Future<bool> Function(int)? canJump})
+      : _canJump = canJump;
 
   int get currentPage {
     final state = _state;
     if (state == null) return 0;
     return state.currentPage;
+  }
+
+  Future<bool> canJump(int page) async {
+    return await _canJump?.call(page) ?? true;
   }
 
   void jumpToPage(int page) async {
@@ -105,6 +113,11 @@ class MPMainTabViewState extends State<MPMainTabView> {
                   k == currentPage ? v.activeTabWidget : v.inactiveTabWidget;
               final handler = GestureDetector(
                 onTap: () async {
+                  if (widget.controller != null) {
+                    if (await widget.controller!.canJump(k) != true) {
+                      return;
+                    }
+                  }
                   setState(() {
                     currentPage = k;
                     loading = true;

@@ -7,7 +7,9 @@ class MainTabViewPage extends StatefulWidget {
 }
 
 class _MainTabViewPageState extends State<MainTabViewPage> {
-  final controller = MPMainTabController();
+  final controller = MPMainTabController(canJump: (page) async {
+    return true;
+  });
 
   @override
   void initState() {
