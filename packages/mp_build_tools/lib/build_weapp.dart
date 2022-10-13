@@ -54,10 +54,11 @@ Map _createAppJson() {
   final _appJson = json.decode(
     File(p.join('weapp', 'app.json')).readAsStringSync(),
   ) as Map;
-  final pages = _appJson["pages"];
+  final List pages = _appJson["pages"];
   Map<dynamic, dynamic> pagesMap = miniProgramConfig!["pages"];
   pagesMap.keys.toList().forEach((k) {
-    pages.add(k.split("/")[1]);
+    String page = k.split("/")[1];
+    if (!pages.contains(page)) pages.add(page);
   });
   _appJson["pages"] = pages;
   return _appJson;
