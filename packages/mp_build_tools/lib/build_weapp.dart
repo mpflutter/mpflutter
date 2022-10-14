@@ -12,10 +12,12 @@ Map? appJson;
 
 main(List<String> args) {
   print(I18n.building());
+  appJson = json.decode(
+    File(p.join('weapp', 'app.json')).readAsStringSync(),
+  ) as Map;
   _checkPubspec();
   _createBuildDir();
   miniProgramConfig = _fetchMiniProgramConfig();
-  appJson = _createAppJson();
   plugin_builder.main(args);
   _copyWeappSource();
   _createPages();
@@ -47,21 +49,6 @@ Map? _fetchMiniProgramConfig() {
       return json.decode(result.stdout);
     } catch (e) {}
   }
-  return null;
-}
-
-Map _createAppJson() {
-  final _appJson = json.decode(
-    File(p.join('weapp', 'app.json')).readAsStringSync(),
-  ) as Map;
-  final List pages = _appJson["pages"];
-  Map<dynamic, dynamic> pagesMap = miniProgramConfig!["pages"];
-  pagesMap.keys.toList().forEach((k) {
-    String page = k.split("/")[1];
-    if (!pages.contains(page)) pages.add(page);
-  });
-  _appJson["pages"] = pages;
-  return _appJson;
 }
 
 void _buildDartJS(List<String> args) {
