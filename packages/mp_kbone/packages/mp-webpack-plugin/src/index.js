@@ -242,11 +242,12 @@ class MpPlugin {
                 const pageExtraConfig = pageConfig && pageConfig.extra || {}
                 const packageName = subpackagesMap[entryName]
                 const pageRoute = `${packageName ? packageName + '/' : ''}pages/${entryName}/index`
-                const assetPathPrefix = packageName && !needEmitConfigToSubpackage ? '../' : ''
+                const configPathPrefix = packageName && !needEmitConfigToSubpackage ? '../' : ''
+                const assetPathPrefix = packageName ? '../' : ''
 
                 // 页面 js
                 let pageJsContent = pageJsTmpl
-                    .replace('/* CONFIG_PATH */', `${assetPathPrefix}../../config`)
+                    .replace('/* CONFIG_PATH */', `${configPathPrefix}../../config`)
                     .replace('/* INIT_FUNCTION */', `function init(window, document) {${assets.js.map(js => 'require(\'' + getAssetPath(assetPathPrefix, js, assetsSubpackageMap) + '\')(window, document)').join(';')}}`)
                 let pageScrollFunction = ''
                 let reachBottomFunction = ''
@@ -267,23 +268,27 @@ class MpPlugin {
                 addFile(compilation, `../${pageRoute}.js`, pageJsContent)
 
                 // 页面 wxml
-                let pageWxmlContent = `<element wx:if="{{pageId}}" class="{{bodyClass}}" style="{{bodyStyle}}" data-private-node-id="e-body" data-private-page-id="{{pageId}}" ${wxCustomComponentRoot || useWeui ? 'generic:custom-component="custom-component"' : ''}></element>`
+                let pageWxmlContent = `<element wx:if="{{pageId}}" class="{{bodyClass}}" style="{{bodyStyle}}" data-private-node-id="e-body" data-private-page-id="{{pageId}}" private-node-id="e-body" private-page-id="{{pageId}}" ${wxCustomComponentRoot || useWeui ? 'generic:custom-component="custom-component"' : ''}></element>`
                 if (loadingView) pageWxmlContent = `<loading-view wx:if="{{loading}}" class="miniprogram-loading-view" page-name="${entryName}"></loading-view>` + pageWxmlContent
                 if (rem || pageStyle) pageWxmlContent = `<page-meta ${rem ? 'root-font-size="{{rootFontSize}}"' : ''} ${pageStyle ? 'page-style="{{pageStyle}}"' : ''}></page-meta>` + pageWxmlContent
                 addFile(compilation, `../${pageRoute}.wxml`, pageWxmlContent)
+                addFile(compilation, `../${pageRoute}.axml`, pageWxmlContent.replace(/wx:/g, 'a:')) // ali
 
                 // 页面 wxss
                 let pageWxssContent = assets.css.map(css => `@import "${getAssetPath(assetPathPrefix, css, assetsSubpackageMap)}";`).join('\n')
                 if (loadingView) pageWxssContent = '.miniprogram-loading-view{position:fixed;top:0;left:0;bottom:0;right:0;z-index:0;}.miniprogram-root{display:block;position:relative;z-index:1;background:#fff;}' + pageWxssContent
                 if (pageBackgroundColor) pageWxssContent = `page{background-color:${pageBackgroundColor};}\n` + pageWxssContent
                 addFile(compilation, `../${pageRoute}.wxss`, adjustCss(pageWxssContent))
+                addFile(compilation, `../${pageRoute}.acss`, adjustCss(pageWxssContent)) // ali
+                
 
                 // 页面 json
                 const pageJson = {
                     ...pageExtraConfig,
                     enablePullDownRefresh: !!pullDownRefresh,
                     usingComponents: {
-                        element: 'miniprogram-element',
+                        element: '../../miniprogram_npm/miniprogram-element/index',
+                        // element: 'miniprogram-element',
                     },
                 }
                 if (loadingView) pageJson.usingComponents['loading-view'] = `${assetPathPrefix}../../loading-view/${loadingViewName}`
@@ -318,6 +323,41 @@ class MpPlugin {
             const isEmitApp = appConfig !== 'noemit'
             const isEmitProjectConfig = appConfig !== 'noconfig'
             let workersDir = 'common/workers'
+
+            // tabbar
+            let tabBar
+            if (tabBarConfig.list && tabBarConfig.list.length) {
+                tabBar = Object.assign({}, tabBarConfig)
+                tabBar.list = tabBarConfig.list.map(item => {
+                    const iconPathName = item.iconPath ? _.md5File(item.iconPath) + path.extname(item.iconPath) : ''
+                    if (iconPathName) _.copyFile(item.iconPath, path.resolve(outputPath, `../images/${iconPathName}`))
+                    const selectedIconPathName = item.selectedIconPath ? _.md5File(item.selectedIconPath) + path.extname(item.selectedIconPath) : ''
+                    if (selectedIconPathName) _.copyFile(item.selectedIconPath, path.resolve(outputPath, `../images/${selectedIconPathName}`))
+                    tabBarMap[`/pages/${item.pageName}/index`] = true
+
+                    const tabBarItem = {
+                        pagePath: `pages/${item.pageName}/index`,
+                        text: item.text,
+                    }
+                    if (iconPathName) tabBarItem.iconPath = `./images/${iconPathName}`
+                    if (selectedIconPathName) tabBarItem.selectedIconPath = `./images/${selectedIconPathName}`
+
+                    return tabBarItem
+                })
+
+                if (tabBar.custom) {
+                    // 自定义 tabBar
+                    const customTabBarDir = tabBar.custom
+                    tabBar.custom = true
+                    compilation.contextDependencies.add(customTabBarDir) // 支持 watch
+                    _.copyDir(customTabBarDir, path.resolve(outputPath, '../custom-tab-bar'))
+                }
+            }
+
+            // worker
+            if (generateConfig.worker) {
+                workersDir = typeof generateConfig.worker === 'string' ? generateConfig.worker : workersDir
+            }
 
             if (isEmitApp) {
                 // app js
@@ -371,41 +411,10 @@ class MpPlugin {
                     preloadRule,
                     ...userAppJson,
                 }
-                if (tabBarConfig.list && tabBarConfig.list.length) {
-                    // tabBar
-                    const tabBar = Object.assign({}, tabBarConfig)
-                    tabBar.list = tabBarConfig.list.map(item => {
-                        const iconPathName = item.iconPath ? _.md5File(item.iconPath) + path.extname(item.iconPath) : ''
-                        if (iconPathName) _.copyFile(item.iconPath, path.resolve(outputPath, `../images/${iconPathName}`))
-                        const selectedIconPathName = item.selectedIconPath ? _.md5File(item.selectedIconPath) + path.extname(item.selectedIconPath) : ''
-                        if (selectedIconPathName) _.copyFile(item.selectedIconPath, path.resolve(outputPath, `../images/${selectedIconPathName}`))
-                        tabBarMap[`/pages/${item.pageName}/index`] = true
 
-                        const tabBarItem = {
-                            pagePath: `pages/${item.pageName}/index`,
-                            text: item.text,
-                        }
-                        if (iconPathName) tabBarItem.iconPath = `./images/${iconPathName}`
-                        if (selectedIconPathName) tabBarItem.selectedIconPath = `./images/${selectedIconPathName}`
+                if (tabBar) appJson.tabBar = tabBar
+                if (generateConfig.worker) appJson.workers = workersDir
 
-                        return tabBarItem
-                    })
-
-                    if (tabBar.custom) {
-                        // 自定义 tabBar
-                        const customTabBarDir = tabBar.custom
-                        tabBar.custom = true
-                        compilation.contextDependencies.add(customTabBarDir) // 支持 watch
-                        _.copyDir(customTabBarDir, path.resolve(outputPath, '../custom-tab-bar'))
-                    }
-
-                    appJson.tabBar = tabBar
-                }
-                if (generateConfig.worker) {
-                    // workers
-                    workersDir = typeof generateConfig.worker === 'string' ? generateConfig.worker : workersDir
-                    appJson.workers = workersDir
-                }
                 if (useWeui) {
                     // 使用 weui 扩展库
                     appJson.useExtendedLib = appJson.useExtendedLib || {}
@@ -528,7 +537,7 @@ class MpPlugin {
                 // custom-component/index.wxml
                 addFile(compilation, '../custom-component/index.wxml', names.map((key, index) => {
                     const {props = [], events = []} = wxCustomComponents[key]
-                    return `<${key} wx:${index === 0 ? 'if' : 'elif'}="{{kboneCustomComponentName === '${key}'}}" id="{{id}}" class="{{className}}" style="{{style}}" ${props.map(name => name + '="{{' + (name.replace(/-([a-zA-Z])/g, (all, $1) => $1.toUpperCase())) + '}}"').join(' ')} ${events.map(name => 'bind' + name + '="on' + name + '"').join(' ')}><block wx:if="{{hasSlots}}"><element wx:for="{{slots}}" wx:key="nodeId" id="{{item.id}}" class="{{item.className}}" style="{{item.style}}" slot="{{item.slot}}" data-private-node-id="{{item.nodeId}}" data-private-page-id="{{item.pageId}}" generic:custom-component="custom-component"></element></block><slot/></${key}>`
+                    return `<${key} wx:${index === 0 ? 'if' : 'elif'}="{{kboneCustomComponentName === '${key}'}}" id="{{id}}" class="{{className}}" style="{{style}}" ${props.map(name => name + '="{{' + (name.replace(/-([a-zA-Z])/g, (all, $1) => $1.toUpperCase())) + '}}"').join(' ')} ${events.map(name => 'bind' + name + '="on' + name + '"').join(' ')}><block wx:if="{{hasSlots}}"><element wx:for="{{slots}}" wx:key="nodeId" id="{{item.id}}" class="{{item.className}}" style="{{item.style}}" slot="{{item.slot}}" data-private-node-id="{{item.nodeId}}" data-private-page-id="{{item.pageId}}" private-node-id="{{item.nodeId}}" private-page-id="{{item.pageId}}" generic:custom-component="custom-component"></element></block><slot/></${key}>`
                 }).join('\n'))
 
                 // custom-component/index.wxss

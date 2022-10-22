@@ -28,6 +28,9 @@ export class ComponentView {
 
   constructor(readonly document: Document, readonly initialAttributes?: any) {
     this.htmlElement = document.createElement(this.elementType());
+    if (__MP_TARGET_WEAPP__) {
+      this.htmlElement.getBoundingClientRect = (this.htmlElement as any).$$getBoundingClientRect;
+    }
   }
 
   dispose() {

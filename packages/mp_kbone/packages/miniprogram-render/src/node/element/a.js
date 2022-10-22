@@ -1,4 +1,5 @@
 const Element = require('../element')
+const Location = require('../../bom/location')
 const cache = require('../../util/cache')
 const Pool = require('../../util/pool')
 const tool = require('../../util/tool')
@@ -97,6 +98,34 @@ class HTMLAnchorElement extends Element {
             href: this.href,
             target: this.target,
         }
+    }
+
+    /**
+     * 对外属性和方法
+     */
+    get href() {
+        return this.$_attrs.get('href')
+    }
+
+    set href(value) {
+        value = '' + value
+
+        if (value.indexOf('//') === -1) {
+            const {origin} = cache.getConfig()
+            value = origin + (value[0] === '/' ? value : `/${value}`)
+        }
+
+        this.$_attrs.set('href', value)
+        const {
+            protocol, hostname, port, pathname, search, hash
+        } = Location.$$parse(value)
+
+        this.$_protocol = protocol || this.$_protocol
+        this.$_hostname = hostname || this.$_hostname
+        this.$_port = port || ''
+        this.$_pathname = pathname || '/'
+        this.$_search = search || ''
+        this.$_hash = hash || ''
     }
 
     get protocol() {

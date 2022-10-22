@@ -95,13 +95,13 @@ class Attribute {
             const datasetName = tool.toCamel(name.substr(5))
             element.dataset[datasetName] = value
         } else {
-            const config = cache.getConfig()
+            // const config = cache.getConfig()
 
             // 判断 value 是否需要删减
-            if (typeof value === 'string' && config.optimization.attrValueReduce && value.length > config.optimization.attrValueReduce && !(name === 'src')) {
-                console.warn(`property "${name}" will be deleted, because it's greater than ${config.optimization.attrValueReduce}`)
-                value = ''
-            }
+            // if (typeof value === 'string' && config.optimization.attrValueReduce && value.length > config.optimization.attrValueReduce) {
+            //     console.warn(`property "${name}" will be deleted, because it's greater than ${config.optimization.attrValueReduce}`)
+            //     value = ''
+            // }
 
             map[name] = value
 

@@ -1,6 +1,18 @@
 const Element = require('../element')
+const Event = require('../../event/event')
 const Pool = require('../../util/pool')
 const cache = require('../../util/cache')
+
+// eslint-disable-next-line no-var, block-scoped-var, semi
+var $wx;
+
+if (typeof $wx === 'undefined' && typeof my !== 'undefined') {
+    // 支付宝适配逻辑
+    // eslint-disable-next-line no-undef
+    $wx = my
+} else {
+    $wx = wx
+}
 
 const pool = new Pool()
 
@@ -105,6 +117,46 @@ class Image extends Element {
      */
     get src() {
         return this.$_attrs.get('src') || ''
+    }
+
+    set src(value) {
+        if (!value || typeof value !== 'string') return
+
+        this.$_attrs.set('src', value)
+
+        setTimeout(() => {
+            $wx.getImageInfo({
+                src: this.src,
+                success: res => {
+                    // 加载成功，调整图片的宽高
+                    this.$_resetRect(res)
+
+                    // 触发 load 事件
+                    this.$$trigger('load', {
+                        event: new Event({
+                            name: 'load',
+                            target: this,
+                            eventPhase: Event.AT_TARGET
+                        }),
+                        currentTarget: this,
+                    })
+                },
+                fail: () => {
+                    // 加载失败，调整图片的宽高
+                    this.$_resetRect({width: 0, height: 0})
+
+                    // 触发 error 事件
+                    this.$$trigger('error', {
+                        event: new Event({
+                            name: 'error',
+                            target: this,
+                            eventPhase: Event.AT_TARGET
+                        }),
+                        currentTarget: this,
+                    })
+                },
+            })
+        }, 0)
     }
 
     get width() {

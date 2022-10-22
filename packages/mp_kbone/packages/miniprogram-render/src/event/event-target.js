@@ -81,6 +81,8 @@ class EventTarget {
 
         eventName = eventName.toLowerCase()
 
+        const document = target.ownerDocument
+        const window = document ? document.defaultView : null
         const path = [target]
         let parentNode = target.parentNode
 
@@ -92,6 +94,11 @@ class EventTarget {
         if (path[path.length - 1].tagName === 'BODY') {
             // 如果最后一个节点是 document.body，则追加 document.documentElement
             path.push(parentNode)
+
+            if (eventName.indexOf('touch') === 0) {
+                // touch 系列事件冒泡到 window
+                path.push(window)
+            }
         }
 
         if (!event) {
@@ -99,7 +106,7 @@ class EventTarget {
             event = new Event({
                 name: eventName,
                 target,
-                timeStamp: miniprogramEvent.timeStamp,
+                timeStamp: window ? window.performance.now() : miniprogramEvent.timeStamp,
                 touches: miniprogramEvent.touches,
                 changedTouches: miniprogramEvent.changedTouches,
                 bubbles: true, // 默认都可以冒泡
@@ -213,8 +220,10 @@ class EventTarget {
         const onEventName = `on${eventName}`
 
         if (!event) {
+            const document = this.ownerDocument
+            const window = document ? document.defaultView : null
             event = new Event({
-                timeStamp: Date.now(),
+                timeStamp: window ? window.performance.now() : Date.now(),
                 touches: [],
                 changedTouches: [],
                 name: eventName,

@@ -1,5 +1,27 @@
 # 更新日志
 
+## 2.2.22
+
+* 支持设置额外追加样式
+* 兼容 webkit 前缀样式
+
+## 2.2.21
+
+* touch 系列事件支持冒泡到 window
+
+## 2.2.20
+
+* 支持 style.setProperty
+* 支持通过 style.setProperty 设置 css 变量
+
+## 2.2.19
+
+* 修复部分场景 querySelector/querySelectorAll 使用伪类选择器会报错的问题
+
+## 2.2.18
+
+* querySelector/querySelectorAll 支持 nth-of-type
+
 ## 2.2.17
 
 * 修复在某些场景会导致事件回调不触发的问题

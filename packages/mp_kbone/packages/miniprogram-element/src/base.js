@@ -23,18 +23,55 @@ let DOM_SUB_TREE_LEVEL = 10
 // setData 的模式，默认使用 data path 模式
 let isOriginalSetData = false
 
-const version = wx.getSystemInfoSync().SDKVersion
+// const version = wx.getSystemInfoSync().SDKVersion // 已经没有必要做这个判断了
 const behaviors = []
-if (_.compareVersion(version, '2.10.3') >= 0) behaviors.push('wx://form-field-button')
-if (_.compareVersion(version, '2.11.2') < 0) console.warn('当前基础库版本低于 2.11.2，建议调整最低支持基础库。')
+// if (_.compareVersion(version, '2.10.3') >= 0) behaviors.push('wx://form-field-button')
+// if (_.compareVersion(version, '2.16.1') < 0) console.warn('当前基础库版本过低，建议调整最低支持基础库版本。')
 
-module.exports = Behavior({
+// eslint-disable-next-line no-var
+var NativeBehavior
+if (typeof Behavior === 'undefined') {
+    NativeBehavior = function(options) {
+        Object.assign(options, options.methods)
+        return {
+            mixins: [
+                {
+                    onInit() {
+                        options.created()
+                    },
+                    didMount() {
+                        options.dataset = this.props
+                        options.setData = this.setData
+                        options.attached()
+                    },
+                    didUnmount() {
+                        options.detached()
+                    }
+                },
+                {data: options.data},
+                {props: {privateNodeId: '', privatePageId: ''}},
+                {methods: options.methods},
+            ],
+        }
+    }
+} else {
+    NativeBehavior = Behavior
+}
+
+// eslint-disable-next-line block-scoped-var
+module.exports = NativeBehavior({
     behaviors,
     properties: {
         inCover: {
             type: Boolean,
             value: false,
         },
+        privateNodeId: {
+            type: String,
+        },
+        privatePageId: {
+            type: String,
+        }
     },
     data: {
         wxCompName: '', // 需要渲染的内置组件名
@@ -51,8 +88,8 @@ module.exports = Behavior({
         isOriginalSetData = config.optimization.setDataMode === 'original'
     },
     attached() {
-        const nodeId = this.dataset.privateNodeId
-        const pageId = this.dataset.privatePageId
+        const nodeId = this.dataset.privateNodeId || this.data.privateNodeId
+        const pageId = this.dataset.privatePageId || this.data.privatePageId
         const data = {}
 
         this.nodeId = nodeId
@@ -183,7 +220,7 @@ module.exports = Behavior({
             if (!window) return
             domNode.$$trigger(eventName, {
                 event: new Event({
-                    timeStamp: Date.now(),
+                    timeStamp: window.performance.now(),
                     touches: evt && evt.touches,
                     changedTouches: evt && evt.changedTouches,
                     name: eventName,
@@ -231,7 +268,16 @@ module.exports = Behavior({
                     const window = cache.getWindow(this.pageId)
 
                     // 处理特殊节点事件
-                    if (domNode.tagName === 'LABEL' && evt.type === 'click' && !isCapture) {
+                    if (domNode.tagName === 'A' && evt.type === 'click' && !isCapture) {
+                        // 处理 a 标签的跳转
+                        const href = domNode.href
+                        const target = domNode.target
+
+                        if (!href || href.indexOf('javascript') !== -1) return
+
+                        if (target === '_blank') window.open(href)
+                        else window.location.href = href
+                    } else if (domNode.tagName === 'LABEL' && evt.type === 'click' && !isCapture) {
                         // 处理 label 的点击
                         const forValue = domNode.getAttribute('for')
                         let targetDomNode
@@ -423,8 +469,6 @@ module.exports = Behavior({
                 }
 
                 domNode._needCallTap = needCallTap
-            } else if (eventName === 'touchmove' && domNode._needCallTap) {
-                domNode._needCallTap = false
             }
         },
 

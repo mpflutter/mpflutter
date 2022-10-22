@@ -3,8 +3,20 @@ const ClassList = require('./class-list')
 const Style = require('./style')
 const Attribute = require('./attribute')
 const cache = require('../util/cache')
+const parser = require('../tree/parser')
 const tool = require('../util/tool')
 const Pool = require('../util/pool')
+
+// eslint-disable-next-line no-var, block-scoped-var, semi
+var $wx;
+
+if (typeof $wx === 'undefined' && typeof my !== 'undefined') {
+    // 支付宝适配逻辑
+    // eslint-disable-next-line no-undef
+    $wx = my
+} else {
+    $wx = wx
+}
 
 const pool = new Pool()
 
@@ -39,6 +51,7 @@ class Element extends Node {
         this.$_tagName = options.tagName || ''
         this.$_children = []
         this.$_nodeType = options.nodeType || Node.ELEMENT_NODE
+        this.$_unary = !!parser.voidMap[this.$_tagName.toLowerCase()]
         this.$_notTriggerUpdate = false
         this.$_dataset = null
         this.$_classList = null
@@ -231,6 +244,96 @@ class Element extends Node {
     }
 
     /**
+     * 遍历 dom 树，生成 html
+     */
+    $_generateHtml(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            // 文本节点
+            return node.textContent
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+            // 元素
+            const tagName = node.tagName.toLowerCase()
+            let html = `<${tagName}`
+
+            // 属性
+            if (node.behavior) html += ` behavior="${tool.escapeForHtmlGeneration(node.behavior)}"`
+            if (node.id) html += ` id="${tool.escapeForHtmlGeneration(node.id)}"`
+            if (node.className) html += ` class="${tool.escapeForHtmlGeneration(node.className)}"`
+
+            const styleText = node.style.cssText
+            if (styleText) html += ` style="${tool.escapeForHtmlGeneration(styleText)}"`
+
+            const src = node.src
+            if (src) html += ` src=${tool.escapeForHtmlGeneration(src)}`
+
+            const dataset = node.dataset
+            Object.keys(dataset).forEach(name => {
+                html += ` data-${tool.toDash(name)}="${tool.escapeForHtmlGeneration(dataset[name])}"`
+            })
+
+            html = this.$$dealWithAttrsForGenerateHtml(html, node)
+
+            if (node.$$isUnary) {
+                // 空标签
+                return `${html} />`
+            } else {
+                const childrenHtml = node.childNodes.map(child => this.$_generateHtml(child)).join('')
+                return `${html}>${childrenHtml}</${tagName}>`
+            }
+        }
+    }
+
+    /**
+     * 遍历 ast，生成 dom 树
+     */
+    $_generateDomTree(node) {
+        const {
+            type,
+            tagName = '',
+            attrs = [],
+            children = [],
+            content = '',
+        } = node
+
+        const nodeId = `b-${tool.getId()}` // 运行时生成，使用 b- 前缀
+
+        if (type === 'element') {
+            // 元素
+            const attrsMap = {}
+
+            // 属性列表转化成 map
+            for (const attr of attrs) {
+                const name = attr.name
+                let value = attr.value
+
+                if (name === 'style') value = value && value.replace('"', '\'') || ''
+
+                attrsMap[name] = value
+            }
+
+            const element = this.ownerDocument.$$createElement({
+                tagName, attrs: attrsMap, nodeId
+            })
+
+            for (let child of children) {
+                child = this.$_generateDomTree(child)
+
+                if (child) element.appendChild(child)
+            }
+
+            return element
+        } else if (type === 'text') {
+            // 文本
+            return this.ownerDocument.$$createTextNode({
+                content: tool.decodeContent(content), nodeId
+            })
+        } else if (type === 'comment') {
+            // 注释
+            return this.ownerDocument.createComment()
+        }
+    }
+
+    /**
      * 对应的 dom 信息
      */
     get $$domInfo() {
@@ -327,7 +430,7 @@ class Element extends Node {
 
             if (this.tagName === 'CANVAS') {
                 // TODO，为了兼容基础库的一个 bug，暂且如此实现
-                wx.createSelectorQuery().in(this.$$wxComponent).select(`.node-${this.$_nodeId}`).context(res => (res && res.context ? resolve(res.context) : reject()))
+                $wx.createSelectorQuery().in(this.$$wxComponent).select(`.node-${this.$_nodeId}`).context(res => (res && res.context ? resolve(res.context) : reject()))
                     .exec()
             } else {
                 window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).context(res => (res && res.context ? resolve(res.context) : reject())).exec()
@@ -347,7 +450,7 @@ class Element extends Node {
 
             if (this.tagName === 'CANVAS') {
                 // TODO，为了兼容基础库的一个 bug，暂且如此实现
-                resolve(wx.createSelectorQuery().in(this.$$wxComponent).select(`.node-${this.$_nodeId}`))
+                resolve($wx.createSelectorQuery().in(this.$$wxComponent).select(`.node-${this.$_nodeId}`))
             } else {
                 resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`))
             }
@@ -465,6 +568,122 @@ class Element extends Node {
         return this.$_children[this.$_children.length - 1]
     }
 
+    get innerHTML() {
+        return this.$_children.map(child => this.$_generateHtml(child)).join('')
+    }
+
+    set innerHTML(html) {
+        if (typeof html !== 'string') return
+
+        const fragment = this.ownerDocument.$$createElement({
+            tagName: 'documentfragment',
+            nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+            nodeType: Node.DOCUMENT_FRAGMENT_NODE,
+        })
+
+        // 解析成 ast
+        let ast = null
+        try {
+            ast = parser.parse(html)
+        } catch (err) {
+            console.error(err)
+        }
+
+        if (!ast) return
+
+        // 生成 dom 树
+        ast.forEach(item => {
+            const node = this.$_generateDomTree(item)
+            if (node) fragment.appendChild(node)
+        })
+
+        // 删除所有子节点
+        this.$_children.forEach(node => {
+            node.$$updateParent(null)
+
+            // 更新映射表
+            this.$_updateChildrenExtra(node, true)
+        })
+        this.$_children.length = 0
+
+        // 追加新子节点
+        if (this.$_tagName === 'table') {
+            // table 节点需要判断是否存在 tbody
+            let hasTbody = false
+
+            for (const child of fragment.childNodes) {
+                if (child.tagName === 'TBODY') {
+                    hasTbody = true
+                    break
+                }
+            }
+
+            if (!hasTbody) {
+                const tbody = this.ownerDocument.$$createElement({
+                    tagName: 'tbody',
+                    attrs: {},
+                    nodeType: Node.ELEMENT_NODE,
+                    nodeId: `b-${tool.getId()}`, // 运行时生成，使用 b- 前缀
+                })
+
+                tbody.appendChild(fragment)
+                this.appendChild(tbody)
+            }
+        } else {
+            this.appendChild(fragment)
+        }
+    }
+
+    get outerHTML() {
+        return this.$_generateHtml(this)
+    }
+
+    set outerHTML(html) {
+        if (typeof html !== 'string') return
+
+        // 解析成 ast，只取第一个作为当前节点
+        let ast = null
+        try {
+            ast = parser.parse(html)[0]
+        } catch (err) {
+            console.error(err)
+        }
+
+        if (ast) {
+            // 生成 dom 树
+            const node = this.$_generateDomTree(ast)
+
+            // 删除所有子节点
+            this.$_children.forEach(node => {
+                node.$$updateParent(null)
+
+                // 更新映射表
+                this.$_updateChildrenExtra(node, true)
+            })
+            this.$_children.length = 0
+
+            this.$_notTriggerUpdate = true // 先不触发更新
+
+            // 追加新子节点
+            const children = [].concat(node.childNodes)
+            for (const child of children) {
+                this.appendChild(child)
+            }
+
+            this.$_tagName = node.tagName.toLowerCase()
+            this.id = node.id || ''
+            this.className = node.className || ''
+            this.style.cssText = node.style.cssText || ''
+            this.src = node.src || ''
+            this.$_dataset = Object.assign({}, node.dataset)
+
+            this.$$dealWithAttrsForOuterHTML(node)
+
+            this.$_notTriggerUpdate = false // 重启触发更新
+            this.$_triggerParentUpdate()
+        }
+    }
+
     get innerText() {
         // WARN：此处处理成和 textContent 一致，不去判断是否会渲染出来的情况
         return this.textContent
@@ -536,7 +755,7 @@ class Element extends Node {
         if (+new Date() - this.$$scrollTimeStamp < 500) return // 为了兼容 mp-webpack-plugin@0.9.14 及以前的版本，在滚动事件触发后的 500ms 内，设置 scrollTop 不予处理
 
         value = parseInt(value, 10)
-        wx.pageScrollTo({scrollTop: value, duration: 0})
+        $wx.pageScrollTo({scrollTop: value, duration: 0})
         this.$$scrollTop = value
     }
 
@@ -873,7 +1092,12 @@ class Element extends Node {
     }
 
     getBoundingClientRect() {
-        return this.$$getBoundingClientRect()
+        // 不作任何实现，只作兼容使用
+        console.warn('getBoundingClientRect is not supported, please use dom.$$getBoundingClientRect instead of it')
+        return {
+            left: 0,
+            top: 0,
+        }
     }
 }
 

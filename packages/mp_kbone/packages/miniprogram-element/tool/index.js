@@ -156,7 +156,7 @@ function createIndexTemplate() {
 /**
  * 构建
  */
-function build() {
+function build(callback) {
     webpack(webpackConfig).run((err, stats) => {
         if (err) {
             console.log(err)
@@ -173,7 +173,33 @@ function build() {
                 publicPath: true,
             }))
         }
+        callback()
     })
+}
+
+function replaceRequire() {
+    let c = fs.readFileSync('dist/base.js', {encoding: 'utf-8'})
+    c = c.replace(/require\("miniprogram-render"\)/, "require('../miniprogram-render/index')")
+    fs.writeFileSync('dist/base.js', c)
+}
+
+function copyAxml() {
+    {
+        const template = fs.readFileSync(path.join(__dirname, '..', 'src', './index.axml'), 'utf8')
+        fs.writeFileSync(path.resolve(__dirname, '..', 'dist', './index.axml'), template, 'utf8')
+    }
+    {
+        const template = fs.readFileSync(path.join(__dirname, '..', 'src', './index.acss'), 'utf8')
+        fs.writeFileSync(path.resolve(__dirname, '..', 'dist', './index.acss'), template, 'utf8')
+    }
+    {
+        const template = fs.readFileSync(path.join(__dirname, '..', 'src', './index-vhost.axml'), 'utf8')
+        fs.writeFileSync(path.resolve(__dirname, '..', 'dist', './index-vhost.axml'), template, 'utf8')
+    }
+    {
+        const template = fs.readFileSync(path.join(__dirname, '..', 'src', './index-vhost.acss'), 'utf8')
+        fs.writeFileSync(path.resolve(__dirname, '..', 'dist', './index-vhost.acss'), template, 'utf8')
+    }
 }
 
 function main() {
@@ -182,6 +208,9 @@ function main() {
     createInnerComponentTemplate()
     createIndexTemplate()
 
-    build()
+    build(function() {
+        copyAxml()
+        replaceRequire()
+    })
 }
 main()

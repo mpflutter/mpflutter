@@ -69,7 +69,8 @@ const wxComponentMap = {
         properties: [{
             name: 'src',
             get(domNode) {
-                return domNode.src ? tool.completeURL(domNode.src, '', true) : ''
+                const window = cache.getWindow(domNode.$$pageId)
+                return domNode.src ? tool.completeURL(domNode.src, window.location.origin, true) : ''
             },
         }],
         handles: {
@@ -616,6 +617,11 @@ const wxComponentMap = {
                 return dealWithBoolValue(domNode, 'selectable')
             },
         }, {
+            name: 'userSelect',
+            get(domNode) {
+                return dealWithBoolValue(domNode, 'user-select')
+            },
+        }, {
             name: 'space',
             get(domNode) {
                 return domNode.getAttribute('space') || ''
@@ -768,6 +774,9 @@ const wxComponentMap = {
                 // 已废弃，建议使用：https://developers.weixin.qq.com/miniprogram/dev/framework/cityservice/cityservice-checkrealnameinfo.html
                 this.callSingleEvent('getrealnameauthinfo', evt)
             },
+            onButtonChooseAvatar(evt) {
+                this.callSingleEvent('chooseavatar', evt)
+            }
         },
     },
     editor: {
@@ -1665,7 +1674,8 @@ const wxComponentMap = {
         }, {
             name: 'src',
             get(domNode) {
-                return domNode.src ? tool.completeURL(domNode.src, '', true) : ''
+                const window = cache.getWindow(domNode.$$pageId)
+                return domNode.src ? tool.completeURL(domNode.src, window.location.origin, true) : ''
             },
         }, {
             name: 'mode',
@@ -1703,7 +1713,8 @@ const wxComponentMap = {
         properties: [{
             name: 'src',
             get(domNode) {
-                return domNode.src ? tool.completeURL(domNode.src, '', true) : ''
+                const window = cache.getWindow(domNode.$$pageId)
+                return domNode.src ? tool.completeURL(domNode.src, window.location.origin, true) : ''
             },
         }, {
             name: 'mode',
@@ -1805,8 +1816,9 @@ const wxComponentMap = {
         properties: [{
             name: 'url',
             get(domNode) {
+                const window = cache.getWindow(domNode.$$pageId)
                 const url = domNode.getAttribute('url')
-                return url ? tool.completeURL(url, '', true) : ''
+                return url ? tool.completeURL(url, window.location.origin, true) : ''
             },
         }, {
             name: 'mode',
@@ -1971,7 +1983,8 @@ const wxComponentMap = {
         properties: [{
             name: 'src',
             get(domNode) {
-                return domNode.src ? tool.completeURL(domNode.src, '', true) : ''
+                const window = cache.getWindow(domNode.$$pageId)
+                return domNode.src ? tool.completeURL(domNode.src, window.location.origin, true) : ''
             },
         }, {
             name: 'duration',
@@ -2057,7 +2070,8 @@ const wxComponentMap = {
         }, {
             name: 'poster',
             get(domNode) {
-                return domNode.poster ? tool.completeURL(domNode.poster, '', true) : ''
+                const window = cache.getWindow(domNode.$$pageId)
+                return domNode.poster ? tool.completeURL(domNode.poster, window.location.origin, true) : ''
             },
         }, {
             name: 'showMuteBtn',
@@ -2232,13 +2246,13 @@ const wxComponentMap = {
             name: 'longitude',
             canBeUserChanged: true,
             get(domNode) {
-                return dealWithNumber(domNode, 'longitude', 39.92)
+                return dealWithNumber(domNode, 'longitude', 116.46)
             },
         }, {
             name: 'latitude',
             canBeUserChanged: true,
             get(domNode) {
-                return dealWithNumber(domNode, 'latitude', 116.46)
+                return dealWithNumber(domNode, 'latitude', 39.92)
             },
         }, {
             name: 'scale',
@@ -2588,7 +2602,8 @@ const wxComponentMap = {
         properties: [{
             name: 'src',
             get(domNode) {
-                return domNode.src ? tool.completeURL(domNode.src, '', true) : ''
+                const window = cache.getWindow(domNode.$$pageId)
+                return domNode.src ? tool.completeURL(domNode.src, window.location.origin, true) : ''
             },
         }],
         handles: {

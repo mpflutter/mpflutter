@@ -20,6 +20,9 @@ export class MPPlatformView extends ComponentView {
     } else if (initialAttributes?.tag && __MP_TARGET_BROWSER__) {
       this.htmlElement = document.createElement(initialAttributes.tag);
     }
+    if (__MP_TARGET_WEAPP__) {
+      this.htmlElement.getBoundingClientRect = (this.htmlElement as any).$$getBoundingClientRect;
+    }
   }
 
   elementType() {

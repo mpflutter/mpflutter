@@ -49,6 +49,7 @@ Map? _fetchMiniProgramConfig() {
       return json.decode(result.stdout);
     } catch (e) {}
   }
+  return null;
 }
 
 void _buildDartJS(List<String> args) {

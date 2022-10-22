@@ -63,7 +63,7 @@ export class MPSwitch extends MPPlatformView {
   onMethodCall(method: string, args: any) {
     if (method === "setValue") {
       if (__MP_MINI_PROGRAM__) {
-        setDOMAttribute(this.htmlElement, "checked", args.value);
+        setDOMAttribute(this.htmlElement, "checked", args.value ? "true" : "false");
       } else if (__MP_TARGET_BROWSER__) {
         (this.inputElement as HTMLInputElement).checked = args.value;
       }

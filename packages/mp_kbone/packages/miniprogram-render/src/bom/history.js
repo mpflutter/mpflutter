@@ -4,6 +4,17 @@
 const Location = require('./location')
 const EventTarget = require('../event/event-target')
 
+// eslint-disable-next-line no-var, block-scoped-var, semi
+var $wx;
+
+if (typeof $wx === 'undefined' && typeof my !== 'undefined') {
+    // 支付宝适配逻辑
+    // eslint-disable-next-line no-undef
+    $wx = my
+} else {
+    $wx = wx
+}
+
 class History extends EventTarget {
     constructor(location) {
         super()
@@ -98,7 +109,7 @@ class History extends EventTarget {
             // 同源才允许操作
             if (title && typeof title === 'string') {
                 // 设置标题
-                wx.setNavigationBarTitle({title})
+                $wx.setNavigationBarTitle({title})
             }
 
 
@@ -119,7 +130,7 @@ class History extends EventTarget {
             // 同源才允许操作
             if (title && typeof title === 'string') {
                 // 设置标题
-                wx.setNavigationBarTitle({title})
+                $wx.setNavigationBarTitle({title})
             }
 
             // 替换 href，但不做跳转

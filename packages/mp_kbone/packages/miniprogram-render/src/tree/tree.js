@@ -1,3 +1,4 @@
+const QuerySelector = require('./query-selector')
 const tool = require('../util/tool')
 
 /**
@@ -34,6 +35,7 @@ class Tree {
         this.idMap = {}
         this.document = document
 
+        this.querySelector = new QuerySelector()
         if (nodeIdMap) nodeIdMap[root.nodeId] = this.root
 
         this.walk(root, this.root)
@@ -115,6 +117,20 @@ class Tree {
         walkDomTree(node || this.root, cache)
 
         return cache.classMap[className] || []
+    }
+
+    /**
+     * 查询符合条件的节点
+     */
+    query(selector, node) {
+        const cache = {}
+        walkDomTree(node || this.root, cache)
+
+        return this.querySelector.exec(selector, {
+            idMap: this.idMap,
+            tagMap: cache.tagMap,
+            classMap: cache.classMap,
+        })
     }
 }
 

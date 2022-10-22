@@ -1,6 +1,17 @@
 const Event = require('../event/event')
 const cache = require('../util/cache')
 
+// eslint-disable-next-line no-var, block-scoped-var, semi
+var $wx;
+
+if (typeof $wx === 'undefined' && typeof my !== 'undefined') {
+    // 支付宝适配逻辑
+    // eslint-disable-next-line no-undef
+    $wx = my
+} else {
+    $wx = wx
+}
+
 class Storage {
     constructor(pageId) {
         this.$_pageId = pageId
@@ -102,7 +113,7 @@ class LocalStorage extends Storage {
      */
     $_updateInfo() {
         try {
-            const info = wx.getStorageInfoSync()
+            const info = $wx.getStorageInfoSync()
             const windowList = cache.getWindowList() || []
             windowList.forEach(window => {
                 if (window) {
@@ -125,16 +136,16 @@ class LocalStorage extends Storage {
     getItem(key) {
         if (!key || typeof key !== 'string') return null
 
-        return wx.getStorageSync(key) || null
+        return $wx.getStorageSync(key) || null
     }
 
     setItem(key, data) {
         if (!key || typeof key !== 'string') return
         data = '' + data
 
-        const oldValue = wx.getStorageSync(key) || null
+        const oldValue = $wx.getStorageSync(key) || null
 
-        wx.setStorageSync(key, data)
+        $wx.setStorageSync(key, data)
         this.$_updateInfo()
         this.$_triggerStorage(key, data, oldValue)
     }
@@ -142,15 +153,15 @@ class LocalStorage extends Storage {
     removeItem(key) {
         if (!key || typeof key !== 'string') return
 
-        const oldValue = wx.getStorageSync(key) || null
+        const oldValue = $wx.getStorageSync(key) || null
 
-        wx.removeStorageSync(key)
+        $wx.removeStorageSync(key)
         this.$_updateInfo()
         this.$_triggerStorage(key, null, oldValue)
     }
 
     clear() {
-        wx.clearStorageSync()
+        $wx.clearStorageSync()
         this.$_updateInfo()
         this.$_triggerStorage(null, null, null, true)
     }

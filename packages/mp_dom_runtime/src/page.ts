@@ -40,6 +40,9 @@ export class Page {
       }
       this.readyCallback?.(undefined);
     });
+    if (__MP_TARGET_WEAPP__) {
+      this.element.getBoundingClientRect = (this.element as any).$$getBoundingClientRect;
+    }
   }
 
   async ready(): Promise<any> {

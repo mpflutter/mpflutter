@@ -2,6 +2,15 @@ const Document = require('./document')
 const EventTarget = require('./event/event-target')
 const Event = require('./event/event')
 const OriginalCustomEvent = require('./event/custom-event')
+const Location = require('./bom/location')
+const Navigator = require('./bom/navigator')
+const Screen = require('./bom/screen')
+const History = require('./bom/history')
+const Miniprogram = require('./bom/miniprogram')
+const {SessionStorage, LocalStorage} = require('./bom/storage')
+const WorkerImpl = require('./bom/worker')
+const Performance = require('./bom/performance')
+const OriginalXMLHttpRequest = require('./bom/xml-http-request')
 const Node = require('./node/node')
 const Element = require('./node/element')
 const TextNode = require('./node/text-node')
@@ -12,8 +21,27 @@ const Attribute = require('./node/attribute')
 const cache = require('./util/cache')
 const tool = require('./util/tool')
 
+// eslint-disable-next-line no-var, block-scoped-var, semi
+var $wx;
+
+if (typeof $wx === 'undefined' && typeof my !== 'undefined') {
+    // 支付宝适配逻辑
+    // eslint-disable-next-line no-undef
+    $wx = my
+} else {
+    $wx = wx
+}
+
 let lastRafTime = 0
 const WINDOW_PROTOTYPE_MAP = {
+    location: Location.prototype,
+    navigator: Navigator.prototype,
+    performance: Performance.prototype,
+    screen: Screen.prototype,
+    history: History.prototype,
+    localStorage: LocalStorage.prototype,
+    sessionStorage: SessionStorage.prototype,
+    XMLHttpRequest: OriginalXMLHttpRequest.prototype,
     event: Event.prototype,
 }
 const ELEMENT_PROTOTYPE_MAP = {
@@ -29,6 +57,7 @@ class Window extends EventTarget {
     constructor(pageId) {
         super()
 
+        const config = cache.getConfig()
         const timeOrigin = +new Date()
 
         this.$_pageId = pageId
@@ -37,6 +66,15 @@ class Window extends EventTarget {
         this.$_outerWidth = 0
         this.$_innerHeight = 0
         this.$_innerWidth = 0
+
+        this.$_location = new Location(pageId)
+        this.$_navigator = new Navigator()
+        this.$_screen = new Screen()
+        this.$_history = new History(this.$_location)
+        this.$_miniprogram = new Miniprogram(pageId)
+        this.$_localStorage = new LocalStorage(pageId)
+        this.$_sessionStorage = new SessionStorage(pageId)
+        this.$_performance = new Performance(timeOrigin)
 
         this.$_nowFetchingWebviewInfoPromise = null // 正在拉取 webview 端信息的 promise 实例
 
@@ -59,6 +97,15 @@ class Window extends EventTarget {
             }
         }
 
+        // XMLHttpRequest 构造器
+        this.$_xmlHttpRequestConstructor = class XMLHttpRequest extends OriginalXMLHttpRequest {constructor() { super(pageId) }}
+
+        // Worker/SharedWorker 构造器
+        if (config.generate && config.generate.worker) {
+            this.$_workerConstructor = class Worker extends WorkerImpl.Worker {constructor(url) { super(url, pageId) }}
+            this.$_sharedWorkerConstructor = class SharedWorker extends WorkerImpl.SharedWorker {constructor(url) { super(url, pageId) }}
+        }
+
         // react 环境兼容
         this.HTMLIFrameElement = function() {}
     }
@@ -67,6 +114,35 @@ class Window extends EventTarget {
      * 初始化内部事件
      */
     $_initInnerEvent() {
+        // 监听 location 的事件
+        this.$_location.addEventListener('hashchange', ({oldURL, newURL}) => {
+            this.$$trigger('hashchange', {
+                event: new Event({
+                    name: 'hashchange',
+                    target: this,
+                    eventPhase: Event.AT_TARGET,
+                    $$extra: {
+                        oldURL,
+                        newURL,
+                    },
+                }),
+                currentTarget: this,
+            })
+        })
+
+        // 监听 history 的事件
+        this.$_history.addEventListener('popstate', ({state}) => {
+            this.$$trigger('popstate', {
+                event: new Event({
+                    name: 'popstate',
+                    target: this,
+                    eventPhase: Event.AT_TARGET,
+                    $$extra: {state},
+                }),
+                currentTarget: this,
+            })
+        })
+
         // 监听滚动事件
         this.addEventListener('scroll', () => {
             const document = this.document
@@ -80,7 +156,7 @@ class Window extends EventTarget {
      */
     $_fetchDeviceInfo() {
         try {
-            const info = wx.getSystemInfoSync()
+            const info = $wx.getSystemInfoSync()
 
             this.$_outerHeight = info.screenHeight
             this.$_outerWidth = info.screenWidth
@@ -150,6 +226,13 @@ class Window extends EventTarget {
     }
 
     /**
+     * 是否是 window 对象
+     */
+    get $$isWindow() {
+        return true
+    }
+
+    /**
      * 销毁实例
      */
     $$destroy() {
@@ -157,6 +240,7 @@ class Window extends EventTarget {
 
         const pageId = this.$_pageId
 
+        WorkerImpl.destroy(pageId)
         Object.keys(subscribeMap).forEach(name => {
             const handlersMap = subscribeMap[name]
             if (handlersMap[pageId]) handlersMap[pageId] = null
@@ -566,7 +650,7 @@ class Window extends EventTarget {
     }
 
     get devicePixelRatio() {
-        return wx.getSystemInfoSync().pixelRatio
+        return $wx.getSystemInfoSync().pixelRatio
     }
 
     open(url) {
@@ -575,7 +659,7 @@ class Window extends EventTarget {
     }
 
     close() {
-        wx.navigateBack({
+        $wx.navigateBack({
             delta: 1,
         })
     }

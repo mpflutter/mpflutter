@@ -108,14 +108,20 @@ Component({
             type: String,
             value: '',
         },
+        privateNodeId: {
+            type: String,
+        },
+        privatePageId: {
+            type: String,
+        }
     },
     options: {
         addGlobalClass: true, // 开启全局样式
         virtualHost: true, // 开启虚拟化 host
     },
     attached() {
-        const nodeId = this.dataset.privateNodeId
-        const pageId = this.dataset.privatePageId
+        const nodeId = this.dataset.privateNodeId || this.data.privateNodeId
+        const pageId = this.dataset.privatePageId || this.data.privatePageId
         const data = {}
 
         this.nodeId = nodeId

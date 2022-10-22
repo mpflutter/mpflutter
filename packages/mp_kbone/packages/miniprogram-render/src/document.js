@@ -18,6 +18,18 @@ const Option = require('./node/element/option')
 const NotSupport = require('./node/element/not-support')
 const WxComponent = require('./node/element/wx-component')
 const WxCustomComponent = require('./node/element/wx-custom-component')
+const Cookie = require('./bom/cookie')
+
+// eslint-disable-next-line no-var, block-scoped-var, semi
+var $wx;
+
+if (typeof $wx === 'undefined' && typeof my !== 'undefined') {
+    // 支付宝适配逻辑
+    // eslint-disable-next-line no-undef
+    $wx = my
+} else {
+    $wx = wx
+}
 
 const CONSTRUCTOR_MAP = {
     A,
@@ -121,6 +133,7 @@ class Document extends EventTarget {
             nodeId: 'e-body',
             children: [],
         }, nodeIdMap, this)
+        this.$_cookie = new Cookie(pageName)
         this.$_config = null
 
         // documentElement
@@ -142,7 +155,7 @@ class Document extends EventTarget {
         if (cookieStore !== 'memory' && cookieStore !== 'globalmemory') {
             try {
                 const key = cookieStore === 'storage' ? `PAGE_COOKIE_${pageName}` : 'PAGE_COOKIE'
-                const cookie = wx.getStorageSync(key)
+                const cookie = $wx.getStorageSync(key)
                 if (cookie) this.$$cookieInstance.deserialize(cookie)
             } catch (err) {
                 // ignore
@@ -159,6 +172,20 @@ class Document extends EventTarget {
 
     get $$pageId() {
         return this.$_pageId
+    }
+
+    /**
+     * 完整的 cookie，包括 httpOnly 也能获取到
+     */
+    get $$cookie() {
+        return this.$_cookie.getCookie(this.URL, true)
+    }
+
+    /**
+     * 获取 cookie 实例
+     */
+    get $$cookieInstance() {
+        return this.$_cookie
     }
 
     /**
@@ -301,6 +328,16 @@ class Document extends EventTarget {
         return ''
     }
 
+    get cookie() {
+        return this.$_cookie.getCookie(this.URL)
+    }
+
+    set cookie(value) {
+        if (!value || typeof value !== 'string') return
+
+        this.$_cookie.setCookie(value, this.URL)
+    }
+
     get visibilityState() {
         return this.$_visibilityState
     }
@@ -313,6 +350,14 @@ class Document extends EventTarget {
         if (this.defaultView) return this.defaultView.location
 
         return null
+    }
+
+    get children() {
+        return [this.$_node]
+    }
+
+    get childNodes() {
+        return [this.$_node]
     }
 
     getElementById(id) {

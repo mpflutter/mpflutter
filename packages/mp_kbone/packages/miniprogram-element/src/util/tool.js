@@ -32,6 +32,7 @@ const hasOwnProperty = Object.prototype.hasOwnProperty
  * 过滤子节点，只获取儿子节点
  */
 function filterNodes(domNode, level, component) {
+    const window = cache.getWindow(domNode.$$pageId)
     let childNodes = domNode.childNodes || []
 
     if (typeof childNodes.map !== 'function') return []
@@ -91,7 +92,7 @@ function filterNodes(domNode, level, component) {
         // 判断图片节点
         domInfo.isImage = domInfo.type === 'element' && domInfo.tagName === 'img'
         if (domInfo.isImage) {
-            domInfo.src = child.src ? tool.completeURL(child.src, '', true) : ''
+            domInfo.src = child.src
             domInfo.mode = child.getAttribute('mode') || ''
             domInfo.webp = !!child.getAttribute('webp')
             domInfo.lazyLoad = !!child.getAttribute('lazy-load')

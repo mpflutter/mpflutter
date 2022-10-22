@@ -14,12 +14,19 @@ const PSEUDO_CHECK = {
         const {a, b} = param
         const index = children.indexOf(node) + 1
 
-        if (a) {
-            return (index - b) % a === 0
-        } else {
-            return index === b
-        }
+        return a ? ((index - b) % a === 0) : (index === b)
     },
+    'nth-of-type': (node, param, rule) => {
+        const copyRule = Object.assign({}, rule)
+        copyRule.pseudo = undefined
+
+        // 找出所有命中除了 nth-of-type 规则之外其他全部规则的兄弟元素
+        const children = Array.from(node.parentNode.children).filter(child => checkHit(child, copyRule))
+        const {a, b} = param
+        const index = children.indexOf(node) + 1
+
+        return a ? ((index - b) % a === 0) : (index === b)
+    }
 }
 
 const ATTR_CHECK = {
@@ -114,7 +121,7 @@ function checkHit(node, rule) {
     if (pseudo) {
         for (const {name, param} of pseudo) {
             const checkPseudo = PSEUDO_CHECK[name]
-            if (!checkPseudo || !checkPseudo(node, param)) return false
+            if (!checkPseudo || !checkPseudo(node, param, rule)) return false
         }
     }
 
@@ -255,7 +262,7 @@ class QuerySelector {
                 const pseudo = {name: pseudoName}
 
                 if (pseudoParam) pseudoParam = pseudoParam.trim()
-                if (pseudoName === 'nth-child') {
+                if (pseudoName === 'nth-child' || pseudoName === 'nth-of-type') {
                     // 处理 nth-child 伪类，参数统一处理成 an + b 的格式
                     pseudoParam = pseudoParam.replace(/\s+/g, '')
 
