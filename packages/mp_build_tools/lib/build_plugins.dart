@@ -5,25 +5,42 @@ import 'package:path/path.dart' as path;
 import 'i18n.dart';
 
 main(List<String> args) {
-  if (!File('.packages').existsSync()) return;
-  final lines = File('.packages').readAsLinesSync();
-  for (final line in lines) {
-    try {
-      final pkgPath = line
-          .replaceFirst(RegExp('.*?:'), '')
-          .replaceFirst('file://', '')
-          .replaceFirst('/lib/', '');
-      if (File(path.join(pkgPath, 'package.json')).existsSync() &&
-          (
-            Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
-            Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
-            Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync() ||
-            Directory(path.join(pkgPath, 'lib', 'tt')).existsSync()
-          )
-        ) {
-        runNpmBuild(pkgPath);
-      }
-    } catch (e) {}
+  if (!File('.packages').existsSync() &&
+      !File('.dart_tool/package_config.json').existsSync()) return;
+  if (File('.packages').existsSync()) {
+    final lines = File('.packages').readAsLinesSync();
+    for (final line in lines) {
+      try {
+        final pkgPath = line
+            .replaceFirst(RegExp('.*?:'), '')
+            .replaceFirst('file://', '')
+            .replaceFirst('/lib/', '');
+        if (File(path.join(pkgPath, 'package.json')).existsSync() &&
+            (Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
+                Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
+                Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync() ||
+                Directory(path.join(pkgPath, 'lib', 'tt')).existsSync())) {
+          runNpmBuild(pkgPath);
+        }
+      } catch (e) {}
+    }
+  } else if (File('.dart_tool/package_config.json').existsSync()) {
+    final pkgs = json.decode(
+        File('.dart_tool/package_config.json').readAsStringSync())['packages'];
+    for (final pkg in pkgs) {
+      try {
+        final pkgPath = pkg["rootUri"]
+            .replaceFirst('file://', '')
+            .replaceFirst('/lib/', '');
+        if (File(path.join(pkgPath, 'package.json')).existsSync() &&
+            (Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
+                Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
+                Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync() ||
+                Directory(path.join(pkgPath, 'lib', 'tt')).existsSync())) {
+          runNpmBuild(pkgPath);
+        }
+      } catch (e) {}
+    }
   }
   buildWebPlugin();
   buildMPPlugin('weapp');
@@ -34,58 +51,112 @@ main(List<String> args) {
 void buildWebPlugin() {
   if (!Directory('web').existsSync()) return;
   final stringBuffer = StringBuffer();
-  final lines = File('.packages').readAsLinesSync();
-  for (final line in lines) {
+  if (File('.packages').existsSync()) {
+    final lines = File('.packages').readAsLinesSync();
+    for (final line in lines) {
+      try {
+        final pkgPath = line
+            .replaceFirst(RegExp('.*?:'), '')
+            .replaceFirst('file://', '')
+            .replaceFirst('/lib/', '');
+        if (File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
+            .existsSync()) {
+          stringBuffer.writeln(
+              File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
+                  .readAsStringSync());
+        }
+      } catch (e) {}
+    }
     try {
-      final pkgPath = line
-          .replaceFirst(RegExp('.*?:'), '')
-          .replaceFirst('file://', '')
-          .replaceFirst('/lib/', '');
-      if (File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
-          .existsSync()) {
-        stringBuffer.writeln(
-            File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
-                .readAsStringSync());
-      }
+      File('web/plugins.min.js').writeAsStringSync(
+          '''var MPEnv = window.MPDOM.MPEnv;var MPMethodChannel = window.MPDOM.MPMethodChannel;var MPEventChannel = window.MPDOM.MPEventChannel;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = window.MPDOM.PluginRegister;''' +
+              stringBuffer.toString());
+    } catch (e) {}
+  } else if (File('.dart_tool/package_config.json').existsSync()) {
+    final pkgs = json.decode(
+        File('.dart_tool/package_config.json').readAsStringSync())['packages'];
+    for (final pkg in pkgs) {
+      try {
+        final pkgPath = pkg["rootUri"]
+            .replaceFirst('file://', '')
+            .replaceFirst('/lib/', '');
+        if (File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
+            .existsSync()) {
+          stringBuffer.writeln(
+              File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
+                  .readAsStringSync());
+        }
+      } catch (e) {}
+    }
+    try {
+      File('web/plugins.min.js').writeAsStringSync(
+          '''var MPEnv = window.MPDOM.MPEnv;var MPMethodChannel = window.MPDOM.MPMethodChannel;var MPEventChannel = window.MPDOM.MPEventChannel;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = window.MPDOM.PluginRegister;''' +
+              stringBuffer.toString());
     } catch (e) {}
   }
-  try {
-    File('web/plugins.min.js').writeAsStringSync(
-        '''var MPEnv = window.MPDOM.MPEnv;var MPMethodChannel = window.MPDOM.MPMethodChannel;var MPEventChannel = window.MPDOM.MPEventChannel;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = window.MPDOM.PluginRegister;''' +
-            stringBuffer.toString());
-  } catch (e) {}
 }
 
 void buildMPPlugin(String appType) {
   if (!Directory(appType).existsSync()) return;
   final stringBuffer = StringBuffer();
-  final lines = File('./.packages').readAsLinesSync();
+
   final components = <File>[];
-  for (final line in lines) {
-    try {
-      final pkgPath = line
-          .replaceFirst(RegExp('.*?:'), '')
-          .replaceFirst('file://', '')
-          .replaceFirst('/lib/', '');
-      if (File(path.join(pkgPath, 'dist', appType, 'bundle.min.js'))
-          .existsSync()) {
-        stringBuffer.writeln(
-            File(path.join(pkgPath, 'dist', appType, 'bundle.min.js'))
-                .readAsStringSync());
-      }
-      if (Directory(path.join(pkgPath, 'lib', appType, 'components'))
-          .existsSync()) {
-        // contains wechat components
-        Directory(path.join(pkgPath, 'lib', appType, 'components'))
-            .listSync()
-            .forEach((element) {
-          if (element.path.endsWith(".json")) {
-            components.add(File(element.path));
-          }
-        });
-      }
-    } catch (e) {}
+  if (File('.packages').existsSync()) {
+    final lines = File('./.packages').readAsLinesSync();
+    for (final line in lines) {
+      try {
+        final pkgPath = line
+            .replaceFirst(RegExp('.*?:'), '')
+            .replaceFirst('file://', '')
+            .replaceFirst('/lib/', '');
+        if (File(path.join(pkgPath, 'dist', appType, 'bundle.min.js'))
+            .existsSync()) {
+          stringBuffer.writeln(
+              File(path.join(pkgPath, 'dist', appType, 'bundle.min.js'))
+                  .readAsStringSync());
+        }
+        if (Directory(path.join(pkgPath, 'lib', appType, 'components'))
+            .existsSync()) {
+          // contains wechat components
+          Directory(path.join(pkgPath, 'lib', appType, 'components'))
+              .listSync()
+              .forEach((element) {
+            if (element.path.endsWith(".json")) {
+              components.add(File(element.path));
+            }
+          });
+        }
+      } catch (e) {}
+    }
+  } else if (File('.dart_tool/package_config.json').existsSync()) {
+    final pkgs = json.decode(
+        File('.dart_tool/package_config.json').readAsStringSync())['packages'];
+    for (final pkg in pkgs) {
+      try {
+        final pkgPath = pkg["rootUri"]
+            .replaceFirst('file://', '')
+            .replaceFirst('/lib/', '');
+        if (File(path.join(pkgPath, 'dist', appType, 'bundle.min.js'))
+            .existsSync()) {
+          stringBuffer.writeln(
+              File(path.join(pkgPath, 'dist', appType, 'bundle.min.js'))
+                  .readAsStringSync());
+        }
+        if (Directory(path.join(pkgPath, 'lib', appType, 'components'))
+            .existsSync()) {
+          // contains wechat components
+          Directory(path.join(pkgPath, 'lib', appType, 'components'))
+              .listSync()
+              .forEach((element) {
+            if (element.path.endsWith(".json")) {
+              components.add(File(element.path));
+            }
+          });
+        }
+      } catch (e) {}
+    }
   }
+
   try {
     File('${appType}/plugins.min.js').writeAsStringSync(
         '''var MPEnv = require("./mpdom.min").MPEnv;var MPMethodChannel = require("./mpdom.min").MPMethodChannel;var MPEventChannel = require("./mpdom.min").MPEventChannel;var MPPlatformView = require("./mpdom.min").MPPlatformView;var MPComponentFactory = require("./mpdom.min").ComponentFactory;var pluginRegisterer = require("./mpdom.min").PluginRegister;''' +
