@@ -48,3 +48,4 @@ dependency_overrides:
 flutter:
   assets:
     - assets/images/
+    - assets/test_file.cert

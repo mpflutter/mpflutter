@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
 import 'package:mp_file/mp_file.dart';
@@ -43,6 +44,25 @@ class FilePage extends StatelessWidget {
       backgroundColor: Color.fromARGB(255, 236, 236, 236),
       body: ListView(
         children: [
+          _renderBlock(Column(
+            children: [
+              _renderHeader('Read file from rootBundle'),
+              GestureDetector(
+                onTap: () async {
+                  final content =
+                      await rootBundle.loadString("assets/test_file.cert");
+
+                  MPWebDialogs.alert(message: content);
+                },
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  color: Colors.pink,
+                ),
+              ),
+              SizedBox(height: 16),
+            ],
+          )),
           _renderBlock(Column(
             children: [
               _renderHeader('Write text to file, and read text from file.'),

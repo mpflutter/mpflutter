@@ -9,6 +9,7 @@ export class CollectionView extends ComponentView {
   wrapperHtmlElement = this.document.createElement("div");
   appBarPinnedViews: ComponentView[] = [];
   appBarPersistentHeight = 0.0;
+  appBarPinnedPlained = false;
   enabledRestoration = false;
   lastScrollX: number = 0;
   lastScrollY: number = 0;
@@ -204,7 +205,7 @@ export class CollectionView extends ComponentView {
 
   reloadLayouts() {
     this.layout.prepareLayout();
-    let persistentYOffset = -this.appBarPersistentHeight;
+    let persistentYOffset = this.appBarPinnedPlained ? 0 : -this.appBarPersistentHeight;
     let persistentHSum = this.appBarPersistentHeight;
     for (let index = 0; index < this.subviews.length; index++) {
       let subview = this.subviews[index];
@@ -294,6 +295,13 @@ export class CollectionView extends ComponentView {
   }
 
   setPinnedAppBar(attributes: any) {
+    if (attributes.appBarPinnedPlained) {
+      const appBarPinnedView = this.factory.create(attributes.appBarPinned, this.document);
+      this.appBarPersistentHeight = cssSizeFromMPElement(appBarPinnedView).height;
+      this.appBarPinnedPlained = true;
+      return;
+    }
+    this.appBarPinnedPlained = false;
     const appBarPinnedView = this.factory.create(attributes.appBarPinned, this.document);
     if (appBarPinnedView) {
       (appBarPinnedView as any).collectionViewFixed = true;

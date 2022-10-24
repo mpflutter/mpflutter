@@ -45,6 +45,7 @@ Map _encodeScroller(Element element) {
     element.findAncestorStateOfType<MPScaffoldState>()?.hasRootScroller = true;
   }
   Element? appBarPinnedElement;
+  var appBarPinnedPlained = false;
   var bottomBarHeight = 0.0;
   var bottomBarWithSafeArea = false;
   if (isRoot && widget.scrollDirection == Axis.vertical) {
@@ -56,6 +57,15 @@ Map _encodeScroller(Element element) {
         maxDepth: 20,
         singleChildOnly: true,
       );
+    }
+    if (scaffoldState?.appBarKey.currentWidget != null) {
+      appBarPinnedElement = MPCore.findTarget<MPAppBar>(
+        scaffoldState!.appBarKey.currentContext as Element?,
+        findParent: true,
+        maxDepth: 20,
+        singleChildOnly: true,
+      );
+      if (appBarPinnedElement != null) appBarPinnedPlained = true;
     }
     bottomBarHeight =
         scaffoldState?.bottomBarKey.currentContext?.size?.height ?? 0.0;
@@ -109,6 +119,7 @@ Map _encodeScroller(Element element) {
     'appBarPinned': appBarPinnedElement != null
         ? MPElement.fromFlutterElement(appBarPinnedElement)
         : null,
+    'appBarPinnedPlained': appBarPinnedPlained,
     'bottomBarHeight': bottomBarHeight,
     'bottomBarWithSafeArea': bottomBarWithSafeArea,
     'restorationId': widget.restorationId,

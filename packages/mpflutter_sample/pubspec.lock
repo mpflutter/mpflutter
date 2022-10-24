@@ -109,7 +109,7 @@ packages:
       name: http_parser
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "4.0.1"
+    version: "4.0.2"
   intl:
     dependency: transitive
     description:
@@ -257,7 +257,7 @@ packages:
       name: watcher
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.0.1"
+    version: "1.0.2"
   win32:
     dependency: transitive
     description:

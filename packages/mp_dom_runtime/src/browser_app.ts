@@ -207,7 +207,24 @@ class FlutterPlatformChannel extends MPMethodChannel {
       copyText.remove();
       return null;
     } else if (method === "Clipboard.getData") {
-      throw 'The operation of getData from clip board is not allow in browser.';
+      throw "The operation of getData from clip board is not allow in browser.";
+    } else if (method === "RootBundle.getAssets") {
+      return new Promise((resolver, rejector) => {
+        const request = new XMLHttpRequest();
+        request.responseType = "blob";
+        request.open("GET", `/assets/${decodeURIComponent(params.uri)}`);
+        request.onloadend = () => {
+          const blobReader = new FileReader();
+          blobReader.onloadend = () => {
+            resolver((blobReader.result as string).split("base64,")[1]);
+          };
+          blobReader.readAsDataURL(request.response);
+        };
+        request.onerror = () => {
+          rejector(request.statusText);
+        };
+        request.send();
+      });
     } else {
       throw "NOTIMPLEMENTED";
     }
