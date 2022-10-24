@@ -297,6 +297,26 @@ class FlutterPlatformChannel extends MPMethodChannel {
           },
         });
       });
+    } else if (method === "RootBundle.getAssets") {
+      if (this.engine?.debugger) {
+        const assetUrl = (() => {
+          return `http://${this.engine.debugger.serverAddr}/assets/${params.uri}`;
+        })();
+        return new Promise((resolver, rejector) => {
+          MPEnv.platformScope.request({
+            url: assetUrl,
+            responseType: "arraybuffer",
+            success: (res: any) => {
+              resolver(MPEnv.platformScope.arrayBufferToBase64(res.data as ArrayBuffer));
+            },
+            fail: (e: any) => {
+              rejector(e.errMsg);
+            },
+          });
+        });
+      } else {
+        return MPEnv.platformScope.getFileSystemManager().readFileSync("assets/" + params.uri, "base64", 0);
+      }
     } else {
       throw "NOTIMPLEMENTED";
     }
