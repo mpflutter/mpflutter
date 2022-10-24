@@ -48,8 +48,8 @@ class ContainerPage extends StatelessWidget {
     return MPScaffold(
       name: 'Container',
       backgroundColor: Theme.of(context).backgroundColor,
-      appBarColor: Theme.of(context).appBarColor,
-      appBarTintColor: Theme.of(context).textColor,
+      appBarColor: Colors.blue,
+      appBarTintColor: Colors.white,
       onWechatMiniProgramShareAppMessage: (request) async {
         return MPWechatMiniProgramShareInfo(
           title: 'Container 容器标题(${request.from ?? ''})',

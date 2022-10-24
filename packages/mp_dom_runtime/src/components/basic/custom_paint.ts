@@ -1,5 +1,5 @@
 import { Engine } from "../../engine";
-import { MPEnv, PlatformType } from "../../env";
+import { MPEnv } from "../../env";
 import { ComponentView } from "../component_view";
 import { setDOMAttribute, setDOMStyle } from "../dom_utils";
 import { cssColor, getFontStyleStyle, getFontWeightStyle, getBaselineStyle } from "../utils";
@@ -13,7 +13,21 @@ export class MPDrawable {
   async decodeDrawable(params: any) {
     if (__MP_MINI_PROGRAM__) {
       if (!MPDrawable.offscreenCanvas) {
-        MPDrawable.offscreenCanvas = MPEnv.platformScope.createOffscreenCanvas();
+        if (MPEnv.platformByteDance()) {
+          MPDrawable.offscreenCanvas = await (() => {
+            return new Promise((resolver) => {
+              MPEnv.platformScope
+                .createSelectorQuery()
+                .select("#mockOffscreenCanvas")
+                .node()
+                .exec((res: any) => {
+                  resolver(res[0].node);
+                });
+            });
+          })();
+        } else {
+          MPDrawable.offscreenCanvas = MPEnv.platformScope.createOffscreenCanvas();
+        }
       }
     }
     try {

@@ -22,7 +22,7 @@ export const MPEnv = {
       return PlatformType.ttMiniProgram;
     } else if (typeof wx !== "undefined" && typeof wx.getSystemInfoSync === "function") {
       return PlatformType.wxMiniProgram;
-    }  else {
+    } else {
       return PlatformType.browser;
     }
   })(),
@@ -33,7 +33,7 @@ export const MPEnv = {
       return tt;
     } else if (typeof wx !== "undefined" && typeof wx.getSystemInfoSync === "function") {
       return wx;
-    } 
+    }
   })(),
   platformAppInstance: undefined,
   platformGlobal: (): any => {
@@ -68,5 +68,8 @@ export const MPEnv = {
     } else {
       return undefined;
     }
+  },
+  platformByteDance: (): boolean => {
+    return typeof tt !== "undefined";
   },
 };

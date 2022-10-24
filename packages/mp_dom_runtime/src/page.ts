@@ -280,7 +280,7 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   backgroundElementAttached = false;
 
   setPageTitle(title: string): void {
-    if (__MP_TARGET_SWANAPP__ || __MP_TARGET_TT__) {
+    if (MPEnv.platformByteDance()) {
       MPEnv.platformScope.setNavigationBarTitle({ title });
       return;
     }
@@ -311,7 +311,7 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   }
 
   setAppBarColor(color: string, tintColor?: string): void {
-    if (__MP_TARGET_SWANAPP__) {
+    if (MPEnv.platformByteDance()) {
       MPEnv.platformScope.setNavigationBarColor({
         frontColor: tintColor,
         backgroundColor: color,
