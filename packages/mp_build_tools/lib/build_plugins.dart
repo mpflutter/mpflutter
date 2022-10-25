@@ -30,6 +30,7 @@ main(List<String> args) {
     for (final pkg in pkgs) {
       try {
         final pkgPath = pkg["rootUri"]
+            .replaceFirst('../', './')
             .replaceFirst('file://', '')
             .replaceFirst('/lib/', '');
         if (File(path.join(pkgPath, 'package.json')).existsSync() &&
@@ -78,6 +79,7 @@ void buildWebPlugin() {
     for (final pkg in pkgs) {
       try {
         final pkgPath = pkg["rootUri"]
+            .replaceFirst('../', './')
             .replaceFirst('file://', '')
             .replaceFirst('/lib/', '');
         if (File(path.join(pkgPath, 'dist', 'web', 'bundle.min.js'))
@@ -134,6 +136,7 @@ void buildMPPlugin(String appType) {
     for (final pkg in pkgs) {
       try {
         final pkgPath = pkg["rootUri"]
+            .replaceFirst('../', './')
             .replaceFirst('file://', '')
             .replaceFirst('/lib/', '');
         if (File(path.join(pkgPath, 'dist', appType, 'bundle.min.js'))
