@@ -99,6 +99,7 @@ class _PlatformChannelIO {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 

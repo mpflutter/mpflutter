@@ -159,6 +159,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -187,6 +188,7 @@ class MPChannelBase {
       DeviceInfo.deviceInfoChangeCallback?.call();
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -249,6 +251,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -269,6 +272,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -291,6 +295,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -314,6 +319,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -397,6 +403,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -409,6 +416,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -419,6 +427,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -427,6 +436,7 @@ class MPChannelBase {
       MPAction.onActionTrigger(message);
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -466,6 +476,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -562,6 +573,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -662,6 +674,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
@@ -680,6 +693,7 @@ class MPChannelBase {
       }
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 
