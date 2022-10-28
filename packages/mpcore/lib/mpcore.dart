@@ -73,34 +73,33 @@ class MPCore {
   final Set<int> _diffableElements = {};
   final Map<int, Element> _renderObjectMapElement = {};
 
-  void connectToHostChannel() async {
+  /// 
+  ///
+  /// [body] like [runZonedGuarded].body:
+  /// [onError] like  [runZonedGuarded].onError
+  /// such as :
+  /* MPCore().connectToHostChannel(
+    body:() {
+      FlutterError.onError = (FlutterErrorDetails error){
+        //todo catch async error
+      };
+      ...
+      runApp(MyApp());
+    },
+    onError: (error, stack) {
+      //todo catch async error
+    },
+  ); */
+  void connectToHostChannel<R>(
+     {R Function()? body,
+    void Function(Object error, StackTrace stack)? onError,
+  }) async {
     if (kReleaseMode) {
-      injectImageSizeLoader();
-      injectErrorWidget();
-      injectMethodChannelHandler();
-      final _ = MPChannel.setupHotReload(this);
-      var pass = false;
-      while (!pass) {
-        await Future.delayed(Duration(milliseconds: 10));
-        try {
-          markNeedsBuild(renderView);
-          clearOldFrameObject();
-          pass = true;
-          // ignore: empty_catches
-        } catch (e) {}
-      }
-      while (true) {
-        try {
-          await sendFrame();
-        } catch (e) {
-          print(e);
-        }
-      }
-    } else {
       await runZonedGuarded(() async {
         injectImageSizeLoader();
         injectErrorWidget();
         injectMethodChannelHandler();
+        body?.call();
         final _ = MPChannel.setupHotReload(this);
         var pass = false;
         while (!pass) {
@@ -120,7 +119,42 @@ class MPCore {
           }
         }
       }, (error, stackTrace) {
-        print('Unccaught exception: $error, $stackTrace.');
+        if (onError != null) {
+          onError.call(error, stackTrace);
+        } else {
+          print('Unccaught exception: $error, $stackTrace.');
+        }
+      });
+    } else {
+      await runZonedGuarded(() async {
+        injectImageSizeLoader();
+        injectErrorWidget();
+        injectMethodChannelHandler();
+        body?.call();
+        final _ = MPChannel.setupHotReload(this);
+        var pass = false;
+        while (!pass) {
+          await Future.delayed(Duration(milliseconds: 10));
+          try {
+            markNeedsBuild(renderView);
+            clearOldFrameObject();
+            pass = true;
+            // ignore: empty_catches
+          } catch (e) {}
+        }
+        while (true) {
+          try {
+            await sendFrame();
+          } catch (e) {
+            print(e);
+          }
+        }
+      }, (error, stackTrace) {
+        if (onError != null) {
+          onError.call(error, stackTrace);
+        } else {
+          print('Unccaught exception: $error, $stackTrace.');
+        }
       });
     }
   }
