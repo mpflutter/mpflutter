@@ -35,7 +35,10 @@ export class MPPicker extends MPPlatformView {
     }
     this.htmlElement.addEventListener("change", (e: any) => {
       this.invokeMethod("callbackResult", {
-        value: typeof e.detail.value === "string" ? [parseInt(e.detail.value)] : e.detail.value,
+        value:
+          typeof e.detail.value === "string" || typeof e.detail.value === "number"
+            ? [parseInt(e.detail.value)]
+            : e.detail.value,
       });
     });
     this.htmlElement.addEventListener("columnchange", (e: any) => {

@@ -4,6 +4,13 @@ import { MPPlatformView } from "./platform_view";
 
 export class MPVideoView extends MPPlatformView {
   videoContext: any;
+  id: string;
+
+  constructor(readonly document: Document, readonly initialAttributes?: any) {
+    super(document, initialAttributes);
+    this.id = "video_" + Math.random().toString();
+    this.htmlElement.setAttribute("id", this.id);
+  }
 
   elementType() {
     return "video";
@@ -14,7 +21,11 @@ export class MPVideoView extends MPPlatformView {
       this.onBrowserMethodCall(method, params);
     } else if (__MP_MINI_PROGRAM__) {
       if (!this.videoContext) {
-        this.videoContext = await (this.htmlElement as any).$$getContext();
+        if (MPEnv.platformByteDance()) {
+          this.videoContext = MPEnv.platformScope.createVideoContext(this.id);
+        } else {
+          this.videoContext = await (this.htmlElement as any).$$getContext();
+        }
       }
       if (this.videoContext) {
         this.onMiniProgramMethodCall(method, params);
@@ -29,17 +40,41 @@ export class MPVideoView extends MPPlatformView {
     } else if (method === "pause") {
       (this.htmlElement as HTMLMediaElement).pause();
     } else if (method === "setVolume") {
+      if (MPEnv.platformByteDance()) {
+        this.videoContext.setMediaVolume({ value: params.volume });
+        return;
+      }
       (this.htmlElement as HTMLMediaElement).muted = false;
       (this.htmlElement as HTMLMediaElement).volume = params.volume;
     } else if (method === "volumeUp") {
+      if (MPEnv.platformByteDance()) {
+        this.videoContext.getMediaVolume({
+          success: (res: any) => {
+            this.videoContext.setMediaVolume({ value: res.value + 0.1 });
+          },
+        });
+        return;
+      }
       (this.htmlElement as HTMLMediaElement).muted = false;
       var volume = (this.htmlElement as HTMLMediaElement).volume;
       (this.htmlElement as HTMLMediaElement).volume = volume + 0.1;
     } else if (method === "volumeDown") {
+      if (MPEnv.platformByteDance()) {
+        this.videoContext.getMediaVolume({
+          success: (res: any) => {
+            this.videoContext.setMediaVolume({ value: res.value - 0.1 });
+          },
+        });
+        return;
+      }
       (this.htmlElement as HTMLMediaElement).muted = false;
       var volume = (this.htmlElement as HTMLMediaElement).volume;
       (this.htmlElement as HTMLMediaElement).volume = volume - 0.1;
     } else if (method === "setMuted") {
+      if (MPEnv.platformByteDance()) {
+        this.videoContext.setMediaVolume({ value: params.muted ? 0.0 : 0.5 });
+        return;
+      }
       (this.htmlElement as HTMLMediaElement).muted = params.muted;
     } else if (method === "fullscreen") {
       (this.htmlElement as HTMLMediaElement).requestFullscreen();
@@ -53,7 +88,7 @@ export class MPVideoView extends MPPlatformView {
   }
 
   onMiniProgramMethodCall(method: string, params: any) {
-    if (!(__MP_MINI_PROGRAM__)) return;
+    if (!__MP_MINI_PROGRAM__) return;
     if (method === "play") {
       this.videoContext.play();
     } else if (method === "pause") {

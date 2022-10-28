@@ -173,7 +173,7 @@ Page(thePage);
         File(wxmlPath).writeAsStringSync('''
 <page-meta><navigation-bar title="{{pageMeta.naviBar.title}}" loading="{{pageMeta.naviBar.loading}}" front-color="{{pageMeta.naviBar.frontColor || '#000000'}}" background-color="{{pageMeta.naviBar.backgroundColor || '#ffffff'}}"></navigation-bar></page-meta>
 <element wx:if="{{pageId}}" class="miniprogram-root" data-private-node-id="e-body" data-private-page-id="{{pageId}}" ></element>
-<canvas type="2d" id="mockOffscreenCanvas" width="1" height="1"></canvas>
+<canvas type="2d" id="mockOffscreenCanvas" style="display:none"></canvas>
         ''');
       }
     });
