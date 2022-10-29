@@ -38,9 +38,11 @@ class _SignaturePageState extends State<SignaturePage> {
               onPanEnd: (e) {
                 points.add(Offset(-1, -1));
               },
-              child: CustomPaint(
-                key: customPaintKey,
-                painter: _SignaturePainter(points),
+              child: IgnorePointer(
+                child: CustomPaint(
+                  key: customPaintKey,
+                  painter: _SignaturePainter(points),
+                ),
               ),
             ),
           ),

@@ -6,22 +6,26 @@ export class WindowInfo {
 
   updateWindowInfo() {
     if (__MP_MINI_PROGRAM__) {
+      const systemInfoSync = MPEnv.platformScope.getSystemInfoSync();
       this.engine.sendMessage(
         JSON.stringify({
           type: "window_info",
           message: {
             window: {
-              width: MPEnv.platformScope.getSystemInfoSync().screenWidth,
-              height: MPEnv.platformScope.getSystemInfoSync().screenHeight,
+              width: systemInfoSync.screenWidth,
+              height: (() => {
+                if (MPEnv.platformByteDance()) {
+                  return systemInfoSync.screenHeight - (systemInfoSync.safeArea?.top ?? 0) - 44;
+                }
+                return systemInfoSync.screenHeight;
+              })(),
               padding: {
-                top: MPEnv.platformScope.getSystemInfoSync().statusBarHeight,
-                bottom:
-                  MPEnv.platformScope.getSystemInfoSync().screenHeight -
-                  MPEnv.platformScope.getSystemInfoSync().safeArea?.bottom,
+                top: systemInfoSync.statusBarHeight,
+                bottom: systemInfoSync.screenHeight - systemInfoSync.safeArea?.bottom,
               },
             },
-            devicePixelRatio: MPEnv.platformScope.getSystemInfoSync().pixelRatio,
-            darkMode: MPEnv.platformScope.getSystemInfoSync().theme === "dark",
+            devicePixelRatio: systemInfoSync.pixelRatio,
+            darkMode: systemInfoSync.theme === "dark",
           },
         })
       );

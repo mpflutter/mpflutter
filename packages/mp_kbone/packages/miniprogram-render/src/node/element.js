@@ -450,7 +450,11 @@ class Element extends Node {
 
             if (this.tagName === 'CANVAS') {
                 // TODO，为了兼容基础库的一个 bug，暂且如此实现
-                resolve($wx.createSelectorQuery().in(this.$$wxComponent).select(`.node-${this.$_nodeId}`))
+                try {
+                    resolve($wx.createSelectorQuery().in(this.$$wxComponent).select(`.node-${this.$_nodeId}`))
+                } catch (error) {
+                    resolve($wx.createSelectorQuery().select(`.node-${this.$_nodeId}`))
+                }
             } else {
                 resolve(window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`))
             }
