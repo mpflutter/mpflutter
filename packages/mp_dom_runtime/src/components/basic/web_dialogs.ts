@@ -14,7 +14,7 @@ export class WebDialogs {
   }
 
   static wxMiniProgramReceivedWebDialogsMessage(engine: Engine, message: any) {
-    if (!(__MP_MINI_PROGRAM__)) return;
+    if (!__MP_MINI_PROGRAM__) return;
     if (message["params"]["dialogType"] === "alert") {
       MPEnv.platformScope.showModal({
         content: message["params"]["message"],
@@ -93,6 +93,37 @@ export class WebDialogs {
           },
         });
       } else {
+        if (MPEnv.platformByteDance() && MPEnv.platformScope.showPrompt) {
+          MPEnv.platformScope.showPrompt({
+            title: message["params"]["message"],
+            success: (res: any) => {
+              if (res.confirm) {
+                engine.sendMessage(
+                  JSON.stringify({
+                    type: "action",
+                    message: {
+                      event: "callback",
+                      id: message["id"],
+                      data: res.inputValue,
+                    },
+                  })
+                );
+              } else {
+                engine.sendMessage(
+                  JSON.stringify({
+                    type: "action",
+                    message: {
+                      event: "callback",
+                      id: message["id"],
+                      data: null,
+                    },
+                  })
+                );
+              }
+            },
+          });
+          return;
+        }
         MPEnv.platformScope.showModal({
           title: message["params"]["message"],
           content: message["params"]["defaultValue"] ?? "",

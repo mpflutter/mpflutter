@@ -16,13 +16,17 @@ export class MPDrawable {
         if (MPEnv.platformByteDance()) {
           MPDrawable.offscreenCanvas = await (() => {
             return new Promise((resolver) => {
-              MPEnv.platformScope
-                .createSelectorQuery()
-                .select("#mockOffscreenCanvas")
-                .node()
-                .exec((res: any) => {
-                  resolver(res[0].node);
-                });
+              try {
+                MPEnv.platformScope
+                  .createSelectorQuery()
+                  .select("#mockOffscreenCanvas")
+                  .node()
+                  .exec((res: any) => {
+                    resolver(res[0].node);
+                  });
+              } catch (error) {
+                resolver(undefined);
+              }
             });
           })();
         } else {
@@ -91,6 +95,19 @@ export class MPDrawable {
 
   async decodeNetworkImage(url: string, hashCode: number): Promise<{ width: number; height: number }> {
     return new Promise((res, rej) => {
+      if (__MP_MINI_PROGRAM__ && !MPDrawable.offscreenCanvas) {
+        MPEnv.platformScope.getImageInfo({
+          src: url,
+          success: (r: any) => {
+            this.decodedDrawables[hashCode] = { width: r.width, height: r.height } as any;
+            res({ width: r.width, height: r.height });
+          },
+          fail: (err: any) => {
+            rej("");
+          },
+        });
+        return;
+      }
       const img = (() => {
         if (__MP_MINI_PROGRAM__) {
           return MPDrawable.offscreenCanvas.createImage();
