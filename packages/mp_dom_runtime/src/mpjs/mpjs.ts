@@ -128,7 +128,6 @@ export class MPJS {
   }
 
   wrapArgument(arg: any, funcCallback: (funcId: string, args: any[]) => void): any {
-    console.log(arg);  
     if (typeof arg === "string" && arg.indexOf("func:") === 0) {
       const funcId = arg;
       const self = this;

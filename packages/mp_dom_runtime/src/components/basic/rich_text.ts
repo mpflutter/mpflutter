@@ -48,7 +48,7 @@ export class RichText extends ComponentView {
       overflow: "hidden",
       textOverflow: "ellipsis",
       textAlign: cssTextAlign(attributes.textAlign),
-      display: "-webkit-box",
+      display: attributes.textAlign ? "unset" : "-webkit-box",
       fontSize: "11px",
       fontFamily: "sans-serif",
       lineHeight: attributes.height?.toString(),

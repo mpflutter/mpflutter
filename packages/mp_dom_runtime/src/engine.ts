@@ -46,7 +46,7 @@ export class Engine {
   }
 
   private installWeChatComponentContextGetter() {
-    if (__MP_TARGET_WEAPP__) {
+    if (__MP_MINI_PROGRAM__) {
       MPEnv.platformGlobal().mp_core_weChatComponentContextGetter = async (hashCode: number) => {
         const target = this.componentFactory.cachedView[hashCode];
         if (target) {

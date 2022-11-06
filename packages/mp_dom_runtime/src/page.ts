@@ -282,6 +282,10 @@ class WXPageScaffoldDelegate implements MPScaffoldDelegate {
   setPageTitle(title: string): void {
     if (MPEnv.platformByteDance()) {
       MPEnv.platformScope.setNavigationBarTitle({ title });
+      MPEnv.platformScope.setNavigationBarColor({
+        frontColor: "#000000",
+        backgroundColor: "#ffffff",
+      });
       return;
     }
     if (MPEnv.platformPC()) {

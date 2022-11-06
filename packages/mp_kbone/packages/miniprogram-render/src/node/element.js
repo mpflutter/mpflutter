@@ -427,11 +427,21 @@ class Element extends Node {
         const window = cache.getWindow(this.$_pageId)
         return new Promise((resolve, reject) => {
             if (!window) reject()
+            if (typeof tt !== 'undefined') {
+                if (this.behavior === 'map') {
+                    resolve($wx.createMapContext(this.id))
+                    return
+                }
+            }
 
             if (this.tagName === 'CANVAS') {
                 // TODO，为了兼容基础库的一个 bug，暂且如此实现
-                $wx.createSelectorQuery().in(this.$$wxComponent).select(`.node-${this.$_nodeId}`).context(res => (res && res.context ? resolve(res.context) : reject()))
-                    .exec()
+                try {
+                    $wx.createSelectorQuery().in(this.$$wxComponent).select(`.node-${this.$_nodeId}`).context(res => (res && res.context ? resolve(res.context) : reject()))
+                        .exec()
+                } catch (error) {
+                    $wx.createSelectorQuery().select(`.node-${this.$_nodeId}`).context(res => (res && res.context ? resolve(res.context) : reject())).exec()
+                }
             } else {
                 window.$$createSelectorQuery().select(`.miniprogram-root >>> .node-${this.$_nodeId}`).context(res => (res && res.context ? resolve(res.context) : reject())).exec()
             }
