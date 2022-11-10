@@ -91,7 +91,8 @@ void _buildDartJS(List<String> args) {
       """var \$__dart_deferred_initializers__ = self.\$__dart_deferred_initializers__;module.exports.main = (function dartProgram()""");
   File(p.join('build', 'main.dart.js')).writeAsStringSync(codeSource);
   var appSource = File(p.join('build', 'app.js')).readAsStringSync();
-  appSource = appSource.replaceAll("var dev = true;", "var dev = false;");
+  appSource = appSource.replaceAll(
+      RegExp(r"""var\sdev\s=\strue;?"""), "var dev = false;");
   File(p.join('build', 'app.js')).writeAsStringSync(appSource);
   final buildBundleResult = Process.runSync(
     'flutter',
