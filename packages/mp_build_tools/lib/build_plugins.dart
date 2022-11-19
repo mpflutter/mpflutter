@@ -17,9 +17,7 @@ main(List<String> args) {
             .replaceFirst('/lib/', '');
         if (File(path.join(pkgPath, 'package.json')).existsSync() &&
             (Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
-                Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
-                Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync() ||
-                Directory(path.join(pkgPath, 'lib', 'tt')).existsSync())) {
+                Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync())) {
           runNpmBuild(pkgPath);
         }
       } catch (e) {}
@@ -35,9 +33,7 @@ main(List<String> args) {
             .replaceFirst('/lib/', '');
         if (File(path.join(pkgPath, 'package.json')).existsSync() &&
             (Directory(path.join(pkgPath, 'lib', 'web')).existsSync() ||
-                Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync() ||
-                Directory(path.join(pkgPath, 'lib', 'swanapp')).existsSync() ||
-                Directory(path.join(pkgPath, 'lib', 'tt')).existsSync())) {
+                Directory(path.join(pkgPath, 'lib', 'weapp')).existsSync())) {
           runNpmBuild(pkgPath);
         }
       } catch (e) {}
@@ -45,8 +41,6 @@ main(List<String> args) {
   }
   buildWebPlugin();
   buildMPPlugin('weapp');
-  buildMPPlugin('swanapp');
-  buildMPPlugin('tt');
 }
 
 void buildWebPlugin() {

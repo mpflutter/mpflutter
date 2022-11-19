@@ -144,33 +144,6 @@ class I18n {
     }
   }
 
-  static reserveSwanappProject() {
-    switch (currentLang) {
-      case Lang.zh:
-        return '该工程需要输出到百度小程序吗？(如果选择否，将删除 swanapp 目录。)';
-      default:
-        return 'Will this project build to baidu miniprogram?(If choose false, will remove swanapp dir.)';
-    }
-  }
-
-  static reserveTTProject() {
-    switch (currentLang) {
-      case Lang.zh:
-        return '该工程需要输出到字节（抖音）小程序吗？(如果选择否，将删除 tt 目录。)';
-      default:
-        return 'Will this project build to bytedance miniprogram?(If choose false, will remove tt dir.)';
-    }
-  }
-
-  static reserveFlutterappProject() {
-    switch (currentLang) {
-      case Lang.zh:
-        return '该工程需要输出到原生Flutter吗？(如果选择否，将删除 flutterapp 目录。)';
-      default:
-        return 'Will this project build to native flutter?(If choose false, will remove flutterapp dir.)';
-    }
-  }
-
   static fetchingVersionInfoFromRemote() {
     switch (currentLang) {
       case Lang.zh:
