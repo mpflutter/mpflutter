@@ -22,6 +22,7 @@ main(List<String> args) {
   _copyWeappSource();
   _createPages();
   _buildDartJS(args);
+  _treeSharkInnerComponent();
   File(p.join('build', 'app.json')).writeAsStringSync(json.encode(appJson));
   print(I18n.buildSuccess('build'));
 }
@@ -348,4 +349,37 @@ void _copyPathSync(String from, String to) {
       Link(copyTo).createSync(file.targetSync(), recursive: true);
     }
   }
+}
+
+void _treeSharkInnerComponent() {
+  try {
+    final codes = <String>[];
+    codes.add(File(p.join('build', 'main.dart.js')).readAsStringSync());
+    codes.add(File(p.join('build', 'mpdom.min.js')).readAsStringSync());
+    subpackages.keys.forEach((e) {
+      Directory("build/dart_package_$e").listSync().forEach((file) {
+        if (file.path.endsWith('.part.js')) {
+          codes.add(File(file.absolute.path).readAsStringSync());
+        }
+      });
+    });
+    final innerComponentXml =
+        File("build/kbone/miniprogram-element/template/inner-component.wxml")
+            .readAsStringSync();
+    var newXmlContents = '';
+    RegExp('<template name="(.*?)">(.*?)</template>', caseSensitive: false)
+        .allMatches(innerComponentXml)
+        .forEach((element) {
+      final name = element.group(1);
+      final content = element.group(2);
+      for (var i = 0; i < codes.length; i++) {
+        if (codes[i].contains('wx-${name}') || codes[i].contains('"${name}"')) {
+          newXmlContents += '<template name="${name}">${content}</template>';
+          break;
+        }
+      }
+    });
+    File("build/kbone/miniprogram-element/template/inner-component.wxml")
+        .writeAsStringSync(newXmlContents);
+  } catch (e) {}
 }
