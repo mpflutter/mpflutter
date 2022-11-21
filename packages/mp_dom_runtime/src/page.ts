@@ -56,7 +56,9 @@ export class Page {
       this.engine.router = new Router(this.engine);
     }
     const router = this.engine.app?.router ?? this.engine?.router;
-    await this.delay();
+    if (__MP_MINI_PROGRAM__) {
+      await this.delay();
+    }
     const viewport = await this.fetchViewport();
     return router!.requestRoute(
       this.options?.route ?? "/",
@@ -107,6 +109,8 @@ export class Page {
     const router = this.engine.app?.router ?? this.engine?.router;
     if (router) {
       const viewport = await this.fetchViewport();
+      console.log("uuuuu");
+      
       router.updateRoute(this.viewId, {
         width: viewport.width,
         height: viewport.height,
