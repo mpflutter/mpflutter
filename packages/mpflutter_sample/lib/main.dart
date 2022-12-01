@@ -19,6 +19,7 @@ import 'package:mpflutter_template/layouts/aspect_ratio_page.dart';
 import 'package:mpflutter_template/layouts/center_page.dart';
 import 'package:mpflutter_template/layouts/column_row_page.dart';
 import 'package:mpflutter_template/layouts/container_page.dart';
+import 'package:mpflutter_template/layouts/indexed_stack_page.dart';
 import 'package:mpflutter_template/layouts/padding.dart';
 import 'package:mpflutter_template/layouts/stack_page.dart';
 import 'package:mpflutter_template/layouts/transform_page.dart';
@@ -131,6 +132,7 @@ class MyApp extends StatelessWidget {
         '/center': (context) => CenterPage(),
         '/columnRow': (context) => ColumnRowPage(),
         '/stack': (context) => StackPage(),
+        '/indexedStack': (context) => IndexedStackPage(),
         '/transform': (context) => TransformPage(),
         '/wrap': (context) => WrapPage(),
         '/table': (context) => TablePage(),

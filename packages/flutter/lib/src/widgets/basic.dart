@@ -3682,30 +3682,10 @@ class IndexedStack extends Stack {
             alignment: alignment,
             textDirection: textDirection,
             fit: sizing,
-            children: children);
+            children: children.isNotEmpty ? [children[index ?? 0]] : []);
 
   /// The index of the child to show.
   final int? index;
-
-  @override
-  RenderIndexedStack createRenderObject(BuildContext context) {
-    assert(_debugCheckHasDirectionality(context));
-    return RenderIndexedStack(
-      index: index,
-      alignment: alignment,
-      textDirection: textDirection ?? Directionality.maybeOf(context),
-    );
-  }
-
-  @override
-  void updateRenderObject(
-      BuildContext context, RenderIndexedStack renderObject) {
-    assert(_debugCheckHasDirectionality(context));
-    renderObject
-      ..index = index
-      ..alignment = alignment
-      ..textDirection = textDirection ?? Directionality.maybeOf(context);
-  }
 }
 
 /// A widget that controls where a child of a [Stack] is positioned.

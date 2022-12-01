@@ -116,6 +116,8 @@ class MyHomePage extends StatelessWidget {
                     context: context, route: '/columnRow'),
                 _renderItem('Stack / Positioned',
                     context: context, route: '/stack'),
+                _renderItem('IndexedStack',
+                    context: context, route: '/indexedStack'),
                 _renderItem('AspectRatio',
                     context: context, route: '/aspectRatio'),
                 _renderItem('Wrap', context: context, route: '/wrap'),
