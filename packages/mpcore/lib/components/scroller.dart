@@ -17,7 +17,7 @@ Map _encodeScroller(Element element) {
       );
     };
   }
-  final isRoot = (() {
+  var isRoot = (() {
     if (widget.primary == false) {
       return false;
     } else if (widget.scrollDirection == Axis.vertical &&
@@ -107,7 +107,10 @@ Map _encodeScroller(Element element) {
     if (element.findAncestorWidgetOfExactType<MPScaffold>()?.onRefresh !=
         null) {
       hasRefreshIndicator = true;
+      isRoot = false;
     }
+  } else if (hasRefreshIndicator && isRoot) {
+    isRoot = false;
   }
   if (hasRefreshIndicator || hasReachBottom) {
     MPCore.addElementToHashCodeCache(element);
