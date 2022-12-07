@@ -7,7 +7,7 @@ packages:
       name: async
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.9.0"
+    version: "2.10.0"
   characters:
     dependency: transitive
     description:
@@ -93,7 +93,7 @@ packages:
       name: glob
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "2.1.0"
+    version: "2.1.1"
   http:
     dependency: "direct main"
     description:
@@ -150,10 +150,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "4969080d2a214782127df20680cc4c07c22f4d6a"
+      resolved-ref: c9bdb9567a41c7782008bb2453024e8ae188bf51
       url: "https://github.com/mpflutter-plugins/mp_file"
     source: git
-    version: "0.0.1"
+    version: "0.1.0"
   mpcore:
     dependency: "direct main"
     description:
@@ -166,7 +166,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "0aee2d41ae487e38761fb4a22bfa4cb4f7f19d1c"
+      resolved-ref: "379f88e9b6dc2484ff4c59e84ab4559f88063fd3"
       url: "https://github.com/mpflutter/mpflutter_plugin_template"
     source: git
     version: "0.0.1"
@@ -206,7 +206,7 @@ packages:
       name: string_scanner
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.1.1"
+    version: "1.2.0"
   term_glyph:
     dependency: transitive
     description:
@@ -225,11 +225,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: HEAD
-      resolved-ref: a6129b36072289774b49c5fa0ab0495265f0daa7
+      ref: "refactor/codegen"
+      resolved-ref: "60c447996768a41b3ed9d948bf757dc6b6ef2059"
       url: "https://github.com/mpflutter-plugins/universal_miniprogram_api"
     source: git
-    version: "0.0.3"
+    version: "0.1.0"
   usage:
     dependency: transitive
     description:
@@ -266,4 +266,4 @@ packages:
     source: hosted
     version: "2.7.0"
 sdks:
-  dart: ">=2.17.0 <3.0.0"
+  dart: ">=2.18.0 <3.0.0"

@@ -29,7 +29,9 @@ dependencies:
   mpflutter_plugin_template:
     git: https://github.com/mpflutter/mpflutter_plugin_template
   universal_miniprogram_api:
-    git: https://github.com/mpflutter-plugins/universal_miniprogram_api
+    git: 
+      url: https://github.com/mpflutter-plugins/universal_miniprogram_api
+      ref: refactor/codegen
   mp_file:
     git: https://github.com/mpflutter-plugins/mp_file
 dependency_overrides:

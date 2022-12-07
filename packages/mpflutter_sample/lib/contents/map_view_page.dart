@@ -54,10 +54,11 @@ class _MapViewPageState extends State<MapViewPage> {
               children: [
                 _renderButton('moveToLocation', () {
                   controller.moveToLocation(
-                    MoveToLocationOption(
-                      latitude: 23.099970,
-                      longitude: 113.324511,
-                    ),
+                    MoveToLocationOption()
+                      ..setValues(
+                        latitude: 23.099970,
+                        longitude: 113.324511,
+                      ),
                   );
                 }),
               ],

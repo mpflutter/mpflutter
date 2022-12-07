@@ -44,20 +44,24 @@ class JsBridgeInvoker {
       final String funcId = message['funcId'];
       final func =
           JsObject.funcHandlers[int.tryParse(funcId.replaceFirst('func:', ''))];
-      if (func != null) {
+      if (func is Function) {
         Function.apply(
           func,
           (message['arguments'] as List)
               .map((e) => JsObject.wrapBrowserObject(e))
               .toList(),
         );
+      } else if (func is JsFunction) {
+        func.call((message['arguments'] as List)
+            .map((e) => JsObject.wrapBrowserObject(e))
+            .toList());
       }
     }
   }
 }
 
 class JsObject {
-  static Map<int, Function> funcHandlers = {};
+  static Map<int, dynamic> funcHandlers = {};
 
   static dynamic wrapBrowserObject(dynamic obj) {
     if (obj is JsObject) {
@@ -84,6 +88,10 @@ class JsObject {
       final funcId = obj.hashCode;
       funcHandlers[funcId] = obj;
       return 'func:${funcId}';
+    } else if (obj is JsFunction) {
+      final funcId = obj.originFunction.hashCode;
+      funcHandlers[funcId] = obj;
+      return 'func:${funcId}';
     } else if (obj is JsObject && obj.objectHandler != null) {
       return 'obj:${obj.objectHandler}';
     } else if (obj is Map) {
@@ -91,6 +99,9 @@ class JsObject {
     } else if (obj is List) {
       return obj.map((e) => toBrowserObject(e)).toList();
     } else {
+      try {
+        return toBrowserObject(obj.toJson());
+      } catch (e) {}
       return obj;
     }
   }
@@ -178,5 +189,20 @@ class JsObject {
       'value': toBrowserObject(value),
     });
     return result;
+  }
+}
+
+class JsFunction {
+  final Function originFunction;
+  final List<dynamic Function(dynamic)?> converters;
+
+  JsFunction(this.originFunction, this.converters);
+
+  void call(List<dynamic> arguments) {
+    final newArguments = <dynamic>[];
+    arguments.asMap().forEach((key, value) {
+      newArguments.add(converters[key]?.call(value) ?? value);
+    });
+    Function.apply(originFunction, newArguments);
   }
 }

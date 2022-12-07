@@ -135,7 +135,7 @@ class MiniProgramApiPage extends StatelessWidget {
                 _renderItem('getSystemInfoSync', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  final result = await wx.getSystemInfoSync();
+                  final result = await wx.getSystemInfo();
                   alertResult('You device brand = ${await result.brand}.');
                 }),
                 _renderItem('getLaunchOptionsSync', context: context,
@@ -154,9 +154,11 @@ class MiniProgramApiPage extends StatelessWidget {
                 _renderItem('navigateToMiniProgram', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.navigateToMiniProgram(
-                    NavigateToMiniProgramOption(appId: 'wx82d43fee89cdc7df'),
+                  final result = await wx.navigateToMiniProgram(
+                    NavigateToMiniProgramOption()
+                      ..setValues(appId: "wx82d43fee89cdc7df"),
                   );
+                  print(await result.errMsg);
                 }),
                 _renderItem('exitMiniProgram', context: context,
                     execBlock: () async {
@@ -173,12 +175,15 @@ class MiniProgramApiPage extends StatelessWidget {
                 _renderItem('downloadFile', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  await wx.downloadFile(DownloadFileOption(
-                      url:
-                          'https://down.qq.com/qqweb/PCQQ/PCQQ_EXE/PCQQ2021.exe',
-                      success: (res) async {
-                        print(await res.tempFilePath);
-                      }));
+                  await wx.downloadFile(
+                    DownloadFileOption()
+                      ..setValues(
+                          url:
+                              'https://down.qq.com/qqweb/PCQQ/PCQQ_EXE/PCQQ2021.exe',
+                          success: (res) async {
+                            print(await res.tempFilePath);
+                          }),
+                  );
                 }),
               ],
             ),
@@ -190,19 +195,20 @@ class MiniProgramApiPage extends StatelessWidget {
                 _renderItem('chooseImage', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.chooseImage(ChooseImageOption(
-                    sizeType: ['compressed'],
-                    sourceType: ['album'],
-                    success: (res) async {
-                      final x = await res.tempFiles;
-                      if (x.isNotEmpty) {
-                        final y = await x[0].path;
-                        final z = await x[0].size;
-                        print(y);
-                        print(z);
-                      }
-                    },
-                  ));
+                  wx.chooseImage(ChooseImageOption()
+                    ..setValues(
+                      sizeType: ['compressed'],
+                      sourceType: ['album'],
+                      success: (res) async {
+                        final x = await res.tempFiles;
+                        if (x.isNotEmpty) {
+                          final y = await x[0].path;
+                          final z = await x[0].size;
+                          print(y);
+                          print(z);
+                        }
+                      },
+                    ));
                 }),
               ],
             ),
@@ -214,34 +220,37 @@ class MiniProgramApiPage extends StatelessWidget {
                 _renderItem('openLocation', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.openLocation(OpenLocationOption(
-                    latitude: 23.105838,
-                    longitude: 113.33104,
-                  ));
+                  wx.openLocation(OpenLocationOption()
+                    ..setValues(
+                      latitude: 23.105838,
+                      longitude: 113.33104,
+                    ));
                 }),
                 _renderItem('getLocation', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.getLocation(GetLocationOption(success: (result) async {
-                    alertResult('lat = ' +
-                        (await result.latitude).toString() +
-                        ', lon =' +
-                        (await result.longitude).toString());
-                  }));
+                  wx.getLocation(GetLocationOption()
+                    ..setValues(success: (result) async {
+                      alertResult('lat = ' +
+                          (await result.latitude).toString() +
+                          ', lon =' +
+                          (await result.longitude).toString());
+                    }));
                 }),
                 _renderItem('choosePoi', context: context, execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.choosePoi(ChoosePoiOption(success: (result) async {
-                    alertResult('name = ' + (await result.name));
-                  }));
+                  wx.choosePoi(ChoosePoiOption()
+                    ..setValues(success: (result) async {
+                      alertResult('name = ' + (await result.name));
+                    }));
                 }),
                 _renderItem('chooseLocation', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.chooseLocation(
-                      ChooseLocationOption(success: (result) async {
-                    alertResult('name = ' + (await result.name));
-                  }));
+                  wx.chooseLocation(ChooseLocationOption()
+                    ..setValues(success: (result) async {
+                      alertResult('name = ' + (await result.name));
+                    }));
                 }),
               ],
             ),
@@ -252,9 +261,10 @@ class MiniProgramApiPage extends StatelessWidget {
                 _renderHeader('开放接口', MaterialIcons.layers_outlined),
                 _renderItem('login', context: context, execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.login(LoginOption(success: (result) async {
-                    alertResult('code = ' + (await result.code));
-                  }));
+                  wx.login(LoginOption()
+                    ..setValues(success: (result) async {
+                      alertResult('code = ' + (await result.code));
+                    }));
                 }),
                 _renderItem('getAccountInfoSync', context: context,
                     execBlock: () async {
@@ -266,16 +276,18 @@ class MiniProgramApiPage extends StatelessWidget {
                 _renderItem('getUserProfile', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.getUserProfile(GetUserProfileOption(
-                      desc: '获取用户信息 Test.',
-                      success: (result) async {
-                        alertResult('nickname = ' +
-                            (await (await result.userInfo).nickName));
-                      }));
+                  wx.getUserProfile(GetUserProfileOption()
+                    ..setValues(
+                        desc: '获取用户信息 Test.',
+                        success: (result) async {
+                          alertResult('nickname = ' +
+                              (await (await result.userInfo).nickName));
+                        }));
                 }),
                 _renderItem('authorize', context: context, execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.authorize(AuthorizeOption(scope: 'scope.userLocation'));
+                  wx.authorize(AuthorizeOption()
+                    ..setValues(scope: 'scope.userLocation'));
                 }),
                 _renderItem('openSetting', context: context,
                     execBlock: () async {
@@ -286,9 +298,10 @@ class MiniProgramApiPage extends StatelessWidget {
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
                   wx.chooseAddress(
-                    ChooseAddressOption(success: (result) async {
-                      alertResult('cityname = ' + await result.cityName);
-                    }),
+                    ChooseAddressOption()
+                      ..setValues(success: (result) async {
+                        alertResult('cityname = ' + await result.cityName);
+                      }),
                   );
                 }),
               ],
@@ -301,49 +314,56 @@ class MiniProgramApiPage extends StatelessWidget {
                 _renderItem('setClipboardData', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.setClipboardData(SetClipboardDataOption(data: 'Hello'));
+                  wx.setClipboardData(
+                      SetClipboardDataOption()..setValues(data: 'Hello'));
                 }),
                 _renderItem('getClipboardData', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.getClipboardData(
-                      GetClipboardDataOption(success: (result) async {
-                    alertResult('getClipboardData = ' + await result.data);
-                  }));
+                  wx.getClipboardData(GetClipboardDataOption()
+                    ..setValues(success: (result) async {
+                      alertResult('getClipboardData = ' + await result.data);
+                    }));
                 }),
                 _renderItem('getNetworkType', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.getNetworkType(
-                      GetNetworkTypeOption(success: (result) async {
-                    alertResult('getNetworkType = ' + await result.networkType);
-                  }));
+                  wx.getNetworkType(GetNetworkTypeOption()
+                    ..setValues(success: (result) async {
+                      alertResult(
+                          'getNetworkType = ' + await result.networkType);
+                    }));
                 }),
                 _renderItem('setScreenBrightness', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.setScreenBrightness(SetScreenBrightnessOption(value: 1.0));
+                  wx.setScreenBrightness(
+                      SetScreenBrightnessOption()..setValues(value: 1.0));
                 }),
                 _renderItem('setKeepScreenOn', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.setKeepScreenOn(SetKeepScreenOnOption(keepScreenOn: true));
+                  wx.setKeepScreenOn(
+                      SetKeepScreenOnOption()..setValues(keepScreenOn: true));
                 }),
                 _renderItem('makePhoneCall', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.makePhoneCall(MakePhoneCallOption(phoneNumber: '10086'));
+                  wx.makePhoneCall(
+                      MakePhoneCallOption()..setValues(phoneNumber: '10086'));
                 }),
                 _renderItem('scanCode', context: context, execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.scanCode(ScanCodeOption(success: (result) async {
-                    alertResult('code text = ' + await result.result);
-                  }));
+                  wx.scanCode(ScanCodeOption()
+                    ..setValues(success: (result) async {
+                      alertResult('code text = ' + await result.result);
+                    }));
                 }),
                 _renderItem('vibrateShort', context: context,
                     execBlock: () async {
                   final wx = UniversalMiniProgramApi.uni;
-                  wx.vibrateShort(VibrateShortOption(type: 'heavy'));
+                  wx.vibrateShort(
+                      VibrateShortOption()..setValues(type: 'heavy'));
                 }),
                 _renderItem('vibrateLong', context: context,
                     execBlock: () async {
