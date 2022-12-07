@@ -21,9 +21,13 @@ MPElement _encodeListView(Element element) {
     hashCode: element.hashCode,
     flutterElement: element,
     name: 'list_view',
-    children: MPElement.childrenFromFlutterElement(
-      indexedSemanticeParentElement,
-    ),
+    children: widget.reverse
+        ? MPElement.childrenFromFlutterElement(
+            indexedSemanticeParentElement,
+          ).reversed.toList()
+        : MPElement.childrenFromFlutterElement(
+            indexedSemanticeParentElement,
+          ),
     attributes: {
       'padding': widget.padding?.toString(),
       ..._encodeScroller(element),

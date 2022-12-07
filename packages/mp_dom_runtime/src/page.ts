@@ -109,8 +109,6 @@ export class Page {
     const router = this.engine.app?.router ?? this.engine?.router;
     if (router) {
       const viewport = await this.fetchViewport();
-      console.log("uuuuu");
-      
       router.updateRoute(this.viewId, {
         width: viewport.width,
         height: viewport.height,
