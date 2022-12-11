@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 
 import '../channel/channel_io.dart'
     if (dart.library.js) '../channel/channel_js.dart';
@@ -67,6 +68,9 @@ class JsObject {
     if (obj is JsObject) {
       return obj;
     } else if (obj is String) {
+      if (obj.startsWith('base64:')) {
+        return base64.decode(obj.replaceFirst('base64:', ''));
+      }
       return obj;
     } else if (obj is num) {
       return obj;
@@ -92,6 +96,9 @@ class JsObject {
       final funcId = obj.originFunction.hashCode;
       funcHandlers[funcId] = obj;
       return 'func:${funcId}';
+    } else if (obj is Uint8List) {
+      final base64EncodedString = base64.encode(obj);
+      return 'base64:${base64EncodedString}';
     } else if (obj is JsObject && obj.objectHandler != null) {
       return 'obj:${obj.objectHandler}';
     } else if (obj is Map) {

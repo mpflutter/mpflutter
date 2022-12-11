@@ -1,5 +1,6 @@
 import { Engine } from "../engine";
 import { MPEnv } from "../env";
+import { decode as decodeBase64, encode as encodeBase64 } from "base64-arraybuffer";
 
 interface MPJSMessage {
   event: string;
@@ -145,6 +146,12 @@ export class MPJS {
       return func;
     } else if (typeof arg === "string" && arg.indexOf("obj:") === 0) {
       return this.objectRefs[arg.replace("obj:", "")];
+    } else if (typeof arg === "string" && arg.indexOf("base64:") === 0) {
+      if (__MP_TARGET_BROWSER__) {
+        return decodeBase64(arg.substring(7));
+      } else if (__MP_MINI_PROGRAM__) {
+        return MPEnv.platformScope.base64ToArrayBuffer(arg.substring(7));
+      }
     } else if (typeof arg === "object" && arg instanceof Array) {
       return arg.map((it) => this.wrapArgument(it, funcCallback));
     } else if (typeof arg === "object") {
@@ -166,6 +173,12 @@ export class MPJS {
       typeof result === "bigint"
     ) {
       return result;
+    } else if (typeof result === "object" && result instanceof ArrayBuffer) {
+      if (__MP_TARGET_BROWSER__) {
+        return 'base64:' + encodeBase64(result);
+      } else if (__MP_MINI_PROGRAM__) {
+        return 'base64:' + MPEnv.platformScope.arrayBufferToBase64(result);
+      }
     } else if (typeof result === "object" && result instanceof Array) {
       return result.map((it) => this.wrapResult(it));
     } else {
