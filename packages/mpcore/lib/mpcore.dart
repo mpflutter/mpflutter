@@ -73,7 +73,7 @@ class MPCore {
   final Set<int> _diffableElements = {};
   final Map<int, Element> _renderObjectMapElement = {};
 
-  /// 
+  ///
   ///
   /// [body] like [runZonedGuarded].body:
   /// [onError] like  [runZonedGuarded].onError
@@ -90,8 +90,8 @@ class MPCore {
       //todo catch async error
     },
   ); */
-  void connectToHostChannel<R>(
-     {R Function()? body,
+  void connectToHostChannel<R>({
+    R Function()? body,
     void Function(Object error, StackTrace stack)? onError,
   }) async {
     if (kReleaseMode) {
@@ -656,4 +656,8 @@ class MPCore {
       printElement(el, level: level + 1);
     });
   }
+}
+
+class MPJS {
+  static final evalTemplate = mpjs.evalTemplate;
 }

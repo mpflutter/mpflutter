@@ -101,6 +101,23 @@ class PluginPage extends StatelessWidget {
               SizedBox(height: 16),
             ],
           )),
+          _renderBlock(Column(
+            children: [
+              _renderHeader('The mpjs template'),
+              GestureDetector(
+                onTap: () async {
+                  final result = await MPJS.evalTemplate('foo', ['Pony']);
+                  print(result);
+                },
+                child: Container(
+                  width: 300,
+                  height: 100,
+                  color: Colors.pink,
+                ),
+              ),
+              SizedBox(height: 16),
+            ],
+          )),
         ],
       ),
     );

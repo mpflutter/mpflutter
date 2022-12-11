@@ -3,11 +3,22 @@ import 'dart:convert';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:mpcore/mpkit/mpkit.dart';
+
 import '../channel/channel_io.dart'
     if (dart.library.js) '../channel/channel_js.dart';
 
 JsObject get context {
   return JsObject();
+}
+
+Future<dynamic> evalTemplate(String templateName, [List<dynamic>? args]) async {
+  if (MPEnv.envHost() == MPEnvHostType.wechatMiniProgram) {
+    return await context['wx']
+        .callMethod('\$mpjs_template_$templateName', args);
+  } else {
+    return await context.callMethod('\$mpjs_template_$templateName', args);
+  }
 }
 
 class JsBridgeInvoker {

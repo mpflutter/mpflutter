@@ -84,6 +84,25 @@ void buildWebPlugin() {
         }
       } catch (e) {}
     }
+    if (File(path.join('lib', 'mpjs.config.dart')).existsSync()) {
+      try {
+        final result = Process.runSync('dart', [
+          'run',
+          '--define=isWeb=true',
+          path.join('lib', 'mpjs.config.dart')
+        ]);
+        final templateScripts = json.decode(result.stdout) as Map;
+        templateScripts.forEach((key, value) {
+          stringBuffer.writeln('''
+try {
+  window.\$mpjs_template_${key} = $value;
+} catch (e) {
+  console.error(e);
+}
+''');
+        });
+      } catch (e) {}
+    }
     try {
       File('web/plugins.min.js').writeAsStringSync(
           '''var MPEnv = window.MPDOM.MPEnv;var MPMethodChannel = window.MPDOM.MPMethodChannel;var MPEventChannel = window.MPDOM.MPEventChannel;var MPPlatformView = window.MPDOM.MPPlatformView;var MPComponentFactory = window.MPDOM.ComponentFactory;var pluginRegisterer = window.MPDOM.PluginRegister;''' +
@@ -152,6 +171,26 @@ void buildMPPlugin(String appType) {
         }
       } catch (e) {}
     }
+  }
+
+  if (File(path.join('lib', 'mpjs.config.dart')).existsSync()) {
+    try {
+      final result = Process.runSync('dart', [
+        'run',
+        '--define=isMiniProgram=true',
+        path.join('lib', 'mpjs.config.dart')
+      ]);
+      final templateScripts = json.decode(result.stdout) as Map;
+      templateScripts.forEach((key, value) {
+        stringBuffer.writeln('''
+try {
+  wx.\$mpjs_template_${key} = $value;
+} catch (e) {
+  console.error(e);
+}
+''');
+      });
+    } catch (e) {}
   }
 
   try {
