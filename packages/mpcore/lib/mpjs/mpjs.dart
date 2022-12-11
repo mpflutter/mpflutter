@@ -146,15 +146,23 @@ class JsObject {
   }
 
   Future<dynamic> callMethod(Object method, [List? args]) async {
+    final trimedArgs = args?.map((e) {
+      return toBrowserObject(e);
+    }).toList();
+    if (trimedArgs != null) {
+      for (var i = trimedArgs.length - 1; i >= 0; i--) {
+        if (trimedArgs[i] == null) {
+          trimedArgs.removeLast();
+        } else {
+          break;
+        }
+      }
+    }
     final result = await JsBridgeInvoker.instance.makeRequest('callMethod', {
       'objectHandler': objectHandler,
       'callChain': _callChain,
       'method': method,
-      'args': args != null
-          ? args.map((e) {
-              return toBrowserObject(e);
-            }).toList()
-          : null,
+      'args': trimedArgs,
     });
     return result;
   }
