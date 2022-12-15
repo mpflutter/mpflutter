@@ -251,9 +251,9 @@ _modulizeDeferedJSCode(File file) {
 
 _writeSubpackagesToAppJson() {
   if (appJson == null) return;
+  (appJson!['pages'] as List)..addAll(miniProgramPages);
   if (subpackages.isNotEmpty) {
     appJson!['subpackages'] ??= [];
-    (appJson!['pages'] as List)..addAll(miniProgramPages);
     (appJson!['subpackages'] as List)
       ..addAll(subpackages.keys.map((e) {
         return {
