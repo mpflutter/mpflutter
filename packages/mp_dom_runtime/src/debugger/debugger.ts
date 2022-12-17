@@ -15,6 +15,7 @@ export interface Debugger {
   serverAddr: string;
   start(): void;
   sendMessage(message: string): void;
+  didConnectCallback?: () => void;
 }
 
 const clientType = () => {
@@ -36,6 +37,7 @@ class WXDebugger implements Debugger {
   private messageQueue: string[] = [];
   private socket?: any;
   private connected = false;
+  didConnectCallback?: () => void;
 
   constructor(readonly serverAddr: string, readonly engine: Engine) {}
 
@@ -46,6 +48,7 @@ class WXDebugger implements Debugger {
     this.socket.onOpen(() => {
       this.connected = true;
       this.socketDidConnect();
+      this.didConnectCallback?.();
     });
     this.socket.onMessage((message: any) => {
       if (typeof message.data === "string") {
@@ -117,6 +120,7 @@ class BrowserDebugger implements Debugger {
   private socket?: WebSocket;
   private connected = false;
   private needReload = false;
+  didConnectCallback?: () => void;
 
   constructor(readonly serverAddr: string, readonly engine: Engine) {}
 
@@ -135,6 +139,7 @@ class BrowserDebugger implements Debugger {
       }
       this.socketDidConnect();
       this.connected = true;
+      this.didConnectCallback?.();
     };
     this.socket.onmessage = (message) => {
       if (typeof message.data === "string") {

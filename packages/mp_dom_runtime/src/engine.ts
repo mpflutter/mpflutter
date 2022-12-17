@@ -131,6 +131,9 @@ export class Engine {
       }
     }
     if (this.debugger) {
+      this.debugger.didConnectCallback = () => {
+        this.windowInfo.updateWindowInfo();
+      };
       this.debugger.start();
     }
     if (this.codeBlock) {
