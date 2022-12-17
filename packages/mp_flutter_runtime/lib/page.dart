@@ -1,23 +1,17 @@
 part of './mp_flutter_runtime.dart';
 
-class MPPageController extends ChangeNotifier {
-  var _firstFrameRendered = false;
-
-  get firstFrameRendered => _firstFrameRendered;
-}
-
 class MPPage extends StatefulWidget {
   final MPEngine engine;
   final String? initialRoute;
   final Map? initialParams;
-  final MPPageController? controller;
+  final Widget? splash;
 
   const MPPage({
     Key? key,
     required this.engine,
     this.initialRoute,
     this.initialParams,
-    this.controller,
+    this.splash,
   }) : super(key: key);
 
   @override
@@ -93,9 +87,6 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
               (widget.engine.provider.uiProvider.appBarHeight() ?? 0) -
               (!widget.engine.provider.uiProvider.isFullScreen()
                   ? MediaQuery.of(context).padding.top
-                  : 0) -
-              (!widget.engine.provider.uiProvider.isFullScreen()
-                  ? MediaQuery.of(context).padding.bottom
                   : 0),
         );
         widget.engine._router.requestRoute(viewport: size).then((viewId) {
@@ -125,10 +116,6 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   @override
   void didReceivedFrameData(Map message) {
     if (!mounted) return;
-    if (widget.controller?._firstFrameRendered == false) {
-      widget.controller?._firstFrameRendered = true;
-      widget.controller?.notifyListeners();
-    }
     setState(() {
       if (message['ignoreScaffold'] != true) {
         scaffoldData = message['scaffold'];
@@ -165,11 +152,12 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   @override
   Widget build(BuildContext context) {
     if (viewId == null) {
-      return Scaffold(
-        appBar:
-            widget.engine.provider.uiProvider.createAppBar(context: context),
-        body: Container(key: containerKey, color: Colors.white),
-      );
+      return widget.splash ??
+          Scaffold(
+            appBar: widget.engine.provider.uiProvider
+                .createAppBar(context: context),
+            body: Container(key: containerKey, color: Colors.white),
+          );
     }
     final widgets = <Widget>[];
     if (scaffoldData != null) {

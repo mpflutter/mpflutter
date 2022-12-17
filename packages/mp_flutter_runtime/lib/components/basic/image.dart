@@ -67,33 +67,40 @@ class _Image extends ComponentView {
     final src = getStringFromAttributes(context, 'src');
     final base64Data = getStringFromAttributes(context, 'base64');
     final assetName = getStringFromAttributes(context, 'assetName');
+    final imageType = getStringFromAttributes(context, 'imageType');
     if (src != null) {
-      return buildNetworkImage(context, src);
+      return ClipRect(child: buildNetworkImage(context, src));
     } else if (base64Data != null) {
-      return Image.memory(base64.decode(base64Data));
+      if (imageType != null && imageType.startsWith("svg")) {
+        return ClipRect(child: SvgPicture.memory(base64.decode(base64Data)));
+      }
+      return ClipRect(child: Image.memory(base64.decode(base64Data)));
     } else if (assetName != null) {
       final engine = getEngine(context);
       if (engine?._mpkReader != null) {
         final data = engine!._mpkReader!.dataWithFilePath(assetName);
         if (data != null) {
-          return Image.memory(
-            data,
-            fit: getFit(context),
+          return ClipRect(
+            child: Image.memory(
+              data,
+              fit: getFit(context),
+            ),
           );
         }
       } else if (engine?.debugger != null) {
         final assetUrl =
             'http://${engine!.debugger!.serverAddr}/assets/$assetName';
-        return buildNetworkImage(context, assetUrl);
+        return ClipRect(child: buildNetworkImage(context, assetUrl));
       } else {
-        return getEngine(context)
-                ?.provider
-                .imageProvider
-                .createImageWithAssetName(
-                    context: context,
-                    assetName: assetName,
-                    fit: getFit(context)) ??
-            const SizedBox();
+        return ClipRect(
+            child: getEngine(context)
+                    ?.provider
+                    .imageProvider
+                    .createImageWithAssetName(
+                        context: context,
+                        assetName: assetName,
+                        fit: getFit(context)) ??
+                const SizedBox());
       }
     }
     return const SizedBox();
