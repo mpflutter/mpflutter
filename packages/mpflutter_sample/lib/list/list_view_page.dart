@@ -82,26 +82,31 @@ class ListViewPage extends StatelessWidget {
             _renderBlock(Column(
               children: [
                 _renderHeader('ListView with Builder and Seperator'),
-                Container(
-                  height: 400,
-                  child: ListView.separated(
-                    padding: EdgeInsets.only(left: 12, right: 12),
-                    itemBuilder: (context, index) {
-                      return Container(
-                        height: 44,
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          'Index - $index',
-                          style: TextStyle(
-                            fontSize: 14,
+                MPRefreshIndicator(
+                  onRefresh: (_) async {
+                    await Future.delayed(Duration(seconds: 2));
+                  },
+                  child: Container(
+                    height: 400,
+                    child: ListView.separated(
+                      padding: EdgeInsets.only(left: 12, right: 12),
+                      itemBuilder: (context, index) {
+                        return Container(
+                          height: 44,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Index - $index',
+                            style: TextStyle(
+                              fontSize: 14,
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return Container(height: 1, color: Colors.black12);
-                    },
-                    itemCount: 100,
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return Container(height: 1, color: Colors.black12);
+                      },
+                      itemCount: 100,
+                    ),
                   ),
                 ),
                 SizedBox(height: 16),

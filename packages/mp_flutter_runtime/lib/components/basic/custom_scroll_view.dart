@@ -14,20 +14,45 @@ class _CustomScrollView extends ComponentView {
 
   @override
   Widget builder(BuildContext context) {
+    final scrollDirection = (() {
+      if (getStringFromAttributes(context, 'scrollDirection') ==
+          'Axis.horizontal') {
+        return Axis.horizontal;
+      } else {
+        return Axis.vertical;
+      }
+    })();
     final childrenWidget = getWidgetsFromChildren(context);
     if (childrenWidget == null) {
       return const SizedBox();
     }
+    final controller = _ScrollControllerManager.createController(dataHashCode);
+    final onScrollAttribute = getIntFromAttributes(context, 'onScroll');
+    if (onScrollAttribute != null) {
+      if (!controller.hasListeners) {
+        controller.addListener(() {
+          getEngine(context)?._sendMessage({
+            "type": "scroll_view",
+            "message": {
+              "event": "onScroll",
+              "target": onScrollAttribute,
+              "scrollLeft": scrollDirection == Axis.vertical
+                  ? 0
+                  : controller.position.pixels,
+              "scrollTop": scrollDirection == Axis.horizontal
+                  ? 0
+                  : controller.position.pixels,
+              "viewportDimension": controller.position.viewportDimension,
+              "scrollHeight": controller.position.maxScrollExtent,
+            },
+          });
+        });
+      }
+    }
     final isRoot = getBoolFromAttributes(context, 'isRoot') ?? false;
     Widget widget = CustomScrollView(
-      scrollDirection: (() {
-        if (getStringFromAttributes(context, 'scrollDirection') ==
-            'Axis.horizontal') {
-          return Axis.horizontal;
-        } else {
-          return Axis.vertical;
-        }
-      })(),
+      scrollDirection: scrollDirection,
+      controller: controller,
       slivers: childrenWidget.map((e) {
         if (e is _SliverList ||
             e is _SliverGrid ||
@@ -38,6 +63,23 @@ class _CustomScrollView extends ComponentView {
         }
       }).toList(),
     );
+    final onRefreshAttribute = getIntFromAttributes(context, 'onRefresh');
+    if (onRefreshAttribute != null) {
+      widget = RefreshIndicator(
+          child: widget,
+          onRefresh: () async {
+            getEngine(context)?._sendMessage({
+              "type": "scroll_view",
+              "message": {
+                "event": "onRefresh",
+                "target": onRefreshAttribute,
+                "isRoot": isRoot,
+              },
+            });
+            final completer = _RefresherManager.createCompleter(dataHashCode);
+            await completer.future;
+          });
+    }
     if (isRoot) {
       widget = NotificationListener<ScrollNotification>(
         onNotification: (details) {

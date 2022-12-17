@@ -189,6 +189,9 @@ class MPEngine {
         _WebDialogs.didReceivedWebDialogsMessage(
             decodedMessage['message'], this);
         break;
+      case 'scroll_view':
+        _didReceivedScrollView(decodedMessage['message']);
+        break;
       case 'platform_view':
         MPPlatformView._didReceivedPlatformViewMessage(
             decodedMessage['message'], this);
@@ -227,6 +230,20 @@ class MPEngine {
     for (final item in data) {
       if (item is int) {
         _componentFactory._cacheViews.remove(item);
+      }
+    }
+  }
+
+  void _didReceivedScrollView(Map data) {
+    if (data["event"] == "onRefreshEnd") {
+      final target = _RefresherManager.findCompleter(data["target"]);
+      if (target != null) {
+        target.complete();
+      }
+    } else if (data["event"] == "jumpTo") {
+      final target = _ScrollControllerManager.findController(data["target"]);
+      if (target != null) {
+        target.jumpTo(data["value"]);
       }
     }
   }
