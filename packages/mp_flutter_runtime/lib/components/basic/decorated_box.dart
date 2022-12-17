@@ -184,7 +184,11 @@ class _DecoratedBox extends ComponentView {
       position: isFront
           ? DecorationPosition.foreground
           : DecorationPosition.background,
-      child: getWidgetFromChildren(context),
+      child: Transform.translate(
+        offset:
+            Offset(boxBorder?.top.width ?? 0.0, boxBorder?.top.width ?? 0.0),
+        child: getWidgetFromChildren(context),
+      ),
     );
   }
 }

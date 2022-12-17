@@ -146,7 +146,8 @@ class MPDialogProvider {
     final overlayEntry = OverlayEntry(builder: (context) {
       final content = Center(
         child: Container(
-          height: 100,
+          height: 128,
+          width: 128,
           decoration: BoxDecoration(
             color: Colors.black.withOpacity(0.6),
             borderRadius: BorderRadius.circular(12),
