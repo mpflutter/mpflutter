@@ -3,10 +3,12 @@ import 'dart:io';
 import 'i18n.dart';
 import 'init_android_studio.dart' as init_android_studio;
 import 'init_template_project.dart' as init_template_project;
+import 'init_flutter_native_project.dart' as init_flutter_native_project;
 import 'upgrade.dart' as upgrade;
 import 'init_local_plugin.dart' as init_local_plugin;
 import 'build_web.dart' as build_web;
 import 'build_weapp.dart' as build_weapp;
+import 'build_flutter_native.dart' as build_flutter_native;
 import 'package:cli_dialog/cli_dialog.dart';
 
 final features = <Map>[
@@ -22,6 +24,13 @@ final features = <Map>[
     'title.zh': '初始化 Android Studio 配置文件',
     'action': () {
       init_android_studio.main([]);
+    },
+  },
+  {
+    'title.en': 'Initialize Flutter Native Project',
+    'title.zh': '初始化 Flutter Native 工程',
+    'action': () {
+      init_flutter_native_project.main([]);
     },
   },
   {
@@ -50,6 +59,13 @@ final features = <Map>[
     'title.zh': '构建小程序应用（微信、字节）',
     'action': () {
       build_weapp.main([]);
+    },
+  },
+  {
+    'title.en': 'Build Flutter Native Application',
+    'title.zh': '构建 Flutter Native 应用',
+    'action': () {
+      build_flutter_native.main([]);
     },
   },
 ];

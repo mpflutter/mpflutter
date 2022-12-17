@@ -209,4 +209,41 @@ dependencies:
 ''';
     }
   }
+
+  static flutterNativeCreated() {
+    switch (currentLang) {
+      case Lang.zh:
+        return '''
+Flutter Native 工程已生成，请进入 flutter_native 目录，使用 VSCode / Xcode / Android Studio 打开对应工程，尝试构建到 iOS / Android 设备上。
+构建没有问题后，你可以使用当前设备进行 Debug 和 Release 操作。
+具体操作方法请进入官网 https://mpflutter.com 查阅文档。
+''';
+
+      default:
+        return '''
+Flutter Native project already generated.
+Enter flutter_native directory, use VSCode / Xcode / Android Studio open it, try to build it.
+You can use the device to debug or release after build success.
+For more information, go to https://mpflutter.com read documentation.
+''';
+    }
+  }
+
+  static flutterNativeProjectNotExists() {
+    switch (currentLang) {
+      case Lang.zh:
+        return 'Flutter Native 工程不存在，请先使用 help.dart 初始化。';
+      default:
+        return 'The Flutter Native project does not exist, please use help.dart to initialize first.';
+    }
+  }
+
+  static flutterNativeBuildSuccess() {
+    switch (currentLang) {
+      case Lang.zh:
+        return 'Flutter Native 构建完成，在 build 文件夹下是一个常规的 flutter 工程，你需要自行构建成 ipa 或 apk。';
+      default:
+        return 'The Flutter Native build is complete. It is a regular flutter project under the build folder. You need to build it into ipa or apk by yourself.';
+    }
+  }
 }

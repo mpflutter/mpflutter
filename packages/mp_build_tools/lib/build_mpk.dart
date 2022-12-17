@@ -111,7 +111,6 @@ _buildMpk() {
   }
 
   pushAsset('assets');
-  print(allFiles);
   final mpkFile = MPKFile(allFiles);
   final data = mpkFile.encode();
   File(p.join('build', 'app.mpk')).writeAsBytesSync(data);

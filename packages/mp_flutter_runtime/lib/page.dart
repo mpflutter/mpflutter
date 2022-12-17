@@ -1,15 +1,23 @@
 part of './mp_flutter_runtime.dart';
 
+class MPPageController extends ChangeNotifier {
+  var _firstFrameRendered = false;
+
+  get firstFrameRendered => _firstFrameRendered;
+}
+
 class MPPage extends StatefulWidget {
   final MPEngine engine;
   final String? initialRoute;
   final Map? initialParams;
+  final MPPageController? controller;
 
   const MPPage({
     Key? key,
     required this.engine,
     this.initialRoute,
     this.initialParams,
+    this.controller,
   }) : super(key: key);
 
   @override
@@ -71,32 +79,30 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
     if (!firstSetted) {
       firstSetted = true;
       route = ModalRoute.of(context);
-      Future.delayed(const Duration(milliseconds: 32)).then((_) {
-        final renderBox = containerKey.currentContext?.findRenderObject();
-        if (renderBox is RenderBox) {
-          final size = renderBox.size;
-          widget.engine._router.requestRoute(viewport: size).then((viewId) {
-            this.viewId = viewId;
-            widget.engine._addManageView(viewId, this);
-          });
-        } else {
-          final size = Size(
-            MediaQuery.of(context).size.width,
-            MediaQuery.of(context).size.height -
-                (widget.engine.provider.uiProvider.appBarHeight() ?? 0) -
-                (!widget.engine.provider.uiProvider.isFullScreen()
-                    ? MediaQuery.of(context).padding.top
-                    : 0) -
-                (!widget.engine.provider.uiProvider.isFullScreen()
-                    ? MediaQuery.of(context).padding.bottom
-                    : 0),
-          );
-          widget.engine._router.requestRoute(viewport: size).then((viewId) {
-            this.viewId = viewId;
-            widget.engine._addManageView(viewId, this);
-          });
-        }
-      });
+      final renderBox = containerKey.currentContext?.findRenderObject();
+      if (renderBox is RenderBox) {
+        final size = renderBox.size;
+        widget.engine._router.requestRoute(viewport: size).then((viewId) {
+          this.viewId = viewId;
+          widget.engine._addManageView(viewId, this);
+        });
+      } else {
+        final size = Size(
+          MediaQuery.of(context).size.width,
+          MediaQuery.of(context).size.height -
+              (widget.engine.provider.uiProvider.appBarHeight() ?? 0) -
+              (!widget.engine.provider.uiProvider.isFullScreen()
+                  ? MediaQuery.of(context).padding.top
+                  : 0) -
+              (!widget.engine.provider.uiProvider.isFullScreen()
+                  ? MediaQuery.of(context).padding.bottom
+                  : 0),
+        );
+        widget.engine._router.requestRoute(viewport: size).then((viewId) {
+          this.viewId = viewId;
+          widget.engine._addManageView(viewId, this);
+        });
+      }
     }
   }
 
@@ -119,6 +125,10 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   @override
   void didReceivedFrameData(Map message) {
     if (!mounted) return;
+    if (widget.controller?._firstFrameRendered == false) {
+      widget.controller?._firstFrameRendered = true;
+      widget.controller?.notifyListeners();
+    }
     setState(() {
       if (message['ignoreScaffold'] != true) {
         scaffoldData = message['scaffold'];
