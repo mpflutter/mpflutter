@@ -23,18 +23,51 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
   Map? scaffoldData;
   List? overlaysData;
   final containerKey = GlobalKey();
+  void Function()? debuggerStateListener;
 
   @override
   void dispose() {
     super.dispose();
+    final debugger = widget.engine.debugger;
+    if (debugger != null && debuggerStateListener != null) {
+      debugger.removeListener(debuggerStateListener!);
+    }
     if (route != null && !route!.isActive && viewId != null) {
       widget.engine._router._disposeRoute(viewId!);
     }
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+  void initState() {
+    super.initState();
+    _listenDebuggerState();
+  }
+
+  void _listenDebuggerState() {
+    final debugger = widget.engine.debugger;
+    if (debugger != null) {
+      debuggerStateListener = () {
+        if (debugger.connected) {
+          firstSetted = false;
+          _requestRoute();
+        } else {
+          if (!mounted) return;
+          final currentRoute = ModalRoute.of(context);
+          if (currentRoute != null && currentRoute.isActive) {
+            Navigator.of(context).popUntil(
+              (route) => route == ModalRoute.of(context),
+            );
+          }
+          setState(() {
+            viewId = null;
+          });
+        }
+      };
+      debugger.addListener(debuggerStateListener!);
+    }
+  }
+
+  void _requestRoute() {
     if (!firstSetted) {
       firstSetted = true;
       route = ModalRoute.of(context);
@@ -65,6 +98,12 @@ class _MPPageState extends State<MPPage> with MPDataReceiver, RouteAware {
         }
       });
     }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _requestRoute();
   }
 
   @override
