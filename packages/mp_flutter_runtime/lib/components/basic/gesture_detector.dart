@@ -93,7 +93,10 @@ class _GestureDetector extends ComponentView {
               );
             }
           : null,
-      child: getWidgetFromChildren(context),
+      child: Container(
+        color: Colors.transparent,
+        child: getWidgetFromChildren(context),
+      ),
     );
   }
 
