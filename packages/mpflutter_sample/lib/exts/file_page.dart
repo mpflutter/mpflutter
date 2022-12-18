@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
@@ -123,8 +125,91 @@ class FilePage extends StatelessWidget {
               SizedBox(height: 16),
             ],
           )),
+          _renderBlock(Column(
+            children: [
+              _renderHeader('Pick media from device'),
+              ChooseMediaWidget(),
+              SizedBox(height: 16),
+            ],
+          )),
         ],
       ),
     );
+  }
+}
+
+class ChooseMediaWidget extends StatefulWidget {
+  const ChooseMediaWidget({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<ChooseMediaWidget> createState() => _ChooseMediaWidgetState();
+}
+
+class _ChooseMediaWidgetState extends State<ChooseMediaWidget> {
+  Uint8List? imageData;
+
+  @override
+  Widget build(BuildContext context) {
+    if (MPEnv.envHost() == MPEnvHostType.browser) {
+      return Container(
+        width: 100,
+        height: 100,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Container(
+                width: 100,
+                height: 100,
+                color: imageData != null ? Colors.black : Colors.pink,
+                child: imageData != null ? Image.memory(imageData!) : null,
+              ),
+            ),
+            Positioned.fill(
+              child: FilePickerView(
+                fileKey: ValueKey("foo_file_picker"),
+                // count: 2,
+                mediaType: FilePickerMediaType.image,
+                // sourceType: FilePickerSourceType.camera,
+                // cameraType: FilePickerCameraType.front,
+                onPickFile: (files) async {
+                  if (files.isNotEmpty) {
+                    final data = await FileManager.getFileManager()
+                        .readFile(files.first);
+                    setState(() {
+                      imageData = data;
+                    });
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return GestureDetector(
+        onTap: () async {
+          final file = await FilePicker.chooseMedia(
+              count: 2,
+              compressed: true,
+              sourceType: FilePickerSourceType.camera,
+              mediaType: FilePickerMediaType.image);
+          if (file.isNotEmpty) {
+            final data =
+                await FileManager.getFileManager().readFile(file.first);
+            setState(() {
+              imageData = data;
+            });
+          }
+        },
+        child: Container(
+          width: 100,
+          height: 100,
+          color: imageData != null ? Colors.black : Colors.pink,
+          child: imageData != null ? Image.memory(imageData!) : null,
+        ),
+      );
+    }
   }
 }

@@ -185,7 +185,29 @@ class JsObject {
     return result;
   }
 
-  Future<T?> getPropertyValue<T>(String key) async {
+  Future<JsObject> newObject(String clazz, [List? args]) async {
+    final trimedArgs = args?.map((e) {
+      return toBrowserObject(e);
+    }).toList();
+    if (trimedArgs != null) {
+      for (var i = trimedArgs.length - 1; i >= 0; i--) {
+        if (trimedArgs[i] == null) {
+          trimedArgs.removeLast();
+        } else {
+          break;
+        }
+      }
+    }
+    final result = await JsBridgeInvoker.instance.makeRequest('newObject', {
+      'objectHandler': objectHandler,
+      'callChain': _callChain,
+      'clazz': clazz,
+      'args': trimedArgs,
+    });
+    return result;
+  }
+
+  Future<T?> getPropertyValue<T>(dynamic key) async {
     var result = await JsBridgeInvoker.instance.makeRequest('getValue', {
       'objectHandler': objectHandler,
       'callChain': _callChain,
@@ -207,7 +229,7 @@ class JsObject {
     }
   }
 
-  Future<dynamic> setPropertyValue(String key, dynamic value) async {
+  Future<dynamic> setPropertyValue(dynamic key, dynamic value) async {
     final result = await JsBridgeInvoker.instance.makeRequest('setValue', {
       'objectHandler': objectHandler,
       'callChain': _callChain,

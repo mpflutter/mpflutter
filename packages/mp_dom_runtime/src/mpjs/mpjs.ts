@@ -15,6 +15,13 @@ interface MPJSCallMethodParams {
   args: any[];
 }
 
+interface MPJSNewObjectParams {
+  objectHandler: string;
+  callChain: string[];
+  clazz: string;
+  args: any[];
+}
+
 interface MPJSGetValueParams {
   objectHandler: string;
   callChain: string[];
@@ -42,6 +49,8 @@ export class MPJS {
   ) {
     if (message.event === "callMethod") {
       this.callMethod(message, callback, funcCallback);
+    } else if (message.event === "newObject") {
+      this.newObject(message, callback, funcCallback);
     } else if (message.event === "getValue") {
       this.getValue(message, callback);
     } else if (message.event === "setValue") {
@@ -66,6 +75,26 @@ export class MPJS {
           callingObject,
           params.args?.map((it) => this.wrapArgument(it, funcCallback))
         );
+        if (result instanceof Promise) {
+          result = await result;
+        }
+        callback(this.wrapResult(result));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  async newObject(
+    message: MPJSMessage,
+    callback: (result: any) => void,
+    funcCallback: (funcId: string, args: any[]) => void
+  ) {
+    const params = message.params as MPJSNewObjectParams;
+    const callingObject = this.getCallee(params.objectHandler, params.callChain);
+    if (typeof callingObject === "object" || typeof callingObject === "function") {
+      try {
+        let result = new callingObject[params.clazz](params.args?.map((it) => this.wrapArgument(it, funcCallback)));
         if (result instanceof Promise) {
           result = await result;
         }
@@ -175,9 +204,9 @@ export class MPJS {
       return result;
     } else if (typeof result === "object" && result instanceof ArrayBuffer) {
       if (__MP_TARGET_BROWSER__) {
-        return 'base64:' + encodeBase64(result);
+        return "base64:" + encodeBase64(result);
       } else if (__MP_MINI_PROGRAM__) {
-        return 'base64:' + MPEnv.platformScope.arrayBufferToBase64(result);
+        return "base64:" + MPEnv.platformScope.arrayBufferToBase64(result);
       }
     } else if (typeof result === "object" && result instanceof Array) {
       return result.map((it) => this.wrapResult(it));

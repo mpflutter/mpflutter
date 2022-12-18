@@ -99,10 +99,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: d67b40dc179a2e36d3e7880b8478652917e3b751
+      resolved-ref: f7eab2314cc14d4c5c371fbcfe65815632986f68
       url: "https://github.com/mpflutter-plugins/http"
     source: git
-    version: "0.13.1"
+    version: "0.13.4"
   http_parser:
     dependency: transitive
     description:
@@ -150,10 +150,10 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: c9bdb9567a41c7782008bb2453024e8ae188bf51
+      resolved-ref: cd53b72a80787c423972a9bce15e3a3b9d8f88ff
       url: "https://github.com/mpflutter-plugins/mp_file"
     source: git
-    version: "0.1.0"
+    version: "0.2.0"
   mpcore:
     dependency: "direct main"
     description:
@@ -176,7 +176,7 @@ packages:
       name: path
       url: "https://pub.flutter-io.cn"
     source: hosted
-    version: "1.8.2"
+    version: "1.8.3"
   pedantic:
     dependency: transitive
     description:
@@ -225,8 +225,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "refactor/codegen"
-      resolved-ref: "60c447996768a41b3ed9d948bf757dc6b6ef2059"
+      ref: HEAD
+      resolved-ref: "124d6899b9bfec60f02f502ffdc2798feef91b04"
       url: "https://github.com/mpflutter-plugins/universal_miniprogram_api"
     source: git
     version: "0.1.0"
