@@ -1,3 +1,7 @@
+## 0.20.0
+
+* Add MPFlutter  Flutter Native support.
+
 ## 0.13.0
 
 * Add android and iOS full support.

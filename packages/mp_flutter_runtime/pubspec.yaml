@@ -1,6 +1,6 @@
 name: mp_flutter_runtime
 description: The MPFlutter runtime of Flutter.
-version: 0.17.0
+version: 0.20.0
 homepage: https://github.com/mpflutter/mpflutter
 
 environment:
