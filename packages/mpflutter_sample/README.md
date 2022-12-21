@@ -35,9 +35,9 @@ Serve on 0.0.0.0:9898
 Use browser open http://0.0.0.0:9898/index.html or use MiniProgram Developer Tools import './dist/weapp' for dev.
 ```
 
-1. 打开 Chrome 浏览器，输入网址 http://127.0.0.1:9898 ，如无意外，你将看到 Hello, MPFlutter! 提示。
-2. 在 VSCode 中打开 `lib/main.dart`，尝试修改 Hello, MPFlutter! 文本，并保存，看看是否可以实现 Hot-Reload?
-3. 如果没有问题，你可以在 lib 目录下开展业务开发了。
+5. 打开 Chrome 浏览器，输入网址 http://127.0.0.1:9898 ，如无意外，你将看到 Hello, MPFlutter! 提示。
+6. 在 VSCode 中打开 `lib/main.dart`，尝试修改 Hello, MPFlutter! 文本，并保存，看看是否可以实现 Hot-Reload?
+7. 如果没有问题，你可以在 lib 目录下开展业务开发了。
 
 ### 微信小程序
 
