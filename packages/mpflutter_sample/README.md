@@ -13,14 +13,18 @@
 - VSCode 扩展：Dart 和 Flutter 
 - Flutter 开发环境
 - Chrome 浏览器
+- Node 16
 
 Flutter 开发环境可以在 https://flutter.dev 或 https://flutter-io.cn 下载安装。
+
+Node 16可以通过[nvm](https://github.com/nvm-sh/nvm#installing-and-updating)得到
 
 ## 开发
 
 1. 使用 Git clone 或直接下载本仓库，使用 VSCode 打开本仓库根目录。
-2. 使用命令行，locate 到本仓库根目录，执行命令 `dart pub get`。
-2. 按下键盘上的 'F5' 键，开始调试，在 VSCode 的调试控制台上出现如下输出。
+2. 执行主目录的build.sh脚本
+3. 使用命令行，locate 到本仓库根目录，执行命令 `dart pub get`。
+4. 按下键盘上的 'F5' 键，开始调试，在 VSCode 的调试控制台上出现如下输出。
 
 ```
 Connecting to VM Service at http://127.0.0.1:61276/OgoUGNgV_fE=/
@@ -31,9 +35,9 @@ Serve on 0.0.0.0:9898
 Use browser open http://0.0.0.0:9898/index.html or use MiniProgram Developer Tools import './dist/weapp' for dev.
 ```
 
-3. 打开 Chrome 浏览器，输入网址 http://0.0.0.0:9898/index.html ，如无意外，你将看到 Hello, MPFlutter! 提示。
-4. 在 VSCode 中打开 `lib/main.dart`，尝试修改 Hello, MPFlutter! 文本，并保存，看看是否可以实现 Hot-Reload?
-5. 如果没有问题，你可以在 lib 目录下开展业务开发了。
+5. 打开 Chrome 浏览器，输入网址 http://127.0.0.1:9898 ，如无意外，你将看到 Hello, MPFlutter! 提示。
+6. 在 VSCode 中打开 `lib/main.dart`，尝试修改 Hello, MPFlutter! 文本，并保存，看看是否可以实现 Hot-Reload?
+7. 如果没有问题，你可以在 lib 目录下开展业务开发了。
 
 ### 微信小程序
 

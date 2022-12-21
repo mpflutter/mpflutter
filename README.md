@@ -28,6 +28,9 @@ MPFlutter 提供了丰富的组件、接口，开发者可以轻松地为应用�
 
 [《Flutter 实战》 https://book.flutterchina.club](https://book.flutterchina.club)
 
+如果你想了解MPFlutter使用的例子, 在packages目录下的mpflutter_sample可能会有帮助.
+如果你想调试代码,请注意一定在先执行主目录下的`build.sh`,它会生成一些web的依赖.
+
 ## 贡献代码
 
 当前 MPFlutter 处于初级阶段，如果你希望为 MPFlutter 贡献代码，又或者是想要研究 MPFlutter 的运行原理，可以阅读 [Contribute Guide](./CONTRIBUTE.md) 尝试搭建框架开发环境。
