@@ -12,7 +12,7 @@ class MPApp extends StatelessWidget {
   final GlobalKey<NavigatorState>? navigatorKey;
   final PageRouteFactory? pageRouteBuilder;
 
-  MPApp({
+  const MPApp({
     this.key,
     this.title,
     this.color,

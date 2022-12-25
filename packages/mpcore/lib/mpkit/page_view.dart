@@ -44,6 +44,7 @@ class MPPageController extends MPPlatformViewController with ChangeNotifier {
       _page = (params?['index'] as num).toInt();
       notifyListeners();
     }
+    return null;
   }
 }
 
@@ -56,7 +57,7 @@ class MPPageView extends MPPlatformView {
   final bool loop;
   final bool autoplay;
 
-  MPPageView({
+  const MPPageView({
     required this.children,
     this.scrollDirection = Axis.horizontal,
     this.loop = false,

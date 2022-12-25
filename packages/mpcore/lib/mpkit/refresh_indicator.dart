@@ -5,7 +5,7 @@ class MPRefreshIndicator extends StatelessWidget {
   final bool Function(Key? scrollViewKey)? enableChecker;
   final Widget child;
 
-  MPRefreshIndicator({
+  const MPRefreshIndicator({
     required this.child,
     this.onRefresh,
     this.enableChecker,

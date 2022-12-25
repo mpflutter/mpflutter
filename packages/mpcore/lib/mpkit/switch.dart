@@ -25,7 +25,7 @@ class MPSwitch extends StatelessWidget {
   final Function(bool)? onValueChanged;
   final MPSwitchController? controller;
 
-  MPSwitch({
+  const MPSwitch({
     this.disabled,
     this.defaultValue,
     this.onValueChanged,

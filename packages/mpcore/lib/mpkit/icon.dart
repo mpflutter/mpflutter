@@ -5,7 +5,7 @@ class MPIcon extends StatelessWidget {
   final double size;
   final Color color;
 
-  MPIcon(this.iconUrl, {this.size = 24, this.color = Colors.black});
+  const MPIcon(this.iconUrl, {this.size = 24, this.color = Colors.black});
 
   @override
   Widget build(BuildContext context) {

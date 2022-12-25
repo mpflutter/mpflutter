@@ -5,7 +5,7 @@ class MPSliverPersistentHeader extends StatelessWidget {
   final bool? lazying;
   final double? lazyOffset;
 
-  MPSliverPersistentHeader({
+  const MPSliverPersistentHeader({
     required this.child,
     this.lazying,
     this.lazyOffset,

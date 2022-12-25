@@ -10,7 +10,7 @@ class MPWechatMiniProgramShareInfo {
   final String? customPath;
   final String? imageUrl;
 
-  MPWechatMiniProgramShareInfo({
+  const MPWechatMiniProgramShareInfo({
     this.title,
     this.routeName,
     this.routeParams,
@@ -23,7 +23,7 @@ class MPWechatMiniProgramShareRequest {
   final String? from;
   final String? webViewUrl;
 
-  MPWechatMiniProgramShareRequest({this.from, this.webViewUrl});
+  const MPWechatMiniProgramShareRequest({this.from, this.webViewUrl});
 }
 
 class MPScaffold extends StatefulWidget {
@@ -44,7 +44,7 @@ class MPScaffold extends StatefulWidget {
   final Widget? floatingBody;
   final Color? backgroundColor;
 
-  MPScaffold({
+  const MPScaffold({
     this.name,
     this.appBarColor,
     this.appBarTintColor,
@@ -237,7 +237,7 @@ class MPOverlayScaffold extends MPScaffold {
   final Function? onBackgroundTap;
   final ModalRoute? parentRoute;
 
-  MPOverlayScaffold({
+  const MPOverlayScaffold({
     Widget? body,
     Color? backgroundColor,
     this.barrierDismissible,
@@ -250,7 +250,7 @@ class MPScaffoldBody extends StatelessWidget {
   final Widget? child;
   final double? appBarHeight;
 
-  MPScaffoldBody({
+  const MPScaffoldBody({
     Key? key,
     this.child,
     this.appBarHeight,
@@ -265,7 +265,7 @@ class MPScaffoldBody extends StatelessWidget {
 class MPScaffoldAppBar extends StatelessWidget {
   final PreferredSizeWidget? child;
 
-  MPScaffoldAppBar({
+  const MPScaffoldAppBar({
     Key? key,
     this.child,
   }) : super(key: key);
@@ -286,7 +286,7 @@ class MPScaffoldAppBar extends StatelessWidget {
 class MPScaffoldBottomBar extends StatelessWidget {
   final Widget? child;
 
-  MPScaffoldBottomBar({
+  const MPScaffoldBottomBar({
     Key? key,
     this.child,
   }) : super(key: key);
@@ -307,7 +307,7 @@ class MPScaffoldBottomBar extends StatelessWidget {
 class MPScaffoldFloatingBody extends StatelessWidget {
   final Widget? child;
 
-  MPScaffoldFloatingBody({
+  const MPScaffoldFloatingBody({
     Key? key,
     this.child,
   }) : super(key: key);

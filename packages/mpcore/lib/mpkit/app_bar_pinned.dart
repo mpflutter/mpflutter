@@ -6,7 +6,7 @@ class MPAppBarPinned extends StatelessWidget implements PreferredSizeWidget {
   final double appBarHeight;
   final Widget? footerContent;
 
-  MPAppBarPinned({
+  const MPAppBarPinned({
     this.headerContent,
     required this.appBarContent,
     required this.appBarHeight,

@@ -79,7 +79,7 @@ class MPPlatformView extends StatelessWidget {
   final List<Widget>? children;
   final Future? Function(String method, Map? params)? onMethodCall;
 
-  MPPlatformView({
+  const MPPlatformView({
     required this.viewType,
     this.viewAttributes = const {},
     this.controller,

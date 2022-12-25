@@ -4,7 +4,7 @@ class MPReachBottomListener extends StatelessWidget {
   final void Function(Key? scrollViewKey)? onReachBottom;
   final Widget child;
 
-  MPReachBottomListener({
+  const MPReachBottomListener({
     required this.child,
     this.onReachBottom,
   });

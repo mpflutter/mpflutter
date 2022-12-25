@@ -29,7 +29,7 @@ class MPSlider extends StatelessWidget {
   final Function(double)? onValueChanged;
   final MPSliderController? controller;
 
-  MPSlider({
+  const MPSlider({
     this.min = 0.0,
     this.max = 100.0,
     this.step = 1.0,

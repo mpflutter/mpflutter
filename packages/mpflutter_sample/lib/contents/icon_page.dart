@@ -46,7 +46,7 @@ class IconPage extends StatelessWidget {
             children: [
               _renderHeader('Icon with default size.'),
               Container(
-                child: MPIcon(MaterialIcons.ac_unit),
+                child: const MPIcon(MaterialIcons.ac_unit),
               ),
               SizedBox(height: 16),
             ],
@@ -55,7 +55,7 @@ class IconPage extends StatelessWidget {
             children: [
               _renderHeader('Icon with 100 size.'),
               Container(
-                child: MPIcon(
+                child: const MPIcon(
                   MaterialIcons.ac_unit,
                   size: 100,
                 ),
@@ -67,7 +67,7 @@ class IconPage extends StatelessWidget {
             children: [
               _renderHeader('Icon with green color.'),
               Container(
-                child: MPIcon(
+                child: const MPIcon(
                   MaterialIcons.ac_unit,
                   size: 100,
                   color: Colors.green,

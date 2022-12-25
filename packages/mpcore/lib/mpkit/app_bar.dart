@@ -9,7 +9,7 @@ class MPAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double appBarHeight;
   final bool primary;
 
-  MPAppBar({
+  const MPAppBar({
     required this.context,
     this.leading,
     this.title,

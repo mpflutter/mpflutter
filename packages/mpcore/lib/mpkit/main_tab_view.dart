@@ -14,7 +14,7 @@ class MPMainTabItem {
 
 class MPMainTabController extends ChangeNotifier {
   MPMainTabViewState? _state;
-  Future<bool> Function(int)? _canJump;
+  final Future<bool> Function(int)? _canJump;
 
   MPMainTabController({Future<bool> Function(int)? canJump})
       : _canJump = canJump;
