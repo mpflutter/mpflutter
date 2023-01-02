@@ -39,7 +39,7 @@
 		"miniprogram-simulate": "^1.2.6",
 		"rimraf": "^3.0.2",
 		"terser-webpack-plugin": "^3.0.6",
-		"webpack": "^4.43.0"
+		"webpack": "^5.75.0"
 	},
 	"gitHead": "335714e2b6cd9c12d159dfc0753c697e800974a4"
 }
