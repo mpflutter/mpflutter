@@ -135,7 +135,7 @@ class JsObject {
   }
 
   JsObject getProperty(String key) {
-    final obj = JsObject();
+    final obj = JsObject(objectHandler: objectHandler);
     obj._callChain
       ..addAll(_callChain)
       ..add(key);
