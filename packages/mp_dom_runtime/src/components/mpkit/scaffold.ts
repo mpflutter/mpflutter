@@ -178,6 +178,14 @@ export class MPScaffold extends ComponentView {
     });
   }
 
+  onWechatMiniProgramShareTimeline(): any {
+    return this.attributes.wechatMiniProgramShareTimeline;
+  }
+
+  onWechatMiniProgramAddToFavorites(): any {
+    return this.attributes.wechatMiniProgramAddToFavorites;
+  }
+
   onReachBottom() {
     this.engine.sendMessage(
       JSON.stringify({

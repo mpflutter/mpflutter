@@ -169,6 +169,12 @@ export const WXPage = function (
         promise: (this as any).mpPage.onWechatMiniProgramShareAppMessage(info),
       };
     },
+    onShareTimeline() {
+      return (this as any).mpPage.onWechatMiniProgramShareTimeline();
+    },
+    onAddToFavorites(info: any) {
+      return (this as any).mpPage.onWechatMiniProgramAddToFavorites();
+    },
     onReachBottom() {
       (this as any).mpPage.onReachBottom();
     },

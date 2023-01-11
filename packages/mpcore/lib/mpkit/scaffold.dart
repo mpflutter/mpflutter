@@ -19,6 +19,38 @@ class MPWechatMiniProgramShareInfo {
   });
 }
 
+class MPWechatMiniProgramShareTimeline {
+  final String? title;
+  final String? routeName;
+  final Map? routeParams;
+  final String? customPath;
+  final String? imageUrl;
+
+  const MPWechatMiniProgramShareTimeline({
+    this.title,
+    this.routeName,
+    this.routeParams,
+    this.customPath,
+    this.imageUrl,
+  });
+}
+
+class MPWechatMiniProgramAddToFavorites {
+  final String? title;
+  final String? routeName;
+  final Map? routeParams;
+  final String? customPath;
+  final String? imageUrl;
+
+  const MPWechatMiniProgramAddToFavorites({
+    this.title,
+    this.routeName,
+    this.routeParams,
+    this.customPath,
+    this.imageUrl,
+  });
+}
+
 class MPWechatMiniProgramShareRequest {
   final String? from;
   final String? webViewUrl;
@@ -36,6 +68,10 @@ class MPScaffold extends StatefulWidget {
   final Future<MPWechatMiniProgramShareInfo> Function(
     MPWechatMiniProgramShareRequest request,
   )? onWechatMiniProgramShareAppMessage;
+  final MPWechatMiniProgramShareTimeline Function()?
+      onWechatMiniProgramShareTimeline;
+  final MPWechatMiniProgramAddToFavorites Function()?
+      onWechatMiniProgramAddToFavorites;
   final Function? onReachBottom;
   final PreferredSizeWidget? appBar;
   final Widget? bottomBar;
@@ -52,6 +88,8 @@ class MPScaffold extends StatefulWidget {
     this.onRefresh,
     this.onPageScroll,
     this.onWechatMiniProgramShareAppMessage,
+    this.onWechatMiniProgramShareTimeline,
+    this.onWechatMiniProgramAddToFavorites,
     this.onReachBottom,
     this.appBar,
     this.bottomBar,

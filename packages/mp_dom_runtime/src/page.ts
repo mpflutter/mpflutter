@@ -172,6 +172,18 @@ export class Page {
     }
   }
 
+  onWechatMiniProgramShareTimeline() {
+    if (this.scaffoldView instanceof MPScaffold) {
+      return this.scaffoldView.onWechatMiniProgramShareTimeline();
+    }
+  }
+
+  onWechatMiniProgramAddToFavorites(info: any) {
+    if (this.scaffoldView instanceof MPScaffold) {
+      return this.scaffoldView.onWechatMiniProgramAddToFavorites();
+    }
+  }
+
   onReachBottom() {
     if (this.scaffoldView instanceof MPScaffold) {
       this.scaffoldView.onReachBottom();

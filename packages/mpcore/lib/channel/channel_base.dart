@@ -380,7 +380,7 @@ class MPChannelBase {
                       .map((key, value) {
                         return MapEntry(
                           key,
-                          '$key=${Uri.encodeQueryComponent(value)}',
+                          '$key=${value is String ? Uri.encodeQueryComponent(value) : ""}',
                         );
                       })
                       .values

@@ -102,6 +102,20 @@ class MiniProgramApiPage extends StatelessWidget {
       onWechatMiniProgramShareAppMessage: (request) async {
         return MPWechatMiniProgramShareInfo(title: '微信小程序 API');
       },
+      onWechatMiniProgramShareTimeline: () {
+        return MPWechatMiniProgramShareTimeline(
+          title: "微信小程序 API Timeline",
+          imageUrl:
+              'https://www-jsdelivr-com.onrender.com/img/landing/built-for-production-icon@2x.png',
+        );
+      },
+      onWechatMiniProgramAddToFavorites: () {
+        return MPWechatMiniProgramAddToFavorites(
+          title: '微信小程序 API Fav',
+          imageUrl:
+              'https://www-jsdelivr-com.onrender.com/img/landing/built-for-production-icon@2x.png',
+        );
+      },
       body: ListView(
         children: [
           Container(

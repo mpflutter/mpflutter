@@ -65,6 +65,82 @@ MPElement _encodeMPScaffold(Element element) {
           ? bodyBackgroundColor.value.toString()
           : null,
       'hasRootScroller': widgetState.hasRootScroller,
+      'wechatMiniProgramShareTimeline': (() {
+        final onWechatMiniProgramShareTimeline =
+            widget.onWechatMiniProgramShareTimeline;
+        if (onWechatMiniProgramShareTimeline == null) {
+          return null;
+        }
+        final shareInfo = onWechatMiniProgramShareTimeline.call();
+        final routeName = shareInfo.routeName ??
+            ModalRoute.of(widgetState.context)?.settings.name ??
+            '/';
+        final routeParams = shareInfo.routeParams ??
+            ModalRoute.of(widgetState.context)?.settings.arguments;
+        final result = <String, dynamic>{
+          'title': shareInfo.title ?? widget.name,
+          'query': (() {
+            if (shareInfo.customPath != null) {
+              return shareInfo.customPath;
+            } else {
+              return 'route=${routeName}&${(() {
+                if (routeParams is Map) {
+                  return routeParams
+                      .map((key, value) {
+                        return MapEntry(
+                          key,
+                          '$key=${value is String ? Uri.encodeQueryComponent(value) : ""}',
+                        );
+                      })
+                      .values
+                      .join('&');
+                }
+                return '';
+              })()}';
+            }
+          })(),
+          'imageUrl': shareInfo.imageUrl,
+        };
+        return result;
+      })(),
+      'wechatMiniProgramAddToFavorites': (() {
+        final onWechatMiniProgramAddToFavorites =
+            widget.onWechatMiniProgramAddToFavorites;
+        if (onWechatMiniProgramAddToFavorites == null) {
+          return null;
+        }
+        final shareInfo = onWechatMiniProgramAddToFavorites.call();
+        final routeName = shareInfo.routeName ??
+            ModalRoute.of(widgetState.context)?.settings.name ??
+            '/';
+        final routeParams = shareInfo.routeParams ??
+            ModalRoute.of(widgetState.context)?.settings.arguments;
+        final result = <String, dynamic>{
+          'title': shareInfo.title ?? widget.name,
+          'query': (() {
+            if (shareInfo.customPath != null) {
+              return shareInfo.customPath;
+            } else {
+              return 'route=${routeName}&${(() {
+                if (routeParams is Map) {
+                  return routeParams
+                      .map((key, value) {
+                        return MapEntry(
+                          key,
+                          '$key=${value is String ? Uri.encodeQueryComponent(value) : ""}',
+                        );
+                      })
+                      .values
+                      .join('&');
+                }
+                return '';
+              })()}';
+            }
+          })(),
+          'imageUrl': shareInfo.imageUrl,
+        };
+        return result;
+      })(),
     },
   );
 }
