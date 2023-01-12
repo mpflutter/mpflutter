@@ -24,5 +24,5 @@ module.exports = [
     'visibility', 'opacity', 'zIndex', 'zoom', 'overflow', 'overflowX', 'overflowY',
     'boxShadow', 'boxSizing', 'content', 'cursor', 'direction', 'listStyle', 'objectFit', 'pointerEvents', 'resize', 'verticalAlign', 'willChange', 'clip', 'clipPath', 'fill',
 
-    'touchAction', 'WebkitAppearance', 'WebkitMask'
+    'touchAction', 'WebkitAppearance', 'mask', 'webkitMask', 'webkitBoxOrient', 'webkitLineClamp', 'overflowWrap'
 ]
