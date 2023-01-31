@@ -85,7 +85,16 @@ class _AnimatingContainerState extends State<AnimatingContainer> {
             height: boxSize,
             duration: Duration(milliseconds: 1000),
             curve: Curves.ease,
-            color: Colors.yellow,
+            child: AnimatedOpacity(
+              opacity: boxSize == 40 ? 1.0 : 0.5,
+              duration: Duration(milliseconds: 1000),
+              child: AnimatedContainer(
+                transform: Matrix4.rotationZ(boxSize == 40 ? 45.0 : 0.0),
+                duration: Duration(milliseconds: 1000),
+                curve: Curves.ease,
+                color: boxSize == 40 ? Colors.blue : Colors.yellow,
+              ),
+            ),
           ),
         ),
       ),

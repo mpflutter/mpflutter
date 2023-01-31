@@ -1585,7 +1585,11 @@ class _AnimatedPositionedDirectionalState
 ///    an [Animation] is provided by the caller instead of being built in.
 ///  * [SliverAnimatedOpacity], for automatically transitioning a sliver's
 ///    opacity over a given duration whenever the given opacity changes.
-class AnimatedOpacity extends ImplicitlyAnimatedWidget {
+class AnimatedOpacity extends StatefulWidget {
+  final Curve curve;
+  final Duration duration;
+  final VoidCallback? onEnd;
+
   /// Creates a widget that animates its opacity implicitly.
   ///
   /// The [opacity] argument must not be null and must be between 0.0 and 1.0,
@@ -1594,12 +1598,12 @@ class AnimatedOpacity extends ImplicitlyAnimatedWidget {
     Key? key,
     this.child,
     required this.opacity,
-    Curve curve = Curves.linear,
-    required Duration duration,
-    VoidCallback? onEnd,
+    this.curve = Curves.linear,
+    required this.duration,
+    this.onEnd,
     this.alwaysIncludeSemantics = false,
   })  : assert(opacity != null && opacity >= 0.0 && opacity <= 1.0),
-        super(key: key, curve: curve, duration: duration, onEnd: onEnd);
+        super(key: key);
 
   /// The widget below this widget in the tree.
   ///
@@ -1634,27 +1638,37 @@ class AnimatedOpacity extends ImplicitlyAnimatedWidget {
   }
 }
 
-class _AnimatedOpacityState
-    extends ImplicitlyAnimatedWidgetState<AnimatedOpacity> {
-  Tween<double>? _opacity;
-  late Animation<double> _opacityAnimation;
+class _AnimatedOpacityState extends State<AnimatedOpacity>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _opacityAnimationController;
 
   @override
-  void forEachTween(TweenVisitor<dynamic> visitor) {
-    _opacity = visitor(_opacity, widget.opacity,
-            (dynamic value) => Tween<double>(begin: value as double))
-        as Tween<double>?;
+  void initState() {
+    super.initState();
+    _opacityAnimationController = AnimationController(
+      vsync: this,
+      value: widget.opacity,
+    );
+    _opacityAnimationController.addListener(() {
+      setState(() {});
+    });
   }
 
-  @override
-  void didUpdateTweens() {
-    _opacityAnimation = animation.drive(_opacity!);
+  void didUpdateWidget(covariant AnimatedOpacity oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.opacity != widget.opacity) {
+      _opacityAnimationController.animateTo(
+        widget.opacity,
+        duration: widget.duration,
+        curve: widget.curve,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FadeTransition(
-      opacity: _opacityAnimation,
+    return Opacity(
+      opacity: _opacityAnimationController.value,
       child: widget.child,
       alwaysIncludeSemantics: widget.alwaysIncludeSemantics,
     );

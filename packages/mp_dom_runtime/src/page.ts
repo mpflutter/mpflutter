@@ -158,7 +158,7 @@ export class Page {
     if (message.overlays && message.overlays instanceof Array) {
       this.setOverlays(message.overlays);
     }
-    if (!this.miniProgramPage.didReceivedFirstFrame) {
+    if (this.miniProgramPage && !this.miniProgramPage.didReceivedFirstFrame) {
       this.miniProgramPage.setData({ didReceivedFirstFrame: true });
       this.miniProgramPage.didReceivedFirstFrame = true;
     }
