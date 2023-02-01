@@ -17,6 +17,7 @@ export class CollectionView extends ComponentView {
   viewHeight: number = 0;
   bottomBarHeight: number = 0;
   bottomBarWithSafeArea = false;
+  reverse = false;
   layout!: CollectionViewLayout;
   didAddScrollListener = false;
   didAddRefreshListener = false;
@@ -270,6 +271,15 @@ export class CollectionView extends ComponentView {
     }
     this.htmlElement.setAttribute("scroll-x", this.attributes.scrollDirection === "Axis.horizontal" ? "true" : "false");
     this.htmlElement.setAttribute("scroll-y", this.attributes.scrollDirection !== "Axis.horizontal" ? "true" : "false");
+    this.reverse = attributes.reverse;
+    setDOMStyle(this.htmlElement, {
+      transform: this.reverse
+        ? this.attributes.scrollDirection === "Axis.horizontal"
+          ? "scale(-1.0, 1.0)"
+          : "scale(1.0, -1.0)"
+        : "unset",
+    });
+    this.updateSubviewTransform();
     if (attributes.isRoot && this.elementType() === "div") {
       let window = MPEnv.platformWindow(this.document);
       if (window) {
@@ -285,6 +295,13 @@ export class CollectionView extends ComponentView {
   }
 
   addSubview(view: ComponentView) {
+    setDOMStyle(view.htmlElement, {
+      transform: this.reverse
+        ? this.attributes.scrollDirection === "Axis.horizontal"
+          ? "scale(-1.0, 1.0)"
+          : "scale(1.0, -1.0)"
+        : "unset",
+    });
     if (view.superview) {
       view.removeFromSuperview();
     }
@@ -292,6 +309,18 @@ export class CollectionView extends ComponentView {
     view.superview = this;
     this.wrapperHtmlElement.appendChild(view.htmlElement);
     view.didMoveToWindow();
+  }
+
+  updateSubviewTransform() {
+    this.subviews.forEach((it) => {
+      setDOMStyle(it.htmlElement, {
+        transform: this.reverse
+          ? this.attributes.scrollDirection === "Axis.horizontal"
+            ? "scale(-1.0, 1.0)"
+            : "scale(1.0, -1.0)"
+          : "unset",
+      });
+    });
   }
 
   setPinnedAppBar(attributes: any) {

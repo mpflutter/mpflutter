@@ -118,6 +118,7 @@ Map _encodeScroller(Element element) {
   return {
     'scrollDirection': widget.scrollDirection.toString(),
     'isRoot': isRoot,
+    'reverse': widget.reverse,
     'scrollDisabled': widget.physics is NeverScrollableScrollPhysics,
     'appBarPinned': appBarPinnedElement != null
         ? MPElement.fromFlutterElement(appBarPinnedElement)
