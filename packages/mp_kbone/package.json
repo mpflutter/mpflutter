@@ -23,6 +23,6 @@
         "eslint-plugin-import": "^2.16.0",
         "eslint-plugin-node": "^7.0.1",
         "eslint-plugin-promise": "^3.8.0",
-        "lerna": "^3.22.1"
+        "lerna": "^6.4.1"
     }
 }
