@@ -40,8 +40,11 @@ class MockPaint implements Paint {
   bool get invertColors => false;
   set invertColors(bool value) {}
 
-  Shader? get shader => null;
-  set shader(Shader? value) {}
+  Shader? _shader;
+  Shader? get shader => _shader;
+  set shader(Shader? value) {
+    _shader = value;
+  }
 
   MaskFilter? get maskFilter => null;
   set maskFilter(MaskFilter? value) {}
@@ -112,6 +115,7 @@ class MockGradientLinear extends MockGradient {
   final List<double>? colorStops;
   final TileMode tileMode;
   final _FastMatrix64? matrix4;
+  dynamic originGradient;
 }
 
 // TODO(flutter_web): For transforms and tile modes implement as webgl
@@ -129,6 +133,7 @@ class MockGradientRadial extends MockGradient {
   final List<double>? colorStops;
   final TileMode tileMode;
   final Float32List? matrix4;
+  dynamic originGradient;
 }
 
 class MockGradientConical extends MockGradient {
@@ -144,4 +149,5 @@ class MockGradientConical extends MockGradient {
   final List<double>? colorStops;
   final TileMode tileMode;
   final Float32List? matrix4;
+  dynamic originGradient;
 }

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
 import 'package:mpflutter_template/animations/animated_container_page.dart';
 import 'package:mpflutter_template/animations/animation_controller_page.dart';
+import 'package:mpflutter_template/contents/chart_page.dart';
 import 'package:mpflutter_template/contents/icon_page.dart';
 import 'package:mpflutter_template/contents/image_page.dart';
 import 'package:mpflutter_template/contents/map_view_page.dart';
@@ -184,6 +185,7 @@ class MyApp extends StatelessWidget {
         '/clipBoard': (context) => ClipBoardPage(),
         '/routeTest': (context) => RouteTestPage(),
         '/file': (context) => FilePage(),
+        '/chart': (context) => ChartPage(),
       },
       navigatorObservers: [MPCore.getNavigationObserver()],
     );

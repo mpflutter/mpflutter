@@ -9,6 +9,9 @@ abstract class Path {
     return MockPath();
   }
   factory Path.from(Path source) {
+    if (source is MockPath) {
+      return MockPath().._commands = ([]..addAll(source._commands));
+    }
     return MockPath();
   }
   PathFillType get fillType;

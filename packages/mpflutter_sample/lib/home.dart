@@ -156,6 +156,7 @@ class MyHomePage extends StatelessWidget {
                 _renderItem('Icon', context: context, route: '/icon'),
                 _renderItem('Text / RichText',
                     context: context, route: '/text'),
+                _renderItem('Chart', context: context, route: '/chart'),
               ],
             ),
             context,

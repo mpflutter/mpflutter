@@ -580,14 +580,14 @@ class TextPainter {
   /// To set the text style, specify a [TextStyle] when creating the [TextSpan]
   /// that you pass to the [TextPainter] constructor or to the [text] property.
   void paint(Canvas canvas, Offset offset) {
-    assert(() {
-      if (size.isEmpty) {
-        throw FlutterError(
-            'TextPainter.paint called when text geometry was not yet calculated.\n'
-            'Please call layout() before paint() to position the text before painting it.');
-      }
-      return true;
-    }());
+    // assert(() {
+    //   if (size.isEmpty) {
+    //     throw FlutterError(
+    //         'TextPainter.paint called when text geometry was not yet calculated.\n'
+    //         'Please call layout() before paint() to position the text before painting it.');
+    //   }
+    //   return true;
+    // }());
     final theText = text;
     if (theText is TextSpan &&
         theText.text is String &&

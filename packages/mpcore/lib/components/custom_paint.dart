@@ -411,6 +411,33 @@ class _RecordingCanvas implements Canvas {
       'strokeCap': paint.strokeCap.toString(),
       'strokeJoin': paint.strokeJoin.toString(),
       'color': paint.color.value.toString(),
+      'gradient': (() {
+        final shader = paint.shader;
+        if (shader != null) {
+          if (shader is ui.MockGradientLinear) {
+            return {
+              'classname': 'LinearGradient',
+              'fromX': shader.from.dx,
+              'fromY': shader.from.dy,
+              'toX': shader.to.dx,
+              'toY': shader.to.dy,
+              'colors': shader.colors.map((e) => e.value.toString()).toList(),
+              'stops': shader.colorStops,
+            };
+          } else if (shader is ui.MockGradientRadial) {
+            final radialGradient = shader.originGradient as RadialGradient;
+            return {
+              'classname': 'RadialGradient',
+              'center': radialGradient.center.toString(),
+              'radius': radialGradient.radius.toString(),
+              'colors':
+                  radialGradient.colors.map((e) => e.value.toString()).toList(),
+              'stops': radialGradient.stops,
+              'tileMode': radialGradient.tileMode.toString(),
+            };
+          }
+        }
+      })(),
       'strokeMiterLimit': paint.strokeMiterLimit,
     };
     if (encodeAlpha && paint.color.value > 0) {

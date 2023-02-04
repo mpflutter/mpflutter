@@ -515,12 +515,41 @@ export class CustomPaint extends ComponentView {
     ctx.lineCap = paint.strokeCap.replace("StrokeCap.", "");
     ctx.lineJoin = paint.strokeJoin.replace("StrokeJoin.", "");
     if (paint.style === "PaintingStyle.fill") {
-      ctx.fillStyle = cssColor(paint.color);
+      if (paint.gradient) {
+        ctx.fillStyle = this.createGradient(ctx, paint.gradient);
+      } else {
+        ctx.fillStyle = cssColor(paint.color);
+      }
       ctx.strokeStyle = "transparent";
     } else {
       ctx.fillStyle = "transparent";
-      ctx.strokeStyle = cssColor(paint.color);
+      if (paint.gradient) {
+        ctx.strokeStyle = this.createGradient(ctx, paint.gradient);
+      } else {
+        ctx.strokeStyle = cssColor(paint.color);
+      }
     }
     ctx.globalAlpha = paint.alpha ?? 1.0;
+  }
+
+  createGradient(ctx: CanvasRenderingContext2D, gradient: any): any {
+    if (gradient.classname === "LinearGradient") {
+      let ctxGradient = ctx.createLinearGradient(gradient.fromX, gradient.fromY, gradient.toX, gradient.toY);
+      if (gradient.stops && gradient.stops.length) {
+        gradient.colors.forEach((it: string, idx: number) => {
+          if (gradient.stops[idx] !== undefined) {
+            ctxGradient.addColorStop(gradient.stops[idx], cssColor(it));
+          }
+        });
+      } else {
+        let stepLength = 1.0 / (gradient.colors.length - 1.0);
+        gradient.colors.forEach((it: string, idx: number) => {
+          if (gradient.stops[idx] !== undefined) {
+            ctxGradient.addColorStop(idx * stepLength, cssColor(it));
+          }
+        });
+      }
+      return ctxGradient;
+    }
   }
 }

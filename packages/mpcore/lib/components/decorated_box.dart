@@ -76,14 +76,14 @@ MPElement _encodeDecoratedBox(Element element) {
       };
     } else if (decoration.gradient != null &&
         decoration.gradient is RadialGradient) {
-      final linearGradient = decoration.gradient as RadialGradient;
+      final radialGradient = decoration.gradient as RadialGradient;
       attributes['decoration']['gradient'] = {
         'classname': 'RadialGradient',
-        'center': linearGradient.center.toString(),
-        'radius': linearGradient.radius.toString(),
-        'colors': linearGradient.colors.map((e) => e.value.toString()).toList(),
-        'stops': linearGradient.stops,
-        'tileMode': linearGradient.tileMode.toString(),
+        'center': radialGradient.center.toString(),
+        'radius': radialGradient.radius.toString(),
+        'colors': radialGradient.colors.map((e) => e.value.toString()).toList(),
+        'stops': radialGradient.stops,
+        'tileMode': radialGradient.tileMode.toString(),
       };
     }
   }
