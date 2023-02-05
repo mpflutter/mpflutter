@@ -312,8 +312,19 @@ class _RecordingCanvas implements Canvas {
   @override
   void drawRRect(ui.RRect rrect, ui.Paint paint) {
     final path = ui.Path();
-    path.addRRect(rrect);
-    drawPath(path, paint);
+    if (min(rrect.width, rrect.height) / 2.0 == rrect.blRadiusX ||
+        min(rrect.width, rrect.height) / 2.0 == rrect.blRadiusY) {
+      path.addRRect(
+        ui.RRect.fromRectAndRadius(
+          rrect.outerRect,
+          Radius.circular(rrect.blRadiusX - 0.1),
+        ),
+      );
+      drawPath(path, paint);
+    } else {
+      path.addRRect(rrect);
+      drawPath(path, paint);
+    }
   }
 
   @override

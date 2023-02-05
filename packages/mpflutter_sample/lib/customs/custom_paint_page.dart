@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
-import 'package:mpcore/mpkit/mpkit.dart';
 
 class CustomPaintPage extends StatefulWidget {
   @override

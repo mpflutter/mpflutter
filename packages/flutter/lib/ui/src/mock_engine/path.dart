@@ -124,7 +124,10 @@ class MockPath implements Path {
     final pt3 = Offset(arcEnd.dx, arcEnd.dy);
     _lastPoint = pt3;
     waitingArcToPoint = (pt4) {
-      final controlPoint = getControllPoint(pt1, pt2, pt3, pt4);
+      var controlPoint = getControllPoint(pt1, pt2, pt3, pt4);
+      if (controlPoint.dx.isInfinite || controlPoint.dy.isInfinite) {
+        return;
+      }
       _commands.add({
         'action': 'arcToPoint',
         'arcControlX': controlPoint.dx,
