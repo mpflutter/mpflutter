@@ -19,3 +19,39 @@ class MPImageProvider {
     return Image.asset(assetName, fit: fit);
   }
 }
+
+class _MPImageWithMPKReader extends StatefulWidget {
+  final _MPKReader reader;
+  final String assetName;
+  final BoxFit fit;
+
+  _MPImageWithMPKReader(
+    this.reader,
+    this.assetName, {
+    this.fit = BoxFit.contain,
+  }) : super(key: Key('MPKReader_$assetName'));
+
+  @override
+  State<_MPImageWithMPKReader> createState() => _MPImageWithMPKReaderState();
+}
+
+class _MPImageWithMPKReaderState extends State<_MPImageWithMPKReader> {
+  Uint8List? data;
+
+  @override
+  initState() {
+    super.initState();
+    data = widget.reader.dataWithFilePath(widget.assetName);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (data == null) return const SizedBox();
+    return ClipRect(
+      child: Image.memory(
+        data!,
+        fit: widget.fit,
+      ),
+    );
+  }
+}

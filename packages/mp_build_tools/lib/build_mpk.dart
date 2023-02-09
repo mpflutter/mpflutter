@@ -158,10 +158,10 @@ class MPKFile {
     });
     final fileIndexData = utf8.encode(json.encode(fileIndex)).toList();
     data.addAll([
-      fileIndexData.length >> 24 & 255,
-      fileIndexData.length >> 16 & 255,
-      fileIndexData.length >> 8 & 255,
-      fileIndexData.length >> 0 & 255
+      fileIndexData.length / 255 / 255 ~/ 255,
+      fileIndexData.length / 255 ~/ 255 % 255,
+      fileIndexData.length ~/ 255 % 255,
+      fileIndexData.length % 255
     ]);
     data.addAll(fileIndexData);
     data.addAll(blobData);

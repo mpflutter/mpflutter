@@ -165,7 +165,7 @@ class _DecoratedBox extends ComponentView {
                 return BoxShadow(
                   color: _Utils.toColor(e['color']),
                   offset: _offsetFromString(e['offset']),
-                  blurRadius: e['blurRadius'] ?? 0,
+                  blurRadius: _Utils.toDouble(e['blurRadius'], 0.0),
                 );
               })
               .toList()

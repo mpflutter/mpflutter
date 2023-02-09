@@ -78,15 +78,11 @@ class _Image extends ComponentView {
     } else if (assetName != null) {
       final engine = getEngine(context);
       if (engine?._mpkReader != null) {
-        final data = engine!._mpkReader!.dataWithFilePath(assetName);
-        if (data != null) {
-          return ClipRect(
-            child: Image.memory(
-              data,
-              fit: getFit(context),
-            ),
-          );
-        }
+        return _MPImageWithMPKReader(
+          engine!._mpkReader!,
+          assetName,
+          fit: getFit(context),
+        );
       } else if (engine?.debugger != null) {
         final assetUrl =
             'http://${engine!.debugger!.serverAddr}/assets/$assetName';
