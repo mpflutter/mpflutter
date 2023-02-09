@@ -12,30 +12,60 @@ class _IndexedStackPageState extends State<IndexedStackPage> {
   @override
   Widget build(BuildContext context) {
     return MPScaffold(
-      body: IndexedStack(
-        index: currentPage,
-        children: [
-          for (int i = 0; i < 3; i++)
-            Center(
-              child: GestureDetector(
-                onTap: () {
-                  setState(() {
-                    currentPage++;
-                    if (currentPage > 2) {
-                      currentPage = 0;
-                    }
-                  });
-                },
-                child: Container(
-                  key: Key('page$i'),
-                  padding: EdgeInsets.all(120),
-                  decoration: BoxDecoration(color: Colors.amber),
-                  child: Text('Page $i'),
-                ),
-              ),
-            )
-        ],
+      body: Center(
+        child: Container(
+          width: 200,
+          height: 200,
+          child: IndexedStack(
+            index: currentPage,
+            keepAlive: true,
+            children: [
+              for (int i = 0; i < 3; i++)
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      currentPage++;
+                      if (currentPage > 2) {
+                        currentPage = 0;
+                      }
+                    });
+                  },
+                  child: _XXX(
+                    key: Key('_$i'),
+                  ),
+                )
+            ],
+          ),
+        ),
       ),
     );
   }
+}
+
+class _XXX extends StatefulWidget {
+  const _XXX({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_XXX> createState() => _XXXState();
+}
+
+class _XXXState extends State<_XXX> with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return ListView.builder(
+      itemBuilder: ((context, index) {
+        return Container(
+          height: 44,
+          child: Text('text - $index'),
+        );
+      }),
+      itemCount: 100,
+    );
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }

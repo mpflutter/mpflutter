@@ -1,3 +1,7 @@
+## 1.1.0
+
+* fix: MPKReader asset read repeatedly.
+
 ## 0.20.0
 
 * Add MPFlutter  Flutter Native support.
