@@ -168,13 +168,17 @@ Page(thePage);
           {}..addAll({
               'usingComponents': {
                 'element':
-                    '${coreLibRequireBase}kbone/miniprogram-element/index'
+                    '${coreLibRequireBase}kbone/miniprogram-element/index',
+                'loading-view': '${coreLibRequireBase}pages/loading-view/index'
               }
             }..addAll(pageConfig)),
         ));
         File(wxmlPath).writeAsStringSync('''
 <page-meta><navigation-bar title="{{pageMeta.naviBar.title}}" loading="{{pageMeta.naviBar.loading}}" front-color="{{pageMeta.naviBar.frontColor || '#000000'}}" background-color="{{pageMeta.naviBar.backgroundColor || '#ffffff'}}"></navigation-bar></page-meta>
 <element wx:if="{{pageId}}" class="miniprogram-root" data-private-node-id="e-body" data-private-page-id="{{pageId}}" ></element>
+<view wx:if="{{!didReceivedFirstFrame}}" style="position: fixed; background-color: transparent; width: 100vw; height: 100vh">
+    <loading-view />
+</view>
 <canvas type="2d" id="mockOffscreenCanvas" style="display:none"></canvas>
         ''');
       }
