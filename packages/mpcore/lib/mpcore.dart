@@ -101,6 +101,12 @@ class MPCore {
         injectMethodChannelHandler();
         body?.call();
         final _ = MPChannel.setupHotReload(this);
+        MPChannel.postMapMessage({
+          'type': 'ready',
+        });
+        while (WidgetsBinding.instance?.renderViewElement == null) {
+          await Future.delayed(Duration(milliseconds: 10));
+        }
         var pass = false;
         while (!pass) {
           await Future.delayed(Duration(milliseconds: 10));
@@ -132,6 +138,12 @@ class MPCore {
         injectMethodChannelHandler();
         body?.call();
         final _ = MPChannel.setupHotReload(this);
+        MPChannel.postMapMessage({
+          'type': 'ready',
+        });
+        while (WidgetsBinding.instance?.renderViewElement == null) {
+          await Future.delayed(Duration(milliseconds: 10));
+        }
         var pass = false;
         while (!pass) {
           await Future.delayed(Duration(milliseconds: 10));

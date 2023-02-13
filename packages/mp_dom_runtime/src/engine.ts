@@ -146,7 +146,6 @@ export class Engine {
       (() => {
         this.codeBlock();
       })();
-      this.flushQueueMessage();
     }
     this.started = true;
   }
@@ -184,7 +183,9 @@ export class Engine {
     if (MPEnv.platformGlobal()?.mpDEBUG) {
       console.log(new Date().getTime(), "in", decodedMessage);
     }
-    if (decodedMessage.type === "frame_data") {
+    if (decodedMessage.type === "ready") {
+      this.flushQueueMessage();
+    } else if (decodedMessage.type === "frame_data") {
       this.didReceivedFrameData(decodedMessage.message);
     } else if (decodedMessage.type === "diff_data") {
       this.didReceivedDiffData(decodedMessage.message);
