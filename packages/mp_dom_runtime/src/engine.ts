@@ -22,6 +22,7 @@ import { wrapDartObject } from "./components/dart_object";
 import { CollectionView } from "./components/basic/collection_view";
 import { EditableText } from "./components/basic/editable_text";
 import { CanvasApp } from "./canvas_app";
+import { CanvasComponentFactory } from "./canvaskit/component_factory";
 
 export class Engine {
   private started: boolean = false;
@@ -30,6 +31,7 @@ export class Engine {
   private messageQueue: string[] = [];
   drawable: MPDrawable;
   componentFactory: ComponentFactory;
+  canvasComponentFactory: CanvasComponentFactory;
   managedViews: { [key: number]: Page } = {};
   unmanagedViewFrameData: { [key: number]: any[] } = {};
   mpJS: MPJS = new MPJS(this);
@@ -41,6 +43,7 @@ export class Engine {
 
   constructor() {
     this.componentFactory = new ComponentFactory(this);
+    this.canvasComponentFactory = new CanvasComponentFactory(this);
     this.drawable = new MPDrawable(this);
     this.platformChannelIO = new PlatformChannelIO(this);
     this.installWeChatComponentContextGetter();

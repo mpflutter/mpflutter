@@ -1,13 +1,14 @@
 import { Engine } from "../engine";
+import { MPScaffold } from "./mpkit/scaffold";
 
 export class CanvasPage {
+
+  private scaffoldView?: MPScaffold;
   private readyCallback?: (_: any) => void;
   viewId: number = -1;
 
   constructor(readonly canvasContext: CanvasRenderingContext2D, readonly engine: Engine) {
     this.requestRoute().then((viewId: number) => {
-      console.log("viewid", viewId);
-      
       this.viewId = viewId;
       engine.managedViews[this.viewId] = this as any;
       engine.pageMode = true;
@@ -38,6 +39,27 @@ export class CanvasPage {
   }
 
   async didReceivedFrameData(message: { [key: string]: any }): Promise<void> {
-    console.log(message);
+    if (message.ignoreScaffold !== true) {
+      const scaffoldView = this.engine.canvasComponentFactory.create(message.scaffold);
+      if (!(scaffoldView instanceof MPScaffold)) return;
+      if (this.scaffoldView !== scaffoldView) {
+        if (this.scaffoldView) {
+          this.scaffoldView.attached = false;
+          this.scaffoldView.removeFromSuperview();
+        }
+        this.scaffoldView = scaffoldView;
+        if (scaffoldView instanceof MPScaffold && !scaffoldView.delegate) {
+
+        }
+      }
+    }
+    this.render();
+  }
+
+  render() {
+    this.canvasContext.clearRect(0, 0, 1000, 1000);
+    if (this.scaffoldView) {
+      this.scaffoldView.render(this.canvasContext);
+    }
   }
 }
