@@ -155,6 +155,8 @@ export const MPPageView = (() => {
     return PageViewWeapp;
   } else if (__MP_TARGET_BROWSER__) {
     return PageViewWeb;
+  } else if (__MP_TARGET_CANVAS__) {
+    return PageViewWeb;
   }
   throw "None of PageView class.";
 })();

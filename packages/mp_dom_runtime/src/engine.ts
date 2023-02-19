@@ -21,6 +21,7 @@ import { WindowInfo } from "./window_info";
 import { wrapDartObject } from "./components/dart_object";
 import { CollectionView } from "./components/basic/collection_view";
 import { EditableText } from "./components/basic/editable_text";
+import { CanvasApp } from "./canvas_app";
 
 export class Engine {
   private started: boolean = false;
@@ -32,7 +33,7 @@ export class Engine {
   managedViews: { [key: number]: Page } = {};
   unmanagedViewFrameData: { [key: number]: any[] } = {};
   mpJS: MPJS = new MPJS(this);
-  app?: BrowserApp | WXApp;
+  app?: BrowserApp | WXApp | CanvasApp;
   router?: Router;
   windowInfo = new WindowInfo(this);
   pageMode: boolean = false;

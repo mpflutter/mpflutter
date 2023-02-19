@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>template</title>
+</head>
+
+<body>
+    <div id="root">
+        <canvas id="appCanvas" width="375" height="667" style="width: 375px; height: 667px;"></canvas>
+    </div>
+    <script src="mpdom.min.js"></script>
+    <script>
+        window.mpDEBUG = true;
+        var canvasContext = document.getElementById("appCanvas").getContext("2d");
+        var { Engine, Page, CanvasApp } = MPDOM;
+        var engine = new Engine();
+        var dev = true;
+        if (dev) {
+            engine.initWithDebuggerServerAddr(new URL(window.location.href).hostname + ':9898');
+            engine.start();
+        }
+        else {
+            Engine.codeBlockWithCodePath('main.dart.js').then(function (codeBlock) {
+                engine.initWithCodeBlock(codeBlock);
+                engine.start();
+            });
+        }
+        var app = new CanvasApp(canvasContext, engine);
+        app.setupFirstPage();
+    </script>
+</body>
+
+</html>

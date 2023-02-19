@@ -1,11 +1,18 @@
 const fs = require("fs");
 
-let targets = ["__MP_TARGET_BROWSER__", "__MP_TARGET_WEAPP__", "__MP_TARGET_SWANAPP__", "__MP_TARGET_TT__"];
+let targets = [
+  "__MP_TARGET_BROWSER__",
+  "__MP_TARGET_WEAPP__",
+  "__MP_TARGET_SWANAPP__",
+  "__MP_TARGET_TT__",
+  "__MP_TARGET_CANVAS__",
+];
 let targetFile = {
   __MP_TARGET_BROWSER__: "mpdom.js",
   __MP_TARGET_WEAPP__: "mpdom.miniprogram.js",
   __MP_TARGET_SWANAPP__: "mpdom.miniprogram.js",
   __MP_TARGET_TT__: "mpdom.miniprogram.js",
+  __MP_TARGET_CANVAS__: "mpdom.canvas.js",
 };
 let currentTarget = process.argv[2];
 
@@ -21,5 +28,8 @@ if (isMiniProgram) {
   code = code.replace(RegExp("__MP_MINI_PROGRAM__", "g"), "true");
 } else {
   code = code.replace(RegExp("__MP_MINI_PROGRAM__", "g"), "false");
+}
+if (currentTarget === "__MP_TARGET_CANVAS__") {
+  code = code.replace(RegExp("__MP_TARGET_CANVAS__", "g"), "true");
 }
 fs.writeFileSync("./dist/mpdom.js." + currentTarget, code);
