@@ -78,6 +78,7 @@ void _buildDartJS(List<String> args) {
     throw I18n.executeFail('dart2js');
   }
   _fixDefererLoader();
+  _fixCryptoRequire();
   _moveDeferedScriptToSubpackages();
   _writeSubpackagesToAppJson();
   _writeSubpackageLoader();
@@ -331,6 +332,38 @@ _fixDefererLoader() {
   code = code.replaceFirst("v.currentScript=a",
       "v.currentScript={src:'/',getAttribute:function(){return '';}};");
   File(p.join('build', 'main.dart.js')).writeAsStringSync(code);
+}
+
+_fixCryptoRequire() {
+  var code = File(p.join('build', 'main.dart.js')).readAsStringSync();
+  if (code.contains('self.require("crypto")')) {
+    code = code.replaceAll('self.require("crypto")', 'require("./crypto")');
+    File(p.join('build', 'main.dart.js')).writeAsStringSync(code);
+    File(p.join('build', 'crypto.js')).writeAsStringSync('''
+let lastRandomValues = undefined;
+
+export const genRandomValues = () => {
+  wx.getRandomValues({
+    length: 32,
+    success: (res) => {
+      lastRandomValues = new Uint8Array(res.randomValues);
+    }
+  })
+}
+
+export const randomFillSync = (buffer) => {
+  genRandomValues();
+  if (lastRandomValues) {
+    for (let index = 0; index < lastRandomValues.length; index++) {
+      buffer[index] = lastRandomValues[index];
+    }
+  }
+}
+''');
+    var appJSCode = File(p.join('build', 'app.js')).readAsStringSync();
+    appJSCode = "require('./crypto').genRandomValues();\n" + appJSCode;
+    File(p.join('build', 'app.js')).writeAsStringSync(appJSCode);
+  }
 }
 
 _removeFiles(List<String> files) {
