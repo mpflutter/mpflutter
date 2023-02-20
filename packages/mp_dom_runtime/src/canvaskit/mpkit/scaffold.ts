@@ -50,8 +50,6 @@ export class MPScaffold extends ComponentView {
 
   render(canvasContext: CanvasRenderingContext2D): void {
     if (this.body) {
-      console.log("renderbody");
-      
       this.body.render(canvasContext);
     }
   }

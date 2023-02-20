@@ -78,12 +78,32 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MPScaffold(
-      body: Center(
-        child: Container(
-          width: 100,
-          height: 100,
-          color: Colors.red,
-        ),
+      body: Column(
+        children: [
+          Container(
+            width: 100,
+            height: 44,
+            color: Colors.red,
+          ),
+          Transform.translate(
+            offset: Offset(100, 44),
+            child: Opacity(
+              opacity: 0.8,
+              child: ClipOval(
+                child: Container(
+                  width: 100,
+                  height: 100,
+                  color: Colors.brown,
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: 100,
+            height: 44,
+            color: Colors.blue,
+          ),
+        ],
       ),
     );
 

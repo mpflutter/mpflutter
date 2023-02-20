@@ -2,8 +2,7 @@ import { cssColor } from "../../components/utils";
 import { ComponentView } from "../component_view";
 
 export class ColoredBox extends ComponentView {
-
-  color?: string
+  color?: string;
 
   setAttributes(attributes: any) {
     super.setAttributes(attributes);
@@ -12,8 +11,9 @@ export class ColoredBox extends ComponentView {
 
   render(canvasContext: CanvasRenderingContext2D): void {
     if (this.constraints) {
+      this.renderTranslate(canvasContext);
       canvasContext.fillStyle = this.color ?? "transparnet";
-      canvasContext.fillRect(this.constraints.x, this.constraints.y, this.constraints.w, this.constraints.h);
+      canvasContext.fillRect(0, 0, this.constraints.w, this.constraints.h);
     }
   }
 }
