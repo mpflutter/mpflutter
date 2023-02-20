@@ -19,6 +19,7 @@ class MPDataProvider {
             v[key] = value;
           }
         });
+        return v;
       })(),
       responseType: dio.ResponseType.bytes,
     );
