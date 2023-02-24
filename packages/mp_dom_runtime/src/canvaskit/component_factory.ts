@@ -4,6 +4,7 @@ import { ColoredBox } from "./basic/colored_box";
 import { Offstage } from "./basic/offstage";
 import { Opacity } from "./basic/opacity";
 import { Transform } from "./basic/transform";
+import { Image } from "./basic/image";
 import { Visibility } from "./basic/visibility";
 import { ComponentView } from "./component_view";
 import { MPScaffold } from "./mpkit/scaffold";
@@ -16,6 +17,7 @@ export class CanvasComponentFactory {
     offstage: Offstage,
     visibility: Visibility,
     transform: Transform,
+    image: Image,
     mp_scaffold: MPScaffold,
   };
 

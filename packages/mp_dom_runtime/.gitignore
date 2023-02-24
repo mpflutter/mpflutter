@@ -126,3 +126,4 @@ dist_tt/mpdom.min.js
 dist_web/mpdom.min.js
 dist_web/*.css
 dist_web/*.js
+dist_minigame/mpdom.min.js

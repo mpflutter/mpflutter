@@ -16,3 +16,4 @@ web/mpdom.min.js
 web/mp_web_features.css
 web/mp_web_features.min.js
 web/plugins.min.js
+canvas/mpdom.min.js

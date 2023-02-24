@@ -86,7 +86,7 @@ class MyHomePage extends StatelessWidget {
             color: Colors.red,
           ),
           Transform.translate(
-            offset: Offset(100, 44),
+            offset: Offset(0, 0),
             child: Opacity(
               opacity: 0.8,
               child: ClipOval(
@@ -102,6 +102,11 @@ class MyHomePage extends StatelessWidget {
             width: 100,
             height: 44,
             color: Colors.blue,
+          ),
+          Image.network(
+            'https://avatars.githubusercontent.com/u/5013664?v=4',
+            width: 100,
+            height: 100,
           ),
         ],
       ),

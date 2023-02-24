@@ -2,10 +2,10 @@ import { Engine } from "../engine";
 import { MPScaffold } from "./mpkit/scaffold";
 
 export class CanvasPage {
-
   private scaffoldView?: MPScaffold;
   private readyCallback?: (_: any) => void;
   viewId: number = -1;
+  nextRenderTimer: any;
 
   constructor(readonly canvasContext: CanvasRenderingContext2D, readonly engine: Engine) {
     this.requestRoute().then((viewId: number) => {
@@ -49,11 +49,20 @@ export class CanvasPage {
         }
         this.scaffoldView = scaffoldView;
         if (scaffoldView instanceof MPScaffold && !scaffoldView.delegate) {
-
         }
       }
     }
     this.render();
+  }
+
+  setNeedsRender() {
+    if (this.nextRenderTimer) {
+      return;
+    }
+    this.nextRenderTimer = requestAnimationFrame(() => {
+      this.render();
+      this.nextRenderTimer = undefined;
+    });
   }
 
   render() {

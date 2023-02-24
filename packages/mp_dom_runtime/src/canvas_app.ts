@@ -4,6 +4,7 @@ import { Router } from "./router";
 
 export class CanvasApp {
   router: CanvasRouter = new CanvasRouter(this.engine);
+  currentPage?: CanvasPage
 
   constructor(readonly canvasContext: CanvasRenderingContext2D, readonly engine: Engine) {
     engine.app = this;
@@ -16,10 +17,8 @@ export class CanvasApp {
     },
     reset?: boolean
   ) {
-    console.log("setupFirstPage");
-    
     const firstPage = new CanvasPage(this.canvasContext, this.engine);
-    // firstPage.isFirst = true;
+    this.currentPage = firstPage;
     await firstPage.ready();
   }
 }
