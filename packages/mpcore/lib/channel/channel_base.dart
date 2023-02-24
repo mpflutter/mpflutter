@@ -567,6 +567,10 @@ class MPChannelBase {
         if (navigator == null) return;
         MPNavigatorObserver.doBacking = true;
         navigator.popUntil((dynamic route) {
+          if (route is ModalRoute &&
+              route.settings.name?.startsWith('/mp_dialog') == true) {
+            return true;
+          }
           return route.hashCode == routeId;
         });
         MPNavigatorObserver.doBacking = false;

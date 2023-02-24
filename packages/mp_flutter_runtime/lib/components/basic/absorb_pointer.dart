@@ -14,8 +14,10 @@ class _AbsorbPointer extends ComponentView {
 
   @override
   Widget builder(BuildContext context) {
-    return AbsorbPointer(
-      absorbing: getBoolFromAttributes(context, 'absorbing') ?? true,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {},
+      // absorbing: getBoolFromAttributes(context, 'absorbing') ?? true,
       child: getWidgetFromChildren(context),
     );
   }

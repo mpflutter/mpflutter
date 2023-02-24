@@ -15,6 +15,7 @@ class _MPScaffold extends ComponentView {
   @override
   Widget builder(BuildContext context) {
     final body = getWidgetFromAttributes(context, 'body');
+    final isOverlay = context.findAncestorWidgetOfExactType<_Overlay>() != null;
     final bottomBar = getWidgetFromAttributes(context, 'bottomBar');
     final appBar = getWidgetFromAttributes(context, 'appBar');
     final floatingBody = getWidgetFromAttributes(context, 'floatingBody');
@@ -32,12 +33,40 @@ class _MPScaffold extends ComponentView {
       children.add(floatingBody);
     }
     return Scaffold(
-      backgroundColor: getColorFromAttributes(context, 'backgroundColor'),
-      appBar: getEngine(context)?.provider.uiProvider.createAppBar(
-            context: context,
-            title: getStringFromAttributes(context, 'name'),
-          ),
+      backgroundColor: isOverlay
+          ? Colors.transparent
+          : getColorFromAttributes(context, 'backgroundColor'),
+      appBar: isOverlay
+          ? MockAppBar((getEngine(context)
+                      ?.provider
+                      .uiProvider
+                      .createAppBar(
+                        context: context,
+                        title: getStringFromAttributes(context, 'name'),
+                      )
+                      ?.preferredSize
+                      .height ??
+                  0) +
+              MediaQuery.of(context).padding.top)
+          : getEngine(context)?.provider.uiProvider.createAppBar(
+                context: context,
+                title: getStringFromAttributes(context, 'name'),
+              ),
       body: Stack(children: children),
     );
   }
+}
+
+class MockAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final double height;
+
+  const MockAppBar(this.height, {super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(height: height);
+  }
+
+  @override
+  ui.Size get preferredSize => Size.fromHeight(height);
 }

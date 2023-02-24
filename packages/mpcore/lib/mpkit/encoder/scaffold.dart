@@ -27,6 +27,7 @@ MPElement _encodeMPScaffold(Element element) {
     name: 'mp_scaffold',
     attributes: {
       'name': name,
+      'isOverlay': widget is MPOverlayScaffold,
       'appBar': appBarElement != null
           ? MPElement.fromFlutterElement(appBarElement)
           : null,

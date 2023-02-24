@@ -232,6 +232,8 @@ class MyHomePage extends StatelessWidget {
                 _renderItem('MPScaffold', context: context, route: '/scaffold'),
                 _renderItem('TabPage', context: context, route: '/tabPage'),
                 _renderItem('Dialogs', context: context, route: '/dialogs'),
+                _renderItem('ModalDialogs',
+                    context: context, route: '/modalDialogs'),
                 _renderItem(
                   'DeferedPage',
                   context: context,

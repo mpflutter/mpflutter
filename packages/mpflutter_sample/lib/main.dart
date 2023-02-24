@@ -36,6 +36,7 @@ import 'package:mpflutter_template/pages/defered_page.dart'
     deferred as deferedPage;
 import 'package:mpflutter_template/pages/dialogs_page.dart';
 import 'package:mpflutter_template/pages/forms_page.dart';
+import 'package:mpflutter_template/pages/modal_dialog_page.dart';
 import 'package:mpflutter_template/pages/scaffold_page.dart';
 import 'package:mpflutter_template/pages/tab_page.dart';
 import 'package:mpflutter_template/styles/clip_oval_page.dart';
@@ -164,6 +165,7 @@ class MyApp extends StatelessWidget {
         '/scaffold': (context) => ScaffoldPage(),
         '/mainTabView': (context) => MainTabViewPage(),
         '/dialogs': (context) => DialogsPage(),
+        '/modalDialogs': (context) => ModalDialogsPage(),
         '/tabPage': (context) => TabPage(),
         '/deferedPage': (context) => FutureBuilder(
               future: deferedPage.loadLibrary(),

@@ -247,10 +247,14 @@ export class Page {
       if (this.scaffoldView) {
         this.scaffoldView.attached = false;
         this.scaffoldView.htmlElement.remove();
+        this.overlaysView.forEach((it) => it.htmlElement.remove());
       }
     } else {
       if (this.scaffoldView?.htmlElement) {
         this.element.appendChild(this.scaffoldView.htmlElement);
+        this.overlaysView.forEach((it) => {
+          this.overlayElement.appendChild(it.htmlElement);
+        });
         this.scaffoldView.setAttributes(this.scaffoldView.attributes);
       }
     }
