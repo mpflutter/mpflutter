@@ -98,16 +98,51 @@ class MyHomePage extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            width: 100,
-            height: 44,
-            color: Colors.blue,
+          Transform.translate(
+            offset: Offset(0, 0),
+            child: Opacity(
+              opacity: 0.8,
+              child: ClipOval(
+                child: Image(
+                  image: AssetImage("assets/images/pony_avatar.jpeg"),
+                  width: 200,
+                  height: 200,
+                ),
+              ),
+            ),
           ),
           Image.network(
-            'https://avatars.githubusercontent.com/u/5013664?v=4',
+            'https://inv.letuinet.com/img/idea.05041d92.png',
             width: 100,
             height: 100,
           ),
+          Image.asset(
+            "assets/images/pony_avatar.jpeg",
+            width: 150,
+            height: 150,
+          ),
+          // Image(image: AssetImage("assets/images/pony_avatar.jpeg")),
+          RichText(
+            text: TextSpan(
+              text: 'Hello ',
+              style: TextStyle(color: Colors.red, fontSize: 25),
+              children: <TextSpan>[
+                TextSpan(
+                    text: 'bold',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                TextSpan(text: ' world!'),
+              ],
+            ),
+          )
+          // Center(
+          //   child: Text(
+          //     "9908908908900",
+          //     style: TextStyle(
+          //       color: Colors.red,
+          //       fontSize: 16,
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );

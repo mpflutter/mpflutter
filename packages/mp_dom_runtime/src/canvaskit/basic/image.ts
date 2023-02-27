@@ -19,6 +19,35 @@ export class Image extends ComponentView {
         (this.engine.app as CanvasApp).currentPage?.setNeedsRender();
       };
     }
+
+    if (attributes.assetName) {
+      let assetUrl = "";
+      if (this.engine.debugger) {
+        assetUrl = (() => {
+          if (attributes.assetPkg) {
+            return `http://${this.engine.debugger.serverAddr}/assets/packages/${attributes.assetPkg}/${attributes.assetName}`;
+          } else {
+            return `http://${this.engine.debugger.serverAddr}/assets/${attributes.assetName}`;
+          }
+        })();
+      } else {
+        assetUrl = (() => {
+          if (attributes.assetPkg) {
+            return `assets/packages/${attributes.assetPkg}/${attributes.assetName}`;
+          } else {
+            return `assets/${attributes.assetName}`;
+          }
+        })();
+        if (__MP_MINI_PROGRAM__) {
+          assetUrl = "/" + assetUrl;
+        }
+      }
+      this.src = assetUrl;
+      this.renderElement.src = this.src;
+      this.renderElement.onload = () => {
+        (this.engine.app as CanvasApp).currentPage?.setNeedsRender();
+      };
+    }
   }
 
   render(canvasContext: CanvasRenderingContext2D): void {

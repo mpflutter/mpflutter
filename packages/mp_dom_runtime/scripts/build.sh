@@ -24,7 +24,7 @@ cp ./dist/mpdom.min.js dist_weapp/mpdom.min.js
 node scripts/change_env.js __MP_TARGET_CANVAS__
 terser --compress --mangle -- ./dist/mpdom.js.__MP_TARGET_CANVAS__ > ./dist/mpdom.min.js
 cp ./dist/mpdom.min.js ../mpflutter_sample/canvas/mpdom.min.js
-cp ./dist/mpdom.min.js ../mpflutter_sample/minigame/mpdom.min.js
+cp ./dist/mpdom.min.js ../mpflutter_sample/minigame/js/mpdom.min.js
 cp ./dist/mpdom.min.js dist_canvas/mpdom.min.js
 
 ## Clean

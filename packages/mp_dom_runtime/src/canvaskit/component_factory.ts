@@ -4,6 +4,7 @@ import { ColoredBox } from "./basic/colored_box";
 import { Offstage } from "./basic/offstage";
 import { Opacity } from "./basic/opacity";
 import { Transform } from "./basic/transform";
+import { RichText, TextSpan, WidgetSpan } from "./basic/rich_text";
 import { Image } from "./basic/image";
 import { Visibility } from "./basic/visibility";
 import { ComponentView } from "./component_view";
@@ -18,6 +19,9 @@ export class CanvasComponentFactory {
     visibility: Visibility,
     transform: Transform,
     image: Image,
+    rich_text: RichText,
+    text_span: TextSpan,
+    widget_span: WidgetSpan,
     mp_scaffold: MPScaffold,
   };
 
@@ -35,7 +39,7 @@ export class CanvasComponentFactory {
     size: { width: number; height: number };
   }[] = [];
 
-  constructor(readonly engine: Engine) {}
+  constructor(readonly engine: Engine) { }
 
   create(data: any): ComponentView | undefined {
     if (!data) return undefined;
@@ -157,9 +161,9 @@ export class CanvasComponentFactory {
 
   private markedNeedsFlushTextMeasureResult = false;
 
-  callbackTextMeasureResult(measureId: number, size: { width: number; height: number }) {}
+  callbackTextMeasureResult(measureId: number, size: { width: number; height: number }) { }
 
-  callbackTextPainterMeasureResult(seqId: number, size: { width: number; height: number }) {}
+  callbackTextPainterMeasureResult(seqId: number, size: { width: number; height: number }) { }
 
-  flushTextMeasureResult() {}
+  flushTextMeasureResult() { }
 }
