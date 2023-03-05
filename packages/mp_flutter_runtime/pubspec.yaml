@@ -42,6 +42,8 @@ flutter:
         pluginClass: MpFlutterRuntimePlugin
       ios:
         pluginClass: MpFlutterRuntimePlugin
+      macos:
+        pluginClass: MpFlutterRuntimePlugin
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
