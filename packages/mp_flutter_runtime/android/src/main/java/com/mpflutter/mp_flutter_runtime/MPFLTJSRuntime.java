@@ -13,9 +13,11 @@ import com.eclipsesource.v8.V8Value;
 import com.mpflutter.mp_flutter_runtime.api.MPTimer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -146,14 +148,7 @@ public class MPFLTJSRuntime implements FlutterPlugin, MethodChannel.MethodCallHa
                     args.push(new V8Function(context, new JavaCallback() {
                         @Override
                         public Object invoke(V8Object v8Object, V8Array v8Array) {
-                            result.success(transformV8ObjectToFlutterObject(args.get(0)));
-                            return null;
-                        }
-                    }));
-                    args.push(new V8Function(context, new JavaCallback() {
-                        @Override
-                        public Object invoke(V8Object v8Object, V8Array v8Array) {
-                            result.success(transformV8ObjectToFlutterObject(args.get(0)));
+                            result.success(v8Array.toString());
                             return null;
                         }
                     }));
@@ -206,39 +201,121 @@ public class MPFLTJSRuntime implements FlutterPlugin, MethodChannel.MethodCallHa
         }
     }
 
+    private void hashArray(V8 context,List lhm1, V8Array objaray)  {
+        for (int i = 0; i < lhm1.size(); i++) {
+            Object value = lhm1.get(i);
+            if (value instanceof String) {
+
+                objaray.push((String)value);
+            }
+            else if (value instanceof List) {
+
+
+                V8Array subobjaray = new V8Array(context);
+                hashArray(context,(List) value,subobjaray);
+            }
+            else if (value instanceof Boolean) {
+
+
+                objaray.push((boolean)value);
+            }
+            else if (value instanceof Double) {
+
+
+                objaray.push((double)value);
+            }
+            else if (value instanceof Integer) {
+
+
+                objaray.push((int)value);
+            }
+            else if (value instanceof V8Value) {
+
+
+                objaray.push((V8Value)value);
+            }
+
+            else if (value instanceof Map) {
+                V8Object obj = new V8Object(context);
+                Map<String, Object> subMap = (Map<String, Object>)value;
+                hashMapper(context,subMap,obj);
+
+
+
+            } else {
+
+            }
+        }
+    }
+
+    private void hashMapper(V8 context,Map<String, Object> lhm1,V8Object obj)  {
+        try {
+            for (Map.Entry<String, Object> entry : lhm1.entrySet()) {
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                if (value instanceof String) {
+
+                    obj.add(key,  (String)value);
+                }
+                else if (value instanceof List) {
+                    V8Array objaray = new V8Array(context);
+                    hashArray(context,(List) value,objaray);
+
+                    obj.add(key, objaray );
+                }
+                else if (value instanceof Boolean) {
+
+                    obj.add(key,  (boolean)value);
+                }
+                else if (value instanceof Double) {
+
+                    obj.add(key,  (double)value);
+                }
+                else if (value instanceof Integer) {
+
+                    obj.add(key,  (int)value);
+                }
+                else if (value instanceof V8Value) {
+
+                    obj.add(key,  (V8Value)value);
+                }
+
+                else if (value instanceof Map) {
+                    Map<String, Object> subMap = (Map<String, Object>)value;
+
+                    V8Object sss = new V8Object(context);
+                    hashMapper(context,subMap,sss);
+                    obj.add(key,sss);
+                } else {
+
+                }
+
+            }
+            System.out.println(obj);
+        }catch (Throwable e){
+            System.out.println(e.toString());
+        }
+    }
+
     private Object transformFlutterObjectToV8Object(V8 context, Object v8Object) {
         if (v8Object instanceof V8Object) {
             return v8Object;
         }
-        else if (v8Object instanceof Map) {
-            V8Object obj = new V8Object(context);
-            String[] keys = (String[]) ((Map<?, ?>) v8Object).keySet().toArray();
-            for (int i = 0; i < keys.length; i++) {
-                Object v = transformFlutterObjectToV8Object(context, ((Map<?, ?>) v8Object).get(keys[i]));
-                if (v instanceof String) {
-                    obj.add(keys[i], (String) v);
-                }
-                else if (v instanceof Boolean) {
-                    obj.add(keys[i], (boolean) v);
-                }
-                else if (v instanceof Double) {
-                    obj.add(keys[i], (double) v);
-                }
-                else if (v instanceof Integer) {
-                    obj.add(keys[i], (int) v);
-                }
-                else if (v instanceof V8Value) {
-                    obj.add(keys[i], (V8Value) v);
-                }
-            }
-            return obj;
-        }
+
         else if (v8Object instanceof List) {
             V8Array obj = new V8Array(context);
             List v = (List)v8Object;
             for (int i = 0; i < v.size(); i++) {
                 obj.push(transformFlutterObjectToV8Object(context, v.get(i)));
             }
+            return obj;
+        }
+        else if (v8Object instanceof Map) {
+            V8Object obj = new V8Object(context);
+
+            hashMapper(context,(Map)v8Object,obj);
+
             return obj;
         }
         else {
