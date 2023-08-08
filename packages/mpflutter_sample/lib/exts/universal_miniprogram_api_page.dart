@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/widgets.dart';
 import 'package:mpcore/mpcore.dart';
 import 'package:mpcore/mpkit/mpkit.dart';
@@ -142,9 +145,17 @@ class MiniProgramApiPage extends StatelessWidget {
                 _renderHeader('基础', MaterialIcons.layers_outlined),
                 _renderItem('canIUse(Image.src)', context: context,
                     execBlock: () async {
-                  final value =
-                      await UniversalMiniProgramApi.uni.canIUse('Image.src');
-                  alertResult('result = ' + value.toString());
+                  final value = await UniversalMiniProgramApi.uni
+                      .getRandomValues(
+                          GetRandomValuesOption()..setValues(length: 6));
+
+                  final arrayBuffer = await ArrayBuffer.fromUint8List(
+                      Uint8List.fromList([0, 1, 2, 3]));
+                  print(await arrayBuffer!.toUint8List());
+                  print(await (await value.randomValues).toUint8List());
+                  // final value =
+                  //     await UniversalMiniProgramApi.uni.canIUse('Image.src');
+                  // alertResult('result = ' + value.toString());
                 }),
                 _renderItem('getSystemInfoSync', context: context,
                     execBlock: () async {

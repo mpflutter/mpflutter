@@ -213,6 +213,9 @@ class JsObject {
       'callChain': _callChain,
       'key': key,
     });
+    if (result is Uint8List && result is T) {
+      return result as T;
+    }
     if (result is List) {
       result = result.map((e) => JsObject.wrapBrowserObject(e)).toList() as T;
     } else if (result is Map) {

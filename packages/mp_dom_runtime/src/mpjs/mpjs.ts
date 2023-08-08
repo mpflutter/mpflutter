@@ -78,7 +78,7 @@ export class MPJS {
         if (result instanceof Promise) {
           result = await result;
         }
-        callback(this.wrapResult(result));
+        callback(this.wrapResult(result, params.method === "base64ToArrayBuffer"));
       } catch (error) {
         console.error(error);
       }
@@ -107,12 +107,27 @@ export class MPJS {
 
   async getValue(message: MPJSMessage, callback: (result: any) => void) {
     const params = message.params as MPJSGetValueParams;
-    const callingObject = this.getCallee(params.objectHandler, params.callChain);
-    let result = callingObject[params.key];
-    if (result instanceof Promise) {
-      result = await result;
+    console.log("params", params)
+    if (params.key === "" && params.callChain.length > 0) {
+      let newCallChain: string[] = [];
+      for (let index = 0; index < params.callChain.length; index++) {
+        newCallChain.push(params.callChain[index]);
+      }
+      let newKey = newCallChain.pop() as string;
+      const callingObject = this.getCallee(params.objectHandler, newCallChain);
+      let result = callingObject[newKey];
+      if (result instanceof Promise) {
+        result = await result;
+      }
+      callback(this.wrapResult(result));
+    } else {
+      const callingObject = this.getCallee(params.objectHandler, params.callChain);
+      let result = params.key === "" ? callingObject : callingObject[params.key];
+      if (result instanceof Promise) {
+        result = await result;
+      }
+      callback(this.wrapResult(result));
     }
-    callback(this.wrapResult(result));
   }
 
   setValue(message: MPJSMessage, callback: (result: any) => void) {
@@ -194,7 +209,7 @@ export class MPJS {
     }
   }
 
-  wrapResult(result: any): any {
+  wrapResult(result: any, forceUseObjectRef: boolean = false): any {
     if (
       typeof result === "string" ||
       typeof result === "number" ||
@@ -202,7 +217,7 @@ export class MPJS {
       typeof result === "bigint"
     ) {
       return result;
-    } else if (typeof result === "object" && result instanceof ArrayBuffer) {
+    } else if (typeof result === "object" && result instanceof ArrayBuffer && !forceUseObjectRef) {
       if (__MP_TARGET_BROWSER__) {
         return "base64:" + encodeBase64(result);
       } else if (__MP_MINI_PROGRAM__) {
