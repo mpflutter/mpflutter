@@ -100,6 +100,9 @@ class JsObject {
 
   static dynamic toBrowserObject(dynamic obj) {
     if (obj is Function) {
+      if (_mirroredFunction[obj.hashCode] != null) {
+        obj = _mirroredFunction[obj.hashCode];
+      }
       final funcId = obj.hashCode;
       funcHandlers[funcId] = obj;
       return 'func:${funcId}';
@@ -122,6 +125,12 @@ class JsObject {
       } catch (e) {}
       return obj;
     }
+  }
+
+  static Map<int, Function> _mirroredFunction = {};
+
+  static void mirrorFunction(Function originFunc, Function newFunc) {
+    _mirroredFunction[originFunc.hashCode] = newFunc;
   }
 
   final List<String> _callChain = [];
