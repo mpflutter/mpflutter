@@ -263,6 +263,7 @@ class MyHomePage extends StatelessWidget {
                 _renderItem('MapView (WeChat)',
                     context: context, route: '/mapView'),
                 _renderItem('File', context: context, route: '/file'),
+                _renderItem('Wasm', context: context, route: '/wasm'),
               ],
             ),
             context,

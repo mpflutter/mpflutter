@@ -16,6 +16,7 @@ import 'package:mpflutter_template/exts/http_network_page.dart';
 import 'package:mpflutter_template/exts/plugin_page.dart';
 import 'package:mpflutter_template/exts/shared_preference_page.dart';
 import 'package:mpflutter_template/exts/universal_miniprogram_api_page.dart';
+import 'package:mpflutter_template/exts/wasm_page.dart';
 import 'package:mpflutter_template/layouts/aspect_ratio_page.dart';
 import 'package:mpflutter_template/layouts/center_page.dart';
 import 'package:mpflutter_template/layouts/column_row_page.dart';
@@ -188,6 +189,7 @@ class MyApp extends StatelessWidget {
         '/routeTest': (context) => RouteTestPage(),
         '/file': (context) => FilePage(),
         '/chart': (context) => ChartPage(),
+        '/wasm': (context) => WasmPage(),
       },
       navigatorObservers: [MPCore.getNavigationObserver()],
     );

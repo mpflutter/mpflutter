@@ -34,6 +34,8 @@ dependencies:
     git: https://github.com/mpflutter-plugins/mp_file
   fl_chart: 
     git: https://github.com/mpflutter-plugins/fl_chart.git
+  mp_wasm:
+    git: https://github.com/mpflutter-plugins/mp_wasm.git
 dependency_overrides:
   flutter:
     path: ../flutter
