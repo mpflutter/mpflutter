@@ -3,7 +3,7 @@ description: A new MPFlutter project.
 publish_to: "none"
 version: 1.0.0+1
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+  sdk: ">=2.12.0 <4.0.0"
 playbox:
   name: 模板工程
   description: 

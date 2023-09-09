@@ -6,7 +6,7 @@
       "name": "MPFlutter",
       "request": "launch",
       "type": "dart",
-      "program": "lib/main.dart",
+      "program": "bin/main.dart",
       "preLaunchTask": "Pre-compile MPFlutter Plugins"
     },
     {
