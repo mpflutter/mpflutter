@@ -87,7 +87,7 @@ void _buildDartJS(List<String> args) {
       .replaceAll(RegExp(r"\n}\)\(\);"), "\n});")
       .replaceAll("else s([])})})()", "else s([])})})");
   codeSource =
-      "let MPEnv = require('./mpdom.min').MPEnv;self = MPEnv.platformGlobal();" +
+      "let MPEnv = require('./mpdom.min').MPEnv;self = MPEnv.platformGlobal();var performance = {now: function(){ return new Date().getTime(); }, mark: function(){}, measure: function(){}};" +
           codeSource;
   codeSource = codeSource.replaceFirst("""(function dartProgram()""",
       """var \$__dart_deferred_initializers__ = self.\$__dart_deferred_initializers__;module.exports.main = (function dartProgram()""");
@@ -250,7 +250,7 @@ _moveDeferedScriptToSubpackages() {
 _modulizeDeferedJSCode(File file) {
   var code = file.readAsStringSync();
   code =
-      "self = getApp();var \$__dart_deferred_initializers__ = self.\$__dart_deferred_initializers__;module.exports.main = function() {$code};";
+      "self = getApp();var performance = {now: function(){ return new Date().getTime(); }, mark: function(){}, measure: function(){}};var \$__dart_deferred_initializers__ = self.\$__dart_deferred_initializers__;module.exports.main = function() {$code};";
   file.writeAsStringSync(code);
 }
 
