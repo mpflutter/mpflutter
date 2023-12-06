@@ -1,8 +1,7 @@
 name: mpflutter
 description: The MPFlutter Library
-publish_to: "none"
 
-version: 2.0.0
+version: 2.0.0-alpha.1
 
 environment:
   sdk: ">=3.1.1 <4.0.0"
@@ -10,11 +9,5 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  path: any
-  full_screen_back_gesture: 0.0.2
   uuid: ^4.2.1
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^2.0.0
+  async: ^2.11.0
