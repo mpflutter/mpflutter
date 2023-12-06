@@ -1,3 +1,0 @@
-test('useGlobal', () => {
-    // ignore
-})

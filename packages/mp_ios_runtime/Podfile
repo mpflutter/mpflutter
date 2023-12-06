@@ -1,9 +1,0 @@
-platform :ios, '10.0'
-
-target 'mp_ios_runtime' do
-  pod 'jetfire', '~> 0.1'
-  pod 'MBProgressHUD', "~> 1.2.0"
-  pod 'SDWebImage', '~> 5.0'
-  pod 'SDWebImageSVGKitPlugin'
-  pod 'SVGKit', '2.1.0'
-end

@@ -1,42 +1,17 @@
-# MPFlutter
+# MPFlutter 2.0
 
-[官方网站](https://mpflutter.com/)
+MPFlutter 是一个跨平台 Flutter 开发框架，可用于微信小程序、抖音小程序开发。
 
-`MPFlutter` 是一个跨平台 Flutter 开发框架，可用于各种小程序、H5、原生应用开发。
+目前正处于公测阶段，暂不接受代码贡献。
 
-开发者可以通过 Dart 语言开发 App，一套代码同时运行在以下平台。
+## 开源协议
 
-* 微信小程序
-* 百度小程序
-* Web (HTML5)
+本项目是在 Apache License Version 2.0 的基础上开源的。
 
-MPFlutter 提供了丰富的组件、接口，开发者可以轻松地为应用添加平台扩展。
+特别提醒你，本项目有以下附加条款：
 
-## 演练场
+1. 商业使用：当您将MPFlutter用于商业项目时，您需要购买许可证。未购买许可证将被视为侵权行为，您的实体将承担法律责任。
 
-尝试 MPFlutter 最简单的方法是使用 Hello World 例子，我们在文档中提供嵌入式的 Playground，你可以在阅读、修改代码的同时，点击 Run 按钮，编译并预览应用。
+2. 保留UNLICENSE标识：您不得擅自删除MPFlutter的UNLICENSE标识。删除UNLICENSE标识同样将被视为侵权行为。
 
-[点此进入演练场](https://pub.mpflutter.com/playground/index.html?source=https://mpflutter.com/samples/helloworld.dart)
-
-## 学习资源
-
-如果你是一名 Dart / Flutter 新手，你可以尝试到以下网站学习相关知识。
-
-[Dart 中文站 https://dart.cn](https://dart.cn)
-
-[Flutter 中文站 https://flutter-io.cn](https://flutter-io.cn)
-
-[《Flutter 实战》 https://book.flutterchina.club](https://book.flutterchina.club)
-
-如果你想了解MPFlutter使用的例子, 在packages目录下的mpflutter_sample可能会有帮助.
-如果你想调试代码,请注意一定在先执行主目录下的`build.sh`,它会生成一些web的依赖.
-
-## 贡献代码
-
-当前 MPFlutter 处于初级阶段，如果你希望为 MPFlutter 贡献代码，又或者是想要研究 MPFlutter 的运行原理，可以阅读 [Contribute Guide](./CONTRIBUTE.md) 尝试搭建框架开发环境。
-
-## 隐私声明
-
-你的使用行为（只限于网站、DevTools）会被发送至 Google Analytics 用于统计，这些行为数据不包含特定的用户标识。
-
-MPFlutter 保证，使用 MPFlutter 构建的最终产物，不会包含任何跟踪代码，也不会收集使用行为。
+3. 高使用量实体的特别授权：如果使用本开源软件的最终受益实体，其所有产品上的去重日活跃用户数超过 100 万，需要购买特别授权。具体细则请联系 PonyCui 或 MPFlutter BD 人员。
