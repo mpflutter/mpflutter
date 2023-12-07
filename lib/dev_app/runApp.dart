@@ -1,5 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:mpflutter/dev_app/dev_server.dart';
+import 'package:mpflutter_runtime/dev_app/dev_server.dart';
 
 void runMPApp(Widget app) {
   runApp(MPDevApp(child: app));

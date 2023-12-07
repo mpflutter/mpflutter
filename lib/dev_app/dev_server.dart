@@ -4,7 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:async/async.dart';
-import 'package:mpflutter/logger.dart';
+import 'package:mpflutter_runtime/logger.dart';
 
 import 'package:uuid/v4.dart';
 
