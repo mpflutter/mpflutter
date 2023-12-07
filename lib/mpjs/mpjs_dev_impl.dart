@@ -1,6 +1,6 @@
-import 'package:mpflutter_runtime/dev_app/dev_mpjs_host.dart';
-import 'package:mpflutter_runtime/dev_app/dev_server.dart';
-import 'package:mpflutter_runtime/mpjs/mpjs.dart';
+import 'package:mpflutter_core/dev_app/dev_mpjs_host.dart';
+import 'package:mpflutter_core/dev_app/dev_server.dart';
+import 'package:mpflutter_core/mpjs/mpjs.dart';
 
 class Context extends JSObject implements IContext {
   static Map<String, Function> functionMap = {};

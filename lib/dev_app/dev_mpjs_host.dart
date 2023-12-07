@@ -1,4 +1,4 @@
-import 'package:mpflutter_runtime/dev_app/dev_server.dart';
+import 'package:mpflutter_core/dev_app/dev_server.dart';
 
 class _MPJSMethodList {
   static final newObject = "mpjs.newObject";

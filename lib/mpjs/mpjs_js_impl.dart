@@ -1,5 +1,5 @@
 import 'dart:js' as js;
-import 'package:mpflutter_runtime/mpjs/mpjs.dart';
+import 'package:mpflutter_core/mpjs/mpjs.dart';
 
 class Context extends JSObject implements IContext {
   static final shared = Context();
