@@ -1,4 +1,5 @@
 import 'dart:js' as js;
+import 'dart:typed_data';
 import 'package:mpflutter_core/mpjs/mpjs.dart';
 
 class Context extends JSObject implements IContext {
@@ -83,6 +84,24 @@ class Context extends JSObject implements IContext {
     };
     Context.functionArgsCount[funcId] = 4;
     return Context.functionMap[funcId]!;
+  }
+
+  Uint8List convertArrayBufferToUint8List(JSObject value) {
+    final plainList = (js.context['Array'] as js.JsObject).callMethod('from', [
+      js.JsObject(js.context['Uint8Array'], [value.jsObject])
+    ]) as js.JsArray;
+    List<int> plainDartList = [];
+    plainList.asMap().forEach((key, value) {
+      plainDartList.add(value);
+    });
+    return Uint8List.fromList(plainDartList);
+  }
+
+  JSObject newArrayBufferFromUint8List(Uint8List value) {
+    final uint8Array = js.JsObject(
+        js.context["Uint8Array"], [new js.JsArray.from(value.toList())]);
+    final ab = uint8Array["buffer"];
+    return JSObject(ab);
   }
 }
 

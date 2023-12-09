@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:mpflutter_core/dev_app/dev_mpjs_host.dart';
 import 'package:mpflutter_core/dev_app/dev_server.dart';
 import 'package:mpflutter_core/mpjs/mpjs.dart';
@@ -93,16 +95,33 @@ class Context extends JSObject implements IContext {
     functionArgsCount[funcId] = 4;
     return dartFunction;
   }
+
+  Uint8List convertArrayBufferToUint8List(JSObject value) {
+    final contextArray = context['Array'] as JSObject;
+    final plainList = contextArray.callMethod('from', [
+      JSObject('Uint8Array', [value])
+    ]) as JSArray;
+    return Uint8List.fromList(plainList.value().cast());
+  }
+
+  JSObject newArrayBufferFromUint8List(Uint8List value) {
+    final uint8Array = JSObject('Uint8Array', [value.toList()]);
+    final ab = uint8Array["buffer"];
+    return ab;
+  }
 }
 
 class JSObject implements IJSObject {
   late final String objectRef;
 
-  JSObject(String refOrClazz) {
+  JSObject(String refOrClazz, [List? arguments]) {
     if (refOrClazz.contains("ref:")) {
       this.objectRef = refOrClazz;
     } else {
-      final valueORObjectRef = DevMPJSHost.shared.newObject(refOrClazz);
+      final valueORObjectRef = DevMPJSHost.shared.newObject(
+        refOrClazz,
+        arguments?.map((e) => transformToBrowserJSObject(e)).toList() ?? [],
+      );
       if (valueORObjectRef is Map && valueORObjectRef["clazz"] == "object") {
         this.objectRef = valueORObjectRef["ref"];
       } else {
@@ -189,6 +208,10 @@ class JSArray extends JSObject implements IJSArray {
     value.forEach((element) {
       add(element);
     });
+  }
+
+  List<dynamic> value() {
+    return DevMPJSHost.shared.plainValueOfObject(objectRef);
   }
 }
 

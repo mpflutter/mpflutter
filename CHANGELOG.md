@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.0.0-alpha.4
+- fix: newObject with args.
+- feat: add arraybuffer utils.
+
 ## 2.0.0-alpha.2
 Rename to mpflutter_core.
 

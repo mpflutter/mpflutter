@@ -9,6 +9,7 @@ class _MPJSMethodList {
   static final callDartFunction = "mpjs.callDartFunction";
   static final returnCallDartFunctionResult =
       "mpjs.returnCallDartFunctionResult";
+  static final plainValueOfObject = "mpjs.plainValueOfObject";
 }
 
 class DevMPJSHost {
@@ -27,11 +28,12 @@ class DevMPJSHost {
     };
   }
 
-  dynamic newObject(String clazz) {
+  dynamic newObject(String clazz, List? arguments) {
     final result = IsolateDevServer.shared.invokeMethod(
       _MPJSMethodList.newObject,
       {
         "clazz": clazz,
+        "arguments": arguments,
       },
     );
     return result;
@@ -42,6 +44,16 @@ class DevMPJSHost {
       _MPJSMethodList.valueOfObject,
       {
         "key": key,
+        "objectRef": objectRef,
+      },
+    );
+    return result;
+  }
+
+  dynamic plainValueOfObject(String objectRef) {
+    final result = IsolateDevServer.shared.invokeMethod(
+      _MPJSMethodList.plainValueOfObject,
+      {
         "objectRef": objectRef,
       },
     );
