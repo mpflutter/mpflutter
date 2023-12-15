@@ -1,22 +1,16 @@
 import 'package:flutter/widgets.dart';
 import 'package:mpflutter_core/dev_app/dev_server.dart';
 
-void runMPApp(Widget app) {
-  runApp(MPDevApp(child: app));
-}
-
-bool kIsMiniProgram = true;
-
-class MPDevApp extends StatefulWidget {
+class MPApp extends StatefulWidget {
   final Widget child;
 
-  const MPDevApp({super.key, required this.child});
+  const MPApp({super.key, required this.child});
 
   @override
-  State<MPDevApp> createState() => _MPDevAppState();
+  State<MPApp> createState() => _MPAppState();
 }
 
-class _MPDevAppState extends State<MPDevApp> {
+class _MPAppState extends State<MPApp> {
   @override
   void dispose() {
     IsolateDevServer.shared.stop();
@@ -35,4 +29,4 @@ class _MPDevAppState extends State<MPDevApp> {
   }
 }
 
-class MPNavigatorObserver extends NavigatorObserver {}
+class MPNavigatorObserverPrivate extends NavigatorObserver {}

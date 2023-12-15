@@ -2,12 +2,6 @@ import 'package:flutter/widgets.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:js' as js;
 
-void runMPApp(Widget app) {
-  runApp(MPApp(child: app));
-}
-
-bool kIsMiniProgram = true;
-
 class MPApp extends StatefulWidget {
   final Widget child;
 
@@ -50,8 +44,8 @@ class _MPAppState extends State<MPApp> {
   }
 }
 
-class MPNavigatorObserver extends NavigatorObserver {
-  MPNavigatorObserver() {
+class MPNavigatorObserverPrivate extends NavigatorObserver {
+  MPNavigatorObserverPrivate() {
     js.context["androidBackPressed"] = () {
       final ctx = navigator?.context;
       if (ctx != null && Navigator.canPop(ctx)) {
