@@ -109,7 +109,18 @@ class JSObject implements IJSObject {
   final js.JsObject jsObject;
 
   JSObject(dynamic arg)
-      : this.jsObject = arg is js.JsObject ? arg : js.JsObject(js.context[arg]);
+      : this.jsObject = arg is js.JsObject
+            ? arg
+            : js.JsObject((() {
+                var clazz = js.context[arg];
+                if (clazz == null) {
+                  clazz = js.context["wx"][arg];
+                }
+                if (clazz == null) {
+                  throw arg + " constructor not found!";
+                }
+                return clazz;
+              })());
 
   static dynamic transformToMPJSObject(dynamic obj) {
     if (obj is js.JsArray) {
