@@ -113,7 +113,7 @@ class JSObject implements IJSObject {
             ? arg
             : js.JsObject((() {
                 var clazz = js.context[arg];
-                if (clazz == null) {
+                if (clazz == null && js.context["wx"] != null) {
                   clazz = js.context["wx"][arg];
                 }
                 if (clazz == null) {
