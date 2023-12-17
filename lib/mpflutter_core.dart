@@ -3,6 +3,7 @@ import './dev_app/runApp.dart' if (dart.library.js) './wechat_app/runApp.dart';
 
 export './logger.dart';
 export './wechat_callbacks.dart';
+export './mpflutter_platform_view.dart';
 
 bool kIsMPFlutter = bool.fromEnvironment(
   'mpflutter.library.core',
