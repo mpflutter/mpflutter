@@ -34,7 +34,7 @@ class _MPAppState extends State<MPApp> {
   @override
   Widget build(BuildContext context) {
     return MediaQuery(
-      data: MediaQueryData(
+      data: MediaQuery.of(context).copyWith(
         padding: EdgeInsets.only(top: safeAreaInsetTop),
         viewPadding: EdgeInsets.only(bottom: safeAreaInsetBottom),
         viewInsets: EdgeInsets.only(bottom: keyboardHeight),
