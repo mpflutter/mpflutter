@@ -47,13 +47,19 @@ class _PlatformViewManager {
   }
 }
 
+class MPFlutterPlatformViewController {
+  String? pvid;
+}
+
 class MPFlutterPlatformView extends StatefulWidget {
+  final MPFlutterPlatformViewController? controller;
   final String viewClazz;
   final bool ignorePlatformTouch;
   final Map<String, dynamic> viewProps;
 
   const MPFlutterPlatformView({
     super.key,
+    this.controller,
     required this.viewClazz,
     this.ignorePlatformTouch = false,
     this.viewProps = const {},
@@ -78,6 +84,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   @override
   void initState() {
     super.initState();
+    widget.controller?.pvid = renderBoxKey.hashCode.toString();
     WidgetsBinding.instance.addPostFrameCallback(_updateViewFrame);
   }
 
