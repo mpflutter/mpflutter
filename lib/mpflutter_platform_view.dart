@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import './mpjs/mpjs.dart' as mpjs;
+
+typedef MPFlutterPlatformViewCallback = void Function(
+    String event, mpjs.JSObject detail);
 
 class _PlatformViewManager {
   static final shared = _PlatformViewManager();
@@ -7,11 +11,19 @@ class _PlatformViewManager {
   final mpjs.JSObject platformViewManager = mpjs.context["platformViewManager"];
   final bool runOnDevtools = mpjs.context["platformViewManager"]['devtools'];
 
+  void addCBListenner(String pvid, MPFlutterPlatformViewCallback callback) {
+    platformViewManager.callMethod("addCBListenner", [
+      pvid,
+      callback,
+    ]);
+  }
+
   void updateView({
     required String viewClazz,
     required String pvid,
     required Rect frame,
     required EdgeInsets wrapper,
+    required double opacity,
     required bool ignorePlatformTouch,
     required Map<String, dynamic> viewProps,
   }) {
@@ -31,6 +43,7 @@ class _PlatformViewManager {
           "bottom": wrapper.bottom,
           "right": wrapper.right,
         },
+        "opacity": opacity,
         "ignorePlatformTouch": ignorePlatformTouch,
         "props": viewProps,
       }
@@ -56,6 +69,7 @@ class MPFlutterPlatformView extends StatefulWidget {
   final String viewClazz;
   final bool ignorePlatformTouch;
   final Map<String, dynamic> viewProps;
+  final MPFlutterPlatformViewCallback? eventCallback;
 
   const MPFlutterPlatformView({
     super.key,
@@ -63,6 +77,7 @@ class MPFlutterPlatformView extends StatefulWidget {
     required this.viewClazz,
     this.ignorePlatformTouch = false,
     this.viewProps = const {},
+    this.eventCallback,
   });
 
   @override
@@ -71,6 +86,7 @@ class MPFlutterPlatformView extends StatefulWidget {
 
 class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   final renderBoxKey = GlobalKey();
+  Route? currentRoute;
 
   @override
   void dispose() {
@@ -85,6 +101,12 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   void initState() {
     super.initState();
     widget.controller?.pvid = renderBoxKey.hashCode.toString();
+    if (widget.eventCallback != null) {
+      _PlatformViewManager.shared.addCBListenner(
+        renderBoxKey.hashCode.toString(),
+        widget.eventCallback!,
+      );
+    }
     WidgetsBinding.instance.addPostFrameCallback(_updateViewFrame);
   }
 
@@ -94,12 +116,20 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
     _updateViewFrame(0);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    currentRoute = ModalRoute.of(context);
+  }
+
   void _updateViewFrame(dynamic time) {
     if (!mounted) return;
     final RenderBox? renderBox =
         renderBoxKey.currentContext?.findRenderObject() as RenderBox?;
     final offset = renderBox?.localToGlobal(Offset.zero);
     final size = renderBox?.size;
+    final opcaityObject = renderBoxKey.currentContext
+        ?.findAncestorRenderObjectOfType<RenderOpacity>();
     if (offset != null && size != null) {
       final frameOnWindow = Rect.fromLTWH(
         offset.dx,
@@ -114,6 +144,9 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
         wrapper: EdgeInsets.only(
           top: (Scaffold.of(context).appBarMaxHeight ?? 0),
         ),
+        opacity: (currentRoute == null || currentRoute!.isCurrent == false)
+            ? 0.0
+            : (opcaityObject?.opacity ?? 1.0),
         ignorePlatformTouch: widget.ignorePlatformTouch,
         viewProps: widget.viewProps,
       );
