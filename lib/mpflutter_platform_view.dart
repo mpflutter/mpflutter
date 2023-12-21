@@ -66,6 +66,7 @@ class MPFlutterPlatformViewController {
 
 class MPFlutterPlatformView extends StatefulWidget {
   final MPFlutterPlatformViewController? controller;
+  final bool transparent;
   final String viewClazz;
   final bool ignorePlatformTouch;
   final Map<String, dynamic> viewProps;
@@ -75,6 +76,7 @@ class MPFlutterPlatformView extends StatefulWidget {
     super.key,
     this.controller,
     required this.viewClazz,
+    this.transparent = false,
     this.ignorePlatformTouch = false,
     this.viewProps = const {},
     this.eventCallback,
@@ -159,18 +161,20 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
     if (_PlatformViewManager.shared.runOnDevtools) {
       return Container(
         key: renderBoxKey,
-        color: Colors.white,
-        child: Center(
-          child: Text(
-            '开发者工具无法预览 PlatformView\n请在真机预览',
-            textAlign: TextAlign.center,
-          ),
-        ),
+        color: Colors.transparent,
+        child: widget.transparent
+            ? null
+            : Center(
+                child: Text(
+                  '开发者工具无法预览 PlatformView\n请在真机预览',
+                  textAlign: TextAlign.center,
+                ),
+              ),
       );
     }
     return Container(
       key: renderBoxKey,
-      color: Colors.white,
+      color: Colors.transparent,
     );
   }
 }
