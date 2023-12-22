@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import './mpjs/mpjs.dart' as mpjs;
@@ -172,9 +173,15 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
               ),
       );
     }
-    return Container(
-      key: renderBoxKey,
-      color: Colors.transparent,
+    return GestureDetector(
+      onPanStart: (_) {},
+      onPanUpdate: (_) {},
+      onPanEnd: (_) {},
+      onPanCancel: () {},
+      child: Container(
+        key: renderBoxKey,
+        color: Colors.transparent,
+      ),
     );
   }
 }
