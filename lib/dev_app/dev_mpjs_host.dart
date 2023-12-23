@@ -1,4 +1,5 @@
 import 'package:mpflutter_core/dev_app/dev_server.dart';
+import 'package:mpflutter_core/mpflutter_core.dart';
 
 class _MPJSMethodList {
   static final newObject = "mpjs.newObject";
@@ -29,6 +30,9 @@ class DevMPJSHost {
   }
 
   dynamic newObject(String clazz, List? arguments) {
+    if (!kIsMPFlutterDevmode) {
+      throw "未开启 MPFlutter Debugger 标志，MPJS 调用失败。";
+    }
     final result = IsolateDevServer.shared.invokeMethod(
       _MPJSMethodList.newObject,
       {
@@ -40,6 +44,9 @@ class DevMPJSHost {
   }
 
   dynamic valueOfObject(dynamic key, String objectRef) {
+    if (!kIsMPFlutterDevmode) {
+      throw "未开启 MPFlutter Debugger 标志，MPJS 调用失败。";
+    }
     final result = IsolateDevServer.shared.invokeMethod(
       _MPJSMethodList.valueOfObject,
       {
@@ -51,6 +58,9 @@ class DevMPJSHost {
   }
 
   dynamic plainValueOfObject(String objectRef) {
+    if (!kIsMPFlutterDevmode) {
+      throw "未开启 MPFlutter Debugger 标志，MPJS 调用失败。";
+    }
     final result = IsolateDevServer.shared.invokeMethod(
       _MPJSMethodList.plainValueOfObject,
       {
@@ -61,6 +71,9 @@ class DevMPJSHost {
   }
 
   dynamic setValueOfObject(dynamic key, dynamic value, String objectRef) {
+    if (!kIsMPFlutterDevmode) {
+      throw "未开启 MPFlutter Debugger 标志，MPJS 调用失败。";
+    }
     final result = IsolateDevServer.shared.invokeMethod(
       _MPJSMethodList.setValueOfObject,
       {
@@ -74,6 +87,9 @@ class DevMPJSHost {
 
   dynamic callMethod(
       dynamic method, List<dynamic> arguments, String objectRef) {
+    if (!kIsMPFlutterDevmode) {
+      throw "未开启 MPFlutter Debugger 标志，MPJS 调用失败。";
+    }
     final result = IsolateDevServer.shared.invokeMethod(
       _MPJSMethodList.callMethod,
       {
@@ -90,6 +106,9 @@ class DevMPJSHost {
     List<dynamic> arguments,
     String objectRef,
   ) {
+    if (!kIsMPFlutterDevmode) {
+      throw "未开启 MPFlutter Debugger 标志，MPJS 调用失败。";
+    }
     final result = IsolateDevServer.shared.invokeMethod(
       _MPJSMethodList.applyFunction,
       {
@@ -102,6 +121,9 @@ class DevMPJSHost {
   }
 
   returnCallDartFunctionResult(String funcCallId, dynamic result) {
+    if (!kIsMPFlutterDevmode) {
+      throw "未开启 MPFlutter Debugger 标志，MPJS 调用失败。";
+    }
     IsolateDevServer.shared.invokeMethod(
       _MPJSMethodList.returnCallDartFunctionResult,
       {

@@ -5,12 +5,12 @@ export './logger.dart';
 export './wechat_callbacks.dart';
 export './mpflutter_platform_view.dart';
 
-bool kIsMPFlutter = bool.fromEnvironment(
+const bool kIsMPFlutter = bool.fromEnvironment(
   'mpflutter.library.core',
   defaultValue: false,
 );
-bool kIsMPFlutterDebugger = bool.fromEnvironment(
-  'mpflutter.library.debugger',
+const bool kIsMPFlutterDevmode = bool.fromEnvironment(
+  'mpflutter.library.devmode',
   defaultValue: false,
 );
 

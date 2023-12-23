@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:isolate';
 
 import 'package:async/async.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mpflutter_core/logger.dart';
 
 import 'package:uuid/v4.dart';
@@ -31,13 +32,18 @@ String? getHomeDirectory() {
   return null;
 }
 
-class IsolateDevServer {
+class IsolateDevServer extends ChangeNotifier {
   static final shared = IsolateDevServer();
 
   final _tempPath = getTempDirectoryPath();
   final hostPort = ReceivePort();
   SendPort? hostSendPort;
   void Function(String, Map)? eventListenner;
+  bool serverConnected = false;
+
+  connected() {
+    return serverConnected;
+  }
 
   start() async {
     if (_tempPath == null) {
@@ -49,6 +55,11 @@ class IsolateDevServer {
       final _tempPath = getTempDirectoryPath();
       final clientPort = ReceivePort();
       hostSendPort.send(clientPort.sendPort);
+      DevServer.shared.addListener(() {
+        hostSendPort.send(
+          {"serverConnected": DevServer.shared._activeClient != null},
+        );
+      });
       DevServer.shared.start();
       DevServer.shared.eventListenner = (p0, p1) {
         hostSendPort.send(
@@ -77,6 +88,10 @@ class IsolateDevServer {
     hostSendPort = await events.next;
     while (true) {
       final isolateMsg = await events.next;
+      if (isolateMsg is Map && isolateMsg["serverConnected"] is bool) {
+        serverConnected = isolateMsg["serverConnected"];
+        notifyListeners();
+      }
       if (isolateMsg is String) {
         try {
           final msg = json.decode(isolateMsg);
@@ -126,7 +141,7 @@ class IsolateDevServer {
   }
 }
 
-class DevServer {
+class DevServer extends ChangeNotifier {
   static final shared = DevServer();
 
   // ignore: unused_field
@@ -136,19 +151,22 @@ class DevServer {
   void Function(String, Map)? eventListenner;
 
   start() async {
-    final server = await HttpServer.bind(InternetAddress.loopbackIPv4, 9898);
+    final server = await HttpServer.bind(InternetAddress.anyIPv4, 9898);
     Logger.info('调试服务器已启动，IP = 127.0.0.1，端口 = 9898');
     _server = server;
     await for (HttpRequest request in server) {
       final socket = await WebSocketTransformer.upgrade(request);
       _activeClient = socket;
       Logger.info('调试宿主已连接');
+      notifyListeners();
       socket.listen((message) {
         receiveMethodResponse(message);
       });
       socket.done.then((value) {
         Logger.info('调试宿主已断开');
         socket.close();
+        _activeClient = null;
+        notifyListeners();
       });
     }
   }
