@@ -191,6 +191,18 @@ class JSObject implements IJSObject {
     );
     return transformToMPJSObject(result);
   }
+
+  Map asMap() {
+    final keys =
+        (context["Object"] as JSObject).callMethod("keys", [this]) as JSArray;
+    final length = keys.length();
+    final result = {};
+    for (var i = 0; i < length; i++) {
+      final key = keys[i];
+      result[key] = this[key];
+    }
+    return result;
+  }
 }
 
 class JSArray extends JSObject implements IJSArray {
@@ -208,6 +220,10 @@ class JSArray extends JSObject implements IJSArray {
     value.forEach((element) {
       add(element);
     });
+  }
+
+  int length() {
+    return this["length"];
   }
 
   List<dynamic> value() {

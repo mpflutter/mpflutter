@@ -45,6 +45,9 @@ class _MPAppState extends State<MPApp> {
 }
 
 class MPNavigatorObserverPrivate extends NavigatorObserver {
+
+  static Route? currentRoute;
+
   MPNavigatorObserverPrivate() {
     js.context["androidBackPressed"] = () {
       final ctx = navigator?.context;
@@ -57,6 +60,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
+    currentRoute = route;
     if (!route.isFirst) {
       (js.context["FlutterHostView"]["shared"] as js.JsObject)
           .callMethod("requireCatchBack", [true]);
@@ -69,6 +73,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
+    currentRoute = previousRoute;
     if (previousRoute?.isFirst == true) {
       (js.context["FlutterHostView"]["shared"] as js.JsObject)
           .callMethod("requireCatchBack", [false]);

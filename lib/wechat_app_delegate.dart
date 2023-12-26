@@ -4,51 +4,12 @@ import 'package:mpflutter_core/mpflutter_core.dart';
 
 import './mpjs/mpjs.dart';
 
-class MPFlutterWechatLaunchOption {
-  final String path;
-  final JSObject query;
-  MPFlutterWechatLaunchOption({required this.path, required this.query});
-}
-
-class MPFlutterWechatEnterOption {
-  final String path;
-  final JSObject query;
-  MPFlutterWechatEnterOption({required this.path, required this.query});
-}
-
 class MPFlutterWechatAppDelegate {
-  final void Function(MPFlutterWechatLaunchOption)? onLaunch;
+  bool _launched = false;
+  final void Function(Map query)? onLaunch;
   final void Function()? onShow;
   final void Function()? onHide;
   final Map Function(JSObject)? onShareAppMessage;
-
-  static MPFlutterWechatLaunchOption? getLaunchOption() {
-    if (kIsMPFlutter) {
-      final result = (context["wx"] as JSObject).callMethod(
-        "getLaunchOptionsSync",
-      );
-      return MPFlutterWechatLaunchOption(
-        path: result["path"],
-        query: result["query"],
-      );
-    } else {
-      return null;
-    }
-  }
-
-  static MPFlutterWechatEnterOption? getEnterOption() {
-    if (kIsMPFlutter) {
-      final result = (context["wx"] as JSObject).callMethod(
-        "getEnterOptionsSync",
-      );
-      return MPFlutterWechatEnterOption(
-        path: result["path"],
-        query: result["query"],
-      );
-    } else {
-      return null;
-    }
-  }
 
   MPFlutterWechatAppDelegate({
     this.onLaunch,
@@ -58,27 +19,81 @@ class MPFlutterWechatAppDelegate {
   }) {
     if (kIsMPFlutter) {
       try {
-        addCallbackListenner();
+        _addCallbackListenner();
+        _readyToLaunch();
       } catch (e) {
         print(e);
       }
     }
   }
 
-  void addCallbackListenner() {
+  void _addCallbackListenner() {
     final mpcbObject = JSObject("Object");
     mpcbObject["onShow"] = onShow;
     mpcbObject["onHide"] = onHide;
-    if (onShareAppMessage != null) {
-      mpcbObject["onShareAppMessage"] = (detail) async {
-        final result = onShareAppMessage!(detail);
-        final jsResult = JSObject("Object");
-        result.forEach((key, value) {
-          jsResult[key] = value;
-        });
-        return jsResult;
-      };
-    }
+    mpcbObject["onShareAppMessage"] = onShareAppMessage;
     context["wx"]["mpcb"] = mpcbObject;
+  }
+
+  void _readyToLaunch() {
+    if (!_launched) {
+      _launched = true;
+      final launchOptions =
+          (context["wx"] as JSObject).callMethod("getLaunchOptionsSync");
+      onLaunch?.call((launchOptions["query"] as JSObject).asMap());
+    }
+  }
+}
+
+class MPFlutterWechatAppShareInfo {
+  final String title;
+  final String? imageUrl;
+  final Map query;
+  MPFlutterWechatAppShareInfo({
+    required this.title,
+    this.imageUrl,
+    required this.query,
+  });
+}
+
+class MPFlutterWechatAppShareManager {
+  static Map<int, MPFlutterWechatAppShareInfo> _routeShareInfos = {};
+
+  static Map onShareAppMessage(JSObject detail) {
+    final currentRoute = MPNavigatorObserver.currentRoute;
+    if (currentRoute != null &&
+        _routeShareInfos[currentRoute.hashCode] != null) {
+      final appShareInfo = _routeShareInfos[currentRoute.hashCode]!;
+      return {
+        "title": appShareInfo.title,
+        "imageUrl": appShareInfo.imageUrl,
+        "path": "pages/index/index?${(() {
+          final map = appShareInfo.query;
+          String query = "";
+          map.forEach((key, value) {
+            query += "$key=${Uri.encodeFull(value)}";
+          });
+          return query;
+        })()}",
+      };
+    } else {
+      return {};
+    }
+  }
+
+  static void setAppShareInfo({
+    required BuildContext context,
+    required String title,
+    String? imageUrl,
+    required Map query,
+  }) {
+    final route = ModalRoute.of(context);
+    if (route != null) {
+      _routeShareInfos[route.hashCode] = MPFlutterWechatAppShareInfo(
+        title: title,
+        imageUrl: imageUrl,
+        query: query,
+      );
+    }
   }
 }

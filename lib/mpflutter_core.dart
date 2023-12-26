@@ -34,4 +34,8 @@ void runMPApp(Widget app) async {
   }
 }
 
-class MPNavigatorObserver extends MPNavigatorObserverPrivate {}
+class MPNavigatorObserver extends MPNavigatorObserverPrivate {
+  static Route? get currentRoute {
+    return MPNavigatorObserverPrivate.currentRoute;
+  }
+}

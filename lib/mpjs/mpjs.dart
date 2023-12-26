@@ -13,6 +13,7 @@ abstract class IJSObject {
   dynamic operator [](dynamic key);
   void operator []=(dynamic key, dynamic value);
   dynamic callMethod(String method, [List<dynamic>? arguments]);
+  Map asMap();
 }
 
 abstract class IJSArray extends IJSObject {

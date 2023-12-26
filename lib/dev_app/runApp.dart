@@ -122,4 +122,19 @@ class _ConnectHostTipsState extends State<ConnectHostTips> {
   }
 }
 
-class MPNavigatorObserverPrivate extends NavigatorObserver {}
+class MPNavigatorObserverPrivate extends NavigatorObserver {
+  
+  static Route? currentRoute;
+
+  @override
+  void didPush(Route route, Route? previousRoute) {
+    super.didPush(route, previousRoute);
+    currentRoute = route;
+  }
+
+  @override
+  void didPop(Route route, Route? previousRoute) {
+    super.didPop(route, previousRoute);
+    currentRoute = previousRoute;
+  }
+}
