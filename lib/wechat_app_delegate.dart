@@ -7,12 +7,14 @@ import './mpjs/mpjs.dart';
 class MPFlutterWechatAppDelegate {
   bool _launched = false;
   final void Function(Map query)? onLaunch;
+  final void Function(Map query)? onEnter;
   final void Function()? onShow;
   final void Function()? onHide;
   final Map Function(JSObject)? onShareAppMessage;
 
   MPFlutterWechatAppDelegate({
     this.onLaunch,
+    this.onEnter,
     this.onShow,
     this.onHide,
     this.onShareAppMessage,
@@ -32,6 +34,9 @@ class MPFlutterWechatAppDelegate {
     mpcbObject["onShow"] = onShow;
     mpcbObject["onHide"] = onHide;
     mpcbObject["onShareAppMessage"] = onShareAppMessage;
+    mpcbObject["onEnter"] = (JSObject query) {
+      onEnter?.call(query.asMap());
+    };
     context["wx"]["mpcb"] = mpcbObject;
   }
 
