@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.0.0-alpha.7
+
+feat: 添加 PlatformView 支持
+feat: 添加 Flutter Plugin 支持
+feat: 添加微信分享等能力支持
+feat: 添加 Hot Reload 联机调试支持
+
 ## 2.0.0-alpha.6
 
 - feat: 添加微信小程序插件 & PlatformView 支持
