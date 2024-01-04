@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:js' as js;
@@ -26,8 +28,15 @@ class _MPAppState extends State<MPApp> {
         ? (js.context["safeAreaInsetBottom"] as num).toDouble()
         : 50.0;
     js.context["keyboardHeightChanged"] = (num value) {
+      if (keyboardHeight == value) {
+        return;
+      }
       keyboardHeight = value.toDouble();
-      setState(() {});
+      Timer(Duration(milliseconds: 100), () {
+        if (keyboardHeight == value) {
+          setState(() {});
+        }
+      });
     };
   }
 
@@ -35,8 +44,10 @@ class _MPAppState extends State<MPApp> {
   Widget build(BuildContext context) {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
-        padding: EdgeInsets.only(top: safeAreaInsetTop),
-        viewPadding: EdgeInsets.only(bottom: safeAreaInsetBottom),
+        padding: EdgeInsets.only(
+          top: safeAreaInsetTop,
+          bottom: safeAreaInsetBottom,
+        ),
         viewInsets: EdgeInsets.only(bottom: keyboardHeight),
       ),
       child: widget.child,
@@ -45,7 +56,6 @@ class _MPAppState extends State<MPApp> {
 }
 
 class MPNavigatorObserverPrivate extends NavigatorObserver {
-
   static Route? currentRoute;
 
   MPNavigatorObserverPrivate() {
