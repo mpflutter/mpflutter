@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:mpflutter_core/mpflutter_memory.dart';
 import 'package:window_manager/window_manager.dart';
 import './dev_app/runApp.dart' if (dart.library.js) './wechat_app/runApp.dart';
 
@@ -28,6 +29,7 @@ void runMPApp(Widget app) async {
         await windowManager.focus();
       });
     }
+    setupMemoryManager();
     runApp(MPApp(child: app));
   } else {
     runApp(app);
