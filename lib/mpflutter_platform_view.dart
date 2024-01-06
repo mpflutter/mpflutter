@@ -11,6 +11,7 @@ class _PlatformViewManager {
 
   final mpjs.JSObject platformViewManager = mpjs.context["platformViewManager"];
   final bool runOnDevtools = mpjs.context["platformViewManager"]['devtools'];
+  final Map<String, Map> pvidOptionCache = {};
 
   void addCBListenner(String pvid, MPFlutterPlatformViewCallback callback) {
     platformViewManager.callMethod("addCBListenner", [
@@ -28,27 +29,31 @@ class _PlatformViewManager {
     required bool ignorePlatformTouch,
     required Map<String, dynamic> viewProps,
   }) {
-    platformViewManager.callMethod("updateView", [
-      {
-        "viewClazz": viewClazz,
-        "pvid": pvid,
-        "frame": {
-          "x": frame.left,
-          "y": frame.top,
-          "width": frame.width,
-          "height": frame.height,
-        },
-        "wrapper": {
-          "top": wrapper.top,
-          "left": wrapper.left,
-          "bottom": wrapper.bottom,
-          "right": wrapper.right,
-        },
-        "opacity": opacity,
-        "ignorePlatformTouch": ignorePlatformTouch,
-        "props": viewProps,
-      }
-    ]);
+    final newOption = {
+      "viewClazz": viewClazz,
+      "pvid": pvid,
+      "frame": {
+        "x": frame.left,
+        "y": frame.top,
+        "width": frame.width,
+        "height": frame.height,
+      },
+      "wrapper": {
+        "top": wrapper.top,
+        "left": wrapper.left,
+        "bottom": wrapper.bottom,
+        "right": wrapper.right,
+      },
+      "opacity": opacity,
+      "ignorePlatformTouch": ignorePlatformTouch,
+      "props": viewProps,
+    };
+    if (pvidOptionCache[pvid] != null &&
+        _deepCompare(newOption, pvidOptionCache[pvid]!)) {
+      return;
+    }
+    pvidOptionCache[pvid] = newOption;
+    platformViewManager.callMethod("updateView", [newOption]);
   }
 
   void disposeView(String viewClazz, String pvid) {
@@ -58,6 +63,31 @@ class _PlatformViewManager {
         "pvid": pvid,
       }
     ]);
+  }
+
+  bool _deepCompare(Map<dynamic, dynamic> map1, Map<dynamic, dynamic> map2) {
+    if (map1.length != map2.length) {
+      return false;
+    }
+
+    for (var key in map1.keys) {
+      if (!map2.containsKey(key)) {
+        return false;
+      }
+
+      var value1 = map1[key];
+      var value2 = map2[key];
+
+      if (value1 is Map<dynamic, dynamic> && value2 is Map<dynamic, dynamic>) {
+        if (!_deepCompare(value1, value2)) {
+          return false;
+        }
+      } else if (value1 != value2) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 
