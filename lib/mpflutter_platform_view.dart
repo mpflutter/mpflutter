@@ -1,4 +1,7 @@
-import 'package:flutter/gestures.dart';
+// Copyright 2023 The MPFlutter Authors. All rights reserved.
+// Use of this source code is governed by a Apache License Version 2.0 that can be
+// found in the LICENSE file.
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import './mpjs/mpjs.dart' as mpjs;

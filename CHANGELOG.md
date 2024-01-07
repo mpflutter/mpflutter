@@ -1,5 +1,9 @@
 # Change Log
 
+## 2.0.0
+
+MPFlutter 2.0.0 正式发布
+
 ## 2.0.0-alpha.7
 
 feat: 添加 PlatformView 支持
