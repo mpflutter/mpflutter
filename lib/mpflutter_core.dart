@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import 'package:mpflutter_core/mpflutter_memory.dart';
+import 'package:mpflutter_core/mpflutter_splash.dart';
 import 'package:window_manager/window_manager.dart';
 import './dev_app/runApp.dart' if (dart.library.js) './wechat_app/runApp.dart';
 
@@ -31,6 +32,7 @@ void runMPApp(Widget app) async {
     }
     setupMemoryManager();
     runApp(MPApp(child: app));
+    MPFlutterSplashManager.hideSplash();
   } else {
     runApp(app);
   }
