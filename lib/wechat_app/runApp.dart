@@ -4,6 +4,8 @@ import 'package:flutter/widgets.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:js' as js;
 
+import 'package:mpflutter_core/mpflutter_core.dart';
+
 class MPApp extends StatefulWidget {
   final Widget child;
 
@@ -21,6 +23,9 @@ class _MPAppState extends State<MPApp> {
   @override
   void initState() {
     super.initState();
+    if (!kIsMPFlutter) {
+      return;
+    }
     safeAreaInsetTop = js.context["safeAreaInsetTop"] is num
         ? (js.context["safeAreaInsetTop"] as num).toDouble()
         : 0.0;
@@ -42,6 +47,9 @@ class _MPAppState extends State<MPApp> {
 
   @override
   Widget build(BuildContext context) {
+    if (!kIsMPFlutter) {
+      return widget.child;
+    }
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(
         padding: EdgeInsets.only(
@@ -59,6 +67,9 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
   static Route? currentRoute;
 
   MPNavigatorObserverPrivate() {
+    if (!kIsMPFlutter) {
+      return;
+    }
     js.context["androidBackPressed"] = () {
       final ctx = navigator?.context;
       if (ctx != null && Navigator.canPop(ctx)) {
@@ -70,6 +81,9 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
+    if (!kIsMPFlutter) {
+      return;
+    }
     currentRoute = route;
     if (!route.isFirst) {
       (js.context["FlutterHostView"]["shared"] as js.JsObject)
@@ -83,6 +97,9 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
+    if (!kIsMPFlutter) {
+      return;
+    }
     currentRoute = previousRoute;
     if (previousRoute?.isFirst == true) {
       (js.context["FlutterHostView"]["shared"] as js.JsObject)

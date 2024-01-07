@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:mpflutter_core/dev_app/dev_server.dart';
 
+import '../mpflutter_core.dart';
+
 class MPApp extends StatefulWidget {
   final Widget child;
 
@@ -123,18 +125,23 @@ class _ConnectHostTipsState extends State<ConnectHostTips> {
 }
 
 class MPNavigatorObserverPrivate extends NavigatorObserver {
-  
   static Route? currentRoute;
 
   @override
   void didPush(Route route, Route? previousRoute) {
     super.didPush(route, previousRoute);
+    if (!kIsMPFlutter) {
+      return;
+    }
     currentRoute = route;
   }
 
   @override
   void didPop(Route route, Route? previousRoute) {
     super.didPop(route, previousRoute);
+    if (!kIsMPFlutter) {
+      return;
+    }
     currentRoute = previousRoute;
   }
 }
