@@ -33,10 +33,12 @@ void runMPApp(Widget app) async {
         await windowManager.show();
         await windowManager.focus();
       });
+      runApp(MPApp(child: app));
+    } else {
+      setupMemoryManager();
+      runApp(MPApp(child: app));
+      MPFlutterSplashManager.hideSplash();
     }
-    setupMemoryManager();
-    runApp(MPApp(child: app));
-    MPFlutterSplashManager.hideSplash();
   } else {
     runApp(app);
   }
