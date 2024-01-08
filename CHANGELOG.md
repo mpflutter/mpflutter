@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.0.2
+
+- fix: Windows 构建小程序，资源分包存在问题
+- fix: 小程序启动过程可能有黑色闪屏
+- fix: Hot Reload 无法使用
+- feat: 内置 brotli 于 mpflutter_build_tools 中，优先使用这个内置的工具。
+
 ## 2.0.0
 
 MPFlutter 2.0.0 正式发布
