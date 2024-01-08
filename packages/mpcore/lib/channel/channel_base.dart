@@ -523,11 +523,13 @@ class MPChannelBase {
             MPChannel.postMessage(routeData);
             requestingRoute = false;
           } else {
-            MPNavigatorObserver.doBacking = true;
-            navigator.popUntil((route) {
-              return route.isFirst;
-            });
-            MPNavigatorObserver.doBacking = false;
+            if (navigator.canPop()) {
+              MPNavigatorObserver.doBacking = true;
+              navigator.popUntil((route) {
+                return route.isFirst;
+              });
+              MPNavigatorObserver.doBacking = false;
+            }
             await navigator.pushNamed(name, arguments: params);
           }
         } else {

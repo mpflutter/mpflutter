@@ -3955,7 +3955,7 @@ class NavigatorState extends State<Navigator>
           }
           break;
         case _RouteLifecycle
-            .pushing: // Will exit this state when animation completes.
+              .pushing: // Will exit this state when animation completes.
           if (!seenTopActiveRoute && poppedRoute != null)
             entry.handleDidPopNext(poppedRoute);
           seenTopActiveRoute = true;
@@ -4472,8 +4472,6 @@ class NavigatorState extends State<Navigator>
   ///    state restoration.
   @optionalTypeArgs
   Future<T?> push<T extends Object?>(Route<T> route) async {
-    final _RouteEntry entry =
-        _history.lastWhere(_RouteEntry.isPresentPredicate);
     if (_previousPopDate != null &&
         DateTime.now().millisecondsSinceEpoch -
                 _previousPopDate!.millisecondsSinceEpoch <
