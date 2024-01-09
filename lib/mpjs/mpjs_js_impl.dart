@@ -210,6 +210,15 @@ class JSArray extends JSObject implements IJSArray {
   int length() {
     return this.jsObject["length"];
   }
+
+  List<dynamic> value() {
+    List<dynamic> returnValue = [];
+    final l = length();
+    for (int i = 0; i < l; i++) {
+      returnValue.add(this[i]);
+    }
+    return returnValue;
+  }
 }
 
 class JSFunction extends JSObject implements IJSFunction {
