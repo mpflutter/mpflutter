@@ -12,6 +12,7 @@ export './logger.dart';
 export './wechat_app_delegate.dart';
 export './mpflutter_platform_view.dart';
 export './mpflutter_use_native_codec.dart';
+export './mpflutter_image_encoder.dart';
 
 const bool kIsMPFlutter = bool.fromEnvironment(
   'mpflutter.library.core',
