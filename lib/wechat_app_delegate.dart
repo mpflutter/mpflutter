@@ -10,8 +10,8 @@ import './mpjs/mpjs.dart';
 
 class MPFlutterWechatAppDelegate {
   bool _launched = false;
-  final void Function(Map query)? onLaunch;
-  final void Function(Map query)? onEnter;
+  final void Function(Map query, JSObject launchOptions)? onLaunch;
+  final void Function(Map query, JSObject launchOptions)? onEnter;
   final void Function()? onShow;
   final void Function()? onHide;
   final Map Function()? onSaveExitState;
@@ -52,7 +52,10 @@ class MPFlutterWechatAppDelegate {
     mpcbObject["onShareTimeline"] = onShareTimeline;
     mpcbObject["onAddToFavorites"] = onAddToFavorites;
     mpcbObject["onEnter"] = (JSObject query) {
-      onEnter?.call(query.asMap());
+      final enterOptions = (context["wx"] as JSObject).callMethod(
+        "getEnterOptionsSync",
+      );
+      onEnter?.call(query.asMap(), enterOptions);
     };
     context["wx"]["mpcb"] = mpcbObject;
   }
@@ -62,7 +65,10 @@ class MPFlutterWechatAppDelegate {
       _launched = true;
       final launchOptions =
           (context["wx"] as JSObject).callMethod("getLaunchOptionsSync");
-      onLaunch?.call((launchOptions["query"] as JSObject).asMap());
+      onLaunch?.call(
+        (launchOptions["query"] as JSObject).asMap(),
+        launchOptions,
+      );
     }
   }
 }
