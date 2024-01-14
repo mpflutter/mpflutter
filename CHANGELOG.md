@@ -1,5 +1,17 @@
 # Change Log
 
+## 2.1.0
+
+fix:
+- mpflutter_wechat_api Array 类型统一修改为 List
+- mpflutter_wechat_api IncludePointsOption set points 缺失
+
+feature:
+- 新增 Image 解码器
+- 新增 Image 编码器
+- 新增分享朋友圈、收藏支持
+- 新增 DarkMode 支持
+
 ## 2.0.2
 
 - fix: Windows 构建小程序，资源分包存在问题
