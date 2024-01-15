@@ -99,7 +99,7 @@ class MPFlutterWechatAppShareManager {
           final map = appShareInfo.query;
           String query = "";
           map.forEach((key, value) {
-            query += "$key=${Uri.encodeFull(value)}";
+            query += "$key=${Uri.encodeFull(value)}&";
           });
           return query;
         })()}",
@@ -120,7 +120,7 @@ class MPFlutterWechatAppShareManager {
           final map = appShareInfo.query;
           String query = "";
           map.forEach((key, value) {
-            query += "$key=${Uri.encodeFull(value)}";
+            query += "$key=${Uri.encodeFull(value)}&";
           });
           return query;
         })()}",
@@ -142,7 +142,7 @@ class MPFlutterWechatAppShareManager {
           final map = appShareInfo.query;
           String query = "";
           map.forEach((key, value) {
-            query += "$key=${Uri.encodeFull(value)}";
+            query += "$key=${Uri.encodeFull(value)}&";
           });
           return query;
         })()}",
