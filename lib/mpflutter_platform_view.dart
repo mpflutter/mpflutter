@@ -96,6 +96,10 @@ class _PlatformViewManager {
 
 class MPFlutterPlatformViewController {
   String? pvid;
+
+  dispose() {
+    pvid = null;
+  }
 }
 
 class MPFlutterPlatformView extends StatefulWidget {
@@ -130,6 +134,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       widget.viewClazz,
       renderBoxKey.hashCode.toString(),
     );
+    widget.controller?.dispose();
     super.dispose();
   }
 
