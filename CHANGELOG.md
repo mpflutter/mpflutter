@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.1.2
+
+fix:
+- MPFlutterWechatAppShareManager 未正确拼接分享参数
+- 同一页面多个 PlatformView 无法同时响应触摸
+
 ## 2.1.0
 
 fix:
