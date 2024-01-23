@@ -163,36 +163,54 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
     currentRoute = ModalRoute.of(context);
   }
 
+  bool isRenderBoxCovered(RenderBox renderBox) {
+    try {
+      final hitTestResult = HitTestResult();
+      final position = renderBox.localToGlobal(Offset.zero);
+      RendererBinding.instance.hitTest(hitTestResult, position);
+      bool covered = true;
+      hitTestResult.path.forEach((element) {
+        if (element.target == renderBox) {
+          covered = false;
+        }
+      });
+      return covered;
+    } catch (e) {
+      return false;
+    }
+  }
+
   void _updateViewFrame(dynamic time) {
     if (!mounted) return;
     final RenderBox? renderBox =
         renderBoxKey.currentContext?.findRenderObject() as RenderBox?;
-    final offset = renderBox?.localToGlobal(Offset.zero);
-    final size = renderBox?.size;
+    if (renderBox == null) return;
+    WidgetsBinding.instance.addPostFrameCallback(_updateViewFrame);
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
     final opcaityObject = renderBoxKey.currentContext
         ?.findAncestorRenderObjectOfType<RenderOpacity>();
-    if (offset != null && size != null) {
-      final frameOnWindow = Rect.fromLTWH(
-        offset.dx,
-        offset.dy,
-        size.width,
-        size.height,
-      );
-      _PlatformViewManager.shared.updateView(
-        viewClazz: widget.viewClazz,
-        pvid: renderBoxKey.hashCode.toString(),
-        frame: frameOnWindow,
-        wrapper: EdgeInsets.only(
-          top: (Scaffold.of(context).appBarMaxHeight ?? 0),
-        ),
-        opacity: (currentRoute == null || currentRoute!.isCurrent == false)
-            ? 0.0
-            : (opcaityObject?.opacity ?? 1.0),
-        ignorePlatformTouch: widget.ignorePlatformTouch,
-        viewProps: widget.viewProps,
-      );
-    }
-    WidgetsBinding.instance.addPostFrameCallback(_updateViewFrame);
+    final frameOnWindow = Rect.fromLTWH(
+      offset.dx,
+      offset.dy,
+      size.width,
+      size.height,
+    );
+    _PlatformViewManager.shared.updateView(
+      viewClazz: widget.viewClazz,
+      pvid: renderBoxKey.hashCode.toString(),
+      frame: frameOnWindow,
+      wrapper: EdgeInsets.only(
+        top: (Scaffold.of(context).appBarMaxHeight ?? 0),
+      ),
+      opacity: (currentRoute == null ||
+              currentRoute!.isCurrent == false ||
+              isRenderBoxCovered(renderBox))
+          ? 0.0
+          : (opcaityObject?.opacity ?? 1.0),
+      ignorePlatformTouch: widget.ignorePlatformTouch,
+      viewProps: widget.viewProps,
+    );
   }
 
   @override
