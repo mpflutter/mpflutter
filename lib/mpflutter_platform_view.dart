@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 import './mpjs/mpjs.dart' as mpjs;
 
 typedef MPFlutterPlatformViewCallback = void Function(
@@ -103,6 +104,17 @@ class MPFlutterPlatformViewController {
 }
 
 class MPFlutterPlatformView extends StatefulWidget {
+  static final _frameUpdater = ChangeNotifier();
+  static var _frameUpdaterInstalled = false;
+
+  static void installFrameUpdater() {
+    if (_frameUpdaterInstalled) return;
+    _frameUpdaterInstalled = true;
+    WidgetsBinding.instance.addPersistentFrameCallback((_) {
+      _frameUpdater.notifyListeners();
+    });
+  }
+
   final MPFlutterPlatformViewController? controller;
   final bool transparent;
   final String viewClazz;
@@ -127,6 +139,8 @@ class MPFlutterPlatformView extends StatefulWidget {
 class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   final renderBoxKey = GlobalKey();
   Route? currentRoute;
+  double appBarHeight = 0;
+  bool visible = true;
 
   @override
   void dispose() {
@@ -135,6 +149,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       renderBoxKey.hashCode.toString(),
     );
     widget.controller?.dispose();
+    MPFlutterPlatformView._frameUpdater.removeListener(_updateViewFrame);
     super.dispose();
   }
 
@@ -148,44 +163,30 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
         widget.eventCallback!,
       );
     }
-    WidgetsBinding.instance.addPostFrameCallback(_updateViewFrame);
+    MPFlutterPlatformView.installFrameUpdater();
+    MPFlutterPlatformView._frameUpdater.addListener(_updateViewFrame);
   }
 
   @override
   void didUpdateWidget(covariant MPFlutterPlatformView oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _updateViewFrame(0);
+    _updateViewFrame();
   }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     currentRoute = ModalRoute.of(context);
+    appBarHeight = Scaffold.of(context).appBarMaxHeight ?? 0;
   }
 
-  bool isRenderBoxCovered(RenderBox renderBox) {
-    try {
-      final hitTestResult = HitTestResult();
-      final position = renderBox.localToGlobal(Offset.zero);
-      RendererBinding.instance.hitTest(hitTestResult, position);
-      bool covered = true;
-      hitTestResult.path.forEach((element) {
-        if (element.target == renderBox) {
-          covered = false;
-        }
-      });
-      return covered;
-    } catch (e) {
-      return false;
+  void _updateViewFrame() {
+    if (!mounted) {
+      return;
     }
-  }
-
-  void _updateViewFrame(dynamic time) {
-    if (!mounted) return;
     final RenderBox? renderBox =
         renderBoxKey.currentContext?.findRenderObject() as RenderBox?;
     if (renderBox == null) return;
-    WidgetsBinding.instance.addPostFrameCallback(_updateViewFrame);
     final offset = renderBox.localToGlobal(Offset.zero);
     final size = renderBox.size;
     final opcaityObject = renderBoxKey.currentContext
@@ -200,14 +201,11 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       viewClazz: widget.viewClazz,
       pvid: renderBoxKey.hashCode.toString(),
       frame: frameOnWindow,
-      wrapper: EdgeInsets.only(
-        top: (Scaffold.of(context).appBarMaxHeight ?? 0),
-      ),
-      opacity: (currentRoute == null ||
-              currentRoute!.isCurrent == false ||
-              isRenderBoxCovered(renderBox))
-          ? 0.0
-          : (opcaityObject?.opacity ?? 1.0),
+      wrapper: EdgeInsets.only(top: appBarHeight),
+      opacity:
+          (currentRoute == null || currentRoute!.isCurrent == false || !visible)
+              ? 0.0
+              : (opcaityObject?.opacity ?? 1.0),
       ignorePlatformTouch: widget.ignorePlatformTouch,
       viewProps: widget.viewProps,
     );
@@ -234,9 +232,15 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       onPanUpdate: (_) {},
       onPanEnd: (_) {},
       onPanCancel: () {},
-      child: Container(
+      child: VisibilityDetector(
         key: renderBoxKey,
-        color: Colors.transparent,
+        onVisibilityChanged: (value) {
+          visible = value.visibleBounds.size.width > 0 &&
+              value.visibleBounds.size.height > 0;
+        },
+        child: Container(
+          color: Colors.transparent,
+        ),
       ),
     );
   }
