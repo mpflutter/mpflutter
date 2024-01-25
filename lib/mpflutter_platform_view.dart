@@ -177,7 +177,13 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     currentRoute = ModalRoute.of(context);
-    appBarHeight = Scaffold.of(context).appBarMaxHeight ?? 0;
+    appBarHeight = ((){
+      try {
+        return Scaffold.of(context).appBarMaxHeight ?? 0;
+      } catch (e) {
+        return 0.0;
+      }
+    })();
   }
 
   void _updateViewFrame() {
