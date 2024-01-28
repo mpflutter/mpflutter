@@ -16,8 +16,11 @@ class MPFlutterWechatAppDelegate {
   final void Function()? onHide;
   final Map Function()? onSaveExitState;
   final Map Function(JSObject)? onShareAppMessage;
+  final void Function(JSObject, Function(Map))? onShareAppMessageAsync;
   final Map Function(JSObject)? onShareTimeline;
+  final void Function(JSObject, Function(Map))? onShareTimelineAsync;
   final Map Function(JSObject)? onAddToFavorites;
+  final void Function(JSObject, Function(Map))? onAddToFavoritesAsync;
 
   MPFlutterWechatAppDelegate({
     this.onLaunch,
@@ -26,8 +29,11 @@ class MPFlutterWechatAppDelegate {
     this.onHide,
     this.onSaveExitState,
     this.onShareAppMessage,
+    this.onShareAppMessageAsync,
     this.onShareTimeline,
+    this.onShareTimelineAsync,
     this.onAddToFavorites,
+    this.onAddToFavoritesAsync,
   }) {
     if (kIsMPFlutter) {
       try {
@@ -49,8 +55,32 @@ class MPFlutterWechatAppDelegate {
     mpcbObject["onHide"] = onHide;
     mpcbObject["onSaveExitState"] = onSaveExitState;
     mpcbObject["onShareAppMessage"] = onShareAppMessage;
+    if (onShareAppMessageAsync != null) {
+      mpcbObject["onShareAppMessageAsync"] =
+          (JSObject detail, JSFunction callback) {
+        onShareAppMessageAsync?.call(detail, (result) {
+          callback.call([result]);
+        });
+      };
+    }
     mpcbObject["onShareTimeline"] = onShareTimeline;
+    if (onShareTimelineAsync != null) {
+      mpcbObject["onShareTimelineAsync"] =
+          (JSObject detail, JSFunction callback) {
+        onShareTimelineAsync?.call(detail, (result) {
+          callback.call([result]);
+        });
+      };
+    }
     mpcbObject["onAddToFavorites"] = onAddToFavorites;
+    if (onAddToFavoritesAsync != null) {
+      mpcbObject["onAddToFavoritesAsync"] =
+          (JSObject detail, JSFunction callback) {
+        onAddToFavoritesAsync?.call(detail, (result) {
+          callback.call([result]);
+        });
+      };
+    }
     mpcbObject["onEnter"] = (JSObject query) {
       final enterOptions = (context["wx"] as JSObject).callMethod(
         "getEnterOptionsSync",
