@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.2.0
+
+fix:
+- PlatformView 无法显示的问题。【已发布至  mpflutter_build_tools: 2.1.3 】
+- 使用 GetConnect 请求时，Response 内容为空的问题。【已发布至  mpflutter_build_tools: 2.1.3 】
+
+feat:
+- 优化 Skia CanvasKit 产物大小
+
 ## 2.1.2
 
 fix:
