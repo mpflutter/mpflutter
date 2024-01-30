@@ -1,7 +1,0 @@
-{
-    "usingComponents": {
-      "element": "../../kbone/miniprogram-element/index",
-      "loading-view": "../loading-view/index"
-    },
-    "enablePullDownRefresh": false
-  }

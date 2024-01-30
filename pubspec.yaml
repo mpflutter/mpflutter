@@ -1,0 +1,16 @@
+name: mpflutter_core
+description: The MPFlutter Library
+homepage: https://mpflutter.com
+
+version: 2.2.0
+
+environment:
+  sdk: ">=3.1.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  uuid: ^4.2.1
+  async: ^2.11.0
+  window_manager: ^0.3.7
+  visibility_detector: ^0.4.0+2

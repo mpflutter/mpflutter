@@ -186,7 +186,7 @@
       same "printed page" as the copyright notice for easier
       identification within third-party archives.
 
-   Copyright [2020] [MPFlutter]
+   Copyright [2023] [MPFlutter]
 
    Licensed under the Apache License, Version 2.0 (the "License");
    you may not use this file except in compliance with the License.
@@ -199,3 +199,13 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+   Additional Terms:
+
+   1. Commercial Use: When you use MPFlutter for commercial projects, you are required to purchase a license. Failure to do so will be considered infringement, and your entity will be liable for legal consequences.
+
+   2. Preservation of UNLICENSE Mark: You are not allowed to remove the UNLICENSE mark from MPFlutter. Removing the UNLICENSE mark will also be considered infringement.
+
+   3. Special Authorization for High-Usage Entities: If the end benefitting entity using this open-source software has a cumulative daily active user count exceeding 1 million across all its products, it is required to purchase a special authorization. For detailed guidelines, please contact PonyCui or MPFlutter BD personnel.
+
+   
