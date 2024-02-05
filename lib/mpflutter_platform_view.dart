@@ -177,7 +177,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     currentRoute = ModalRoute.of(context);
-    appBarHeight = ((){
+    appBarHeight = (() {
       try {
         return Scaffold.of(context).appBarMaxHeight ?? 0;
       } catch (e) {
@@ -198,8 +198,8 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
     final opcaityObject = renderBoxKey.currentContext
         ?.findAncestorRenderObjectOfType<RenderOpacity>();
     final frameOnWindow = Rect.fromLTWH(
-      offset.dx,
-      offset.dy,
+      offset.dx.isNaN ? -1000 : offset.dx,
+      offset.dy.isNaN ? -1000 : offset.dy,
       size.width,
       size.height,
     );
@@ -243,6 +243,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
         onVisibilityChanged: (value) {
           visible = value.visibleBounds.size.width > 0 &&
               value.visibleBounds.size.height > 0;
+          _updateViewFrame();
         },
         child: Container(
           color: Colors.transparent,
