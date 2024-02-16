@@ -1,5 +1,14 @@
 # Change Log
 
+## 2.3.0
+
+fix:
+- frameOnWindow x and y nan issue
+
+feat:
+- 添加 MiniTex 文本渲染器
+- mpflutter_build_tools 强制 Flutter SDK 版本检测
+
 ## 2.2.0
 
 fix:
