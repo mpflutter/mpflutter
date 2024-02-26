@@ -58,6 +58,10 @@ class _MPAppState extends State<MPApp> {
       data: MediaQuery.of(context).copyWith(
         padding: EdgeInsets.only(
           top: safeAreaInsetTop,
+          bottom: keyboardHeight > 0 ? 0 : safeAreaInsetBottom,
+        ),
+        viewPadding: EdgeInsets.only(
+          top: safeAreaInsetTop,
           bottom: safeAreaInsetBottom,
         ),
         viewInsets: EdgeInsets.only(bottom: keyboardHeight),
