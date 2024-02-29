@@ -24,6 +24,14 @@ class _PlatformViewManager {
     ]);
   }
 
+  void batchBegin() {
+    platformViewManager.callMethod("batchSetDataBegin", []);
+  }
+
+  void batchCommit() {
+    platformViewManager.callMethod("batchSetDataCommit", []);
+  }
+
   void updateView({
     required String viewClazz,
     required String pvid,
@@ -111,7 +119,9 @@ class MPFlutterPlatformView extends StatefulWidget {
     if (_frameUpdaterInstalled) return;
     _frameUpdaterInstalled = true;
     WidgetsBinding.instance.addPersistentFrameCallback((_) {
+      _PlatformViewManager.shared.batchBegin();
       _frameUpdater.notifyListeners();
+      _PlatformViewManager.shared.batchCommit();
     });
   }
 
