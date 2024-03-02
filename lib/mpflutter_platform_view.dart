@@ -7,7 +7,7 @@ import 'package:flutter/rendering.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import './mpjs/mpjs.dart' as mpjs;
 
-typedef MPFlutterPlatformViewCallback = void Function(
+typedef MPFlutterPlatformViewCallback = dynamic Function(
     String event, mpjs.JSObject detail);
 
 class _PlatformViewManager {
