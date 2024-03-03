@@ -1,5 +1,17 @@
 # Change Log
 
+## 2.3.2
+
+fix:
+- TextField 设置 keyboardType 不生效的问题
+- 修复微信小程序在 Windows / macOS 微信上无法运行的问题（关联微信官方 BUG ）
+- (MiniTex) 目标字体不存在内置字体时，直接使用 MiniTex 进行渲染。
+- 修复 viewPadding 数值不正确导致安全区域异常的问题。
+- 修复 HTTP 空返回值导出请求异常的问题。
+- 修复 Editable inputFormatter 和 enable 属性无效的问题。
+- 修复 flutter_widget_from_html_core 无法使用的问题。
+- 新增 MPFlutterImageEncoder.encodeToFilePath 和 MPFlutterImageEncoder.encodeToBase64。
+
 ## 2.3.0
 
 fix:
