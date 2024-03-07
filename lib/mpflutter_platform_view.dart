@@ -111,6 +111,24 @@ class MPFlutterPlatformViewController {
   }
 }
 
+class MPFlutterPlatformViewport extends StatelessWidget {
+  final Widget child;
+  final double? topHeight;
+  final double? bottomHeight;
+
+  const MPFlutterPlatformViewport({
+    super.key,
+    required this.child,
+    this.topHeight = null,
+    this.bottomHeight = null,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return child;
+  }
+}
+
 class MPFlutterPlatformView extends StatefulWidget {
   static final _frameUpdater = ChangeNotifier();
   static var _frameUpdaterInstalled = false;
@@ -149,7 +167,8 @@ class MPFlutterPlatformView extends StatefulWidget {
 class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   final renderBoxKey = GlobalKey();
   Route? currentRoute;
-  double appBarHeight = 0;
+  double topHeight = 0;
+  double bottomHeight = 0;
   bool visible = true;
 
   @override
@@ -187,9 +206,20 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     currentRoute = ModalRoute.of(context);
-    appBarHeight = (() {
+    topHeight = (() {
+      final viewport =
+          context.findAncestorWidgetOfExactType<MPFlutterPlatformViewport>();
       try {
-        return Scaffold.of(context).appBarMaxHeight ?? 0;
+        return viewport?.topHeight ?? Scaffold.of(context).appBarMaxHeight ?? 0;
+      } catch (e) {
+        return 0.0;
+      }
+    })();
+    bottomHeight = (() {
+      final viewport =
+          context.findAncestorWidgetOfExactType<MPFlutterPlatformViewport>();
+      try {
+        return viewport?.bottomHeight ?? 0;
       } catch (e) {
         return 0.0;
       }
@@ -217,7 +247,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       viewClazz: widget.viewClazz,
       pvid: renderBoxKey.hashCode.toString(),
       frame: frameOnWindow,
-      wrapper: EdgeInsets.only(top: appBarHeight),
+      wrapper: EdgeInsets.only(top: topHeight, bottom: bottomHeight),
       opacity:
           (currentRoute == null || currentRoute!.isCurrent == false || !visible)
               ? 0.0
