@@ -197,6 +197,11 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
         renderBoxKey.hashCode.toString(),
         widget.eventCallback!,
       );
+    } else {
+      _PlatformViewManager.shared.addCBListenner(
+        renderBoxKey.hashCode.toString(),
+        (String event, mpjs.JSObject detail) {},
+      );
     }
     MPFlutterPlatformView.installFrameUpdater();
     MPFlutterPlatformView._frameUpdater.addListener(_onUpdateViewFrameSingal);
