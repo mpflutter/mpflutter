@@ -2,6 +2,8 @@
 // Use of this source code is governed by a Apache License Version 2.0 that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -149,6 +151,7 @@ class MPFlutterPlatformView extends StatefulWidget {
   final bool ignorePlatformTouch;
   final Map<String, dynamic> viewProps;
   final MPFlutterPlatformViewCallback? eventCallback;
+  final bool delayUpdate;
 
   const MPFlutterPlatformView({
     super.key,
@@ -158,6 +161,7 @@ class MPFlutterPlatformView extends StatefulWidget {
     this.ignorePlatformTouch = false,
     this.viewProps = const {},
     this.eventCallback,
+    this.delayUpdate = false,
   });
 
   @override
@@ -170,6 +174,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   double topHeight = 0;
   double bottomHeight = 0;
   bool visible = true;
+  _Throttler _throttler = _Throttler();
 
   @override
   void dispose() {
@@ -178,7 +183,8 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       renderBoxKey.hashCode.toString(),
     );
     widget.controller?.dispose();
-    MPFlutterPlatformView._frameUpdater.removeListener(_updateViewFrame);
+    MPFlutterPlatformView._frameUpdater
+        .removeListener(_onUpdateViewFrameSingal);
     super.dispose();
   }
 
@@ -193,7 +199,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       );
     }
     MPFlutterPlatformView.installFrameUpdater();
-    MPFlutterPlatformView._frameUpdater.addListener(_updateViewFrame);
+    MPFlutterPlatformView._frameUpdater.addListener(_onUpdateViewFrameSingal);
   }
 
   @override
@@ -224,6 +230,14 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
         return 0.0;
       }
     })();
+  }
+
+  void _onUpdateViewFrameSingal() {
+    if (widget.delayUpdate) {
+      _throttler.throttle(_updateViewFrame, Duration(seconds: 1));
+    } else {
+      _updateViewFrame();
+    }
   }
 
   void _updateViewFrame() {
@@ -281,14 +295,31 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       child: VisibilityDetector(
         key: renderBoxKey,
         onVisibilityChanged: (value) {
-          visible = value.visibleBounds.size.width > 0 &&
+          final nextVisible = value.visibleBounds.size.width > 0 &&
               value.visibleBounds.size.height > 0;
-          _updateViewFrame();
+          if (nextVisible != visible) {
+            visible = nextVisible;
+            _updateViewFrame();
+          }
         },
         child: Container(
           color: Colors.transparent,
         ),
       ),
     );
+  }
+}
+
+class _Throttler {
+  Timer? _timer;
+
+  void throttle(Function function, Duration duration) {
+    if (_timer != null && _timer!.isActive) {
+      _timer!.cancel();
+    }
+
+    _timer = Timer(duration, () {
+      function();
+    });
   }
 }
