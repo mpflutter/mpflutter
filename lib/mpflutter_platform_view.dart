@@ -174,7 +174,8 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   double topHeight = 0;
   double bottomHeight = 0;
   bool visible = true;
-  _Throttler _throttler = _Throttler();
+  _Debouncer _debouncer = _Debouncer();
+  _Throttler _throttler = _Throttler(delay: Duration(milliseconds: 300));
 
   @override
   void dispose() {
@@ -235,11 +236,13 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
         return 0.0;
       }
     })();
+    _updateViewFrame();
   }
 
   void _onUpdateViewFrameSingal() {
     if (widget.delayUpdate) {
-      _throttler.throttle(_updateViewFrame, Duration(seconds: 1));
+      _debouncer.run(_updateViewFrame, Duration(milliseconds: 300));
+      _throttler.run(_updateViewFrame);
     } else {
       _updateViewFrame();
     }
@@ -316,9 +319,27 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
 }
 
 class _Throttler {
+  final Duration delay;
+  Timer? _timer;
+  bool _isRunning = false;
+
+  _Throttler({required this.delay});
+
+  void run(VoidCallback action) {
+    if (!_isRunning) {
+      _isRunning = true;
+      action();
+      _timer = Timer(delay, () {
+        _isRunning = false;
+      });
+    }
+  }
+}
+
+class _Debouncer {
   Timer? _timer;
 
-  void throttle(Function function, Duration duration) {
+  void run(Function function, Duration duration) {
     if (_timer != null && _timer!.isActive) {
       _timer!.cancel();
     }
