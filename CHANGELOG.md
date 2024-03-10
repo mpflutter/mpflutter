@@ -1,5 +1,12 @@
 # Change Log
 
+## 2.4.0
+
+feat: 
+- 新增无字体渲染能力的 Skia CanvasKit 产物，并且在 MiniTex 启用的情况下，可以使用该产物。
+- 新增 main.mpflutter.dart 分包策略，默认 main.dart.js 将不大于 700K。
+- 智能分包策略调整，在主包大小保持 2M 的情况下，去除不必要的子分包。
+
 ## 2.3.2
 
 fix:
