@@ -2,6 +2,7 @@
 // Use of this source code is governed by a Apache License Version 2.0 that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:mpflutter_core/dev_app/dev_mpjs_host.dart';
@@ -206,6 +207,23 @@ class JSObject implements IJSObject {
       result[key] = this[key];
     }
     return result;
+  }
+
+  Future<dynamic> callMethodAwaitPromise(String method,
+      [List<dynamic>? arguments]) {
+    JSObject promiseObject = callMethod(method, arguments);
+    final completer = Completer();
+    (promiseObject.callMethod("then", [
+      (result) {
+        completer.complete(result);
+      }
+    ]) as JSObject)
+        .callMethod("catch", [
+      (error) {
+        completer.completeError(error);
+      }
+    ]);
+    return completer.future;
   }
 }
 

@@ -2,6 +2,7 @@
 // Use of this source code is governed by a Apache License Version 2.0 that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:js' as js;
 import 'dart:typed_data';
 import 'package:mpflutter_core/mpjs/mpjs.dart';
@@ -112,7 +113,7 @@ class Context extends JSObject implements IContext {
 class JSObject implements IJSObject {
   final js.JsObject jsObject;
 
-  JSObject(dynamic arg)
+  JSObject(dynamic arg, [List? arguments])
       : this.jsObject = arg is js.JsObject
             ? arg
             : js.JsObject((() {
@@ -124,7 +125,7 @@ class JSObject implements IJSObject {
                   throw arg + " constructor not found!";
                 }
                 return clazz;
-              })());
+              })(), arguments);
 
   static dynamic transformToMPJSObject(dynamic obj) {
     if (obj is js.JsArray) {
@@ -188,6 +189,23 @@ class JSObject implements IJSObject {
       result[key] = this[key];
     }
     return result;
+  }
+
+  Future<dynamic> callMethodAwaitPromise(String method,
+      [List<dynamic>? arguments]) {
+    JSObject promiseObject = callMethod(method, arguments);
+    final completer = Completer();
+    (promiseObject.callMethod("then", [
+      (result) {
+        completer.complete(result);
+      }
+    ]) as JSObject)
+        .callMethod("catch", [
+      (error) {
+        completer.completeError(error);
+      }
+    ]);
+    return completer.future;
   }
 }
 
