@@ -47,6 +47,9 @@ class _MPAppState extends State<MPApp> {
         }
       });
     };
+    js.context["onWegameShow"] = () {
+      WidgetsBinding.instance.scheduleForcedFrame();
+    };
   }
 
   @override
