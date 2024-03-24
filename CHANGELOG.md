@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.5.0
+
+feat:
+- 新增微信小游戏支持。
+- 新增 MPFlutterNetworkImage 用于修正 Flutter Web 无 LoadingBuilder 的支持。
+
 ## 2.4.0
 
 feat: 
