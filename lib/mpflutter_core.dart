@@ -11,10 +11,11 @@ import './dev_app/runApp.dart' if (dart.library.js) './wechat_app/runApp.dart';
 export './logger.dart';
 export './wechat_app_delegate.dart';
 export './mpflutter_platform_view.dart';
-export './mpflutter_use_native_codec.dart';
-export './mpflutter_image_encoder.dart';
 export './mpflutter_darkmode.dart';
-export './mpflutter_network_image.dart';
+export './image/mpflutter_use_native_codec.dart';
+export './image/mpflutter_image_encoder.dart';
+export './image/mpflutter_network_image_io.dart'
+    if (dart.library.js) 'image/mpflutter_network_image_js.dart';
 
 const bool kIsMPFlutter = bool.fromEnvironment(
   'mpflutter.library.core',
