@@ -19,6 +19,14 @@ const bool kIsMPFlutter = bool.fromEnvironment(
   'mpflutter.library.core',
   defaultValue: false,
 );
+const bool kIsMPFlutterWechat = bool.fromEnvironment(
+  'mpflutter.library.target.wechat',
+  defaultValue: false,
+);
+const bool kIsMPFlutterWegame = bool.fromEnvironment(
+  'mpflutter.library.target.wegame',
+  defaultValue: false,
+);
 const bool kIsMPFlutterDevmode = bool.fromEnvironment(
   'mpflutter.library.devmode',
   defaultValue: false,
