@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.6.0
+
+feat:
+- 新增 FVM 支持。
+
 ## 2.5.0 
 
 feat:
