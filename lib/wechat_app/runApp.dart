@@ -84,7 +84,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
     js.context["androidBackPressed"] = () {
       final ctx = navigator?.context;
       if (ctx != null && Navigator.canPop(ctx)) {
-        Navigator.pop(ctx);
+        Navigator.maybePop(ctx);
       }
     };
   }
