@@ -152,6 +152,7 @@ class MPFlutterPlatformView extends StatefulWidget {
   final Map<String, dynamic> viewProps;
   final MPFlutterPlatformViewCallback? eventCallback;
   final bool delayUpdate;
+  final Widget? placeholder;
 
   const MPFlutterPlatformView({
     super.key,
@@ -162,6 +163,7 @@ class MPFlutterPlatformView extends StatefulWidget {
     this.viewProps = const {},
     this.eventCallback,
     this.delayUpdate = false,
+    this.placeholder,
   });
 
   @override
@@ -306,12 +308,15 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
           final nextVisible = value.visibleBounds.size.width > 0 &&
               value.visibleBounds.size.height > 0;
           if (nextVisible != visible) {
-            visible = nextVisible;
+            setState(() {
+              visible = nextVisible;
+            });
             _updateViewFrame();
           }
         },
         child: Container(
           color: Colors.transparent,
+          child: currentRoute?.isCurrent != true ? widget.placeholder : null,
         ),
       ),
     );
