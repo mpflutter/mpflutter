@@ -61,4 +61,8 @@ class MPNavigatorObserver extends MPNavigatorObserverPrivate {
   static Route? get currentRoute {
     return MPNavigatorObserverPrivate.currentRoute;
   }
+
+  static MPNavigatorObserverPrivate? get shared {
+    return MPNavigatorObserverPrivate.shared;
+  }
 }

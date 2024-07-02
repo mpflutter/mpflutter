@@ -128,8 +128,13 @@ class _ConnectHostTipsState extends State<ConnectHostTips> {
   }
 }
 
-class MPNavigatorObserverPrivate extends NavigatorObserver {
+class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
   static Route? currentRoute;
+  static MPNavigatorObserverPrivate? shared;
+
+  MPNavigatorObserverPrivate() {
+    shared = this;
+  }
 
   @override
   void didPush(Route route, Route? previousRoute) {
@@ -138,6 +143,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
       return;
     }
     currentRoute = route;
+    notifyListeners();
   }
 
   @override
@@ -147,5 +153,6 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
       return;
     }
     currentRoute = previousRoute;
+    notifyListeners();
   }
 }

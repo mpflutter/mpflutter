@@ -74,8 +74,9 @@ class _MPAppState extends State<MPApp> {
   }
 }
 
-class MPNavigatorObserverPrivate extends NavigatorObserver {
+class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
   static Route? currentRoute;
+  static MPNavigatorObserverPrivate? shared;
 
   MPNavigatorObserverPrivate() {
     if (!kIsMPFlutter) {
@@ -87,6 +88,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
         Navigator.maybePop(ctx);
       }
     };
+    shared = this;
   }
 
   @override
@@ -103,6 +105,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
       (js.context["FlutterHostView"]["shared"] as js.JsObject)
           .callMethod("requireCatchBack", [false]);
     }
+    notifyListeners();
   }
 
   @override
@@ -116,5 +119,6 @@ class MPNavigatorObserverPrivate extends NavigatorObserver {
       (js.context["FlutterHostView"]["shared"] as js.JsObject)
           .callMethod("requireCatchBack", [false]);
     }
+    notifyListeners();
   }
 }

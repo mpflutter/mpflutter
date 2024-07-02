@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 import './mpjs/mpjs.dart' as mpjs;
+import 'mpflutter_core.dart';
 
 typedef MPFlutterPlatformViewCallback = dynamic Function(
     String event, mpjs.JSObject detail);
@@ -18,6 +19,10 @@ class _PlatformViewManager {
   final mpjs.JSObject platformViewManager = mpjs.context["platformViewManager"];
   final bool runOnDevtools = mpjs.context["platformViewManager"]['devtools'];
   final Map<String, Map> pvidOptionCache = {};
+
+  void setWindowLevel(int windowLevel) {
+    platformViewManager.callMethod("setWindowLevel", [windowLevel]);
+  }
 
   void addCBListenner(String pvid, MPFlutterPlatformViewCallback callback) {
     platformViewManager.callMethod("addCBListenner", [
@@ -42,6 +47,7 @@ class _PlatformViewManager {
     required double opacity,
     required bool ignorePlatformTouch,
     required Map<String, dynamic> viewProps,
+    bool forceUpdate = false,
   }) {
     final newOption = {
       "viewClazz": viewClazz,
@@ -64,7 +70,9 @@ class _PlatformViewManager {
     };
     if (pvidOptionCache[pvid] != null &&
         _deepCompare(newOption, pvidOptionCache[pvid]!)) {
-      return;
+      if (!forceUpdate) {
+        return;
+      }
     }
     pvidOptionCache[pvid] = newOption;
     platformViewManager.callMethod("updateView", [newOption]);
@@ -74,6 +82,44 @@ class _PlatformViewManager {
     platformViewManager.callMethod("disposeView", [
       {
         "viewClazz": viewClazz,
+        "pvid": pvid,
+      }
+    ]);
+  }
+
+  void updateOverlay({
+    required String pvid,
+    required Rect frame,
+    BorderRadius? borderRadius,
+  }) {
+    final newOption = {
+      "pvid": pvid,
+      "x": frame.left,
+      "y": frame.top,
+      "width": frame.width,
+      "height": frame.height,
+      "borderRadius": borderRadius?.topLeft.x ?? 0,
+    };
+    if (pvidOptionCache[pvid] != null &&
+        _deepCompare(newOption, pvidOptionCache[pvid]!)) {
+      refreshOverlay(pvid);
+      return;
+    }
+    pvidOptionCache[pvid] = newOption;
+    platformViewManager.callMethod("updateOverlay", [newOption]);
+  }
+
+  void disposeOverlay(String pvid) {
+    platformViewManager.callMethod("disposeOverlay", [
+      {
+        "pvid": pvid,
+      }
+    ]);
+  }
+
+  void refreshOverlay(String pvid) {
+    platformViewManager.callMethod("refreshOverlay", [
+      {
         "pvid": pvid,
       }
     ]);
@@ -121,8 +167,8 @@ class MPFlutterPlatformViewport extends StatelessWidget {
   const MPFlutterPlatformViewport({
     super.key,
     required this.child,
-    this.topHeight = null,
-    this.bottomHeight = null,
+    this.topHeight,
+    this.bottomHeight,
   });
 
   @override
@@ -176,6 +222,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   double topHeight = 0;
   double bottomHeight = 0;
   bool visible = true;
+  bool? lastVisible;
   _Debouncer _debouncer = _Debouncer();
   _Throttler _throttler = _Throttler(delay: Duration(milliseconds: 300));
 
@@ -188,6 +235,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
     widget.controller?.dispose();
     MPFlutterPlatformView._frameUpdater
         .removeListener(_onUpdateViewFrameSingal);
+    MPNavigatorObserver.shared?.removeListener(_onUpdateViewFrameRouteChanged);
     super.dispose();
   }
 
@@ -239,6 +287,18 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       }
     })();
     _updateViewFrame();
+    MPNavigatorObserver.shared?.addListener(_onUpdateViewFrameRouteChanged);
+  }
+
+  void _onUpdateViewFrameRouteChanged() {
+    Future.delayed(Duration(milliseconds: 300)).then((value) {
+      if (currentRoute?.isCurrent == true) {
+        visible = lastVisible ?? false;
+      } else {
+        lastVisible = visible;
+      }
+      _updateViewFrame(forceUpdate: true);
+    });
   }
 
   void _onUpdateViewFrameSingal() {
@@ -250,7 +310,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
     }
   }
 
-  void _updateViewFrame() {
+  void _updateViewFrame({bool forceUpdate = false}) {
     if (!mounted) {
       return;
     }
@@ -278,6 +338,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
               : (opcaityObject?.opacity ?? 1.0),
       ignorePlatformTouch: widget.ignorePlatformTouch,
       viewProps: widget.viewProps,
+      forceUpdate: forceUpdate,
     );
   }
 
@@ -323,9 +384,139 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   }
 }
 
+class MPFlutterPlatformOverlay extends StatefulWidget {
+  final Widget? child;
+
+  const MPFlutterPlatformOverlay({
+    super.key,
+    this.child,
+  });
+
+  @override
+  State<MPFlutterPlatformOverlay> createState() =>
+      _MPFlutterPlatformOverlayState();
+}
+
+class _MPFlutterPlatformOverlayState extends State<MPFlutterPlatformOverlay> {
+  final renderBoxKey = GlobalKey();
+  Route? currentRoute;
+  bool visible = true;
+
+  @override
+  void dispose() {
+    _PlatformViewManager.shared.disposeOverlay(
+      renderBoxKey.hashCode.toString(),
+    );
+    MPFlutterPlatformView._frameUpdater
+        .removeListener(_onUpdateViewFrameSingal);
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    MPFlutterPlatformView.installFrameUpdater();
+    MPFlutterPlatformView._frameUpdater.addListener(_onUpdateViewFrameSingal);
+  }
+
+  @override
+  void didUpdateWidget(covariant MPFlutterPlatformOverlay oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateViewFrame();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    currentRoute = ModalRoute.of(context);
+    _updateViewFrame();
+  }
+
+  void _onUpdateViewFrameSingal() {
+    _updateViewFrame();
+  }
+
+  void _updateViewFrame() {
+    if (!mounted) {
+      return;
+    }
+    final RenderBox? renderBox =
+        renderBoxKey.currentContext?.findRenderObject() as RenderBox?;
+    if (renderBox == null) return;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = renderBox.size;
+    final frameOnWindow = Rect.fromLTWH(
+      offset.dx.isNaN ? -1000 : offset.dx,
+      offset.dy.isNaN ? -1000 : offset.dy,
+      size.width,
+      size.height,
+    );
+    _PlatformViewManager.shared.updateOverlay(
+      pvid: renderBoxKey.hashCode.toString(),
+      frame: frameOnWindow,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      key: renderBoxKey,
+      child: widget.child,
+    );
+  }
+}
+
+class MPFlutterPlatformOverlaySupport extends StatefulWidget {
+  final Widget child;
+
+  const MPFlutterPlatformOverlaySupport({super.key, required this.child});
+
+  @override
+  State<MPFlutterPlatformOverlaySupport> createState() =>
+      _MPFlutterPlatformOverlaySupportState();
+}
+
+class _MPFlutterPlatformOverlaySupportState
+    extends State<MPFlutterPlatformOverlaySupport> {
+  Route? currentRoute;
+
+  @override
+  void dispose() {
+    MPNavigatorObserver.shared?.removeListener(_updateWindowLevel);
+    _updateWindowLevel();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(covariant MPFlutterPlatformOverlaySupport oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _updateWindowLevel();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    currentRoute = ModalRoute.of(context);
+    MPNavigatorObserver.shared?.addListener(_updateWindowLevel);
+    _updateWindowLevel();
+  }
+
+  void _updateWindowLevel() {
+    if (mounted && currentRoute != null && currentRoute!.isCurrent == true) {
+      _PlatformViewManager.shared.setWindowLevel(20000);
+    } else {
+      _PlatformViewManager.shared.setWindowLevel(0);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
+}
+
 class _Throttler {
   final Duration delay;
-  Timer? _timer;
   bool _isRunning = false;
 
   _Throttler({required this.delay});
@@ -334,7 +525,7 @@ class _Throttler {
     if (!_isRunning) {
       _isRunning = true;
       action();
-      _timer = Timer(delay, () {
+      Timer(delay, () {
         _isRunning = false;
       });
     }
