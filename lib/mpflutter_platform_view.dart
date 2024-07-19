@@ -213,7 +213,49 @@ class MPFlutterPlatformView extends StatefulWidget {
   });
 
   @override
-  State<MPFlutterPlatformView> createState() => _MPFlutterPlatformViewState();
+  State<MPFlutterPlatformView> createState() {
+    if (!kIsMPFlutter) {
+      return _MPFlutterPlatformViewState_NOOP();
+    }
+    if (kIsMPFlutterDevmode) {
+      return _MPFlutterPlatformViewState_IO();
+    }
+    return _MPFlutterPlatformViewState();
+  }
+}
+
+class _MPFlutterPlatformViewState_NOOP extends State<MPFlutterPlatformView> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.transparent,
+      child: widget.transparent
+          ? null
+          : Center(
+              child: Text(
+                '非 MPFlutter 环境，无法使用 PlatformView。',
+                textAlign: TextAlign.center,
+              ),
+            ),
+    );
+  }
+}
+
+class _MPFlutterPlatformViewState_IO extends State<MPFlutterPlatformView> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.transparent,
+      child: widget.transparent
+          ? null
+          : Center(
+              child: Text(
+                'HotReload 场景无法使用 PlatformView。\n请在真机预览',
+                textAlign: TextAlign.center,
+              ),
+            ),
+    );
+  }
 }
 
 class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
@@ -393,8 +435,23 @@ class MPFlutterPlatformOverlay extends StatefulWidget {
   });
 
   @override
-  State<MPFlutterPlatformOverlay> createState() =>
-      _MPFlutterPlatformOverlayState();
+  State<MPFlutterPlatformOverlay> createState() {
+    if (!kIsMPFlutter) {
+      return _MPFlutterPlatformOverlayState_NOOP();
+    }
+    if (kIsMPFlutterDevmode) {
+      return _MPFlutterPlatformOverlayState_NOOP();
+    }
+    return _MPFlutterPlatformOverlayState();
+  }
+}
+
+class _MPFlutterPlatformOverlayState_NOOP
+    extends State<MPFlutterPlatformOverlay> {
+  @override
+  Widget build(BuildContext context) {
+    return widget.child ?? SizedBox();
+  }
 }
 
 class _MPFlutterPlatformOverlayState extends State<MPFlutterPlatformOverlay> {
@@ -472,8 +529,20 @@ class MPFlutterPlatformOverlaySupport extends StatefulWidget {
   const MPFlutterPlatformOverlaySupport({super.key, required this.child});
 
   @override
-  State<MPFlutterPlatformOverlaySupport> createState() =>
-      _MPFlutterPlatformOverlaySupportState();
+  State<MPFlutterPlatformOverlaySupport> createState() {
+    if (!kIsMPFlutter || kIsMPFlutterDevmode) {
+      return _MPFlutterPlatformOverlaySupportState_NOOP();
+    }
+    return _MPFlutterPlatformOverlaySupportState();
+  }
+}
+
+class _MPFlutterPlatformOverlaySupportState_NOOP
+    extends State<MPFlutterPlatformOverlaySupport> {
+  @override
+  Widget build(BuildContext context) {
+    return widget.child;
+  }
 }
 
 class _MPFlutterPlatformOverlaySupportState
