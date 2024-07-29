@@ -1,5 +1,10 @@
 # Change Log
 
+## 2.7.5
+
+fix:
+- 修正 Hot Reload 下部分组件存在抛错的问题。
+
 ## 2.6.1
 
 fix:
