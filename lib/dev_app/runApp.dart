@@ -131,6 +131,7 @@ class _ConnectHostTipsState extends State<ConnectHostTips> {
 class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
   static Route? currentRoute;
   static MPNavigatorObserverPrivate? shared;
+  static int currentRouteCount = 0;
 
   MPNavigatorObserverPrivate() {
     shared = this;
@@ -142,6 +143,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
     if (!kIsMPFlutter) {
       return;
     }
+    currentRouteCount++;
     currentRoute = route;
     notifyListeners();
   }
@@ -152,6 +154,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
     if (!kIsMPFlutter) {
       return;
     }
+    currentRouteCount--;
     currentRoute = previousRoute;
     notifyListeners();
   }

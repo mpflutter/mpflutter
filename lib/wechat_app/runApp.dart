@@ -77,6 +77,7 @@ class _MPAppState extends State<MPApp> {
 class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
   static Route? currentRoute;
   static MPNavigatorObserverPrivate? shared;
+  static int currentRouteCount = 0;
 
   MPNavigatorObserverPrivate() {
     if (!kIsMPFlutter) {
@@ -97,6 +98,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
     if (!kIsMPFlutter) {
       return;
     }
+    currentRouteCount++;
     currentRoute = route;
     if (!route.isFirst) {
       (js.context["FlutterHostView"]["shared"] as js.JsObject)
@@ -114,6 +116,22 @@ class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
     if (!kIsMPFlutter) {
       return;
     }
+    currentRouteCount--;
+    currentRoute = previousRoute;
+    if (previousRoute?.isFirst == true) {
+      (js.context["FlutterHostView"]["shared"] as js.JsObject)
+          .callMethod("requireCatchBack", [false]);
+    }
+    notifyListeners();
+  }
+
+  @override
+  void didRemove(Route route, Route? previousRoute) {
+    super.didRemove(route, previousRoute);
+    if (!kIsMPFlutter) {
+      return;
+    }
+    currentRouteCount--;
     currentRoute = previousRoute;
     if (previousRoute?.isFirst == true) {
       (js.context["FlutterHostView"]["shared"] as js.JsObject)

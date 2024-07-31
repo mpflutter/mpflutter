@@ -12,6 +12,7 @@ export './logger.dart';
 export './wechat_app_delegate.dart';
 export './mpflutter_platform_view.dart';
 export './mpflutter_darkmode.dart';
+export './douyin_app/douyin_navigator.dart';
 export './image/mpflutter_use_native_codec.dart';
 export './image/mpflutter_image_encoder.dart';
 export './image/mpflutter_network_image_io.dart'
