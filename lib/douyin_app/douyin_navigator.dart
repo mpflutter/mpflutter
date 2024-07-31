@@ -69,16 +69,3 @@ class DouyinNativeNavigatorHandler {
     };
   }
 }
-
-class DouyinAppBar extends StatelessWidget implements PreferredSizeWidget {
-  final String? title;
-  DouyinAppBar({this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox();
-  }
-
-  @override
-  Size get preferredSize => Size.fromHeight(0);
-}
