@@ -13,6 +13,10 @@ import 'mpflutter_core.dart';
 typedef MPFlutterPlatformViewCallback = dynamic Function(
     String event, mpjs.JSObject detail);
 
+String getPVID(GlobalKey renderBoxKey) {
+  return "pvid_" + renderBoxKey.hashCode.toString();
+}
+
 class _PlatformViewManager {
   static final shared = _PlatformViewManager();
 
@@ -272,7 +276,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   void dispose() {
     _PlatformViewManager.shared.disposeView(
       widget.viewClazz,
-      renderBoxKey.hashCode.toString(),
+      getPVID(renderBoxKey),
     );
     widget.controller?.dispose();
     MPFlutterPlatformView._frameUpdater
@@ -284,15 +288,15 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   @override
   void initState() {
     super.initState();
-    widget.controller?.pvid = renderBoxKey.hashCode.toString();
+    widget.controller?.pvid = getPVID(renderBoxKey);
     if (widget.eventCallback != null) {
       _PlatformViewManager.shared.addCBListenner(
-        renderBoxKey.hashCode.toString(),
+        getPVID(renderBoxKey),
         widget.eventCallback!,
       );
     } else {
       _PlatformViewManager.shared.addCBListenner(
-        renderBoxKey.hashCode.toString(),
+        getPVID(renderBoxKey),
         (String event, mpjs.JSObject detail) {},
       );
     }
@@ -371,7 +375,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
     );
     _PlatformViewManager.shared.updateView(
       viewClazz: widget.viewClazz,
-      pvid: renderBoxKey.hashCode.toString(),
+      pvid: getPVID(renderBoxKey),
       frame: frameOnWindow,
       wrapper: EdgeInsets.only(top: topHeight, bottom: bottomHeight),
       opacity:
@@ -462,7 +466,7 @@ class _MPFlutterPlatformOverlayState extends State<MPFlutterPlatformOverlay> {
   @override
   void dispose() {
     _PlatformViewManager.shared.disposeOverlay(
-      renderBoxKey.hashCode.toString(),
+      getPVID(renderBoxKey),
     );
     MPFlutterPlatformView._frameUpdater
         .removeListener(_onUpdateViewFrameSingal);
@@ -509,7 +513,7 @@ class _MPFlutterPlatformOverlayState extends State<MPFlutterPlatformOverlay> {
       size.height,
     );
     _PlatformViewManager.shared.updateOverlay(
-      pvid: renderBoxKey.hashCode.toString(),
+      pvid: getPVID(renderBoxKey),
       frame: frameOnWindow,
     );
   }
