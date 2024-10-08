@@ -78,7 +78,7 @@ class MPFlutterImageEncoder {
     }
     final completer = Completer<String>();
     (mpjs.context["encodeImageToFilePath"] as mpjs.JSFunction).call([
-      rawRgba.buffer.asUint8List(),
+      rawRgba,
       image.width,
       image.height,
       "image/${format.name}",
