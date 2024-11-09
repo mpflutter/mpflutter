@@ -106,6 +106,7 @@ class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
           .callMethod("requireCatchBack", [false]);
     }
     notifyListeners();
+    _scheduleForcedFrame10Times();
   }
 
   @override
@@ -120,5 +121,13 @@ class MPNavigatorObserverPrivate extends NavigatorObserver with ChangeNotifier {
           .callMethod("requireCatchBack", [false]);
     }
     notifyListeners();
+    _scheduleForcedFrame10Times();
+  }
+
+  void _scheduleForcedFrame10Times() async {
+    for (var i = 0; i < 10; i++) {
+      await Future.delayed(Duration(milliseconds: 100));
+      WidgetsBinding.instance.scheduleForcedFrame();
+    }
   }
 }
