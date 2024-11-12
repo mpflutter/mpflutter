@@ -339,7 +339,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
   void _onUpdateViewFrameRouteChanged() {
     Future.delayed(Duration(milliseconds: 300)).then((value) {
       if (currentRoute?.isCurrent == true) {
-        visible = lastVisible ?? false;
+        visible = lastVisible ?? true;
       } else {
         lastVisible = visible;
       }
