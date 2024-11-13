@@ -1,5 +1,11 @@
 # Change Log
 
+## 2.7.6
+
+fix:
+- 优化 Image.encodeToFilePath 的速度
+- PlatformView 可能未能正确展示的问题
+
 ## 2.7.5
 
 fix:
