@@ -23,8 +23,15 @@ class _PlatformViewManager {
   final mpjs.JSObject platformViewManager = mpjs.context["platformViewManager"];
   final bool runOnDevtools = mpjs.context["platformViewManager"]['devtools'];
   final Map<String, Map> pvidOptionCache = {};
+  var _holderId = 0;
 
-  void setWindowLevel(int windowLevel) {
+  void setWindowLevel(int windowLevel, int holderId) {
+    if (windowLevel > 0) {
+      _holderId = holderId;
+    }
+    if (_holderId != holderId) {
+      return;
+    }
     platformViewManager.callMethod("setWindowLevel", [windowLevel]);
   }
 
@@ -576,9 +583,9 @@ class _MPFlutterPlatformOverlaySupportState
 
   void _updateWindowLevel() {
     if (mounted && currentRoute != null && currentRoute!.isCurrent == true) {
-      _PlatformViewManager.shared.setWindowLevel(20000);
+      _PlatformViewManager.shared.setWindowLevel(20000, currentRoute.hashCode);
     } else {
-      _PlatformViewManager.shared.setWindowLevel(0);
+      _PlatformViewManager.shared.setWindowLevel(0, currentRoute.hashCode);
     }
   }
 
