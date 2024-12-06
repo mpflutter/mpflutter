@@ -102,6 +102,7 @@ class _PlatformViewManager {
     required String pvid,
     required Rect frame,
     BorderRadius? borderRadius,
+    String? visibility,
   }) {
     final newOption = {
       "pvid": pvid,
@@ -110,6 +111,7 @@ class _PlatformViewManager {
       "width": frame.width,
       "height": frame.height,
       "borderRadius": borderRadius?.topLeft.x ?? 0,
+      "visibility": visibility ?? "unset",
     };
     if (pvidOptionCache[pvid] != null &&
         _deepCompare(newOption, pvidOptionCache[pvid]!)) {
@@ -469,6 +471,7 @@ class _MPFlutterPlatformOverlayState extends State<MPFlutterPlatformOverlay> {
   final renderBoxKey = GlobalKey();
   Route? currentRoute;
   bool visible = true;
+  bool? lastVisible;
 
   @override
   void dispose() {
@@ -498,6 +501,18 @@ class _MPFlutterPlatformOverlayState extends State<MPFlutterPlatformOverlay> {
     super.didChangeDependencies();
     currentRoute = ModalRoute.of(context);
     _updateViewFrame();
+    MPNavigatorObserver.shared?.addListener(_onUpdateViewFrameRouteChanged);
+  }
+
+  void _onUpdateViewFrameRouteChanged() {
+    Future.delayed(Duration(milliseconds: 300)).then((value) {
+      if (currentRoute?.isCurrent == true) {
+        visible = lastVisible ?? true;
+      } else {
+        lastVisible = visible;
+      }
+      _updateViewFrame();
+    });
   }
 
   void _onUpdateViewFrameSingal() {
@@ -522,6 +537,10 @@ class _MPFlutterPlatformOverlayState extends State<MPFlutterPlatformOverlay> {
     _PlatformViewManager.shared.updateOverlay(
       pvid: getPVID(renderBoxKey),
       frame: frameOnWindow,
+      visibility:
+          (currentRoute == null || currentRoute!.isCurrent == false || !visible)
+              ? "hidden"
+              : "unset",
     );
   }
 
