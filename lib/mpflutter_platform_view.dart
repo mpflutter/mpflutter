@@ -350,7 +350,7 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       if (currentRoute?.isCurrent == true) {
         visible = lastVisible ?? true;
       } else {
-        lastVisible = visible;
+        lastVisible ??= visible;
       }
       _updateViewFrame(forceUpdate: true);
     });
@@ -509,7 +509,7 @@ class _MPFlutterPlatformOverlayState extends State<MPFlutterPlatformOverlay> {
       if (currentRoute?.isCurrent == true) {
         visible = lastVisible ?? true;
       } else {
-        lastVisible = visible;
+        lastVisible ??= visible;
       }
       _updateViewFrame();
     });
