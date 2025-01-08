@@ -35,6 +35,13 @@ class _PlatformViewManager {
     platformViewManager.callMethod("setWindowLevel", [windowLevel]);
   }
 
+  void setDisplayOverlayModalLayer(bool displayOverlayModalLayer) {
+    platformViewManager.callMethod(
+      "setDisplayOverlayModalLayer",
+      [displayOverlayModalLayer ? "visible" : "hidden"],
+    );
+  }
+
   void addCBListenner(String pvid, MPFlutterPlatformViewCallback callback) {
     platformViewManager.callMethod("addCBListenner", [
       pvid,
@@ -382,16 +389,24 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
       size.width,
       size.height,
     );
+    bool hideBecauseRoutePushed =
+        currentRoute == null || currentRoute!.isCurrent == false;
+    bool ignorePlatformTouch = widget.ignorePlatformTouch;
+    if (MPNavigatorObserver.currentRoute is ModalBottomSheetRoute) {
+      if (hideBecauseRoutePushed) {
+        ignorePlatformTouch = true;
+      }
+      hideBecauseRoutePushed = false;
+    }
     _PlatformViewManager.shared.updateView(
       viewClazz: widget.viewClazz,
       pvid: getPVID(renderBoxKey),
       frame: frameOnWindow,
       wrapper: EdgeInsets.only(top: topHeight, bottom: bottomHeight),
-      opacity:
-          (currentRoute == null || currentRoute!.isCurrent == false || !visible)
-              ? 0.0
-              : (opcaityObject?.opacity ?? 1.0),
-      ignorePlatformTouch: widget.ignorePlatformTouch,
+      opacity: (hideBecauseRoutePushed || !visible)
+          ? 0.0
+          : (opcaityObject?.opacity ?? 1.0),
+      ignorePlatformTouch: ignorePlatformTouch,
       viewProps: widget.viewProps,
       forceUpdate: forceUpdate,
     );
@@ -556,7 +571,10 @@ class _MPFlutterPlatformOverlayState extends State<MPFlutterPlatformOverlay> {
 class MPFlutterPlatformOverlaySupport extends StatefulWidget {
   final Widget child;
 
-  const MPFlutterPlatformOverlaySupport({super.key, required this.child});
+  const MPFlutterPlatformOverlaySupport({
+    super.key,
+    required this.child,
+  });
 
   @override
   State<MPFlutterPlatformOverlaySupport> createState() {
@@ -601,11 +619,20 @@ class _MPFlutterPlatformOverlaySupportState
   }
 
   void _updateWindowLevel() {
-    if (mounted && currentRoute != null && currentRoute!.isCurrent == true) {
+    bool shouldWindowLevelSetHigh =
+        currentRoute != null && currentRoute!.isCurrent == true;
+    bool activeRouteIsModalBottomSheet =
+        MPNavigatorObserver.currentRoute is ModalBottomSheetRoute;
+    if (mounted && activeRouteIsModalBottomSheet) {
+      shouldWindowLevelSetHigh = true;
+    }
+    if (mounted && shouldWindowLevelSetHigh) {
       _PlatformViewManager.shared.setWindowLevel(20000, currentRoute.hashCode);
     } else {
       _PlatformViewManager.shared.setWindowLevel(0, currentRoute.hashCode);
     }
+    _PlatformViewManager.shared
+        .setDisplayOverlayModalLayer(activeRouteIsModalBottomSheet);
   }
 
   @override
