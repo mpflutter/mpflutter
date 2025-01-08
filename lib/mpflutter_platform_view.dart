@@ -392,7 +392,10 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
     bool hideBecauseRoutePushed =
         currentRoute == null || currentRoute!.isCurrent == false;
     bool ignorePlatformTouch = widget.ignorePlatformTouch;
-    if (MPNavigatorObserver.currentRoute is ModalBottomSheetRoute) {
+    if (context.findAncestorWidgetOfExactType<
+                MPFlutterPlatformOverlaySupport>() !=
+            null &&
+        MPNavigatorObserver.currentRoute is ModalBottomSheetRoute) {
       if (hideBecauseRoutePushed) {
         ignorePlatformTouch = true;
       }
