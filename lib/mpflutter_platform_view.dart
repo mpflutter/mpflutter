@@ -395,7 +395,8 @@ class _MPFlutterPlatformViewState extends State<MPFlutterPlatformView> {
     if (context.findAncestorWidgetOfExactType<
                 MPFlutterPlatformOverlaySupport>() !=
             null &&
-        MPNavigatorObserver.currentRoute is ModalBottomSheetRoute) {
+        (MPNavigatorObserver.currentRoute is ModalBottomSheetRoute ||
+            MPNavigatorObserver.currentRoute is DialogRoute)) {
       if (hideBecauseRoutePushed) {
         ignorePlatformTouch = true;
       }
@@ -625,7 +626,8 @@ class _MPFlutterPlatformOverlaySupportState
     bool shouldWindowLevelSetHigh =
         currentRoute != null && currentRoute!.isCurrent == true;
     bool activeRouteIsModalBottomSheet =
-        MPNavigatorObserver.currentRoute is ModalBottomSheetRoute;
+        MPNavigatorObserver.currentRoute is ModalBottomSheetRoute ||
+            MPNavigatorObserver.currentRoute is DialogRoute;
     if (mounted && activeRouteIsModalBottomSheet) {
       shouldWindowLevelSetHigh = true;
     }
