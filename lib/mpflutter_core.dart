@@ -16,6 +16,7 @@ export './image/mpflutter_use_native_codec.dart';
 export './image/mpflutter_image_encoder.dart';
 export './image/mpflutter_network_image_io.dart'
     if (dart.library.js) 'image/mpflutter_network_image_js.dart';
+export './mpflutter_keyboard_observer.dart';
 
 const bool kIsMPFlutter = bool.fromEnvironment(
   'mpflutter.library.core',

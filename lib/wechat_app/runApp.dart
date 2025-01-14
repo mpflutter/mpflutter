@@ -10,6 +10,8 @@ import 'dart:js' as js;
 
 import 'package:mpflutter_core/mpflutter_core.dart';
 
+import '../mpflutter_keyboard_observer.dart';
+
 class MPApp extends StatefulWidget {
   final Widget child;
 
@@ -44,6 +46,7 @@ class _MPAppState extends State<MPApp> {
       Timer(Duration(milliseconds: 100), () {
         if (keyboardHeight == value) {
           setState(() {});
+          MPFlutterKeyboardObserver.shared.setKeyboardVisible(keyboardHeight > 0, keyboardHeight);
         }
       });
     };
