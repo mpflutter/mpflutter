@@ -44,7 +44,7 @@ class _MPAppState extends State<MPApp> {
       }
       keyboardHeight = value.toDouble();
       Timer(Duration(milliseconds: 100), () {
-        if (keyboardHeight == value) {
+        if ((keyboardHeight - value.toDouble()).abs() < 0.01) {
           setState(() {});
           MPFlutterKeyboardObserver.shared.setKeyboardVisible(keyboardHeight > 0, keyboardHeight);
         }
