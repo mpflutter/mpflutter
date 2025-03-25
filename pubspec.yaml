@@ -2,7 +2,7 @@ name: mpflutter_core
 description: The MPFlutter Library
 homepage: https://mpflutter.com
 
-version: 2.7.8
+version: 2.8.0
 
 environment:
   sdk: ">=3.7.2 <4.0.0"
