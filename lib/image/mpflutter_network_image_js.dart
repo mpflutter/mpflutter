@@ -203,4 +203,7 @@ class MPFlutterNetworkImage
   @override
   String toString() =>
       '${objectRuntimeType(this, 'NetworkImage')}("$url", scale: ${scale.toStringAsFixed(1)})';
+      
+  @override
+  WebHtmlElementStrategy get webHtmlElementStrategy => WebHtmlElementStrategy.never;
 }
